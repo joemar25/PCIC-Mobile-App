@@ -9,8 +9,7 @@ class VerifyLoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isLoginSuccessful) {
-      // Delay navigation to the dashboard page by 2 seconds
-      Future.delayed(const Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 1), () {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const DashboardPage()),
