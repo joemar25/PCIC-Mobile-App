@@ -82,20 +82,18 @@ class _JobPageState extends State<JobPage> {
             urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             subdomains: const ['a', 'b', 'c'],
           ),
-          // PolylineLayer(
-          // options: PolylineLayerOptions(
-          //   polylines: [
-          //     Polyline(
-          //       points: routePoints,
-          //       color: Colors.blue,
-          //       strokeWidth: 5.0,
-          //     ),
-          //   ],
-          // ),
-          // ),
-          // MarkerLayerWidget(
-          //   options: MarkerLayerOptions(markers: markers),
-          // ),
+          PolylineLayer(
+            polylines: [
+              Polyline(
+                points: routePoints,
+                color: Colors.blue,
+                strokeWidth: 5.0,
+              ),
+            ],
+          ),
+          MarkerLayer(
+            markers: markers,
+          ),
         ],
       ),
       floatingActionButton: Column(
