@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/_splash.dart';
 import 'package:pcic_mobile_app/screens/_starting.dart';
+import 'package:pcic_mobile_app/screens/dashboard/_job.dart';
+import 'package:pcic_mobile_app/screens/dashboard/_task.dart';
+import 'package:pcic_mobile_app/screens/dashboard/_home.dart';
+import 'package:pcic_mobile_app/screens/dashboard/_message.dart';
 import 'package:pcic_mobile_app/screens/user-control/_login.dart';
 import 'package:pcic_mobile_app/screens/user-control/_signup.dart';
 import 'package:pcic_mobile_app/screens/user-control/_verify_login.dart';
 import 'package:pcic_mobile_app/screens/user-control/_verify_signup.dart';
-import 'package:pcic_mobile_app/screens/dashboard/_home.dart';
 
 const String appTITLE = "PCIC Mobile App";
 
@@ -31,7 +34,10 @@ class MyApp extends StatelessWidget {
             const VerifyLoginPage(isLoginSuccessful: true),
         '/verify-signup': (context) =>
             const VerifySignupPage(isSignupSuccessful: true),
-        '/dashboard': (context) => const DashboardPage(),
+        '/_home': (context) => const DashboardPage(),
+        '/_job': (context) => const JobPage(),
+        '/_message': (context) => const MessagePage(),
+        '/_task': (context) => const TaskPage(),
       },
     );
   }
