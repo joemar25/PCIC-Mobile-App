@@ -19,7 +19,6 @@ class VerifyLoginPage extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Verify Login")),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -19,7 +19,6 @@ class VerifySignupPage extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Verify Signup")),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
