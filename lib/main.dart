@@ -5,7 +5,7 @@ import 'package:pcic_mobile_app/screens/user-control/_login.dart';
 import 'package:pcic_mobile_app/screens/user-control/_signup.dart';
 import 'package:pcic_mobile_app/screens/user-control/_verify_login.dart';
 import 'package:pcic_mobile_app/screens/user-control/_verify_signup.dart';
-import 'package:pcic_mobile_app/screens/dashboard/_dashboard.dart';
+import 'package:pcic_mobile_app/screens/dashboard/_home.dart';
 
 const String appTITLE = "PCIC Mobile App";
 

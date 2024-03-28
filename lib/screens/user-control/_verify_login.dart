@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import 'package:pcic_mobile_app/screens/dashboard/_dashboard.dart';
+import 'package:pcic_mobile_app/screens/dashboard/_home.dart';
 
 class VerifyLoginPage extends StatelessWidget {
   final bool isLoginSuccessful;
