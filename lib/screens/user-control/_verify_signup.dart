@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
-import 'package:pcic_mobile_app/screens/dashboard/_home.dart';
+import 'package:pcic_mobile_app/screens/user-control/_login.dart';
+import 'package:pcic_mobile_app/utils/app_colors.dart';
 
 class VerifySignupPage extends StatelessWidget {
   final bool isSignupSuccessful;
@@ -12,7 +13,7 @@ class VerifySignupPage extends StatelessWidget {
       Future.delayed(const Duration(seconds: 1), () {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const DashboardPage()),
+          MaterialPageRoute(builder: (context) => const LoginPage()),
         );
       });
     }
@@ -23,9 +24,9 @@ class VerifySignupPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              isSignupSuccessful ? Icons.check_circle : Icons.error,
+              isSignupSuccessful ? Icons.check : Icons.error,
               size: 100,
-              color: isSignupSuccessful ? Colors.green : Colors.red,
+              color: isSignupSuccessful ? AppColors.success : AppColors.error,
             ),
             const SizedBox(height: 20),
             Text(
@@ -33,6 +34,7 @@ class VerifySignupPage extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
+                color: AppColors.text,
               ),
             ),
           ],

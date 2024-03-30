@@ -49,6 +49,9 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
+        // get the env file from the project root 
+        resValue "string", "MAPBOX_ACCESS_TOKEN", "\"${System.getenv("MAPBOX_ACCESS_TOKEN")}\""
     }
 
     buildTypes {

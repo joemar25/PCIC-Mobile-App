@@ -1,8 +1,8 @@
-import 'package:flutter/foundation.dart'; // for printing debug messages
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:flutter/foundation.dart'; // for printing debug messages
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:pcic_mobile_app/utils/app_env.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class JobPage extends StatefulWidget {
@@ -13,15 +13,17 @@ class JobPage extends StatefulWidget {
 }
 
 class _JobPageState extends State<JobPage> {
-  MapController mapController = MapController();
-  List<LatLng> routePoints = [];
-  List<Marker> markers = [];
+  late MapboxMapController mapController;
+  final List<LatLng> routePoints = [];
   String currentLocation = '';
   bool isColumnVisible = true;
 
   @override
   void initState() {
     super.initState();
+    if (kDebugMode) {
+      print('Mapbox access token: ${Env.MAPBOX_ACCESS_TOKEN}');
+    }
     _requestLocationPermission();
   }
 
@@ -42,21 +44,22 @@ class _JobPageState extends State<JobPage> {
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      setState(() {
-        mapController.move(
-          LatLng(position.latitude, position.longitude),
-          15.0,
-        );
-        routePoints.add(LatLng(position.latitude, position.longitude));
-        markers.add(
-          Marker(
-            point: LatLng(position.latitude, position.longitude),
-            child: const Icon(Icons.location_on, color: Colors.blue),
-          ),
-        );
-        currentLocation =
-            'Lat: ${position.latitude}, Long: ${position.longitude}';
-      });
+      // setState(() {
+      //   mapController.move(
+      //     LatLng(position.latitude, position.longitude),
+      //     15.0,
+      //   );
+      //   routePoints.add(LatLng(position.latitude, position.longitude));
+      //   markers.add(
+      //     Marker(
+      //       point: LatLng(position.latitude, position.longitude),
+      //       builder: (context) =>
+      //           const Icon(Icons.location_on, color: Colors.blue),
+      //     ),
+      //   );
+      //   currentLocation =
+      //       'Lat: ${position.latitude}, Long: ${position.longitude}';
+      // });
     } catch (e) {
       print('Error getting current location: $e');
     }
@@ -64,8 +67,8 @@ class _JobPageState extends State<JobPage> {
 
   void _startRouting() {
     setState(() {
-      routePoints = [];
-      markers = [];
+      routePoints.clear();
+      // markers.clear();
     });
   }
 
@@ -84,38 +87,37 @@ class _JobPageState extends State<JobPage> {
     return Scaffold(
       body: Stack(
         children: [
-          FlutterMap(
-            mapController: mapController,
-            options: MapOptions(
-              onTap: (position, point) {
-                setState(() {
-                  routePoints.add(point);
-                  markers.add(
-                    Marker(
-                      point: point,
-                      child: const Icon(Icons.location_on, color: Colors.red),
-                    ),
-                  );
-                });
-              },
+          MapboxMap(
+            accessToken: Env.MAPBOX_ACCESS_TOKEN,
+            initialCameraPosition: const CameraPosition(
+              target: LatLng(12, 12),
+              zoom: 5,
             ),
-            children: [
-              TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              ),
-              PolylineLayer(
-                polylines: [
-                  Polyline(
-                    points: routePoints,
-                    color: Colors.blue,
-                    strokeWidth: 5.0,
-                  ),
-                ],
-              ),
-              MarkerLayer(
-                markers: markers,
-              ),
-            ],
+            onMapCreated: (MapboxMapController controller) {
+              mapController = controller;
+            },
+            onMapClick: (point, latLng) {
+              setState(() {
+                routePoints.add(latLng);
+                // markers.add(
+                //   Marker(
+                //     point: latLng,
+                //     builder: (context) =>
+                //         const Icon(Icons.location_on, color: Colors.red),
+                //   ),
+                // );
+              });
+            },
+            // polylines: [
+            //   Polyline(
+            //     points: routePoints,
+            //     color: Colors.blue,
+            //     strokeWidth: 5.0,
+            //   ),
+            // ],
+            // markers: markers
+            //     .map((marker) => marker)
+            //     .toSet(), // Convert the list to a set
           ),
           Positioned(
             left: 0,
@@ -199,13 +201,13 @@ class _JobPageState extends State<JobPage> {
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            _buildTrackingOption('Start'),
+                            _buildTrackingOption('Start', _startRouting),
                             const SizedBox(width: 8),
-                            _buildTrackingOption('Stop'),
+                            _buildTrackingOption('Stop', _stopRouting),
                           ],
                         ),
                         const SizedBox(height: 8),
-                        _buildTrackingOption('Pin Drop'),
+                        _buildTrackingOption('Pin Drop', () {}),
                         const SizedBox(height: 24),
                         Row(
                           children: [
@@ -288,38 +290,41 @@ class _JobPageState extends State<JobPage> {
     );
   }
 
-  Widget _buildTrackingOption(String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
-        borderRadius: BorderRadius.circular(2),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: const BoxDecoration(
-              color: Color(0xFF45C53F),
-              shape: BoxShape.circle,
+  Widget _buildTrackingOption(String label, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF5F5F5),
+          borderRadius: BorderRadius.circular(2),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 24,
+              height: 24,
+              decoration: const BoxDecoration(
+                color: Color(0xFF45C53F),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.check,
+                color: Colors.white,
+                size: 16,
+              ),
             ),
-            child: const Icon(
-              Icons.check,
-              color: Colors.white,
-              size: 16,
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Color(0xFF1E1E1E),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: const TextStyle(
-              color: Color(0xFF1E1E1E),
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
