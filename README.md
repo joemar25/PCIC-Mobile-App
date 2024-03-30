@@ -31,4 +31,8 @@ rebuilding commands in flutter
     flutter run
 ```
 
-1
+Your project contains issues that can be fixed by running "dart fix" from the command line.
+
+```cmd
+    dart fix
+```
