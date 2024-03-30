@@ -30,7 +30,9 @@ class VerifySignupPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              isSignupSuccessful ? "Signup Successful!" : "Signup Failed!",
+              isSignupSuccessful
+                  ? "Your Sign up was successful!"
+                  : "Signup Failed!",
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,

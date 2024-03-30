@@ -5,7 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pcic_mobile_app/utils/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   SplashScreenState createState() => SplashScreenState();
@@ -79,7 +79,7 @@ class SplashScreenState extends State<SplashScreen> {
               ),
             ),
           ),
-          Positioned(
+          const Positioned(
             bottom: 150,
             left: 0,
             right: 0,

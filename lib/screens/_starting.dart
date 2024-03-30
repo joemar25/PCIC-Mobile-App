@@ -15,13 +15,13 @@ class StartingPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.home,
                 size: 100,
                 color: AppColors.onPrimary,
               ),
               const SizedBox(height: 20),
-              Text(
+              const Text(
                 "Welcome to My App",
                 style: TextStyle(
                   fontSize: 24,
