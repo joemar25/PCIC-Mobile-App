@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart'; // for printing debug messages
+import 'package:flutter/foundation.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/pcic_form_1.dart';
-import 'package:pcic_mobile_app/utils/app_env.dart';
+import 'package:pcic_mobile_app/utils/_app_env.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/_pcic_form_1.dart';
 
 class JobPage extends StatefulWidget {
   const JobPage({super.key});
@@ -62,7 +62,9 @@ class _JobPageState extends State<JobPage> {
       //       'Lat: ${position.latitude}, Long: ${position.longitude}';
       // });
     } catch (e) {
-      print('Error getting current location: $e');
+      if (kDebugMode) {
+        print('Error getting current location: $e');
+      }
     }
   }
 

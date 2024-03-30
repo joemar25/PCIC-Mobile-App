@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:pcic_mobile_app/screens/_starting.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:pcic_mobile_app/utils/app_colors.dart';
+import 'package:pcic_mobile_app/utils/_app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

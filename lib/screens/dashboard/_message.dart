@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/chat_page.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/_chat.dart';
 
 class MessagePage extends StatelessWidget {
   const MessagePage({super.key});
@@ -7,9 +7,6 @@ class MessagePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Messages'),
-      ),
       body: ListView(
         children: [
           _buildMessageItem(
