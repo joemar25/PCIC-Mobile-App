@@ -9,10 +9,11 @@ import 'package:pcic_mobile_app/screens/user-control/_login.dart';
 import 'package:pcic_mobile_app/screens/user-control/_signup.dart';
 import 'package:pcic_mobile_app/screens/user-control/_verify_login.dart';
 import 'package:pcic_mobile_app/screens/user-control/_verify_signup.dart';
+import 'package:pcic_mobile_app/utils/app_routes.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-const String appTITLE = "PCIC Mobile App";
-
-void main() {
+void main() async {
+  await dotenv.load(fileName: "assets/config/.env");
   runApp(const MyApp());
 }
 
@@ -22,22 +23,34 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      /***************************************************************************
+       * Debug Banner, currently set to false so you could not see the debug
+       * banner on the top right of the app
+       ***************************************************************************/
       debugShowCheckedModeBanner: false,
-      title: appTITLE,
-      initialRoute: '/',
+
+      /***************************************************************************
+       * App Title
+       ***************************************************************************/
+      title: "PCIC Mobile App",
+
+      /***************************************************************************
+       * Routes
+       **************************************************************************/
+      initialRoute: AppRoutes.splash,
       routes: {
-        '/': (context) => const SplashScreen(),
-        '/starting': (context) => const StartingPage(),
-        '/login': (context) => const LoginPage(),
-        '/signup': (context) => const SignupPage(),
-        '/verify-login': (context) =>
+        AppRoutes.splash: (context) => const SplashScreen(),
+        AppRoutes.starting: (context) => const StartingPage(),
+        AppRoutes.login: (context) => const LoginPage(),
+        AppRoutes.signup: (context) => const SignupPage(),
+        AppRoutes.verifyLogin: (context) =>
             const VerifyLoginPage(isLoginSuccessful: true),
-        '/verify-signup': (context) =>
+        AppRoutes.verifySignup: (context) =>
             const VerifySignupPage(isSignupSuccessful: true),
-        '/_home': (context) => const DashboardPage(),
-        '/_job': (context) => const JobPage(),
-        '/_message': (context) => const MessagePage(),
-        '/_task': (context) => const TaskPage(),
+        AppRoutes.home: (context) => const DashboardPage(),
+        AppRoutes.job: (context) => const JobPage(),
+        AppRoutes.message: (context) => const MessagePage(),
+        AppRoutes.task: (context) => const TaskPage(),
       },
     );
   }

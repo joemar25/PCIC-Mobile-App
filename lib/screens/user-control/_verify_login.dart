@@ -1,9 +1,9 @@
 import "package:flutter/material.dart";
 import 'package:pcic_mobile_app/screens/dashboard/_home.dart';
+import 'package:pcic_mobile_app/utils/app_colors.dart';
 
 class VerifyLoginPage extends StatelessWidget {
   final bool isLoginSuccessful;
-
   const VerifyLoginPage({super.key, required this.isLoginSuccessful});
 
   @override
@@ -18,21 +18,23 @@ class VerifyLoginPage extends StatelessWidget {
     }
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              isLoginSuccessful ? Icons.check_circle : Icons.error,
+              Icons.check,
               size: 100,
-              color: isLoginSuccessful ? Colors.green : Colors.red,
+              color: AppColors.success,
             ),
             const SizedBox(height: 20),
-            Text(
-              isLoginSuccessful ? "Login Successful!" : "Login Failed!",
-              style: const TextStyle(
+            const Text(
+              "Login Successful",
+              style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
+                color: AppColors.text,
               ),
             ),
           ],

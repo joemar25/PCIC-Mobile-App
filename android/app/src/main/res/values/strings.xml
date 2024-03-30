@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+
+    <!-- This is where we put the PK or the Public Key token for MapBox -->
+    <!-- PUBLIC_ACCESS_TOKEN -->
+    <string name="mapbox_access_token">
+        <string name="mapbox_access_token">@string/MAPBOX_ACCESS_TOKEN</string>
+    </string>
+ 
+</resources>

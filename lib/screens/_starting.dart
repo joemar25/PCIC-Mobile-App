@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/user-control/_login.dart';
 import 'package:pcic_mobile_app/screens/user-control/_signup.dart';
+import 'package:pcic_mobile_app/utils/app_colors.dart';
 
 class StartingPage extends StatelessWidget {
   const StartingPage({super.key});
@@ -9,23 +10,23 @@ class StartingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.blue,
+        color: AppColors.primary,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
+              Icon(
                 Icons.home,
                 size: 100,
-                color: Colors.white,
+                color: AppColors.onPrimary,
               ),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 "Welcome to My App",
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: AppColors.onPrimary,
                 ),
               ),
               const SizedBox(height: 40),
@@ -39,7 +40,8 @@ class StartingPage extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
+                  backgroundColor: AppColors.secondary,
+                  foregroundColor: AppColors.onSecondary,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 40,
                     vertical: 15,
@@ -52,7 +54,6 @@ class StartingPage extends StatelessWidget {
                   "Login",
                   style: TextStyle(
                     fontSize: 18,
-                    color: Colors.blue,
                   ),
                 ),
               ),
@@ -67,7 +68,8 @@ class StartingPage extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
+                  backgroundColor: AppColors.secondary,
+                  foregroundColor: AppColors.onSecondary,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 40,
                     vertical: 15,
@@ -80,7 +82,6 @@ class StartingPage extends StatelessWidget {
                   "Sign Up",
                   style: TextStyle(
                     fontSize: 18,
-                    color: Colors.blue,
                   ),
                 ),
               ),
