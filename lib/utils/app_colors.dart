@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 
-/**
- * Usage:
- * 
- * 1. import the file
- * 2. Use the colors in your widgets by using 'AppColors.primary' as sample 
- */
+/// Usage:
+/// 1. import the file
+/// 2. Use the colors in your widgets by using 'AppColors.primary' as sample
 
 class AppColors {
   static const Color primary = Color(0xFF89C53F);
