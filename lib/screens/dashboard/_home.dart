@@ -51,7 +51,8 @@ class _DashboardPageState extends State<DashboardPage> {
       IconData icon, String label, int index) {
     final isSelected = _selectedIndex == index;
     return BottomNavigationBarItem(
-      icon: Container(
+      icon: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: isSelected
             ? BoxDecoration(
@@ -61,13 +62,16 @@ class _DashboardPageState extends State<DashboardPage> {
             : null,
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment:
-              MainAxisAlignment.center, // Align items horizontally
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon),
             if (isSelected) ...[
               const SizedBox(width: 4),
-              Text(label),
+              AnimatedOpacity(
+                duration: const Duration(milliseconds: 300),
+                opacity: isSelected ? 1.0 : 0.0,
+                child: Text(label),
+              ),
             ],
           ],
         ),
@@ -93,6 +97,22 @@ class HomeScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           const Text(
+            'Agent Name HERE',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const Text(
+            'Agent ID HERE',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const Text(
+            'Current Location HERE',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const Text(
+            'Date Now',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const Text(
             'Search Tasks',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
@@ -114,7 +134,7 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Expanded(
             child: ListView.builder(
-              itemCount: 10,
+              itemCount: 3,
               itemBuilder: (context, index) => ListTile(
                 title: Text('Task $index'),
                 subtitle: Text('Description of task $index'),
