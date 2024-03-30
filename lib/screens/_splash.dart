@@ -1,54 +1,100 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:pcic_mobile_app/screens/_starting.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:pcic_mobile_app/utils/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  SplashScreenState createState() => SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class SplashScreenState extends State<SplashScreen> {
+  late Timer _timer;
+
   @override
   void initState() {
     super.initState();
-    startTimer();
+    _startTimer();
   }
 
-  startTimer() async {
-    var duration = const Duration(seconds: 2);
-    return Timer(duration, navigateToStartingPage);
+  void _startTimer() {
+    const duration = Duration(seconds: 1);
+    _timer = Timer(duration, _navigateToStartingPage);
   }
 
-  navigateToStartingPage() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const StartingPage()),
-    );
+  void _navigateToStartingPage() {
+    if (mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const StartingPage()),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      backgroundColor: Colors.blue,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 100,
-              height: 100,
+      body: Stack(
+        children: [
+          Container(color: AppColors.primaryDark),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: screenHeight * 0.63,
               decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
+                color: AppColors.primary,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.elliptical(250, 100),
+                  bottomRight: Radius.elliptical(250, 100),
+                ),
+              ),
+              child: Center(
+                child: Container(
+                  width: 300,
+                  height: 300,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Image.asset(
+                      'assets/storage/images/icon.png',
+                      width: 250,
+                      height: 250,
+                    ),
+                  ),
+                ),
               ),
             ),
-            const SizedBox(height: 20),
-            const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          ),
+          Positioned(
+            bottom: 150,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: SizedBox(
+                width: 50,
+                height: 50,
+                child: SpinKitCircle(
+                  color: AppColors.onPrimary,
+                  size: 50.0,
+                ),
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -21,6 +21,7 @@ samples, guidance on mobile development, and a full API reference.
 [Mapbox Documentation](https://pub.dev/documentation/mapbox_gl/latest/)
 [Mapbox Blog Integration](https://medium.com/nerd-for-tech/navigation-with-mapbox-for-flutter-apps-313687778686)
 [Mapbox Integration](https://www.dhiwise.com/post/flutter-mapbox-integration-everything-you-need-to-know)
+[Spinkit for Loading](https://pub.dev/packages/flutter_spinkit)
 
 rebuilding commands in flutter
 
