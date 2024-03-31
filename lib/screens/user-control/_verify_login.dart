@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:pcic_mobile_app/screens/dashboard/_home.dart';
-import 'package:pcic_mobile_app/utils/app_colors.dart';
+import 'package:pcic_mobile_app/utils/_app_colors.dart';
 
 class VerifyLoginPage extends StatelessWidget {
   final bool isLoginSuccessful;
@@ -17,7 +17,7 @@ class VerifyLoginPage extends StatelessWidget {
       });
     }
 
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: AppColors.background,
       body: Center(
         child: Column(
@@ -28,8 +28,8 @@ class VerifyLoginPage extends StatelessWidget {
               size: 100,
               color: AppColors.success,
             ),
-            const SizedBox(height: 20),
-            const Text(
+            SizedBox(height: 20),
+            Text(
               "Login Successful",
               style: TextStyle(
                 fontSize: 24,

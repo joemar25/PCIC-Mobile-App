@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart'; // for printing debug messages
+import 'package:flutter/foundation.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:pcic_mobile_app/utils/app_env.dart';
+import 'package:pcic_mobile_app/utils/_app_env.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/_pcic_form_1.dart';
 
 class JobPage extends StatefulWidget {
   const JobPage({super.key});
@@ -61,15 +62,17 @@ class _JobPageState extends State<JobPage> {
       //       'Lat: ${position.latitude}, Long: ${position.longitude}';
       // });
     } catch (e) {
-      print('Error getting current location: $e');
+      if (kDebugMode) {
+        print('Error getting current location: $e');
+      }
     }
   }
 
   void _startRouting() {
-    setState(() {
-      routePoints.clear();
-      // markers.clear();
-    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const PCICFormPage()),
+    );
   }
 
   void _stopRouting() {
@@ -85,17 +88,21 @@ class _JobPageState extends State<JobPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Start Job'),
+      ),
       body: Stack(
         children: [
           MapboxMap(
             accessToken: Env.MAPBOX_ACCESS_TOKEN,
             initialCameraPosition: const CameraPosition(
-              target: LatLng(12, 12),
-              zoom: 5,
+              target: LatLng(13.145467, 483.723563),
+              zoom: 18,
             ),
             onMapCreated: (MapboxMapController controller) {
               mapController = controller;
             },
+            styleString: 'mapbox://styles/mapbox/outdoors-v12',
             onMapClick: (point, latLng) {
               setState(() {
                 routePoints.add(latLng);
@@ -214,7 +221,13 @@ class _JobPageState extends State<JobPage> {
                             Expanded(
                               child: ElevatedButton(
                                 onPressed: () {
-                                  // Save button action
+                                  // Navigate to PCIC Form
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const PCICFormPage()),
+                                  );
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF89C53F),
@@ -325,41 +338,6 @@ class _JobPageState extends State<JobPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNavItem({
-    required IconData icon,
-    String label = '',
-    bool isActive = false,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: isActive
-          ? BoxDecoration(
-              color: const Color(0x1989C53F),
-              borderRadius: BorderRadius.circular(12),
-            )
-          : null,
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: isActive ? const Color(0xFF89C53F) : Colors.black,
-          ),
-          if (label.isNotEmpty) ...[
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: isActive ? const Color(0xFF89C53F) : Colors.black,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ],
       ),
     );
   }

@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:pcic_mobile_app/screens/user-control/_login.dart';
-import 'package:pcic_mobile_app/utils/app_colors.dart';
+import 'package:pcic_mobile_app/utils/_app_colors.dart';
 
 class VerifySignupPage extends StatelessWidget {
   final bool isSignupSuccessful;
@@ -30,7 +30,9 @@ class VerifySignupPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              isSignupSuccessful ? "Signup Successful!" : "Signup Failed!",
+              isSignupSuccessful
+                  ? "Your Sign up was successful!"
+                  : "Signup Failed!",
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
