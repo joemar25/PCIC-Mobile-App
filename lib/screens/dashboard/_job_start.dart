@@ -88,6 +88,9 @@ class _JobPageState extends State<JobPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Start Job'),
+      ),
       body: Stack(
         children: [
           MapboxMap(

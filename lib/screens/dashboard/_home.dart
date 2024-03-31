@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_task.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_message.dart';
-import 'package:pcic_mobile_app/screens/dashboard/_job_start.dart';
+import 'package:pcic_mobile_app/screens/dashboard/_settings.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -17,7 +17,7 @@ class _DashboardPageState extends State<DashboardPage> {
     HomeScreen(),
     TaskPage(),
     MessagePage(),
-    JobPage(),
+    SettingsPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -35,7 +35,7 @@ class _DashboardPageState extends State<DashboardPage> {
           _buildNavigationBarItem(Icons.home, 'Home', 0),
           _buildNavigationBarItem(Icons.task, 'Tasks', 1),
           _buildNavigationBarItem(Icons.message, 'Messages', 2),
-          _buildNavigationBarItem(Icons.work, 'Jobs', 3),
+          _buildNavigationBarItem(Icons.settings, 'Settings', 3),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_job_start.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/_task_add.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/_task_details.dart';
 
 class TaskPage extends StatefulWidget {
@@ -32,33 +31,35 @@ class _TaskPageState extends State<TaskPage> {
     },
   ];
 
-  List<Map<String, dynamic>> upcomingTasks = [];
-  List<Map<String, dynamic>> completedTasks = [];
+  List<Map<String, dynamic>> filteredTasks = [];
 
   bool _showUpcomingTasks = true;
+  String _searchQuery = '';
 
-  void _separateTasks() {
-    upcomingTasks = tasks.where((task) => !task['isCompleted']).toList();
-    completedTasks = tasks.where((task) => task['isCompleted']).toList();
+  @override
+  void initState() {
+    super.initState();
+    _filterTasks('');
+  }
+
+  void _filterTasks(String query) {
+    setState(() {
+      _searchQuery = query;
+      filteredTasks = tasks
+          .where((task) =>
+              task['title'].toLowerCase().contains(query.toLowerCase()) ||
+              task['description'].toLowerCase().contains(query.toLowerCase()))
+          .where((task) =>
+              _showUpcomingTasks ? !task['isCompleted'] : task['isCompleted'])
+          .toList();
+    });
   }
 
   void _toggleTaskView() {
     setState(() {
       _showUpcomingTasks = !_showUpcomingTasks;
+      _filterTasks(_searchQuery);
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _separateTasks();
-  }
-
-  void _navigateToAddTask() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const AddTaskPage()),
-    );
   }
 
   void _navigateToTaskDetails(Map<String, dynamic> task) {
@@ -81,92 +82,83 @@ class _TaskPageState extends State<TaskPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: ListView(
-              children: [
-                const SizedBox(height: 16.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    MaterialButton(
-                      onPressed: () {
-                        _toggleTaskView();
-                      },
-                      child: Text(
-                        'Upcoming Tasks',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color: _showUpcomingTasks ? Colors.blue : Colors.grey,
-                        ),
-                      ),
-                    ),
-                    MaterialButton(
-                      onPressed: () {
-                        _toggleTaskView();
-                      },
-                      child: Text(
-                        'Completed Tasks',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color:
-                              !_showUpcomingTasks ? Colors.blue : Colors.grey,
-                        ),
-                      ),
-                    ),
-                  ],
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              'Tasks',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TextField(
+              onChanged: _filterTasks,
+              decoration: InputDecoration(
+                hintText: 'Search tasks...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24.0),
                 ),
-                const SizedBox(height: 8.0),
-                _showUpcomingTasks
-                    ? ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: upcomingTasks.length,
-                        itemBuilder: (context, index) {
-                          final task = upcomingTasks[index];
-                          return Card(
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 8.0,
-                            ),
-                            child: ListTile(
-                              title: Text(task['title']),
-                              subtitle: Text(task['description']),
-                              trailing: ElevatedButton(
-                                onPressed: () => _navigateToTaskDetails(task),
-                                child: const Text('View Details'),
-                              ),
-                              onTap: () => _navigateToTaskDetails(task),
-                            ),
-                          );
-                        },
-                      )
-                    : ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: completedTasks.length,
-                        itemBuilder: (context, index) {
-                          final task = completedTasks[index];
-                          return Card(
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 8.0,
-                            ),
-                            child: ListTile(
-                              title: Text(task['title']),
-                              subtitle: Text(task['description']),
-                              trailing: ElevatedButton(
-                                onPressed: () => _navigateToTaskDetails(task),
-                                child: const Text('View Details'),
-                              ),
-                              onTap: () => _navigateToTaskDetails(task),
-                            ),
-                          );
-                        },
-                      ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                  onPressed: _showUpcomingTasks ? null : _toggleTaskView,
+                  child: Text(
+                    'Upcoming',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      color: _showUpcomingTasks ? Colors.blue : Colors.grey,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: !_showUpcomingTasks ? null : _toggleTaskView,
+                  child: Text(
+                    'Completed',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      color: !_showUpcomingTasks ? Colors.blue : Colors.grey,
+                    ),
+                  ),
+                ),
               ],
+            ),
+          ),
+          const SizedBox(height: 16.0),
+          Expanded(
+            child: ListView.separated(
+              itemCount: filteredTasks.length,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, index) {
+                final task = filteredTasks[index];
+                return ListTile(
+                  title: Text(
+                    task['title'],
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Text(
+                    task['description'],
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _navigateToTaskDetails(task),
+                );
+              },
             ),
           ),
         ],
