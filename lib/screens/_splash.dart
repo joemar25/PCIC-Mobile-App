@@ -11,7 +11,7 @@ class SplashScreen extends StatelessWidget {
 
     return Scaffold(
       body: FutureBuilder(
-        future: Future.delayed(const Duration(seconds: 2)),
+        future: Future.delayed(const Duration(seconds: 1)),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Stack(
