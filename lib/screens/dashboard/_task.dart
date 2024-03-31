@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/dashboard/controllers/_filter_task.dart';
+import 'package:pcic_mobile_app/screens/dashboard/controllers/task.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/_geotag.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/_task_details.dart';
 import 'package:intl/intl.dart';
@@ -13,31 +14,8 @@ class TaskPage extends StatefulWidget {
 }
 
 class _TaskPageState extends State<TaskPage> {
-  List<Map<String, dynamic>> tasks = [
-    {
-      'id': 1,
-      'title': 'Task 1',
-      'description': 'Description of task 1',
-      'isCompleted': false,
-      'dateAdded': DateTime(2023, 6, 1),
-    },
-    {
-      'id': 2,
-      'title': 'Task 2',
-      'description': 'Description of task 2',
-      'isCompleted': true,
-      'dateAdded': DateTime(2023, 6, 2),
-    },
-    {
-      'id': 3,
-      'title': 'Task 3',
-      'description': 'Description of task 3',
-      'isCompleted': false,
-      'dateAdded': DateTime(2023, 6, 3),
-    },
-  ];
-
-  List<Map<String, dynamic>> filteredTasks = [];
+  List<Task> tasks = Task.getAllTasks();
+  List<Task> filteredTasks = [];
 
   bool _isUpcomingTasksSelected = true;
   String _searchQuery = '';
@@ -68,22 +46,19 @@ class _TaskPageState extends State<TaskPage> {
   }
 
   Future<void> _filterTasksAsync() async {
-    final filteredList = await Future.value(tasks
+    final filteredList = tasks
         .where((task) =>
-            task['title'].toLowerCase().contains(_searchQuery.toLowerCase()) ||
-            task['description']
-                .toLowerCase()
-                .contains(_searchQuery.toLowerCase()))
-        .where((task) => _isUpcomingTasksSelected
-            ? !task['isCompleted']
-            : task['isCompleted'])
-        .toList());
+            task.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            task.description.toLowerCase().contains(_searchQuery.toLowerCase()))
+        .where((task) =>
+            _isUpcomingTasksSelected ? !task.isCompleted : task.isCompleted)
+        .toList();
 
     filteredList.sort((a, b) {
       if (_sortEarliest) {
-        return a['dateAdded'].compareTo(b['dateAdded']);
+        return a.dateAdded.compareTo(b.dateAdded);
       } else {
-        return b['dateAdded'].compareTo(a['dateAdded']);
+        return b.dateAdded.compareTo(a.dateAdded);
       }
     });
 
@@ -107,7 +82,7 @@ class _TaskPageState extends State<TaskPage> {
     _filterTasksAsync();
   }
 
-  void _navigateToTaskDetails(Map<String, dynamic> task) {
+  void _navigateToTaskDetails(Task task) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -219,36 +194,35 @@ class _TaskPageState extends State<TaskPage> {
               ),
               const SizedBox(height: 16.0),
               Expanded(
-                child: filteredTasks.isEmpty
-                    ? Center(
-                        child: Text(
-                          _isUpcomingTasksSelected
-                              ? 'No upcoming tasks'
-                              : 'No completed tasks',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      )
-                    : ListView.separated(
-                        itemCount: filteredTasks.length,
-                        itemBuilder: (context, index) {
-                          final task = filteredTasks[index];
-                          return ListTile(
-                            title: Text(
-                              task['title'],
-                              style: Theme.of(context).textTheme.titleLarge,
-                            ),
-                            subtitle: Text(
-                              '${task['description']}\nDate Added: ${DateFormat('MMM d, yyyy').format(task['dateAdded'])}',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            trailing: const Icon(Icons.chevron_right),
-                            onTap: () => _navigateToTaskDetails(task),
-                          );
-                        },
-                        separatorBuilder: (context, index) => const Divider(),
-                      ),
-              ),
+                  child: filteredTasks.isEmpty
+                      ? Center(
+                          child: Text(
+                            _isUpcomingTasksSelected
+                                ? 'No upcoming tasks'
+                                : 'No completed tasks',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        )
+                      : ListView.separated(
+                          itemCount: filteredTasks.length,
+                          itemBuilder: (context, index) {
+                            final task = filteredTasks[index];
+                            return ListTile(
+                              title: Text(
+                                task.title,
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              subtitle: Text(
+                                '${task.description}\nDate Added: ${DateFormat('MMM d, yyyy').format(task.dateAdded)}',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              trailing: const Icon(Icons.chevron_right),
+                              onTap: () => _navigateToTaskDetails(task),
+                            );
+                          },
+                          separatorBuilder: (context, index) => const Divider(),
+                        )),
             ],
           );
         },

@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pcic_mobile_app/screens/dashboard/controllers/task.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/_geotag.dart';
 
 class TaskDetailsPage extends StatelessWidget {
-  final Map<String, dynamic> task;
+  final Task task;
 
   const TaskDetailsPage({super.key, required this.task});
 
   void _navigateToGeotagPage(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => GeotagPage(taskId: task['id'])),
+      MaterialPageRoute(builder: (context) => GeotagPage(taskId: task.id)),
     );
   }
 
@@ -26,12 +27,12 @@ class TaskDetailsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              task['title'],
+              task.title,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8.0),
             Text(
-              'Date Added: ${DateFormat('MMM d, yyyy').format(task['dateAdded'])}',
+              'Date Added: ${DateFormat('MMM d, yyyy').format(task.dateAdded)}',
               style: const TextStyle(
                 color: Colors.grey,
                 fontSize: 14.0,
@@ -55,7 +56,7 @@ class TaskDetailsPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: Text(
-                task['description'],
+                task.description,
                 style: const TextStyle(fontSize: 16.0),
               ),
             ),
@@ -72,16 +73,16 @@ class TaskDetailsPage extends StatelessWidget {
                 ),
                 const SizedBox(width: 8.0),
                 Text(
-                  task['isCompleted'] ? 'Completed' : 'Upcoming',
+                  task.isCompleted ? 'Completed' : 'Upcoming',
                   style: TextStyle(
                     fontSize: 16.0,
-                    color: task['isCompleted'] ? Colors.green : Colors.orange,
+                    color: task.isCompleted ? Colors.green : Colors.orange,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 24.0),
-            if (!task['isCompleted'])
+            if (!task.isCompleted)
               ElevatedButton(
                 onPressed: () => _navigateToGeotagPage(context),
                 child: const Text('Go to Job Page'),
