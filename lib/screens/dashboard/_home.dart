@@ -16,7 +16,7 @@ class _DashboardPageState extends State<DashboardPage> {
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
     TaskPage(),
-    MessagePage(),
+    MessagesPage(),
     SettingsPage(),
   ];
 

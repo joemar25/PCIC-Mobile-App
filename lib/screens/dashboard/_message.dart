@@ -1,150 +1,188 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:pcic_mobile_app/screens/dashboard/controllers/_filter_message.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/_chat.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/_message.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/_message_items.dart';
+import 'package:provider/provider.dart';
 
-class MessagePage extends StatefulWidget {
-  const MessagePage({super.key});
+class MessagesPage extends StatefulWidget {
+  const MessagesPage({super.key});
 
   @override
-  _MessagePageState createState() => _MessagePageState();
+  _MessagesPageState createState() => _MessagesPageState();
 }
 
-class _MessagePageState extends State<MessagePage> {
-  final List<Map<String, String>> messages = [
+class _MessagesPageState extends State<MessagesPage> {
+  final List<Map<String, dynamic>> messages = [
     {
-      'name': 'John Doe',
+      'name': 'Joemar Cardiño',
       'message': 'Hey, how are you?',
-      'time': '10:30 AM',
-      'color': 'blue',
+      'time': DateTime(2023, 6, 5, 10, 30),
+      'color': Colors.blue,
     },
     {
-      'name': 'Jane Smith',
+      'name': 'Sean Palacay',
       'message': 'Can we meet tomorrow?',
-      'time': '9:45 AM',
-      'color': 'green',
+      'time': DateTime(2023, 6, 5, 9, 45),
+      'color': Colors.green,
     },
     {
-      'name': 'Alex Johnson',
+      'name': 'JC Bea',
       'message': 'Thanks for your help!',
-      'time': 'Yesterday',
-      'color': 'orange',
+      'time': DateTime(2023, 6, 4, 14, 0),
+      'color': Colors.orange,
     },
     {
-      'name': 'Sarah Brown',
+      'name': 'Mr Johny Makasalanan',
       'message': 'I have a question for you.',
-      'time': '2 days ago',
-      'color': 'purple',
+      'time': DateTime(2023, 6, 3, 11, 15),
+      'color': Colors.purple,
     },
   ];
 
-  List<Map<String, String>> filteredMessages = [];
+  List<Map<String, dynamic>> filteredMessages = [];
+
+  String _searchQuery = '';
+  bool _sortEarliest = true;
 
   @override
   void initState() {
     super.initState();
-    filteredMessages = messages;
-  }
-
-  void _filterMessages(String query) {
-    setState(() {
-      filteredMessages = messages
-          .where((message) =>
-              message['name']!.toLowerCase().contains(query.toLowerCase()) ||
-              message['message']!.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+    _loadFilters();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _postFrameCallback();
     });
   }
 
-  Color _getColorFromString(String colorString) {
-    switch (colorString) {
-      case 'blue':
-        return Colors.blue;
-      case 'green':
-        return Colors.green;
-      case 'orange':
-        return Colors.orange;
-      case 'purple':
-        return Colors.purple;
-      default:
-        return Colors.grey;
-    }
+  void _postFrameCallback() {
+    _filterMessagesAsync();
+    // Add any other state-related logic here
   }
 
-  Widget _buildMessageItem(
-    BuildContext context,
-    String name,
-    String message,
-    String time,
-    Color color,
-  ) {
-    return MessageItem(
-      name: name,
-      message: message,
-      time: time,
-      color: color,
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatPage(name: name),
-          ),
-        );
-      },
+  void _loadFilters() {
+    final filters =
+        Provider.of<MessageFiltersNotifier>(context, listen: false).filters;
+    setState(() {
+      _searchQuery = filters.searchQuery;
+      _sortEarliest = filters.sortEarliest;
+    });
+  }
+
+  Future<void> _filterMessagesAsync() async {
+    final filteredList = await Future.value(messages
+        .where((message) =>
+            message['name']
+                .toLowerCase()
+                .contains(_searchQuery.toLowerCase()) ||
+            message['message']
+                .toLowerCase()
+                .contains(_searchQuery.toLowerCase()))
+        .toList());
+
+    filteredList.sort((a, b) {
+      if (_sortEarliest) {
+        return a['time'].compareTo(b['time']);
+      } else {
+        return b['time'].compareTo(a['time']);
+      }
+    });
+
+    setState(() {
+      filteredMessages = filteredList;
+    });
+
+    Provider.of<MessageFiltersNotifier>(context, listen: false).updateFilters(
+      MessageFilters(
+        searchQuery: _searchQuery,
+        sortEarliest: _sortEarliest,
+      ),
+    );
+  }
+
+  void _navigateToMessageDetails(Map<String, dynamic> message) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MessageDetailsPage(message: message),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Messages',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Search messages...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24.0),
+      body: Builder(
+        builder: (context) {
+          return Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Messages',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-              onChanged: _filterMessages,
-            ),
-          ),
-          const SizedBox(height: 16.0),
-          Expanded(
-            child: ListView.separated(
-              itemCount: filteredMessages.length,
-              separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index) {
-                final message = filteredMessages[index];
-                return _buildMessageItem(
-                  context,
-                  message['name']!,
-                  message['message']!,
-                  message['time']!,
-                  _getColorFromString(message['color']!),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
-          // Navigate to compose message screen
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value;
+                    });
+                    _filterMessagesAsync();
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Search messages...',
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(24.0),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Sort by:'),
+                    DropdownButton<bool>(
+                      value: _sortEarliest,
+                      onChanged: (value) {
+                        setState(() {
+                          _sortEarliest = value!;
+                        });
+                        _filterMessagesAsync();
+                      },
+                      items: const [
+                        DropdownMenuItem(value: true, child: Text('Earliest')),
+                        DropdownMenuItem(value: false, child: Text('Latest')),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: filteredMessages.length,
+                  itemBuilder: (context, index) {
+                    final message = filteredMessages[index];
+                    return MessageItem(
+                      name: message['name'],
+                      message: message['message'],
+                      time: DateFormat('MMM d, yyyy hh:mm a')
+                          .format(message['time']),
+                      color: message['color'],
+                      onTap: () => _navigateToMessageDetails(message),
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
         },
       ),
     );
