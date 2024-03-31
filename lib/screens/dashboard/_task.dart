@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/screens/dashboard/controllers/_filter_task.dart';
-import 'package:pcic_mobile_app/screens/dashboard/controllers/task.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/_geotag.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/_task_details.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:pcic_mobile_app/screens/dashboard/controllers/_control_task.dart';
+import 'package:pcic_mobile_app/screens/dashboard/controllers/_filter_task.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/_task_details.dart';
 
 class TaskPage extends StatefulWidget {
   const TaskPage({super.key});
@@ -32,7 +31,6 @@ class _TaskPageState extends State<TaskPage> {
 
   void _postFrameCallback() {
     _filterTasksAsync();
-    // Add any other state-related logic here
   }
 
   void _loadFilters() {
@@ -91,145 +89,129 @@ class _TaskPageState extends State<TaskPage> {
     );
   }
 
-  void _navigateToGeotagPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const GeotagPage()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Builder(
-        builder: (context) {
-          return Column(
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Center(
-                  child: Text(
-                    'Tasks',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+      body: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              'Tasks',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+                _filterTasksAsync();
+              },
+              decoration: InputDecoration(
+                hintText: 'Search tasks...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24.0),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: TextField(
+            ),
+          ),
+          const SizedBox(height: 16.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed:
+                        _isUpcomingTasksSelected ? null : _toggleTaskView,
+                    style: TextButton.styleFrom(
+                      backgroundColor: _isUpcomingTasksSelected
+                          ? Colors.blue.withOpacity(0.2)
+                          : null,
+                    ),
+                    child: const Text('Upcoming'),
+                  ),
+                ),
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: TextButton(
+                    onPressed:
+                        !_isUpcomingTasksSelected ? null : _toggleTaskView,
+                    style: TextButton.styleFrom(
+                      backgroundColor: !_isUpcomingTasksSelected
+                          ? Colors.blue.withOpacity(0.2)
+                          : null,
+                    ),
+                    child: const Text('Completed'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Sort by:'),
+                DropdownButton<bool>(
+                  value: _sortEarliest,
                   onChanged: (value) {
                     setState(() {
-                      _searchQuery = value;
+                      _sortEarliest = value!;
                     });
                     _filterTasksAsync();
                   },
-                  decoration: InputDecoration(
-                    hintText: 'Search tasks...',
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24.0),
+                  items: const [
+                    DropdownMenuItem(value: true, child: Text('Earliest')),
+                    DropdownMenuItem(value: false, child: Text('Latest')),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16.0),
+          Expanded(
+            child: filteredTasks.isEmpty
+                ? Center(
+                    child: Text(
+                      _isUpcomingTasksSelected
+                          ? 'No upcoming tasks'
+                          : 'No completed tasks',
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
+                  )
+                : ListView.separated(
+                    itemCount: filteredTasks.length,
+                    itemBuilder: (context, index) {
+                      final task = filteredTasks[index];
+                      return ListTile(
+                        title: Text(
+                          task.title,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        subtitle: Text(
+                          '${task.description}\nDate Added: ${DateFormat('MMM d, yyyy').format(task.dateAdded)}',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () => _navigateToTaskDetails(task),
+                      );
+                    },
+                    separatorBuilder: (context, index) => const Divider(),
                   ),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed:
-                            _isUpcomingTasksSelected ? null : _toggleTaskView,
-                        style: TextButton.styleFrom(
-                          backgroundColor: _isUpcomingTasksSelected
-                              ? Colors.blue.withOpacity(0.2)
-                              : null,
-                        ),
-                        child: const Text('Upcoming'),
-                      ),
-                    ),
-                    const SizedBox(width: 16.0),
-                    Expanded(
-                      child: TextButton(
-                        onPressed:
-                            !_isUpcomingTasksSelected ? null : _toggleTaskView,
-                        style: TextButton.styleFrom(
-                          backgroundColor: !_isUpcomingTasksSelected
-                              ? Colors.blue.withOpacity(0.2)
-                              : null,
-                        ),
-                        child: const Text('Completed'),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Sort by:'),
-                    DropdownButton<bool>(
-                      value: _sortEarliest,
-                      onChanged: (value) {
-                        setState(() {
-                          _sortEarliest = value!;
-                        });
-                        _filterTasksAsync();
-                      },
-                      items: const [
-                        DropdownMenuItem(value: true, child: Text('Earliest')),
-                        DropdownMenuItem(value: false, child: Text('Latest')),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              Expanded(
-                  child: filteredTasks.isEmpty
-                      ? Center(
-                          child: Text(
-                            _isUpcomingTasksSelected
-                                ? 'No upcoming tasks'
-                                : 'No completed tasks',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        )
-                      : ListView.separated(
-                          itemCount: filteredTasks.length,
-                          itemBuilder: (context, index) {
-                            final task = filteredTasks[index];
-                            return ListTile(
-                              title: Text(
-                                task.title,
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                              subtitle: Text(
-                                '${task.description}\nDate Added: ${DateFormat('MMM d, yyyy').format(task.dateAdded)}',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              trailing: const Icon(Icons.chevron_right),
-                              onTap: () => _navigateToTaskDetails(task),
-                            );
-                          },
-                          separatorBuilder: (context, index) => const Divider(),
-                        )),
-            ],
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _navigateToGeotagPage,
-        child: const Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }

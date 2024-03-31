@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/screens/dashboard/_task.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_message.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_settings.dart';
+import 'package:pcic_mobile_app/screens/dashboard/_task.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -48,7 +48,10 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   BottomNavigationBarItem _buildNavigationBarItem(
-      IconData icon, String label, int index) {
+    IconData icon,
+    String label,
+    int index,
+  ) {
     final isSelected = _selectedIndex == index;
     return BottomNavigationBarItem(
       icon: AnimatedContainer(

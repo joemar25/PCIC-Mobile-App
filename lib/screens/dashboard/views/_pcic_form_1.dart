@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:pcic_mobile_app/screens/dashboard/controllers/_control_task.dart';
 
 void main() {
-  runApp(const PCICForm());
+  runApp(const TaskFormPage());
 }
 
-class PCICForm extends StatelessWidget {
-  const PCICForm({super.key});
+class TaskFormPage extends StatelessWidget {
+  const TaskFormPage({super.key, Task? task});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,9 @@ class PCICForm extends StatelessWidget {
 }
 
 class PCICFormPage extends StatefulWidget {
-  const PCICFormPage({super.key});
+  final int? taskId;
+
+  const PCICFormPage({super.key, this.taskId});
 
   @override
   _PCICFormPageState createState() => _PCICFormPageState();
@@ -108,6 +111,57 @@ class _PCICFormPageState extends State<PCICFormPage> {
                         'Registration Number: ${_registrationNumberController.text}');
                     print('Owner Name: ${_ownerNameController.text}');
                     print('Email: ${_emailController.text}');
+                  }
+                },
+                child: const Text('Submit'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    // Create a map with the form data
+                    Map<String, dynamic> formData = {
+                      'companyName': _companyNameController.text,
+                      'registrationNumber': _registrationNumberController.text,
+                      'ownerName': _ownerNameController.text,
+                      'email': _emailController.text,
+                    };
+
+                    if (widget.taskId == null) {
+                      // Add a new task
+                      Task.addTask(
+                        title: 'PCIC Form',
+                        description: 'PCIC Form submission',
+                        geotaggedPhoto: '',
+                        formData: formData,
+                      );
+                    } else {
+                      // Update an existing task
+                      // Retrieve the existing task based on the taskId
+                      Task existingTask = Task.getAllTasks().firstWhere(
+                        (task) => task.id == widget.taskId,
+                        orElse: () => throw Exception('Task not found'),
+                      );
+
+                      // Create an updated task with the new form data
+                      Task updatedTask = Task(
+                        id: existingTask.id,
+                        title: existingTask.title,
+                        description: existingTask.description,
+                        isCompleted: existingTask.isCompleted,
+                        dateAdded: existingTask.dateAdded,
+                        geotaggedPhoto: existingTask.geotaggedPhoto,
+                        formData: formData,
+                      );
+
+                      // Update the task in the database or storage mechanism
+                      // You need to implement the updateTask() function in the Task class
+                      // to handle the update logic based on your storage mechanism
+                      // For example:
+                      // Task.updateTask(updatedTask);
+                    }
+
+                    // Navigate back to the previous screen
+                    Navigator.pop(context);
                   }
                 },
                 child: const Text('Submit'),
