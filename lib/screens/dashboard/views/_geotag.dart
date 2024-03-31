@@ -96,12 +96,13 @@ class _JobPageState extends State<JobPage> {
           MapboxMap(
             accessToken: Env.MAPBOX_ACCESS_TOKEN,
             initialCameraPosition: const CameraPosition(
-              target: LatLng(12, 12),
-              zoom: 5,
+              target: LatLng(13.145467, 483.723563),
+              zoom: 18,
             ),
             onMapCreated: (MapboxMapController controller) {
               mapController = controller;
             },
+            styleString: 'mapbox://styles/mapbox/satellite-v9',
             onMapClick: (point, latLng) {
               setState(() {
                 routePoints.add(latLng);

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/screens/dashboard/_job_start.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/_geotag.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/_task_details.dart';
 
 class TaskPage extends StatefulWidget {
