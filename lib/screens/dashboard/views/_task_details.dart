@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/_geotag.dart';
 
-class TaskDetailsPage extends StatefulWidget {
+class TaskDetailsPage extends StatelessWidget {
   final int taskId;
+  final bool isCompleted;
 
-  const TaskDetailsPage({super.key, required this.taskId});
+  const TaskDetailsPage({
+    super.key,
+    required this.taskId,
+    required this.isCompleted,
+  });
 
-  @override
-  _TaskDetailsPageState createState() => _TaskDetailsPageState();
-}
-
-class _TaskDetailsPageState extends State<TaskDetailsPage> {
-  final String _jobTitle = 'Job Title';
-  final String _jobDescription = 'Job Description';
-
-  @override
-  void initState() {
-    super.initState();
+  void _navigateToGeotagPage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => GeotagPage(taskId: taskId)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    const String jobTitle = 'Job Title';
+    const String jobDescription = 'Job Description';
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Job Details'),
@@ -30,18 +33,21 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _jobTitle,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              jobTitle,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
             Text(
-              _jobDescription,
-              style: const TextStyle(fontSize: 18),
+              jobDescription,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             // Add more job details as needed
+            const SizedBox(height: 24),
+            if (!isCompleted)
+              ElevatedButton(
+                onPressed: () => _navigateToGeotagPage(context),
+                child: const Text('Go to Job Page'),
+              ),
           ],
         ),
       ),

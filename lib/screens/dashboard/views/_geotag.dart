@@ -6,14 +6,16 @@ import 'package:pcic_mobile_app/utils/_app_env.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/_pcic_form_1.dart';
 
-class JobPage extends StatefulWidget {
-  const JobPage({super.key});
+class GeotagPage extends StatefulWidget {
+  final int? taskId;
+
+  const GeotagPage({super.key, this.taskId});
 
   @override
-  _JobPageState createState() => _JobPageState();
+  _GeotagPageState createState() => _GeotagPageState();
 }
 
-class _JobPageState extends State<JobPage> {
+class _GeotagPageState extends State<GeotagPage> {
   late MapboxMapController mapController;
   final List<LatLng> routePoints = [];
   String currentLocation = '';
@@ -85,220 +87,246 @@ class _JobPageState extends State<JobPage> {
     }
   }
 
+  Future<bool> _onWillPop() async {
+    final shouldPop = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmation'),
+        content: const Text('Are you sure you want to cancel?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Yes'),
+          ),
+        ],
+      ),
+    );
+    return shouldPop ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Start Job'),
-      ),
-      body: Stack(
-        children: [
-          MapboxMap(
-            accessToken: Env.MAPBOX_ACCESS_TOKEN,
-            initialCameraPosition: const CameraPosition(
-              target: LatLng(13.145467, 483.723563),
-              zoom: 18,
-            ),
-            onMapCreated: (MapboxMapController controller) {
-              mapController = controller;
-            },
-            styleString: 'mapbox://styles/mapbox/outdoors-v12',
-            onMapClick: (point, latLng) {
-              setState(() {
-                routePoints.add(latLng);
-                // markers.add(
-                //   Marker(
-                //     point: latLng,
-                //     builder: (context) =>
-                //         const Icon(Icons.location_on, color: Colors.red),
-                //   ),
-                // );
-              });
-            },
-            // polylines: [
-            //   Polyline(
-            //     points: routePoints,
-            //     color: Colors.blue,
-            //     strokeWidth: 5.0,
-            //   ),
-            // ],
-            // markers: markers
-            //     .map((marker) => marker)
-            //     .toSet(), // Convert the list to a set
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0x192F2F2F),
-                    blurRadius: 20,
-                    offset: Offset(-10, 4),
-                  ),
-                ],
+    final bool isNewTask = widget.taskId == null;
+
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(isNewTask ? 'Create Task' : 'Update Task'),
+        ),
+        body: Stack(
+          children: [
+            MapboxMap(
+              accessToken: Env.MAPBOX_ACCESS_TOKEN,
+              initialCameraPosition: const CameraPosition(
+                target: LatLng(13.145467, 483.723563),
+                zoom: 18,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Geotagging',
-                        style: TextStyle(
-                          color: Color(0xFF1E1E1E),
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isColumnVisible = !isColumnVisible;
-                          });
-                        },
-                        child: Icon(
-                          isColumnVisible
-                              ? Icons.keyboard_arrow_down
-                              : Icons.keyboard_arrow_up,
-                        ),
-                      ),
-                    ],
+              onMapCreated: (MapboxMapController controller) {
+                mapController = controller;
+              },
+              styleString: 'mapbox://styles/mapbox/outdoors-v12',
+              onMapClick: (point, latLng) {
+                setState(() {
+                  routePoints.add(latLng);
+                  // markers.add(
+                  //   Marker(
+                  //     point: latLng,
+                  //     builder: (context) =>
+                  //         const Icon(Icons.location_on, color: Colors.red),
+                  //   ),
+                  // );
+                });
+              },
+              // polylines: [
+              //   Polyline(
+              //     points: routePoints,
+              //     color: Colors.blue,
+              //     strokeWidth: 5.0,
+              //   ),
+              // ],
+              // markers: markers
+              //     .map((marker) => marker)
+              //     .toSet(), // Convert the list to a set
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                padding: const EdgeInsets.all(16),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
                   ),
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    height: isColumnVisible ? null : 0,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0x192F2F2F),
+                      blurRadius: 20,
+                      offset: Offset(-10, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const SizedBox(height: 16),
                         const Text(
-                          'Your Location',
+                          'Geotagging',
                           style: TextStyle(
-                            color: Color(0xFF9D9D9D),
-                            fontSize: 12,
+                            color: Color(0xFF1E1E1E),
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          currentLocation,
-                          style: const TextStyle(
-                            color: Color(0xFF343434),
-                            fontSize: 12,
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isColumnVisible = !isColumnVisible;
+                            });
+                          },
+                          child: Icon(
+                            isColumnVisible
+                                ? Icons.keyboard_arrow_down
+                                : Icons.keyboard_arrow_up,
                           ),
-                        ),
-                        const Divider(height: 24),
-                        const Text(
-                          'Tracking Options',
-                          style: TextStyle(
-                            color: Color(0xFF9D9D9D),
-                            fontSize: 12,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            _buildTrackingOption('Start', _startRouting),
-                            const SizedBox(width: 8),
-                            _buildTrackingOption('Stop', _stopRouting),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        _buildTrackingOption('Pin Drop', () {}),
-                        const SizedBox(height: 24),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  // Navigate to PCIC Form
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const PCICFormPage()),
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF89C53F),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16),
-                                ),
-                                child: const Text(
-                                  'Save',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  // Reset button action
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF89C53F),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16),
-                                ),
-                                child: const Text(
-                                  'Reset',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
                       ],
                     ),
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      height: isColumnVisible ? null : 0,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Your Location',
+                            style: TextStyle(
+                              color: Color(0xFF9D9D9D),
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            currentLocation,
+                            style: const TextStyle(
+                              color: Color(0xFF343434),
+                              fontSize: 12,
+                            ),
+                          ),
+                          const Divider(height: 24),
+                          const Text(
+                            'Tracking Options',
+                            style: TextStyle(
+                              color: Color(0xFF9D9D9D),
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              _buildTrackingOption('Start', _startRouting),
+                              const SizedBox(width: 8),
+                              _buildTrackingOption('Stop', _stopRouting),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          _buildTrackingOption('Pin Drop', () {}),
+                          const SizedBox(height: 24),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    // Navigate to PCIC Form
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const PCICFormPage()),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF89C53F),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
+                                  ),
+                                  child: Text(
+                                    isNewTask ? 'Create' : 'Update',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    // Reset button action
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF89C53F),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
+                                  ),
+                                  child: const Text(
+                                    'Reset',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              top: 16,
+              right: 16,
+              child: Container(
+                width: 20,
+                height: 31,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage("https://via.placeholder.com/20x31"),
+                    fit: BoxFit.fill,
                   ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            top: 16,
-            right: 16,
-            child: Container(
-              width: 20,
-              height: 31,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage("https://via.placeholder.com/20x31"),
-                  fit: BoxFit.fill,
                 ),
-              ),
-              child: const Center(
-                child: CircleAvatar(
-                  radius: 5,
-                  backgroundColor: Colors.white,
+                child: const Center(
+                  child: CircleAvatar(
+                    radius: 5,
+                    backgroundColor: Colors.white,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

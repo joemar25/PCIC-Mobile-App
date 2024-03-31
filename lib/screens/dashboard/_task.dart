@@ -33,7 +33,7 @@ class _TaskPageState extends State<TaskPage> {
 
   List<Map<String, dynamic>> filteredTasks = [];
 
-  bool _showUpcomingTasks = true;
+  bool _isUpcomingTasksSelected = true;
   String _searchQuery = '';
 
   @override
@@ -49,15 +49,16 @@ class _TaskPageState extends State<TaskPage> {
           .where((task) =>
               task['title'].toLowerCase().contains(query.toLowerCase()) ||
               task['description'].toLowerCase().contains(query.toLowerCase()))
-          .where((task) =>
-              _showUpcomingTasks ? !task['isCompleted'] : task['isCompleted'])
+          .where((task) => _isUpcomingTasksSelected
+              ? !task['isCompleted']
+              : task['isCompleted'])
           .toList();
     });
   }
 
   void _toggleTaskView() {
     setState(() {
-      _showUpcomingTasks = !_showUpcomingTasks;
+      _isUpcomingTasksSelected = !_isUpcomingTasksSelected;
       _filterTasks(_searchQuery);
     });
   }
@@ -66,15 +67,18 @@ class _TaskPageState extends State<TaskPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => TaskDetailsPage(taskId: task['id']),
+        builder: (context) => TaskDetailsPage(
+          taskId: task['id'],
+          isCompleted: task['isCompleted'],
+        ),
       ),
     );
   }
 
-  void _navigateToJobPage() {
+  void _navigateToGeotagPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const JobPage()),
+      MaterialPageRoute(builder: (context) => const GeotagPage()),
     );
   }
 
@@ -84,14 +88,11 @@ class _TaskPageState extends State<TaskPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Text(
               'Tasks',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
           Padding(
@@ -113,24 +114,29 @@ class _TaskPageState extends State<TaskPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                TextButton(
-                  onPressed: _showUpcomingTasks ? null : _toggleTaskView,
-                  child: Text(
-                    'Upcoming',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      color: _showUpcomingTasks ? Colors.blue : Colors.grey,
+                Expanded(
+                  child: TextButton(
+                    onPressed:
+                        _isUpcomingTasksSelected ? null : _toggleTaskView,
+                    style: TextButton.styleFrom(
+                      backgroundColor: _isUpcomingTasksSelected
+                          ? Colors.blue.withOpacity(0.2)
+                          : null,
                     ),
+                    child: const Text('Upcoming'),
                   ),
                 ),
-                TextButton(
-                  onPressed: !_showUpcomingTasks ? null : _toggleTaskView,
-                  child: Text(
-                    'Completed',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      color: !_showUpcomingTasks ? Colors.blue : Colors.grey,
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: TextButton(
+                    onPressed:
+                        !_isUpcomingTasksSelected ? null : _toggleTaskView,
+                    style: TextButton.styleFrom(
+                      backgroundColor: !_isUpcomingTasksSelected
+                          ? Colors.blue.withOpacity(0.2)
+                          : null,
                     ),
+                    child: const Text('Completed'),
                   ),
                 ),
               ],
@@ -138,33 +144,40 @@ class _TaskPageState extends State<TaskPage> {
           ),
           const SizedBox(height: 16.0),
           Expanded(
-            child: ListView.separated(
-              itemCount: filteredTasks.length,
-              separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index) {
-                final task = filteredTasks[index];
-                return ListTile(
-                  title: Text(
-                    task['title'],
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+            child: filteredTasks.isEmpty
+                ? Center(
+                    child: Text(
+                      _isUpcomingTasksSelected
+                          ? 'No upcoming tasks'
+                          : 'No completed tasks',
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
+                  )
+                : ListView.separated(
+                    itemCount: filteredTasks.length,
+                    itemBuilder: (context, index) {
+                      final task = filteredTasks[index];
+                      return ListTile(
+                        title: Text(
+                          task['title'],
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        subtitle: Text(
+                          task['description'],
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () => _navigateToTaskDetails(task),
+                      );
+                    },
+                    separatorBuilder: (context, index) => const Divider(),
                   ),
-                  subtitle: Text(
-                    task['description'],
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _navigateToTaskDetails(task),
-                );
-              },
-            ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _navigateToJobPage,
+        onPressed: _navigateToGeotagPage,
         child: const Icon(Icons.add),
       ),
     );

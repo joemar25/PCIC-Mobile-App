@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
         AppRoutes.home: (context) => const DashboardPage(),
         AppRoutes.task: (context) => const TaskPage(),
         AppRoutes.message: (context) => const MessagePage(),
-        AppRoutes.job: (context) => const JobPage(),
+        AppRoutes.job: (context) => const GeotagPage(),
 
         // controls
         AppRoutes.verifyLogin: (context) =>
