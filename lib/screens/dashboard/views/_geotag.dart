@@ -102,7 +102,7 @@ class _JobPageState extends State<JobPage> {
             onMapCreated: (MapboxMapController controller) {
               mapController = controller;
             },
-            styleString: 'mapbox://styles/mapbox/satellite-v9',
+            styleString: 'mapbox://styles/mapbox/outdoors-v12',
             onMapClick: (point, latLng) {
               setState(() {
                 routePoints.add(latLng);

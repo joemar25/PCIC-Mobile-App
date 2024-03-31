@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/_splash.dart';
 import 'package:pcic_mobile_app/screens/_starting.dart';
-import 'package:pcic_mobile_app/screens/dashboard/_job_start.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/_geotag.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_task.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_home.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_message.dart';
