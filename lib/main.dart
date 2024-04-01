@@ -50,11 +50,12 @@ class MyApp extends StatelessWidget {
         AppRoutes.job: (context) => GeotagPage(
                 task: Task(
               id: 1,
-              title: 'Sample Task',
-              description: 'This is a sample task.',
+              // title: 'Sample Task',
+              // description: 'This is a sample task.',
               isCompleted: false,
               dateAdded: DateTime.now(),
-              geotaggedPhoto: '',
+              dateAccess: DateTime.now(),
+              // geotaggedPhoto: '',
               formData: {},
             )),
         // controls
