@@ -13,7 +13,7 @@ class TaskPage extends StatefulWidget {
 }
 
 class _TaskPageState extends State<TaskPage> {
-  List<Task> tasks = Task.getAllTasks();
+  Future<List<Task>> tasks = Task.getAllTasks();
   List<Task> filteredTasks = [];
 
   bool _isUpcomingTasksSelected = true;
@@ -44,7 +44,8 @@ class _TaskPageState extends State<TaskPage> {
   }
 
   Future<void> _filterTasksAsync() async {
-    final filteredList = tasks
+    List<Task> taskList = await tasks; // Add this line to resolve the Future
+    final filteredList = taskList
         // .where((task) =>
         // task.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
         // task.description.toLowerCase().contains(_searchQuery.toLowerCase()))
