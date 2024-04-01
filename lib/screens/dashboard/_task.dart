@@ -45,9 +45,9 @@ class _TaskPageState extends State<TaskPage> {
 
   Future<void> _filterTasksAsync() async {
     final filteredList = tasks
-        .where((task) =>
-            task.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-            task.description.toLowerCase().contains(_searchQuery.toLowerCase()))
+        // .where((task) =>
+        // task.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+        // task.description.toLowerCase().contains(_searchQuery.toLowerCase()))
         .where((task) =>
             _isUpcomingTasksSelected ? !task.isCompleted : task.isCompleted)
         .toList();
@@ -196,14 +196,14 @@ class _TaskPageState extends State<TaskPage> {
                       final task = filteredTasks[index];
                       return ListTile(
                         title: Text(
-                          task.title,
+                          task.id.toString(),
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
-                        subtitle: Text(
-                          '${task.description}\nDate Added: ${DateFormat('MMM d, yyyy').format(task.dateAdded)}',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        // subtitle: Text(
+                        //   '${task.description}\nDate Added: ${DateFormat('MMM d, yyyy').format(task.dateAdded)}',
+                        //   maxLines: 2,
+                        //   overflow: TextOverflow.ellipsis,
+                        // ),
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () => _navigateToTaskDetails(task),
                       );

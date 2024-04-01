@@ -26,8 +26,12 @@ class TaskDetailsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Text(
+            //   task.title,
+            //   style: Theme.of(context).textTheme.titleLarge,
+            // ),
             Text(
-              task.title,
+              task.id.toString(),
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8.0),
@@ -55,10 +59,10 @@ class TaskDetailsPage extends StatelessWidget {
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(8.0),
               ),
-              child: Text(
-                task.description,
-                style: const TextStyle(fontSize: 16.0),
-              ),
+              // child: Text(
+              //   task.description,
+              //   style: const TextStyle(fontSize: 16.0),
+              // ),
             ),
             const SizedBox(height: 24.0),
             Row(
