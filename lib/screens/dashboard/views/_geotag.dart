@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:pcic_mobile_app/screens/dashboard/controllers/_control_task.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/_pcic_form_1.dart';
 import 'package:pcic_mobile_app/utils/_app_env.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/_pcic_form_1.dart';
 
 class GeotagPage extends StatefulWidget {
-  final int? taskId;
+  final Task task;
 
-  const GeotagPage({super.key, this.taskId});
+  const GeotagPage({super.key, required this.task});
 
   @override
   _GeotagPageState createState() => _GeotagPageState();
@@ -24,9 +24,7 @@ class _GeotagPageState extends State<GeotagPage> {
   @override
   void initState() {
     super.initState();
-    if (kDebugMode) {
-      print('Mapbox access token: ${Env.MAPBOX_ACCESS_TOKEN}');
-    }
+    debugPrint('Mapbox access token: ${Env.MAPBOX_ACCESS_TOKEN}');
     _requestLocationPermission();
   }
 
@@ -35,10 +33,7 @@ class _GeotagPageState extends State<GeotagPage> {
     if (status.isGranted) {
       await _getCurrentLocation();
     } else {
-      // Handle permission denied case
-      if (kDebugMode) {
-        print('Location permission denied');
-      }
+      debugPrint('Location permission denied');
     }
   }
 
@@ -47,44 +42,43 @@ class _GeotagPageState extends State<GeotagPage> {
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      // setState(() {
-      //   mapController.move(
-      //     LatLng(position.latitude, position.longitude),
-      //     15.0,
-      //   );
-      //   routePoints.add(LatLng(position.latitude, position.longitude));
-      //   markers.add(
-      //     Marker(
-      //       point: LatLng(position.latitude, position.longitude),
-      //       builder: (context) =>
-      //           const Icon(Icons.location_on, color: Colors.blue),
-      //     ),
-      //   );
-      //   currentLocation =
-      //       'Lat: ${position.latitude}, Long: ${position.longitude}';
-      // });
+      setState(() {
+        currentLocation =
+            'Lat: ${position.latitude}, Long: ${position.longitude}';
+      });
     } catch (e) {
-      if (kDebugMode) {
-        print('Error getting current location: $e');
-      }
+      debugPrint('Error getting current location: $e');
     }
   }
 
   void _startRouting() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const PCICFormPage()),
-    );
+    // Start capturing the route points
+    // You can implement the logic to start tracking the user's location and adding route points
   }
 
   void _stopRouting() {
     if (routePoints.length >= 2) {
-      // Perform actions with the captured route points
-      if (kDebugMode) {
-        print('Captured route points: $routePoints');
-      }
-      // Add your logic here to process the captured route points
+      debugPrint('Captured route points: $routePoints');
+      // Generate the GPX file from the captured route points
+      String gpxFile = _generateGPXFile(routePoints);
+      // Navigate to the read-only form with the task and GPX file
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PCICFormPage(
+            task: widget.task,
+            gpxFile: gpxFile,
+          ),
+        ),
+      );
     }
+  }
+
+  String _generateGPXFile(List<LatLng> routePoints) {
+    // Implement the logic to generate the GPX file from the captured route points
+    // You can use a library or create the GPX file structure manually
+    // Return the generated GPX file as a string
+    return 'Generated GPX file content';
   }
 
   Future<bool> _onWillPop() async {
@@ -110,13 +104,11 @@ class _GeotagPageState extends State<GeotagPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isNewTask = widget.taskId == null;
-
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(isNewTask ? 'Create Task' : 'Update Task'),
+          title: const Text('Update Task'),
         ),
         body: Stack(
           children: [
@@ -133,25 +125,8 @@ class _GeotagPageState extends State<GeotagPage> {
               onMapClick: (point, latLng) {
                 setState(() {
                   routePoints.add(latLng);
-                  // markers.add(
-                  //   Marker(
-                  //     point: latLng,
-                  //     builder: (context) =>
-                  //         const Icon(Icons.location_on, color: Colors.red),
-                  //   ),
-                  // );
                 });
               },
-              // polylines: [
-              //   Polyline(
-              //     points: routePoints,
-              //     color: Colors.blue,
-              //     strokeWidth: 5.0,
-              //   ),
-              // ],
-              // markers: markers
-              //     .map((marker) => marker)
-              //     .toSet(), // Convert the list to a set
             ),
             Positioned(
               left: 0,
@@ -248,12 +223,16 @@ class _GeotagPageState extends State<GeotagPage> {
                               Expanded(
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    // Navigate to PCIC Form
+                                    // Navigate to PCIC Form with captured route points
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              const PCICFormPage()),
+                                        builder: (context) => PCICFormPage(
+                                          task: widget.task,
+                                          gpxFile:
+                                              _generateGPXFile(routePoints),
+                                        ),
+                                      ),
                                     );
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -264,9 +243,9 @@ class _GeotagPageState extends State<GeotagPage> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 16),
                                   ),
-                                  child: Text(
-                                    isNewTask ? 'Create' : 'Update',
-                                    style: const TextStyle(
+                                  child: const Text(
+                                    'Update',
+                                    style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 18,
                                     ),
@@ -278,6 +257,9 @@ class _GeotagPageState extends State<GeotagPage> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     // Reset button action
+                                    setState(() {
+                                      routePoints.clear();
+                                    });
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFF89C53F),
