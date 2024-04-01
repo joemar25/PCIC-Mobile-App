@@ -37,30 +37,65 @@ class Task {
   }
 
   static Future<List<Task>> getAllTasks() async {
-    List<Task> tasks = [];
+    // List<Task> tasks = [];
 
-    try {
-      DatabaseReference databaseReference =
-          FirebaseDatabase.instance.reference().child('agents');
+    // try {
+    //   DatabaseReference databaseReference =
+    //       FirebaseDatabase.instance.reference().child('agents');
 
-      DatabaseEvent event = await databaseReference.once();
-      DataSnapshot dataSnapshot = event.snapshot;
+    //   DatabaseEvent event = await databaseReference.once();
+    //   DataSnapshot dataSnapshot = event.snapshot;
 
-      if (dataSnapshot.value != null) {
-        Map<String, dynamic> values =
-            dataSnapshot.value as Map<String, dynamic>;
+    //   if (dataSnapshot.value != null) {
+    //     Map<String, dynamic> values =
+    //         dataSnapshot.value as Map<String, dynamic>;
 
-        values.forEach((key, value) {
-          Map<String, dynamic> taskData = Map<String, dynamic>.from(value);
-          taskData['id'] = int.parse(key);
-          Task task = Task.fromMap(taskData);
-          tasks.add(task);
-        });
-      }
-    } catch (error) {
-      debugPrint('Error retrieving tasks from Firebase: $error');
-    }
+    //     values.forEach((key, value) {
+    //       Map<String, dynamic> taskData = Map<String, dynamic>.from(value);
+    //       taskData['id'] = int.parse(key);
+    //       Task task = Task.fromMap(taskData);
+    //       tasks.add(task);
+    //     });
+    //   }
+    // } catch (error) {
+    //   debugPrint('Error retrieving tasks from Firebase: $error');
+    // }
 
-    return tasks;
+    // return tasks;
+
+    return [
+      Task(
+        id: 1,
+        isCompleted: false,
+        dateAdded: DateTime(2023, 6, 1),
+        dateAccess: DateTime(2023, 6, 1),
+        // geotaggedPhoto: '',
+        formData: {},
+      ),
+      Task(
+        id: 2,
+        isCompleted: false,
+        dateAdded: DateTime.now().subtract(const Duration(days: 4)),
+        dateAccess: DateTime.now().subtract(const Duration(days: 4)),
+        // geotaggedPhoto: '',
+        formData: {},
+      ),
+      Task(
+        id: 3,
+        isCompleted: true,
+        dateAdded: DateTime.now().subtract(const Duration(days: 2)),
+        dateAccess: DateTime.now().subtract(const Duration(days: 2)),
+        // geotaggedPhoto: '',
+        formData: {},
+      ),
+      Task(
+        id: 4,
+        isCompleted: true,
+        dateAdded: DateTime.now().subtract(const Duration(days: 2)),
+        dateAccess: DateTime.now().subtract(const Duration(days: 2)),
+        // geotaggedPhoto: '',
+        formData: {},
+      ),
+    ];
   }
 }
