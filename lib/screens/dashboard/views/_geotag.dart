@@ -51,10 +51,11 @@ class _GeotagPageState extends State<GeotagPage> {
     }
   }
 
-  void _startRouting() {
-    // Start capturing the route points
-    // You can implement the logic to start tracking the user's location and adding route points
-  }
+ void _startRouting() {
+  debugPrint('Starting');
+  _getCurrentLocation();
+}
+
 
   void _stopRouting() {
     if (routePoints.length >= 2) {
@@ -313,42 +314,83 @@ class _GeotagPageState extends State<GeotagPage> {
     );
   }
 
-  Widget _buildTrackingOption(String label, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF5F5F5),
-          borderRadius: BorderRadius.circular(2),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 24,
-              height: 24,
-              decoration: const BoxDecoration(
-                color: Color(0xFF45C53F),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.check,
-                color: Colors.white,
-                size: 16,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: const TextStyle(
-                color: Color(0xFF1E1E1E),
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
+Widget _buildTrackingOption(String label, VoidCallback onTap) {
+  return GestureDetector(
+    onTap: () {
+      if (label == 'Pin Drop') {
+        _addPinDrop();
+      } else {
+        onTap();
+      }
+    },
+    child: Container(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F5F5),
+        borderRadius: BorderRadius.circular(2),
       ),
-    );
+      child: Row(
+        children: [
+          Container(
+            width: 24,
+            height: 24,
+            decoration: const BoxDecoration(
+              color: Color(0xFF45C53F),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.check,
+              color: Colors.white,
+              size: 16,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xFF1E1E1E),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+void _addPinDrop() {
+  if (currentLocation.isNotEmpty && mapController != null) {
+    // Extract latitude and longitude from the current location string
+    final latLng = currentLocation.split(', ');
+    if (latLng.length == 2) {
+      final latitude = double.tryParse(latLng[0].split(': ')[1]);
+      final longitude = double.tryParse(latLng[1].split(': ')[1]);
+      if (latitude != null && longitude != null) {
+        // Add the pin at the location
+        mapController.addSymbol(SymbolOptions(
+          geometry: LatLng(latitude, longitude),
+          iconImage: 'OIP.jpg', // Replace 'your-icon-image' with your custom pin icon
+          textField: 'Pin', // Optional: Label text for the pin
+        ));
+
+        // Move the camera to the dropped pin location
+        mapController.animateCamera(CameraUpdate.newLatLngZoom(
+          LatLng(latitude, longitude),
+          18, // Adjust zoom level as needed
+        ));
+      } else {
+        debugPrint('Invalid latitude or longitude.');
+      }
+    } else {
+      debugPrint('Error parsing current location.');
+    }
+  } else {
+    debugPrint('Current location is not available.');
   }
+}
+
+
+
+
 }
