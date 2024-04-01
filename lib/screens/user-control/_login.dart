@@ -1,9 +1,18 @@
-import "package:flutter/material.dart";
-import "package:pcic_mobile_app/screens/user-control/_signup.dart";
-import "package:pcic_mobile_app/screens/user-control/_verify_login.dart";
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pcic_mobile_app/screens/user-control/_signup.dart';
+import 'package:pcic_mobile_app/screens/user-control/_verify_login.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  String _email = '';
+  String _password = '';
 
   @override
   Widget build(BuildContext context) {
@@ -35,50 +44,35 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            // Padding(
-            //   padding: const EdgeInsets.all(20),
-            //   child: Column(
-            //     crossAxisAlignment: CrossAxisAlignment.stretch,
-            //     children: [
-            //       OutlinedButton(
-            //         onPressed: () {
-            //           // Handle button onPressed action
-            //         },
-            //         style: OutlinedButton.styleFrom(
-            //           shape: RoundedRectangleBorder(
-            //             borderRadius: BorderRadius.circular(10),
-            //           ),
-            //         ),
-            //         child: const Text("Login with Google",
-            //         style: TextStyle(color: Color(0xFF89C53F)
-            //           )
-            //         ),
-                    
-            //       ),
-            //     ],
-            //   ),
-            // ),
-
-            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch, // Ensure children take up full width
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SizedBox(
                     child: Column(
                       children: [
                         TextField(
+                          onChanged: (value) {
+                            setState(() {
+                              _email = value;
+                            });
+                          },
                           decoration: InputDecoration(
-                            labelText: "Username",
+                            labelText: "Email",
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                             contentPadding: const EdgeInsets.only(left: 20),
                           ),
                         ),
-                       const SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         TextField(
+                          onChanged: (value) {
+                            setState(() {
+                              _password = value;
+                            });
+                          },
                           obscureText: true,
                           decoration: InputDecoration(
                             labelText: "Password",
@@ -91,7 +85,7 @@ class LoginPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                 const SizedBox(height: 15), // Added spacing between the TextFormField and Checkbox
+                  const SizedBox(height: 15),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -103,7 +97,7 @@ class LoginPage extends StatelessWidget {
                             fillColor: MaterialStateProperty.all(const Color(0xFF89C53F)),
                             checkColor: Colors.white,
                           ),
-                         const Text(
+                          const Text(
                             "Remember Me",
                             style: TextStyle(
                               color: Color(0xFF7C7C7C),
@@ -127,19 +121,34 @@ class LoginPage extends StatelessWidget {
                 ],
               ),
             ),
-            
             SizedBox(
-              width: double.infinity, // Set width to 100%
+              width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const VerifyLoginPage(
-                        isLoginSuccessful: true,
+                onPressed: () async {
+                  try {
+                    UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                      email: _email,
+                      password: _password,
+                    );
+                    // Login successful, navigate to the next screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const VerifyLoginPage(
+                          isLoginSuccessful: true,
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  } catch (e) {
+                    // Handle login error
+                    print('Login error: $e');
+                    // Show an error message to the user
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Login failed. Please check your email and password.'),
+                      ),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
@@ -160,7 +169,6 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
             GestureDetector(
               onTap: () {
@@ -174,16 +182,16 @@ class LoginPage extends StatelessWidget {
               child: RichText(
                 text: const TextSpan(
                   style: TextStyle(
-                    color: Colors.black, // Set default text color to black
+                    color: Colors.black,
                   ),
                   children: [
                     TextSpan(
-                      text: "Don’t have an account? ",
+                      text: "Don't have an account? ",
                     ),
                     TextSpan(
                       text: "Sign up here",
                       style: TextStyle(
-                        color: Color(0xFF89C53F), // Set text color to green
+                        color: Color(0xFF89C53F),
                       ),
                     ),
                   ],
