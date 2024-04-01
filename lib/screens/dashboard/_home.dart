@@ -100,10 +100,10 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
+              const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Hello',
@@ -115,7 +115,16 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              Icon(Icons.menu)
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SettingsPage()),
+                  );
+                },
+                child: const Icon(Icons.menu),
+              ),
             ],
           ),
           const SizedBox(height: 16),
