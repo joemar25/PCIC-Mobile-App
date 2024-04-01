@@ -17,16 +17,16 @@ class PCICFormPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: <Widget>[
-            TextFormField(
-              initialValue: task.title,
-              decoration: const InputDecoration(labelText: 'Title'),
-              enabled: false,
-            ),
-            TextFormField(
-              initialValue: task.description,
-              decoration: const InputDecoration(labelText: 'Description'),
-              enabled: false,
-            ),
+            // TextFormField(
+            //   initialValue: task.title,
+            //   decoration: const InputDecoration(labelText: 'Title'),
+            //   enabled: false,
+            // ),
+            // TextFormField(
+            //   initialValue: task.description,
+            //   decoration: const InputDecoration(labelText: 'Description'),
+            //   enabled: false,
+            // ),
             TextFormField(
               initialValue: task.formData['companyName'] ?? '',
               decoration: const InputDecoration(labelText: 'Company Name'),
