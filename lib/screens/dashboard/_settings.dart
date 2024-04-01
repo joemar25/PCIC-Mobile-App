@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -8,11 +9,30 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final List<Map<String, dynamic>> _data = [
-    {'taskID': '1231123', 'jobID': '123 Main St', 'isComplete': 'june 1, 2022', 'dateAdded': 'june 1, 2022', 'dateAccess': 'june 1, 2022'},
-    {'taskID': '213123w', 'jobID': '123 Main St', 'isComplete': 'june 1, 2022', 'dateAdded': 'june 1, 2022', 'dateAccess': 'june 1, 2022'},
-    {'taskID': '11d1', 'jobID': '123 Main St', 'isComplete': 'june 1, 2022', 'dateAdded': 'june 1, 2022', 'dateAccess': 'june 1, 2022'},
-  ];
+  final DatabaseReference _databaseReference =
+      FirebaseDatabase.instance.ref('tasks');
+  List<Map<dynamic, dynamic>> _data = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  void _fetchData() {
+    _databaseReference.onValue.listen((event) {
+      final data = Map<dynamic, dynamic>.from(event.snapshot.value as dynamic);
+      final List<Map<dynamic, dynamic>> tasks = [];
+
+      data.forEach((key, value) {
+        tasks.add(Map<dynamic, dynamic>.from(value));
+      });
+
+      setState(() {
+        _data = tasks;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +48,7 @@ class _SettingsPageState extends State<SettingsPage> {
             DataColumn(label: Text('jobID')),
             DataColumn(label: Text('isComplete')),
             DataColumn(label: Text('dateAdded')),
-             DataColumn(label: Text('dateAccess')),
+            DataColumn(label: Text('dateAccess')),
           ],
           rows: _data.map((entry) {
             return DataRow(
