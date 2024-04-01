@@ -11,7 +11,7 @@ class TaskDetailsPage extends StatelessWidget {
   void _navigateToGeotagPage(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => GeotagPage(taskId: task.id)),
+      MaterialPageRoute(builder: (context) => GeotagPage(task: task)),
     );
   }
 
