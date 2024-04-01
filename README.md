@@ -44,3 +44,9 @@ Your project contains issues that can be fixed by running "dart fix" from the co
 
 [Styles Documentation](https://docs.mapbox.com/api/maps/styles/)
 satilite view: mapbox://styles/mapbox/satellite-v9
+
+## Builing APK
+
+```cmd
+    flutter build apk
+```
