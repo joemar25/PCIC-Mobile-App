@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 
 class Task {
@@ -5,7 +6,6 @@ class Task {
   late final bool isCompleted;
   final DateTime dateAdded;
   final DateTime dateAccess;
-  // final String geotaggedPhoto;
   final Map<String, dynamic> formData;
 
   Task({
@@ -22,7 +22,6 @@ class Task {
       'isCompleted': isCompleted,
       'dateAdded': dateAdded.toIso8601String(),
       'dateAccess': dateAdded.toIso8601String(),
-      // 'geotaggedPhoto': geotaggedPhoto,
       'formData': formData,
     };
   }
@@ -33,77 +32,35 @@ class Task {
       isCompleted: map['isCompleted'],
       dateAdded: DateTime.parse(map['dateAdded']),
       dateAccess: DateTime.parse(map['dateAccess']),
-      // geotaggedPhoto: map['geotaggedPhoto'],
       formData: Map<String, dynamic>.from(map['formData']),
     );
   }
 
-  // Getter to retrieve all tasks
-  static List<Task> getAllTasks() {
-    // Here you can fetch tasks from a database or some other storage mechanism.
-    // For the sake of example, let's return a hardcoded list of tasks.
-    return [
-      Task(
-        id: 1,
-        isCompleted: false,
-        dateAdded: DateTime(2023, 6, 1),
-        dateAccess: DateTime(2023, 6, 1),
-        // geotaggedPhoto: '',
-        formData: {},
-      ),
-      Task(
-        id: 2,
-        isCompleted: false,
-        dateAdded: DateTime.now().subtract(const Duration(days: 4)),
-        dateAccess: DateTime.now().subtract(const Duration(days: 4)),
-        // geotaggedPhoto: '',
-        formData: {},
-      ),
-      Task(
-        id: 3,
-        isCompleted: true,
-        dateAdded: DateTime.now().subtract(const Duration(days: 2)),
-        dateAccess: DateTime.now().subtract(const Duration(days: 2)),
-        // geotaggedPhoto: '',
-        formData: {},
-      ),
-      Task(
-        id: 4,
-        isCompleted: true,
-        dateAdded: DateTime.now().subtract(const Duration(days: 2)),
-        dateAccess: DateTime.now().subtract(const Duration(days: 2)),
-        // geotaggedPhoto: '',
-        formData: {},
-      ),
-    ];
-  }
+  static Future<List<Task>> getAllTasks() async {
+    List<Task> tasks = [];
 
-  static void addTask({
-    required String title,
-    required String description,
-    required String geotaggedPhoto,
-    required Map<String, dynamic> formData,
-  }) {
-    // Generate a new task ID
-    int newTaskId = getAllTasks().length + 1;
+    try {
+      DatabaseReference databaseReference =
+          FirebaseDatabase.instance.reference().child('agents');
 
-    // Create a new task instance
-    Task newTask = Task(
-      id: newTaskId,
-      dateAdded: DateTime.now(),
-      dateAccess: DateTime.now(),
-      // geotaggedPhoto: geotaggedPhoto,
-      formData: formData,
-    );
+      DatabaseEvent event = await databaseReference.once();
+      DataSnapshot dataSnapshot = event.snapshot;
 
-    // Here you can save the new task to a database or some other storage mechanism.
-    // For the sake of example, let's print a message.
-    debugPrint('Adding new task: ${newTask.toMap()}');
-  }
+      if (dataSnapshot.value != null) {
+        Map<String, dynamic> values =
+            dataSnapshot.value as Map<String, dynamic>;
 
-  static void doTask(Task task) {
-    // Here you can perform actions related to doing the task.
-    // For the sake of example, let's print a message.
-    debugPrint('Doing task: ${task.toMap()}');
+        values.forEach((key, value) {
+          Map<String, dynamic> taskData = Map<String, dynamic>.from(value);
+          taskData['id'] = int.parse(key);
+          Task task = Task.fromMap(taskData);
+          tasks.add(task);
+        });
+      }
+    } catch (error) {
+      debugPrint('Error retrieving tasks from Firebase: $error');
+    }
+
+    return tasks;
   }
 }
