@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_message.dart';
-import 'package:pcic_mobile_app/screens/dashboard/_settings.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_task.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/home_views/_home_header.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/home_views/_profile_container.dart';
