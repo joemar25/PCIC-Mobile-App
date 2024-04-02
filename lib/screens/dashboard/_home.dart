@@ -343,7 +343,6 @@ class HomeScreen extends StatelessWidget {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
-          RecentTaskContainer()
         ],
       ),
     );
