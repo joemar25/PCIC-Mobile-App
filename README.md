@@ -52,3 +52,6 @@ satilite view: mapbox://styles/mapbox/satellite-v9
 ```cmd
     flutter build apk
 ```
+
+
+nav bar from dashboard shoud be SettingsPage not Test
