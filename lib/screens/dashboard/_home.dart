@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_message.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_settings.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_task.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/_test.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -95,6 +99,10 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final DatabaseReference databaseReference =
+        FirebaseDatabase.instance.ref().child('agents');
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -103,24 +111,18 @@ class HomeScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Hello',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w100)),
-                  Text(
-                    'Hi Agent!',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                ],
+              const Text(
+                'Dashboard',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => const SettingsPage()),
+                    MaterialPageRoute(builder: (context) => const Test()),
                   );
                 },
                 child: const Icon(Icons.menu),
@@ -135,48 +137,111 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8),
-                          child: Row(
-                            children: [
-                              Image(
-                                image: AssetImage('storage/images/icon.png'),
-                                height: 55,
-                                width: 55,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Juan Dela Cruz',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
+                  StreamBuilder<DatabaseEvent>(
+                    stream: databaseReference.onValue,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        final DataSnapshot dataSnapshot = snapshot.data!.snapshot;
+                        final Map<dynamic, dynamic>? agentData =
+                            dataSnapshot.value as Map<dynamic, dynamic>?;
+                        if (agentData != null) {
+                          final String loggedInUserKey = auth.currentUser!.uid;
+                          final String? name =
+                              agentData[loggedInUserKey]?['name'] as String?;
+                          final int? agentID =
+                              agentData[loggedInUserKey]?['agentID'] as int?;
+
+                          return Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                  child: Row(
+                                    children: [
+                                      const Image(
+                                        image: AssetImage('storage/images/icon.png'),
+                                        height: 55,
+                                        width: 55,
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            name ?? 'Agent Name',
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold),
+                                          ),Text(
+                                        'Agent ${agentID?.toString() ?? 'Agent ID'}',
+                                        style: const TextStyle(
+                                          color: Color(0xFFD2FFCB),
+                                          fontWeight: FontWeight.w100,
+                                        ),
+                                      ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    'Agent 007',
-                                    style: TextStyle(
-                                        color: Color(0xFFD2FFCB),
-                                        fontWeight: FontWeight.w100),
-                                  )
+                                ),
+                                const Image(
+                                    image:
+                                        AssetImage('storage/images/arrow-right.png'))
+                              ],
+                            ),
+                          );
+                        }
+                      }
+
+                      return const Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8),
+                              child: Row(
+                                children: [
+                                  Image(
+                                    image: AssetImage('storage/images/icon.png'),
+                                    height: 55,
+                                    width: 55,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Agent Name',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        'Agent 007',
+                                        style: TextStyle(
+                                            color: Color(0xFFD2FFCB),
+                                            fontWeight: FontWeight.w100),
+                                      )
+                                    ],
+                                  ),
                                 ],
                               ),
-                            ],
-                          ),
+                            ),
+                            Image(image: AssetImage('storage/images/arrow-right.png'))
+                          ],
                         ),
-                        Image(
-                            image: AssetImage('storage/images/arrow-right.png'))
-                      ],
-                    ),
+                      );
+                    },
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -257,50 +322,6 @@ class HomeScreen extends StatelessWidget {
                 ],
               )),
           const SizedBox(height: 8),
-          // Container(
-          //   height: 85,
-          //   decoration: const BoxDecoration(color: Colors.white),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //     children: [
-          //       Column(
-          //         mainAxisAlignment: MainAxisAlignment.center,
-          //         children: [
-          //           Container(
-          //             alignment: Alignment.center,
-          //             height: 65,
-          //             width: 65,
-          //             decoration: BoxDecoration(
-          //                 color: const Color(0xFF7C7C7C).withOpacity(0.1),
-          //                 shape: BoxShape.circle),
-          //             child: Image.asset('storage/images/profile-add.png'),
-          //           ),
-          //           Text(
-          //             '3',
-          //           )
-          //         ],
-          //       ),
-          //       // SizedBox(
-          //       //   width: 65,
-          //       // ),
-          //       Column(
-          //         mainAxisAlignment: MainAxisAlignment.center,
-          //         children: [
-          //           Container(
-          //             alignment: Alignment.center,
-          //             height: 65,
-          //             width: 65,
-          //             decoration: BoxDecoration(
-          //                 color: const Color(0xFF7C7C7C).withOpacity(0.1),
-          //                 shape: BoxShape.circle),
-          //             child: Image.asset('storage/images/hospital.png'),
-          //           ),
-          //           Text('4')
-          //         ],
-          //       )
-          //     ],
-          //   ),
-          // ),
           const SizedBox(height: 8),
           Container(
             decoration: BoxDecoration(
