@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/user-control/_login.dart';
 import 'package:pcic_mobile_app/screens/user-control/_signup.dart';
-import 'package:pcic_mobile_app/utils/_app_colors.dart';
 
 class StartingPage extends StatelessWidget {
   const StartingPage({super.key});
@@ -9,27 +8,35 @@ class StartingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: AppColors.primary,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+        body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+              child: Container(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              height: 270,
+              width: 270,
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                  shape: BoxShape.circle, color: Color(0xFF89C53F)),
+              child: Image.asset(
+                height: 250,
+                width: 250,
+                'storage/images/logo.png',
+                // height: 350,
+                // width: 350,
+              ),
+            ),
+          )),
+          Expanded(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Icon(
-                Icons.home,
-                size: 100,
-                color: AppColors.onPrimary,
+              const SizedBox(
+                height: 55,
               ),
-              const SizedBox(height: 20),
-              const Text(
-                "Welcome to My App",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.onPrimary,
-                ),
-              ),
-              const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -40,24 +47,28 @@ class StartingPage extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.secondary,
-                  foregroundColor: AppColors.onSecondary,
+                  minimumSize: const Size(300, 50),
+                  backgroundColor: const Color(0xFF0C7D3F),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 40,
                     vertical: 15,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                 ),
                 child: const Text(
                   "Login",
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(
+                height: 14,
+              ),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -68,27 +79,30 @@ class StartingPage extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.secondary,
-                  foregroundColor: AppColors.onSecondary,
+                  minimumSize: const Size(300, 50),
+                  backgroundColor: Colors.white,
+                  // foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 40,
                     vertical: 15,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(16),
+                    side: const BorderSide(color: Color(0xFF89C53F), width: 1),
                   ),
                 ),
                 child: const Text(
                   "Sign Up",
                   style: TextStyle(
-                    fontSize: 18,
-                  ),
+                      fontWeight: FontWeight.normal,
+                      fontSize: 16,
+                      color: Color(0xFF89C53F)),
                 ),
               ),
             ],
-          ),
-        ),
+          ))
+        ],
       ),
-    );
+    ));
   }
 }
