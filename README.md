@@ -22,6 +22,8 @@ samples, guidance on mobile development, and a full API reference.
 [Mapbox Blog Integration](https://medium.com/nerd-for-tech/navigation-with-mapbox-for-flutter-apps-313687778686)
 [Mapbox Integration](https://www.dhiwise.com/post/flutter-mapbox-integration-everything-you-need-to-know)
 [Spinkit for Loading](https://pub.dev/packages/flutter_spinkit)
+[Flutter on Real Devices](https://youtu.be/aohkII1C4JY?si=OniTGV9St1JK0I_u)
+[Flutter Map Stable Tutorial](https://www.youtube.com/watch?v=hZwrcOTxDJI)
 
 rebuilding commands in flutter
 

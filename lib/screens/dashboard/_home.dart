@@ -3,7 +3,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_message.dart';
-import 'package:pcic_mobile_app/screens/dashboard/_settings.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_task.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/_test.dart';
 
@@ -19,9 +18,9 @@ class _DashboardPageState extends State<DashboardPage> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
-    TaskPage(),
     MessagesPage(),
-    SettingsPage(),
+    TaskPage(),
+    // SettingsPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -37,8 +36,8 @@ class _DashboardPageState extends State<DashboardPage> {
       bottomNavigationBar: BottomNavigationBar(
         items: [
           _buildNavigationBarItem('storage/images/home-2.png', 'Home', 0),
-          _buildNavigationBarItem('storage/images/calendar-2.png', 'Tasks', 1),
-          _buildNavigationBarItem('storage/images/message.png', 'Messages', 2),
+          _buildNavigationBarItem('storage/images/message.png', 'Messages', 1),
+          _buildNavigationBarItem('storage/images/calendar-2.png', 'Tasks', 2),
           // _buildNavigationBarItem(Icons.settings, 'Settings', 3),
         ],
         currentIndex: _selectedIndex,
@@ -343,116 +342,8 @@ class HomeScreen extends StatelessWidget {
             'Recent Task',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: ListView.builder(
-              itemCount: 3,
-              itemBuilder: (context, index) {
-                return Container(
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(14)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 10,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8),
-                                child: Row(
-                                  children: [
-                                    Image(
-                                      image: AssetImage(
-                                          'storage/images/FormImage.png'),
-                                      height: 55,
-                                      width: 55,
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Natural Disaster',
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                          'ID Number',
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w100),
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Divider(
-                            color: const Color(0xFF7C7C7C).withOpacity(0.1),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    'storage/images/clock.png',
-                                    color: const Color(0xFFC5C23F),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  const Text(
-                                    '03-23-24',
-                                    style: TextStyle(color: Color(0xFFC5C23F)),
-                                  )
-                                ],
-                              ),
-                              const SizedBox(
-                                width: 32,
-                              ),
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    'storage/images/clock.png',
-                                    color: const Color(0xFF45C53F),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  const Text(
-                                    '04-25-24',
-                                    style: TextStyle(color: Color(0xFF45C53F)),
-                                  )
-                                ],
-                              )
-                              // Row(),
-                            ],
-                          ),
-                        )
-                      ],
-                    ));
-              },
-            ),
-          ),
+          SizedBox(height: 8),
+          RecentTaskContainer()
         ],
       ),
     );
