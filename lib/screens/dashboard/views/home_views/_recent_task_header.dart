@@ -18,7 +18,7 @@ class RecentTaskHeader extends StatelessWidget {
             child: Row(
               children: [
                 Image(
-                  image: AssetImage('storage/images/FormImage.png'),
+                  image: AssetImage('assets/storage/images/FormImage.png'),
                   height: 55,
                   width: 55,
                 ),

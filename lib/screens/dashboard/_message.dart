@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pcic_mobile_app/screens/dashboard/controllers/_filter_message.dart';
+import 'package:pcic_mobile_app/utils/controls/_filter_message.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/_chat.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/_message_items.dart';
 import 'package:provider/provider.dart';

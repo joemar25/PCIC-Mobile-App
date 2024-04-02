@@ -11,7 +11,7 @@ class SplashScreen extends StatelessWidget {
 
     return Scaffold(
       body: FutureBuilder(
-        future: Future.delayed(const Duration(seconds: 1)),
+        future: Future.delayed(const Duration(seconds: 3)),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Stack(
@@ -40,7 +40,7 @@ class SplashScreen extends StatelessWidget {
                         ),
                         child: Center(
                           child: Image.asset(
-                            'storage/images/icon.png',
+                            'assets/storage/images/icon.png',
                             width: 250,
                             height: 250,
                           ),

@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pcic_mobile_app/screens/_logout.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_message.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_task.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/home_views/_home_header.dart';
@@ -20,7 +22,6 @@ class _DashboardPageState extends State<DashboardPage> {
     HomeScreen(),
     MessagesPage(),
     TaskPage(),
-    // SettingsPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -35,87 +36,87 @@ class _DashboardPageState extends State<DashboardPage> {
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: [
-          _buildNavigationBarItem('storage/images/home-2.png', 'Home', 0),
-          _buildNavigationBarItem('storage/images/message.png', 'Messages', 1),
-          _buildNavigationBarItem('storage/images/calendar-2.png', 'Tasks', 2),
-          // _buildNavigationBarItem(Icons.settings, 'Settings', 3),
+          _buildNavigationBarItem(Icons.home, 'Home'),
+          _buildNavigationBarItem(Icons.message, 'Messages'),
+          _buildNavigationBarItem(Icons.calendar_today, 'Tasks'),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Colors.green,
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
       ),
     );
   }
 
-  BottomNavigationBarItem _buildNavigationBarItem(
-    String icon,
-    String label,
-    int index,
-  ) {
-    final isSelected = _selectedIndex == index;
+  BottomNavigationBarItem _buildNavigationBarItem(IconData icon, String label) {
     return BottomNavigationBarItem(
-      icon: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: isSelected
-            ? BoxDecoration(
-                color: const Color(0xFF89C53F).withOpacity(0.2),
-                borderRadius: BorderRadius.circular(10),
-              )
-            : null,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ImageIcon(
-              AssetImage(icon),
-              color: const Color(0xFF7C7C7C),
-            ),
-            if (isSelected) ...[
-              const SizedBox(width: 4),
-              AnimatedOpacity(
-                duration: const Duration(milliseconds: 300),
-                opacity: isSelected ? 1.0 : 0.0,
-                child: Text(label,
-                    style: const TextStyle(
-                        color: Color(0xFF89C53F), fontWeight: FontWeight.bold)),
-              ),
-            ],
-          ],
-        ),
-      ),
-      label: '',
+      icon: Icon(icon),
+      label: label,
     );
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  Future<void> _handleLogout() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      // Navigate to the logout success page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LogoutSuccessPage()),
+      );
+    } catch (e) {
+      // Handle logout error
+      print('Logout error: $e');
+      // Show an error message to the user
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Logout failed. Please try again.')),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          HomeHeader(),
-          SizedBox(height: 16),
-          ProfileContainer(),
-          SizedBox(height: 8),
-          SearchButton(),
-          SizedBox(height: 16),
-          Text(
-            'Recent Task',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    List<String> recentTasks = [
+      'Task 1',
+      'Task 2',
+      'Task 3',
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: HomeHeader(onLogout: _handleLogout),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              const ProfileContainer(),
+              const SizedBox(height: 16),
+              const SearchButton(),
+              const SizedBox(height: 16),
+              const Text(
+                'Recent Task',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              RecentTaskContainer(
+                tasks: recentTasks,
+              ),
+            ],
           ),
-          SizedBox(height: 8),
-          RecentTaskContainer()
-        ],
+        ),
       ),
     );
   }

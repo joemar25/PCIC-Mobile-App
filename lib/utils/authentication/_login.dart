@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:pcic_mobile_app/screens/user-control/_signup.dart';
-import 'package:pcic_mobile_app/screens/user-control/_verify_login.dart';
+import 'package:pcic_mobile_app/utils/authentication/_signup.dart';
+import 'package:pcic_mobile_app/utils/authentication/_verify_login.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Align(
                     alignment: Alignment.center,
                     child: Image.asset(
-                      'storage/images/logo.png',
+                      'assets/storage/images/logo.png',
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -94,7 +94,8 @@ class _LoginPageState extends State<LoginPage> {
                           Checkbox(
                             value: true,
                             onChanged: null,
-                            fillColor: MaterialStateProperty.all(const Color(0xFF89C53F)),
+                            fillColor: MaterialStateProperty.all(
+                                const Color(0xFF89C53F)),
                             checkColor: Colors.white,
                           ),
                           const Text(
@@ -126,7 +127,8 @@ class _LoginPageState extends State<LoginPage> {
               child: ElevatedButton(
                 onPressed: () async {
                   try {
-                    UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    UserCredential userCredential =
+                        await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: _email,
                       password: _password,
                     );
@@ -145,7 +147,8 @@ class _LoginPageState extends State<LoginPage> {
                     // Show an error message to the user
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Login failed. Please check your email and password.'),
+                        content: Text(
+                            'Login failed. Please check your email and password.'),
                       ),
                     );
                   }

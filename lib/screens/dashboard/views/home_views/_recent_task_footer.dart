@@ -15,7 +15,7 @@ class RecentTaskFooter extends StatelessWidget {
           Row(
             children: [
               Image.asset(
-                'storage/images/clock.png',
+                'assets/storage/images/clock.png',
                 color: const Color(0xFFC5C23F),
               ),
               const SizedBox(width: 4),
@@ -31,7 +31,7 @@ class RecentTaskFooter extends StatelessWidget {
           Row(
             children: [
               Image.asset(
-                'storage/images/clock.png',
+                'assets/storage/images/clock.png',
                 color: const Color(0xFF45C53F),
               ),
               const SizedBox(width: 4),

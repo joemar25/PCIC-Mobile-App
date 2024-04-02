@@ -1,119 +1,62 @@
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/screens/dashboard/_settings.dart';
 
-class HomeHeader extends StatefulWidget {
-  const HomeHeader({super.key});
+class HomeHeader extends StatelessWidget {
+  final VoidCallback onLogout;
 
-  @override
-  State<HomeHeader> createState() => _HomeHeaderState();
-}
-
-class _HomeHeaderState extends State<HomeHeader> {
-  String dropDownValue = '';
+  const HomeHeader({super.key, required this.onLogout});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        //Conceptualize laturrr
-        // Image(
-        //   image: AssetImage('storage/images/icon.png'),
-        //   height: 55,
-        //   width: 55,
-        // ),
         const Text(
-          'Hi Agent!',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          'Hi, Agent',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         PopupMenuButton<String>(
-          icon: const Icon(Icons.menu),
+          onSelected: (value) {
+            if (value == 'Logout') {
+              onLogout();
+            } else {
+              // Handle other menu item selections
+              switch (value) {
+                case 'Profile':
+                  // Navigate to the profile screen
+                  break;
+                case 'Settings':
+                  // Navigate to the settings screen
+                  break;
+              }
+            }
+          },
           itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-            PopupMenuItem<String>(
-              value: 'Option 1',
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const SettingsPage()),
-                  );
-                },
-                child: const Row(
-                  children: [
-                    ImageIcon(AssetImage('storage/images/profile.png')),
-                    SizedBox(width: 8),
-                    Text('Profile'),
-                  ],
-                ),
+            const PopupMenuItem<String>(
+              value: 'Profile',
+              child: ListTile(
+                leading: Icon(Icons.person),
+                title: Text('Profile'),
               ),
             ),
-            PopupMenuItem<String>(
-              value: 'Option 2',
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const SettingsPage()),
-                  );
-                },
-                child: const Row(
-                  children: [
-                    ImageIcon(AssetImage('storage/images/settings.png')),
-                    SizedBox(width: 8),
-                    Text('Settings'),
-                  ],
-                ),
+            const PopupMenuItem<String>(
+              value: 'Settings',
+              child: ListTile(
+                leading: Icon(Icons.settings),
+                title: Text('Settings'),
               ),
             ),
-            PopupMenuItem<String>(
-              value: 'Option 3',
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const SettingsPage()),
-                  );
-                },
-                child: const Row(
-                  children: [
-                    ImageIcon(AssetImage(
-                      'storage/images/logout.png',
-                    )),
-                    SizedBox(width: 8),
-                    Text('Logout'),
-                  ],
-                ),
+            const PopupMenuItem<String>(
+              value: 'Logout',
+              child: ListTile(
+                leading: Icon(Icons.logout),
+                title: Text('Logout'),
               ),
             ),
           ],
         ),
-
-        // DropdownButton<String>(
-        //     items: [
-        //       DropdownMenuItem(value: dropDownValue),
-        //       DropdownMenuItem(value: 'One', child: Text('One')),
-        //       DropdownMenuItem(value: 'Two', child: Text('Two'))
-        //     ],
-        //     value: dropDownValue,
-        //     icon: const Icon(Icons.menu),
-        //     onChanged: (String? newValue) {
-        //       setState(() {
-        //         dropDownValue = newValue!;
-        //       });
-        //     }),
-
-        // ElevatedButton(
-        //   onPressed: () {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(builder: (context) => const SettingsPage()),
-        //     );
-        //   },
-        //   child: const Icon(Icons.menu),
-        // ),
       ],
     );
   }

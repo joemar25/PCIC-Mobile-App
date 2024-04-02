@@ -15,7 +15,7 @@ class ProfileChildThree extends StatelessWidget {
         children: [
           Row(
             children: [
-              Image.asset('storage/images/calendar-2.png'),
+              Image.asset('assets/storage/images/calendar-2.png'),
               const SizedBox(width: 4),
               const Text(
                 'Sunday, 5 March',
@@ -25,7 +25,7 @@ class ProfileChildThree extends StatelessWidget {
           ),
           Row(
             children: [
-              Image.asset('storage/images/clock.png'),
+              Image.asset('assets/storage/images/clock.png'),
               const SizedBox(width: 4),
               const Text(
                 '2972 Westheimer..',

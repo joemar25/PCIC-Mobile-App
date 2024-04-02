@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:pcic_mobile_app/utils/_app_firebase.dart';
 import 'package:provider/provider.dart';
 import 'package:pcic_mobile_app/screens/_splash.dart';
 import 'package:pcic_mobile_app/screens/_starting.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_home.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_message.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_task.dart';
-import 'package:pcic_mobile_app/screens/dashboard/controllers/_filter_message.dart';
-import 'package:pcic_mobile_app/screens/dashboard/controllers/_filter_task.dart';
+import 'package:pcic_mobile_app/utils/controls/_filter_message.dart';
+import 'package:pcic_mobile_app/utils/controls/_filter_task.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/_geotag.dart';
-import 'package:pcic_mobile_app/screens/user-control/_login.dart';
-import 'package:pcic_mobile_app/screens/user-control/_signup.dart';
-import 'package:pcic_mobile_app/screens/user-control/_verify_login.dart';
-import 'package:pcic_mobile_app/screens/user-control/_verify_signup.dart';
+import 'package:pcic_mobile_app/utils/authentication/_login.dart';
+import 'package:pcic_mobile_app/utils/authentication/_signup.dart';
+import 'package:pcic_mobile_app/utils/authentication/_verify_login.dart';
+import 'package:pcic_mobile_app/utils/authentication/_verify_signup.dart';
 import 'package:pcic_mobile_app/utils/_app_routes.dart';
-import 'package:pcic_mobile_app/screens/dashboard/controllers/_control_task.dart';
+import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
 void main() async {
   await dotenv.load(fileName: "assets/config/.env");
