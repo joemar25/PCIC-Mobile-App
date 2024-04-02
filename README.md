@@ -53,5 +53,6 @@ satilite view: mapbox://styles/mapbox/satellite-v9
     flutter build apk
 ```
 
-
 nav bar from dashboard shoud be SettingsPage not Test
+
+By pressing s while naka flutter run, maga screenshot sya sa chrome or device man

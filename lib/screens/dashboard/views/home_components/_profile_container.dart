@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/home_views/_profile_childone.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/home_views/_profile_childthree.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/home_views/_profile_childtwo.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_profile_childone.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_profile_childthree.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_profile_childtwo.dart';
 
 class ProfileContainer extends StatelessWidget {
   const ProfileContainer({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/home_views/_recent_task_footer.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/home_views/_recent_task_header.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_recent_task_footer.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_recent_task_header.dart';
 
 class RecentTaskContainer extends StatelessWidget {
   const RecentTaskContainer({super.key, required this.tasks});

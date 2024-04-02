@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/_logout.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_message.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_task.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/home_views/_home_header.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/home_views/_profile_container.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/home_views/_recent_task_container.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/home_views/_search_button.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_home_header.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_profile_container.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_recent_task_container.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_search_button.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
