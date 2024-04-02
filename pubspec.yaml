@@ -24,6 +24,8 @@ dependencies:
   google_sign_in: ^6.2.1
   file_picker: ^8.0.0+1
   firebase_database: ^10.4.11
+  flutter_map: ^6.1.0
+  flutter_map_cancellable_tile_provider: ^2.0.0
 
 dev_dependencies:
   flutter_test:

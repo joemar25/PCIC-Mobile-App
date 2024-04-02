@@ -3,6 +3,7 @@
     <!-- MAR: PERMISION AREA -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- for now this is disabled, for further development and research -->
     <!-- <uses-permission android:name="android.permission.INTERNET" /> -->
