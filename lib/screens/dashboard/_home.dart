@@ -7,7 +7,6 @@ import 'package:pcic_mobile_app/screens/dashboard/views/home_views/_home_header.
 import 'package:pcic_mobile_app/screens/dashboard/views/home_views/_profile_container.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/home_views/_recent_task_container.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/home_views/_search_button.dart';
-import 'package:pcic_mobile_app/utils/authentication/_login.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
