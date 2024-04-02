@@ -65,7 +65,7 @@ class MapService {
           style: const LocationMarkerStyle(
             marker: DefaultLocationMarker(
               child: Icon(
-                Icons.navigation,
+                Icons.person_pin_circle_outlined,
                 color: Colors.white,
               ),
             ),
