@@ -1,16 +1,8 @@
-import 'dart:io' as io;
-import 'dart:html' as html;
-import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
-
-import 'package:gpx/gpx.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:pcic_mobile_app/utils/_app_gpx.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 import 'package:pcic_mobile_app/utils/controls/_location_service.dart';
 import 'package:pcic_mobile_app/utils/controls/_map_service.dart';
-import 'package:screenshot/screenshot.dart';
 
 class GeotagPage extends StatefulWidget {
   final Task task;
@@ -23,7 +15,6 @@ class GeotagPage extends StatefulWidget {
 class _GeotagPageState extends State<GeotagPage> {
   final LocationService _locationService = LocationService();
   final MapService _mapService = MapService();
-  final ScreenshotController _screenshotController = ScreenshotController();
 
   bool retainPinDrop = false;
   bool showConfirmationDialog = true;
@@ -58,87 +49,16 @@ class _GeotagPageState extends State<GeotagPage> {
       isRoutingStarted = true;
       _mapService.clearRoutePoints();
     });
-    _trackRoutePoints();
+    _getCurrentLocation();
   }
 
-  void _trackRoutePoints() async {
-    while (isRoutingStarted) {
-      LatLng? position = await _locationService.getCurrentLocation();
-      if (position != null) {
-        setState(() {
-          currentLocation =
-              'Lat: ${position.latitude}, Long: ${position.longitude}';
-          // _mapService.addRoutePoint(position);
-          _mapService.addMarker(position);
-        });
-        await Future.delayed(const Duration(seconds: 1));
-      }
-    }
-  }
-
-  void _stopRouting() async {
+  void _stopRouting() {
     setState(() {
       isRoutingStarted = false;
       _mapService.clearMarkers();
     });
-
-    List<Wpt> routePoints = _mapService.routePoints
-        .map((point) => Wpt(lat: point.latitude, lon: point.longitude))
-        .toList();
-
-    var gpx = GpxUtil.createGpx(routePoints);
-    var gpxString = GpxWriter().asString(gpx);
-
-    await _saveGpxFile(gpxString);
-
-    final screenshotBytes = await _mapService.captureMapScreenshot();
-    if (screenshotBytes != null) {
-      await _saveMapScreenshot(screenshotBytes);
-    }
-  }
-
-  Future<void> _saveGpxFile(String gpxString) async {
-    if (kIsWeb) {
-      // Web-specific implementation
-      final blob = html.Blob([gpxString], 'text/plain', 'native');
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      final anchor = html.document.createElement('a') as html.AnchorElement
-        ..href = url
-        ..style.display = 'none'
-        ..download = 'route.gpx';
-      html.document.body!.children.add(anchor);
-      anchor.click();
-      html.document.body!.children.remove(anchor);
-      html.Url.revokeObjectUrl(url);
-    } else {
-      // Android-specific implementation
-      final directory = await getApplicationDocumentsDirectory();
-      final file = io.File('${directory.path}/route.gpx');
-      await file.writeAsString(gpxString);
-      debugPrint('GPX file saved: ${file.path}');
-    }
-  }
-
-  Future<void> _saveMapScreenshot(Uint8List screenshotBytes) async {
-    if (kIsWeb) {
-      // Web-specific implementation
-      final blob = html.Blob([screenshotBytes], 'image/png');
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      final anchor = html.document.createElement('a') as html.AnchorElement
-        ..href = url
-        ..style.display = 'none'
-        ..download = 'map_screenshot.png';
-      html.document.body!.children.add(anchor);
-      anchor.click();
-      html.document.body!.children.remove(anchor);
-      html.Url.revokeObjectUrl(url);
-    } else {
-      // Android-specific implementation
-      final directory = await getApplicationDocumentsDirectory();
-      final file = io.File('${directory.path}/map_screenshot.png');
-      await file.writeAsBytes(screenshotBytes);
-      debugPrint('Map screenshot saved: ${file.path}');
-    }
+    // Save the route points or perform any necessary actions
+    debugPrint('Route Points: ${_mapService.routePoints}');
   }
 
   Future<void> _addMarkerAtCurrentLocation() async {

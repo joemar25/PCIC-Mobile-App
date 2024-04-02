@@ -27,8 +27,10 @@ dependencies:
   flutter_map: ^6.1.0
   flutter_map_cancellable_tile_provider: ^2.0.0
   latlong2: ^0.9.1
-  flutter_map_location_marker: any
-  # flutter_map_location_marker: ^8.0.8
+  flutter_map_location_marker: any # flutter_map_location_marker: ^8.0.8
+  gpx: ^2.2.2
+  path_provider: ^2.1.2
+  screenshot: ^2.3.0
 
 dev_dependencies:
   flutter_test:
