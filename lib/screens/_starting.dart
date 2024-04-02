@@ -16,8 +16,8 @@ class StartingPage extends StatelessWidget {
               child: Container(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: 270,
-              width: 270,
+              height: 300,
+              width: 300,
               alignment: Alignment.center,
               decoration: const BoxDecoration(
                   shape: BoxShape.circle, color: Color(0xFF89C53F)),
