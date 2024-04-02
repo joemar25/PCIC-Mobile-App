@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/screens/user-control/_login.dart';
-import 'package:pcic_mobile_app/screens/user-control/_signup.dart';
+import 'package:pcic_mobile_app/utils/authentication/_login.dart';
+import 'package:pcic_mobile_app/utils/authentication/_signup.dart';
 
 class StartingPage extends StatelessWidget {
   const StartingPage({super.key});
@@ -24,7 +24,7 @@ class StartingPage extends StatelessWidget {
               child: Image.asset(
                 height: 250,
                 width: 250,
-                'storage/images/logo.png',
+                'assets/storage/images/logo.png',
                 // height: 350,
                 // width: 350,
               ),

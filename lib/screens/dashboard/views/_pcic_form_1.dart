@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/screens/dashboard/controllers/_control_task.dart';
+import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 
 class PCICFormPage extends StatelessWidget {
   final Task task;

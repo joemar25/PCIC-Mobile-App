@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:pcic_mobile_app/screens/dashboard/controllers/_control_task.dart';
-import 'package:pcic_mobile_app/screens/dashboard/controllers/location_service.dart';
-import 'package:pcic_mobile_app/screens/dashboard/controllers/map_service.dart';
+import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
+import 'package:pcic_mobile_app/utils/controls/location_service.dart';
+import 'package:pcic_mobile_app/utils/controls/map_service.dart';
 
 class GeotagPage extends StatefulWidget {
   final Task task;

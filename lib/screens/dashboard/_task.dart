@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:pcic_mobile_app/screens/dashboard/controllers/_control_task.dart';
-import 'package:pcic_mobile_app/screens/dashboard/controllers/_filter_task.dart';
+import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
+import 'package:pcic_mobile_app/utils/controls/_filter_task.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/_task_details.dart';
 
 class TaskPage extends StatefulWidget {

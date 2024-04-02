@@ -15,7 +15,7 @@ class ProfileChildOne extends StatelessWidget {
             child: Row(
               children: [
                 Image(
-                  image: AssetImage('storage/images/icon.png'),
+                  image: AssetImage('assets/storage/images/icon.png'),
                   height: 55,
                   width: 55,
                 ),
@@ -43,7 +43,7 @@ class ProfileChildOne extends StatelessWidget {
               ],
             ),
           ),
-          Image(image: AssetImage('storage/images/arrow-right.png'))
+          Image(image: AssetImage('assets/storage/images/arrow-right.png'))
         ],
       ),
     );

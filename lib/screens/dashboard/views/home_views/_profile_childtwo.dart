@@ -11,7 +11,7 @@ class ProfileChildTwo extends StatelessWidget {
         Row(
           children: [
             Image.asset(
-              'storage/images/checked.png',
+              'assets/storage/images/checked.png',
               height: 16,
             ),
             const SizedBox(
@@ -26,7 +26,7 @@ class ProfileChildTwo extends StatelessWidget {
         Row(
           children: [
             Image.asset(
-              'storage/images/list.png',
+              'assets/storage/images/list.png',
               height: 16,
             ),
             const SizedBox(
