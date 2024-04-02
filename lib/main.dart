@@ -16,12 +16,14 @@ import 'package:pcic_mobile_app/screens/user-control/_verify_signup.dart';
 import 'package:pcic_mobile_app/utils/_app_routes.dart';
 import 'package:pcic_mobile_app/screens/dashboard/controllers/_control_task.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart'; // Import the file containing the DefaultFirebaseOptions class
+import 'firebase_options.dart';
 
 void main() async {
   await dotenv.load(fileName: "assets/config/.env");
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform); // Initialize Firebase with the appropriate options
+  await Firebase.initializeApp(
+      options: DefaultFirebaseOptions
+          .currentPlatform); // Initialize Firebase with the appropriate options
   runApp(
     MultiProvider(
       providers: [
