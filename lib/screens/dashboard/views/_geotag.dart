@@ -17,6 +17,7 @@ class _GeotagPageState extends State<GeotagPage> {
   final MapService _mapService = MapService();
 
   bool retainPinDrop = false;
+  bool showConfirmationDialog = true;
   String currentLocation = '';
   bool isColumnVisible = true;
   bool isRoutingStarted = false;
@@ -25,11 +26,11 @@ class _GeotagPageState extends State<GeotagPage> {
   void initState() {
     super.initState();
     _locationService.requestLocationPermission().then((_) {
-      _getCurrentLocation();
+      _getCurrentLocation(addMarker: false);
     });
   }
 
-  Future<void> _getCurrentLocation() async {
+  Future<void> _getCurrentLocation({bool addMarker = true}) async {
     LatLng? position = await _locationService.getCurrentLocation();
     if (position != null) {
       setState(() {
@@ -37,18 +38,18 @@ class _GeotagPageState extends State<GeotagPage> {
             'Lat: ${position.latitude}, Long: ${position.longitude}';
         _mapService.moveMap(position);
       });
+      if (addMarker) {
+        _mapService.addMarker(position);
+      }
     }
   }
 
-  Future<void> _startRouting() async {
-    LatLng? position = await _locationService.getCurrentLocation();
-    if (position != null) {
-      setState(() {
-        isRoutingStarted = true;
-        _mapService.clearRoutePoints();
-        _mapService.addMarker(position);
-      });
-    }
+  void _startRouting() {
+    setState(() {
+      isRoutingStarted = true;
+      _mapService.clearRoutePoints();
+    });
+    _getCurrentLocation();
   }
 
   void _stopRouting() {
@@ -62,39 +63,47 @@ class _GeotagPageState extends State<GeotagPage> {
 
   Future<void> _addMarkerAtCurrentLocation() async {
     LatLng? position = await _locationService.getCurrentLocation();
-    if (position != null) {
-      _mapService.addMarker(position);
+    _mapService.addMarker(position!);
 
-      if (!retainPinDrop) {
-        bool? shouldRetain = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Confirm Pin Drop'),
-            content: CheckboxListTile(
-              title: const Text('Stop showing this message'),
-              value: retainPinDrop,
-              onChanged: (value) {
-                setState(() {
-                  retainPinDrop = value!;
-                });
-              },
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('OK'),
-              ),
-            ],
+    if (showConfirmationDialog) {
+      bool? shouldRetain = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Confirm Pin Drop'),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return CheckboxListTile(
+                title: const Text('Don\'t show again'),
+                value: retainPinDrop,
+                onChanged: (value) {
+                  setState(() {
+                    retainPinDrop = value!;
+                  });
+                },
+              );
+            },
           ),
-        );
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
 
-        if (shouldRetain == false) {
-          _mapService.removeLastMarker();
-        }
+      if (shouldRetain == false) {
+        _mapService.removeLastMarker();
+      } else {
+        showConfirmationDialog = !retainPinDrop;
+      }
+    } else {
+      if (!retainPinDrop) {
+        _mapService.removeLastMarker();
       }
     }
   }
@@ -192,7 +201,7 @@ class _GeotagPageState extends State<GeotagPage> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: _getCurrentLocation,
+          onPressed: () => _getCurrentLocation(addMarker: false),
           child: const Icon(Icons.my_location),
         ),
       ),
