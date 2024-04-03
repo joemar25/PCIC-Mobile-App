@@ -1,9 +1,9 @@
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart' show Uint8List;
 import 'package:gpx/gpx.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/_pcic_form_1.dart';
 import 'package:pcic_mobile_app/utils/_app_gpx.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
@@ -18,7 +18,7 @@ class GeotagPage extends StatefulWidget {
   _GeotagPageState createState() => _GeotagPageState();
 }
 
-class _GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
+class _GeotagPageState extends State<GeotagPage> {
   final LocationService _locationService = LocationService();
   final MapService _mapService = MapService();
 
@@ -32,7 +32,6 @@ class _GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     _locationService.requestLocationPermission().then((_) {
       _getCurrentLocation(addMarker: false);
     });
@@ -40,21 +39,13 @@ class _GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _mapService.dispose();
     super.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      _mapService.dispose();
-    }
-  }
-
   Future<void> _getCurrentLocation({bool addMarker = true}) async {
     LatLng? position = await _locationService.getCurrentLocation();
-    if (position != null && mounted) {
+    if (position != null) {
       setState(() {
         currentLocation =
             'Lat: ${position.latitude}, Long: ${position.longitude}';
@@ -68,7 +59,7 @@ class _GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
 
   void _startRouting() async {
     LatLng? position = await _locationService.getCurrentLocation();
-    if (position != null && mounted) {
+    if (position != null) {
       setState(() {
         isRoutingStarted = true;
         _mapService.clearRoutePoints();
@@ -79,7 +70,7 @@ class _GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   }
 
   void _trackRoutePoints() async {
-    while (isRoutingStarted && mounted) {
+    while (isRoutingStarted) {
       LatLng? position = await _locationService.getCurrentLocation();
       if (position != null) {
         setState(() {
