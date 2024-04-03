@@ -1,6 +1,5 @@
 import 'dart:io' as io;
-import 'dart:html' as html;
-import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
+import 'package:flutter/foundation.dart' show Uint8List;
 
 import 'package:gpx/gpx.dart';
 import 'package:latlong2/latlong.dart';
@@ -10,7 +9,6 @@ import 'package:pcic_mobile_app/utils/_app_gpx.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 import 'package:pcic_mobile_app/utils/controls/_location_service.dart';
 import 'package:pcic_mobile_app/utils/controls/_map_service.dart';
-import 'package:screenshot/screenshot.dart';
 
 class GeotagPage extends StatefulWidget {
   final Task task;
@@ -23,7 +21,6 @@ class GeotagPage extends StatefulWidget {
 class _GeotagPageState extends State<GeotagPage> {
   final LocationService _locationService = LocationService();
   final MapService _mapService = MapService();
-  final ScreenshotController _screenshotController = ScreenshotController();
 
   bool retainPinDrop = false;
   bool showConfirmationDialog = true;
@@ -53,12 +50,16 @@ class _GeotagPageState extends State<GeotagPage> {
     }
   }
 
-  void _startRouting() {
-    setState(() {
-      isRoutingStarted = true;
-      _mapService.clearRoutePoints();
-    });
-    _trackRoutePoints();
+  void _startRouting() async {
+    LatLng? position = await _locationService.getCurrentLocation();
+    if (position != null) {
+      setState(() {
+        isRoutingStarted = true;
+        _mapService.clearRoutePoints();
+        _mapService.addColoredMarker(position, Colors.green);
+      });
+      _trackRoutePoints();
+    }
   }
 
   void _trackRoutePoints() async {
@@ -68,8 +69,7 @@ class _GeotagPageState extends State<GeotagPage> {
         setState(() {
           currentLocation =
               'Lat: ${position.latitude}, Long: ${position.longitude}';
-          // _mapService.addRoutePoint(position);
-          _mapService.addMarker(position);
+          _mapService.addRoutePoint(position);
         });
         await Future.delayed(const Duration(seconds: 1));
       }
@@ -95,50 +95,30 @@ class _GeotagPageState extends State<GeotagPage> {
     if (screenshotBytes != null) {
       await _saveMapScreenshot(screenshotBytes);
     }
+
+    // Show a snackbar to indicate that the files are saved
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('GPX file and screenshot saved successfully!'),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 
   Future<void> _saveGpxFile(String gpxString) async {
-    if (kIsWeb) {
-      // Web-specific implementation
-      final blob = html.Blob([gpxString], 'text/plain', 'native');
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      final anchor = html.document.createElement('a') as html.AnchorElement
-        ..href = url
-        ..style.display = 'none'
-        ..download = 'route.gpx';
-      html.document.body!.children.add(anchor);
-      anchor.click();
-      html.document.body!.children.remove(anchor);
-      html.Url.revokeObjectUrl(url);
-    } else {
-      // Android-specific implementation
-      final directory = await getApplicationDocumentsDirectory();
-      final file = io.File('${directory.path}/route.gpx');
-      await file.writeAsString(gpxString);
-      debugPrint('GPX file saved: ${file.path}');
-    }
+    // Android-specific implementation
+    final directory = await getApplicationDocumentsDirectory();
+    final file = io.File('${directory.path}/route.gpx');
+    await file.writeAsString(gpxString);
+    debugPrint('GPX file saved: ${file.path}');
   }
 
   Future<void> _saveMapScreenshot(Uint8List screenshotBytes) async {
-    if (kIsWeb) {
-      // Web-specific implementation
-      final blob = html.Blob([screenshotBytes], 'image/png');
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      final anchor = html.document.createElement('a') as html.AnchorElement
-        ..href = url
-        ..style.display = 'none'
-        ..download = 'map_screenshot.png';
-      html.document.body!.children.add(anchor);
-      anchor.click();
-      html.document.body!.children.remove(anchor);
-      html.Url.revokeObjectUrl(url);
-    } else {
-      // Android-specific implementation
-      final directory = await getApplicationDocumentsDirectory();
-      final file = io.File('${directory.path}/map_screenshot.png');
-      await file.writeAsBytes(screenshotBytes);
-      debugPrint('Map screenshot saved: ${file.path}');
-    }
+    // Android-specific implementation
+    final directory = await getApplicationDocumentsDirectory();
+    final file = io.File('${directory.path}/map_screenshot.png');
+    await file.writeAsBytes(screenshotBytes);
+    debugPrint('Map screenshot saved: ${file.path}');
   }
 
   Future<void> _addMarkerAtCurrentLocation() async {
