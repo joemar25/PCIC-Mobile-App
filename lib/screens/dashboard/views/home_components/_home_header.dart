@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/_settings.dart';
 
 class HomeHeader extends StatelessWidget {
   final VoidCallback onLogout;
@@ -28,7 +29,12 @@ class HomeHeader extends StatelessWidget {
                   // Navigate to the profile screen
                   break;
                 case 'Settings':
-                  // Navigate to the settings screen
+                  Navigator.push(
+                    // Navigate to the SettingsScreen
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SettingsPage()),
+                  );
                   break;
               }
             }
