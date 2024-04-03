@@ -98,6 +98,4 @@ class Task {
       ),
     ];
   }
-
-  static void addTask({required String title, required String description, required String geotaggedPhoto, required Map<String, dynamic> formData}) {}
 }

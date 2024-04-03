@@ -1,5 +1,5 @@
-import 'dart:typed_data';
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -10,8 +10,9 @@ import 'package:screenshot/screenshot.dart';
 
 class MapService {
   final MapController mapController = MapController();
-  final List<Marker> markers = [];
   final List<LatLng> routePoints = [];
+  double currentZoom = 21.0;
+  final List<Marker> markers = [];
 
   void addMarker(LatLng point) {
     markers.add(
@@ -21,12 +22,31 @@ class MapService {
         point: point,
         child: const Icon(
           Icons.location_on,
-          color: Colors.blue,
+          color: Colors.red,
           size: 40.0,
         ),
       ),
     );
     routePoints.add(point);
+  }
+
+  void addColoredMarker(LatLng point, Color color) {
+    markers.add(
+      Marker(
+        width: 80.0,
+        height: 80.0,
+        point: point,
+        child: const Icon(
+          Icons.location_on,
+          color: Colors.green,
+          size: 40.0,
+        ),
+      ),
+    );
+  }
+
+  void clearMarkers() {
+    markers.clear();
   }
 
   void removeLastMarker() {
@@ -36,8 +56,9 @@ class MapService {
     }
   }
 
-  void clearMarkers() {
-    markers.clear();
+  void addRoutePoint(LatLng point) {
+    routePoints.add(point);
+    moveMap(point);
   }
 
   void clearRoutePoints() {
@@ -45,7 +66,12 @@ class MapService {
   }
 
   void moveMap(LatLng point) {
-    mapController.move(point, 18.0);
+    mapController.move(point, currentZoom);
+  }
+
+  void zoomMap(double zoom) {
+    currentZoom = zoom;
+    mapController.move(mapController.center, zoom);
   }
 
   Future<Uint8List?> captureMapScreenshot() async {
@@ -70,7 +96,7 @@ class MapService {
         LatLng(maxLat, maxLng),
       );
 
-      // Center and zoom the map to fit the route bounds
+      // Center the map to fit the route bounds
       mapController.fitBounds(
         bounds,
         options: const FitBoundsOptions(
@@ -95,18 +121,33 @@ class MapService {
       data: const MediaQueryData(),
       child: FlutterMap(
         mapController: mapController,
-        options: const MapOptions(
-          initialCenter: LatLng(13.138769, 123.734005),
-          initialZoom: 18.0,
-          maxZoom: 55.0,
+        options: MapOptions(
+          center: const LatLng(13.138769, 123.734005),
+          zoom: currentZoom,
+          maxZoom: 23.0,
+          onPositionChanged: (position, hasGesture) {
+            currentZoom = position.zoom!;
+          },
         ),
         children: [
           TileLayer(
             urlTemplate:
+                // 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                 'https://api.mapbox.com/styles/v1/quanbysolutions/cluhoxol502q801oi8od2cmvz/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicXVhbmJ5c29sdXRpb25zIiwiYSI6ImNsdWhrejRwdDJyYnAya3A2NHFqbXlsbHEifQ.WJ5Ng-AO-dTrlkUHD_ebMw',
             tileProvider: CancellableNetworkTileProvider(),
           ),
-          MarkerLayer(markers: markers),
+          PolylineLayer(
+            polylines: [
+              Polyline(
+                points: routePoints,
+                strokeWidth: 4.0,
+                color: Colors.blue,
+              ),
+            ],
+          ),
+          MarkerLayer(
+            markers: markers,
+          ),
           CurrentLocationLayer(
             followOnLocationUpdate: FollowOnLocationUpdate.always,
             turnOnHeadingUpdate: TurnOnHeadingUpdate.never,

@@ -48,7 +48,7 @@ android {
         
         
         // MAR: this is the original = minSdkVersion flutter.minSdkVersion
-        minSdkVersion 20
+        minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

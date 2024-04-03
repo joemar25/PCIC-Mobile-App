@@ -19,7 +19,26 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _fetchData() async {
-
+    try {
+      final snapshot = await _databaseReference.child('agentsTask').get();
+      if (snapshot.exists) {
+        final value = snapshot.value;
+        if (value != null) {
+          if (value is List<Object?>) {
+            _data = _processData(value);
+          } else {
+            print('Unexpected data format');
+          }
+        } else {
+          print('The "agents" node is empty');
+        }
+        setState(() {});
+      } else {
+        print('The "agents" node does not exist');
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
   }
 
   List<Map<String, dynamic>> _processData(List<Object?> data) {
