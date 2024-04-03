@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/_test.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_camera.dart';
 
 class HomeHeader extends StatelessWidget {
   final VoidCallback onLogout;
@@ -41,7 +42,7 @@ class HomeHeader extends StatelessWidget {
                       case 'Settings':
                          Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Test()),
+                          MaterialPageRoute(builder: (context) => camera()),
                         );
                         break;
                     }
@@ -67,6 +68,7 @@ class HomeHeader extends StatelessWidget {
                     child: ListTile(
                       leading: Icon(Icons.logout),
                       title: Text('Logout'),
+                      
                     ),
                   ),
                 ],
