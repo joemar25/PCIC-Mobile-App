@@ -37,6 +37,8 @@ dependencies:
   url_launcher: ^6.2.5
   open_file: ^3.3.2
   camera: ^0.10.5+9
+  lottie: ^3.1.0 #decide latur what to do
+  flutter_animate: ^4.5.0 #decide latur 
 
 dev_dependencies:
   flutter_test:
@@ -49,5 +51,6 @@ flutter:
     - assets/storage/images/
     - assets/storage/tasks/
     - assets/image/
+    - assets/animations/
     # - assets/cache.db
     # - assets/icon/
