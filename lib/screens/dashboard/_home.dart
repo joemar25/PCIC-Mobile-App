@@ -1,12 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/screens/_logout.dart';
+import 'package:flutter/services.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/_logout.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_message.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_task.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_home_header.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_profile_container.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_recent_task_container.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_search_button.dart';
+import 'package:pcic_mobile_app/utils/_app_session.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -30,20 +32,44 @@ class _DashboardPageState extends State<DashboardPage> {
     });
   }
 
+  Future<bool> _onWillPop() async {
+    return await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Confirm Exit'),
+            content: const Text('Are you sure you want to exit the app?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('No'),
+              ),
+              TextButton(
+                onPressed: () => SystemNavigator.pop(),
+                child: const Text('Yes'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _widgetOptions.elementAt(_selectedIndex),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          _buildNavigationBarItem(Icons.home, 'Home'),
-          _buildNavigationBarItem(Icons.message, 'Messages'),
-          _buildNavigationBarItem(Icons.calendar_today, 'Tasks'),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: _widgetOptions.elementAt(_selectedIndex),
+        bottomNavigationBar: BottomNavigationBar(
+          items: [
+            _buildNavigationBarItem(Icons.home, 'Home'),
+            _buildNavigationBarItem(Icons.message, 'Messages'),
+            _buildNavigationBarItem(Icons.calendar_today, 'Tasks'),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.green,
+          unselectedItemColor: Colors.grey,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }
@@ -64,9 +90,28 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late Session _session;
+  String? _token;
+
+  @override
+  void initState() {
+    super.initState();
+    _session = Session();
+    _retrieveToken();
+  }
+
+  Future<void> _retrieveToken() async {
+    String? token = await _session.getToken();
+    setState(() {
+      _token = token;
+    });
+  }
+
   Future<void> _handleLogout() async {
     try {
       await FirebaseAuth.instance.signOut();
+      // Clear the session token
+      await _session.stop();
       // Navigate to the logout success page
       Navigator.pushReplacement(
         context,
@@ -95,29 +140,34 @@ class _HomeScreenState extends State<HomeScreen> {
         automaticallyImplyLeading: false,
         title: HomeHeader(onLogout: _handleLogout),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 16),
-              const ProfileContainer(),
-              const SizedBox(height: 16),
-              const SearchButton(),
-              const SizedBox(height: 16),
-              const Text(
-                'Recent Task',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      body: _token != null
+          ? SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+                    const ProfileContainer(),
+                    const SizedBox(height: 16),
+                    const SearchButton(),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Recent Task',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    RecentTaskContainer(
+                      tasks: recentTasks,
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 8),
-              RecentTaskContainer(
-                tasks: recentTasks,
-              ),
-            ],
-          ),
-        ),
-      ),
+            )
+          : const Center(
+              child: Text('Please log in to access the dashboard.'),
+            ),
     );
   }
 }
