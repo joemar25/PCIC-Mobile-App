@@ -82,7 +82,7 @@ class _GeotagPageState extends State<GeotagPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirmation'),
-        content: const Text('Are you sure you want to stop routing?'),
+        content: const Text('Finish routing?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -97,11 +97,6 @@ class _GeotagPageState extends State<GeotagPage> {
     );
 
     if (shouldStop == true) {
-      setState(() {
-        isRoutingStarted = false;
-        _mapService.clearMarkers();
-      });
-
       List<Wpt> routePoints = _mapService.routePoints
           .map((point) => Wpt(lat: point.latitude, lon: point.longitude))
           .toList();
@@ -117,6 +112,11 @@ class _GeotagPageState extends State<GeotagPage> {
         screenshotFilePath = await _saveMapScreenshot(screenshotBytes);
       }
 
+      setState(() {
+        isRoutingStarted = false;
+        _mapService.clearMarkers();
+      });
+
       // Show a snackbar with the file locations
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
@@ -126,9 +126,6 @@ class _GeotagPageState extends State<GeotagPage> {
           duration: const Duration(seconds: 2),
         ),
       );
-
-      // Delay for 2 seconds before navigating to the forms page
-      await Future.delayed(const Duration(seconds: 2));
 
       // Navigate to the forms page
       Navigator.push(
