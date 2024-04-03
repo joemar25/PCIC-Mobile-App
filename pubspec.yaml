@@ -31,15 +31,12 @@ dependencies:
   gpx: ^2.2.2
   path_provider: ^2.1.2
   screenshot: ^2.3.0
-<<<<<<< HEAD
   fluttertoast: ^8.2.4
   image_picker: ^1.0.7
   flutter_downloader: ^1.11.6
   url_launcher: ^6.2.5
   open_file: ^3.3.2
-=======
   camera: ^0.10.5+9
->>>>>>> 3ac05ecbc441f44e27a5f394fa29eb0fd60d3dfb
 
 dev_dependencies:
   flutter_test:
