@@ -425,69 +425,69 @@ class _PCICFormPageState extends State<PCICFormPage> {
                   },
                   child: const Text('Submit'),
                 ),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      // Create a map with the form data
-                      Map<String, dynamic> formData = {
-                        'farmerFirstName': _farmerFirstNameController.text,
-                        'farmerLastName': _farmerLastNameController.text,
-                        'farmerEmail': _farmerMiddleInitialController.text,
-                        'farmerAddress': _farmerAddressController.text,
-                        'farmerType': _farmerTypeController.text,
-                        'farmerMobileNumber':
-                            _farmerMobileNumberController.text,
-                        'farmerGroupName': _farmerGroupNameController.text,
-                        'farmerGroupAddress':
-                            _farmerGroupAddressController.text,
-                        'lenderName': _lenderNameController.text,
-                        'lenderAddress': _lenderAddressController.text,
-                        'cicNumberType': _cicNumberTypeController.text,
-                        'locationType': _locationTypeController.text,
-                      };
+                // ElevatedButton(
+                //   onPressed: () async {
+                //     if (_formKey.currentState!.validate()) {
+                //       // Create a map with the form data
+                //       Map<String, dynamic> formData = {
+                //         'farmerFirstName': _farmerFirstNameController.text,
+                //         'farmerLastName': _farmerLastNameController.text,
+                //         'farmerEmail': _farmerMiddleInitialController.text,
+                //         'farmerAddress': _farmerAddressController.text,
+                //         'farmerType': _farmerTypeController.text,
+                //         'farmerMobileNumber':
+                //             _farmerMobileNumberController.text,
+                //         'farmerGroupName': _farmerGroupNameController.text,
+                //         'farmerGroupAddress':
+                //             _farmerGroupAddressController.text,
+                //         'lenderName': _lenderNameController.text,
+                //         'lenderAddress': _lenderAddressController.text,
+                //         'cicNumberType': _cicNumberTypeController.text,
+                //         'locationType': _locationTypeController.text,
+                //       };
 
-                      if (widget.taskId == null) {
-                        // Add a new task
-                        Task.addTask(
-                          title: 'PCIC Form',
-                          description: 'PCIC Form submission',
-                          geotaggedPhoto: '',
-                          formData: formData,
-                        );
-                      } else {
-                        // Update an existing task
-                        // Retrieve the existing task based on the taskId
-                        List<Task> taskList = await Task.getAllTasks();
-                        Task existingTask = taskList.firstWhere(
-                          (task) => task.id == widget.taskId,
-                          orElse: () => throw Exception('Task not found'),
-                        );
+                //       if (widget.taskId == null) {
+                //         // Add a new task
+                //         Task.addTask(
+                //           title: 'PCIC Form',
+                //           description: 'PCIC Form submission',
+                //           geotaggedPhoto: '',
+                //           formData: formData,
+                //         );
+                //       } else {
+                //         // Update an existing task
+                //         // Retrieve the existing task based on the taskId
+                //         List<Task> taskList = await Task.getAllTasks();
+                //         Task existingTask = taskList.firstWhere(
+                //           (task) => task.id == widget.taskId,
+                //           orElse: () => throw Exception('Task not found'),
+                //         );
 
-                        // Create an updated task with the new form data
-                        // ignore: unused_local_variable
-                        // Task updatedTask = Task(
-                        //   id: existingTask.id,
-                        //   title: existingTask.title,
-                        //   description: existingTask.description,
-                        //   isCompleted: existingTask.isCompleted,
-                        //   dateAdded: existingTask.dateAdded,
-                        //   geotaggedPhoto: existingTask.geotaggedPhoto,
-                        //   formData: formData,
-                        // );
+                //         // Create an updated task with the new form data
+                //         // ignore: unused_local_variable
+                //         // Task updatedTask = Task(
+                //         //   id: existingTask.id,
+                //         //   title: existingTask.title,
+                //         //   description: existingTask.description,
+                //         //   isCompleted: existingTask.isCompleted,
+                //         //   dateAdded: existingTask.dateAdded,
+                //         //   geotaggedPhoto: existingTask.geotaggedPhoto,
+                //         //   formData: formData,
+                //         // );
 
-                        // Update the task in the database or storage mechanism
-                        // You need to implement the updateTask() function in the Task class
-                        // to handle the update logic based on your storage mechanism
-                        // For example:
-                        // Task.updateTask(updatedTask);
-                      }
+                //         // Update the task in the database or storage mechanism
+                //         // You need to implement the updateTask() function in the Task class
+                //         // to handle the update logic based on your storage mechanism
+                //         // For example:
+                //         // Task.updateTask(updatedTask);
+                //       }
 
-                      // Navigate back to the previous screen
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: const Text('Submit'),
-                ),
+                //       // Navigate back to the previous screen
+                //       Navigator.pop(context);
+                //     }
+                //   },
+                //   child: const Text('Submit'),
+                // ),
               ],
             ),
           ),
