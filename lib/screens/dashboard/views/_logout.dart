@@ -1,8 +1,5 @@
-import 'dart:async';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/utils/authentication/_login.dart'; // Assuming LoginPage is imported from this path
+import 'package:pcic_mobile_app/utils/authentication/_login.dart';
 
 class LogoutSuccessPage extends StatelessWidget {
   const LogoutSuccessPage({super.key});
