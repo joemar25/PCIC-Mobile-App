@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:pcic_mobile_app/utils/_app_colors.dart';
+// import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:lottie/lottie.dart';
+// import 'package:pcic_mobile_app/utils/_app_colors.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -10,11 +11,30 @@ class SplashScreen extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: Color(0xFFD2FFCB),
       body: FutureBuilder(
-        future: Future.delayed(const Duration(seconds: 3)),
+        future: Future.delayed(const Duration(seconds: 4)),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Stack(
+            return Center(
+                child: Lottie.asset('assets/animations/SplashFlow.json'));
+          } else {
+            // Navigate to the starting page
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Navigator.pushReplacementNamed(context, '/starting');
+            });
+            return Container(); // Placeholder widget
+          }
+        },
+      ),
+    );
+  }
+}
+
+
+/**
+ * 
+ * Stack(
               children: [
                 Container(color: AppColors.primaryDark),
                 Positioned(
@@ -49,32 +69,20 @@ class SplashScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const Positioned(
+                Positioned(
                   bottom: 150,
                   left: 0,
                   right: 0,
                   child: Center(
                     child: SizedBox(
-                      width: 50,
-                      height: 50,
-                      child: SpinKitCircle(
-                        color: AppColors.onPrimary,
-                        size: 50.0,
-                      ),
-                    ),
+                        width: 150,
+                        height: 150,
+                        child: Lottie.asset("assets/animations/walk.json")),
                   ),
                 ),
               ],
             );
-          } else {
-            // Navigate to the starting page
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pushReplacementNamed(context, '/starting');
-            });
-            return Container(); // Placeholder widget
-          }
-        },
-      ),
-    );
-  }
-}
+ * 
+ * 
+ * 
+ */
