@@ -1,10 +1,11 @@
-import 'dart:io' as io;
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart' show Uint8List;
 
 import 'package:gpx/gpx.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/_pcic_form_1.dart';
 import 'package:pcic_mobile_app/utils/_app_gpx.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 import 'package:pcic_mobile_app/utils/controls/_location_service.dart';
@@ -77,48 +78,86 @@ class _GeotagPageState extends State<GeotagPage> {
   }
 
   void _stopRouting() async {
-    setState(() {
-      isRoutingStarted = false;
-      _mapService.clearMarkers();
-    });
-
-    List<Wpt> routePoints = _mapService.routePoints
-        .map((point) => Wpt(lat: point.latitude, lon: point.longitude))
-        .toList();
-
-    var gpx = GpxUtil.createGpx(routePoints);
-    var gpxString = GpxWriter().asString(gpx);
-
-    await _saveGpxFile(gpxString);
-
-    final screenshotBytes = await _mapService.captureMapScreenshot();
-    if (screenshotBytes != null) {
-      await _saveMapScreenshot(screenshotBytes);
-    }
-
-    // Show a snackbar to indicate that the files are saved
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('GPX file and screenshot saved successfully!'),
-        duration: Duration(seconds: 2),
+    bool? shouldStop = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmation'),
+        content: const Text('Are you sure you want to stop routing?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('OK'),
+          ),
+        ],
       ),
     );
+
+    if (shouldStop == true) {
+      setState(() {
+        isRoutingStarted = false;
+        _mapService.clearMarkers();
+      });
+
+      List<Wpt> routePoints = _mapService.routePoints
+          .map((point) => Wpt(lat: point.latitude, lon: point.longitude))
+          .toList();
+
+      var gpx = GpxUtil.createGpx(routePoints);
+      var gpxString = GpxWriter().asString(gpx);
+
+      String gpxFilePath = await _saveGpxFile(gpxString);
+      String screenshotFilePath = '';
+
+      final screenshotBytes = await _mapService.captureMapScreenshot();
+      if (screenshotBytes != null) {
+        screenshotFilePath = await _saveMapScreenshot(screenshotBytes);
+      }
+
+      // Show a snackbar with the file locations
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              'Files saved:\nGPX: $gpxFilePath\nScreenshot: $screenshotFilePath'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+
+      // Delay for 2 seconds before navigating to the forms page
+      await Future.delayed(const Duration(seconds: 2));
+
+      // Navigate to the forms page
+      Navigator.push(
+        // ignore: use_build_context_synchronously
+        context,
+        MaterialPageRoute(
+          builder: (context) => PCICFormPage(
+            imageFile: screenshotFilePath,
+            gpxFile: gpxFilePath,
+          ),
+        ),
+      );
+    }
   }
 
-  Future<void> _saveGpxFile(String gpxString) async {
-    // Android-specific implementation
-    final directory = await getApplicationDocumentsDirectory();
-    final file = io.File('${directory.path}/route.gpx');
+  Future<String> _saveGpxFile(String gpxString) async {
+    final directory = await getExternalStorageDirectory();
+    final file = File('${directory!.path}/route.gpx');
     await file.writeAsString(gpxString);
     debugPrint('GPX file saved: ${file.path}');
+    return file.path;
   }
 
-  Future<void> _saveMapScreenshot(Uint8List screenshotBytes) async {
-    // Android-specific implementation
-    final directory = await getApplicationDocumentsDirectory();
-    final file = io.File('${directory.path}/map_screenshot.png');
+  Future<String> _saveMapScreenshot(Uint8List screenshotBytes) async {
+    final directory = await getExternalStorageDirectory();
+    final file = File('${directory!.path}/map_screenshot.png');
     await file.writeAsBytes(screenshotBytes);
     debugPrint('Map screenshot saved: ${file.path}');
+    return file.path;
   }
 
   Future<void> _addMarkerAtCurrentLocation() async {

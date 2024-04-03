@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:pcic_mobile_app/utils/_app_firebase.dart';
 import 'package:provider/provider.dart';
 import 'package:pcic_mobile_app/screens/_splash.dart';
@@ -21,6 +22,10 @@ import 'package:firebase_core/firebase_core.dart';
 void main() async {
   await dotenv.load(fileName: "assets/config/.env");
   WidgetsFlutterBinding.ensureInitialized();
+  await FlutterDownloader.initialize(
+    debug: true,
+    ignoreSsl: true,
+  );
   await Firebase.initializeApp(
       options: DefaultFirebaseOptions
           .currentPlatform); // Initialize Firebase with the appropriate options
