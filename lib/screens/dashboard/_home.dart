@@ -9,6 +9,7 @@ import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_profile
 import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_recent_task_container.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_search_button.dart';
 import 'package:pcic_mobile_app/utils/_app_session.dart';
+import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -92,12 +93,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late Session _session;
   String? _token;
+  List<Task> _tasks = [];
 
   @override
   void initState() {
     super.initState();
     _session = Session();
     _retrieveToken();
+    _fetchTasks();
   }
 
   Future<void> _retrieveToken() async {
@@ -105,6 +108,17 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _token = token;
     });
+  }
+
+  Future<void> _fetchTasks() async {
+    try {
+      List<Task> tasks = await Task.getAllTasks();
+      setState(() {
+        _tasks = tasks;
+      });
+    } catch (error) {
+      debugPrint('Error fetching tasks: $error');
+    }
   }
 
   Future<void> _handleLogout() async {
@@ -129,12 +143,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> recentTasks = [
-      'Task 1',
-      'Task 2',
-      'Task 3',
-    ];
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -159,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 8),
                     RecentTaskContainer(
-                      tasks: recentTasks,
+                      tasks: _tasks.map((task) => task.id.toString()).toList(),
                     ),
                   ],
                 ),
