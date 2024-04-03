@@ -20,7 +20,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _fetchData() async {
     try {
-      final snapshot = await _databaseReference.child('agentsTask').get();
+      final snapshot = await _databaseReference.child('tasks').get();
       if (snapshot.exists) {
         final value = snapshot.value;
         if (value != null) {
@@ -71,8 +71,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Job ID: ${agent['jobID'] ?? ''}'),
-                      Text('Task ID: ${agent['taskID'] ?? ''}'),
+                      Text('Job ID: ${agent['ppir_assignmentid'] ?? ''}'),
+                      Text('Task ID: ${agent['ppir_insuranceid'] ?? ''}'),
                       Text('Date Access: ${agent['dateAccess'] ?? ''}'),
                       Text('Date Added: ${agent['dateAdded'] ?? ''}'),
                       Text('Is Complete: ${agent['isComplete'] ?? ''}'),

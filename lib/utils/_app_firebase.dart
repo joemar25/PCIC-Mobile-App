@@ -44,7 +44,7 @@ class DefaultFirebaseOptions {
     projectId: 'pcic-97692',
     authDomain: 'pcic-97692.firebaseapp.com',
     storageBucket: 'pcic-97692.appspot.com',
-    databaseURL: "pcic-97692-default-rtdb.firebaseio.com",
+    databaseURL: "https://pcic-97692-default-rtdb.firebaseio.com",
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -53,6 +53,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '331409317731',
     projectId: 'pcic-97692',
     storageBucket: 'pcic-97692.appspot.com',
-    databaseURL: "pcic-97692-default-rtdb.firebaseio.com",
+    databaseURL: "https://pcic-97692-default-rtdb.firebaseio.com",
   );
 }

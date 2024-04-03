@@ -78,7 +78,8 @@ class MyApp extends StatelessWidget {
                   isCompleted: false,
                   dateAdded: DateTime.now(),
                   dateAccess: DateTime.now(),
-                  formData: {},
+                  ppirAssignmentId: 2,
+                  ppirInsuranceId: 3,
                 ),
               ),
             );
