@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/_geotag.dart';
 
+import '_pcic_form_1.dart';
+
 class TaskDetailsPage extends StatelessWidget {
   final Task task;
 
@@ -91,8 +93,22 @@ class TaskDetailsPage extends StatelessWidget {
                 onPressed: () => _navigateToGeotagPage(context),
                 child: const Text('Go to Job Page'),
               ),
+              ElevatedButton(
+                onPressed: () {
+                  // Navigate to the PCICFormPage
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PCICFormPage(),
+                    ),
+                  );
+                },
+                child: const Text('Navigate to form'),
+              ),
           ],
+          
         ),
+        
       ),
     );
   }
