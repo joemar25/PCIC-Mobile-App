@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pcic_mobile_app/screens/dashboard/_home.dart';
+import 'package:pcic_mobile_app/utils/_app_session.dart';
 import 'package:pcic_mobile_app/utils/authentication/_signup.dart';
 import 'package:pcic_mobile_app/utils/authentication/_verify_login.dart';
 
@@ -13,6 +15,24 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String _email = '';
   String _password = '';
+  final Session _session = Session();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkExistingToken();
+  }
+
+  Future<void> _checkExistingToken() async {
+    String? token = await _session.getToken();
+    if (token != null) {
+      // Token exists, navigate to the home page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const DashboardPage()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,6 +152,11 @@ class _LoginPageState extends State<LoginPage> {
                       email: _email,
                       password: _password,
                     );
+                    // Login successful, initialize the session with the user token
+                    String? token = await userCredential.user?.getIdToken();
+                    if (token != null) {
+                      _session.init(token);
+                    }
                     // Login successful, navigate to the next screen
                     Navigator.push(
                       context,
@@ -141,9 +166,11 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     );
+
+                    debugPrint('Token: $token');
                   } catch (e) {
                     // Handle login error
-                    print('Login error: $e');
+                    debugPrint('Login error: $e');
                     // Show an error message to the user
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:pcic_mobile_app/utils/_app_firebase.dart';
 import 'package:provider/provider.dart';
 import 'package:pcic_mobile_app/screens/_splash.dart';
@@ -21,9 +22,14 @@ import 'package:firebase_core/firebase_core.dart';
 void main() async {
   await dotenv.load(fileName: "assets/config/.env");
   WidgetsFlutterBinding.ensureInitialized();
+  await FlutterDownloader.initialize(
+    debug: true,
+    ignoreSsl: true,
+  );
   await Firebase.initializeApp(
-      options: DefaultFirebaseOptions
-          .currentPlatform); // Initialize Firebase with the appropriate options
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(
     MultiProvider(
       providers: [
@@ -44,31 +50,53 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "PCIC Mobile App",
       initialRoute: AppRoutes.splash,
-      routes: {
-        // routes
-        AppRoutes.splash: (context) => const SplashScreen(),
-        AppRoutes.starting: (context) => const StartingPage(),
-        AppRoutes.login: (context) => const LoginPage(),
-        AppRoutes.signup: (context) => const SignupPage(),
-        AppRoutes.home: (context) => const DashboardPage(),
-        AppRoutes.task: (context) => const TaskPage(),
-        AppRoutes.message: (context) => const MessagesPage(),
-        AppRoutes.job: (context) => GeotagPage(
+      onGenerateRoute: (RouteSettings settings) {
+        switch (settings.name) {
+          case AppRoutes.splash:
+            return MaterialPageRoute(
+                builder: (context) => const SplashScreen());
+          case AppRoutes.starting:
+            return MaterialPageRoute(
+                builder: (context) => const StartingPage());
+          case AppRoutes.login:
+            return MaterialPageRoute(builder: (context) => const LoginPage());
+          case AppRoutes.signup:
+            return MaterialPageRoute(builder: (context) => const SignupPage());
+          case AppRoutes.home:
+            return MaterialPageRoute(
+                builder: (context) => const DashboardPage());
+          case AppRoutes.task:
+            return MaterialPageRoute(builder: (context) => const TaskPage());
+          case AppRoutes.message:
+            return MaterialPageRoute(
+                builder: (context) => const MessagesPage());
+          case AppRoutes.job:
+            return MaterialPageRoute(
+              builder: (context) => GeotagPage(
                 task: Task(
-              id: 1,
-              // title: 'Sample Task',
-              // description: 'This is a sample task.',
-              isCompleted: false,
-              dateAdded: DateTime.now(),
-              dateAccess: DateTime.now(),
-              // geotaggedPhoto: '',
-              formData: {},
-            )),
-        // controls
-        AppRoutes.verifyLogin: (context) =>
-            const VerifyLoginPage(isLoginSuccessful: true),
-        AppRoutes.verifySignup: (context) =>
-            const VerifySignupPage(isSignupSuccessful: true),
+                  id: 1,
+                  isCompleted: false,
+                  dateAdded: DateTime.now(),
+                  dateAccess: DateTime.now(),
+                  formData: {},
+                ),
+              ),
+            );
+          case AppRoutes.verifyLogin:
+            return MaterialPageRoute(
+                builder: (context) =>
+                    const VerifyLoginPage(isLoginSuccessful: true));
+          case AppRoutes.verifySignup:
+            return MaterialPageRoute(
+                builder: (context) =>
+                    const VerifySignupPage(isSignupSuccessful: true));
+          case '/dashboard':
+            return MaterialPageRoute(
+                builder: (context) => const DashboardPage());
+          default:
+            return MaterialPageRoute(
+                builder: (context) => const SplashScreen());
+        }
       },
     );
   }
