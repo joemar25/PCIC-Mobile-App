@@ -45,11 +45,15 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFD2FFCB),
       body: FutureBuilder(
-        future: Future.delayed(const Duration(seconds: 4)),
+        future: Future.delayed(const Duration(seconds: 3)),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-                child: Lottie.asset('assets/animations/SplashFlow.json'));
+                child: Image.asset(
+              'assets/animations/loading-location.gif',
+              width: 75,
+              height: 75,
+            ));
           } else {
             // Navigate to the starting page
             WidgetsBinding.instance.addPostFrameCallback((_) {
