@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-// import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
-import 'package:pcic_mobile_app/utils/controls/_filter_task.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/_task_details.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/_geotag.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/tasks_components/_task_container.dart'; // Import the TaskContainer widget
 
 class TaskPage extends StatefulWidget {
   const TaskPage({super.key});
@@ -13,207 +12,36 @@ class TaskPage extends StatefulWidget {
 }
 
 class _TaskPageState extends State<TaskPage> {
-  Future<List<Task>> tasks = Task.getAllTasks();
-  List<Task> filteredTasks = [];
-
-  bool _isUpcomingTasksSelected = true;
-  String _searchQuery = '';
-  bool _sortEarliest = true;
+  List<Task> _tasks = []; // Initialize an empty list of tasks
 
   @override
   void initState() {
     super.initState();
-    _loadFilters();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _postFrameCallback();
-    });
+    _fetchTasks(); // Fetch tasks when the page initializes
   }
 
-  void _postFrameCallback() {
-    _filterTasksAsync();
-  }
-
-  void _loadFilters() {
-    final filters =
-        Provider.of<TaskFiltersNotifier>(context, listen: false).filters;
-    setState(() {
-      _isUpcomingTasksSelected = filters.isUpcomingTasksSelected;
-      _searchQuery = filters.searchQuery;
-      _sortEarliest = filters.sortEarliest;
-    });
-  }
-
-  Future<void> _filterTasksAsync() async {
-    List<Task> taskList = await tasks; // Add this line to resolve the Future
-    final filteredList = taskList
-        // .where((task) =>
-        // task.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-        // task.description.toLowerCase().contains(_searchQuery.toLowerCase()))
-        .where((task) =>
-            _isUpcomingTasksSelected ? !task.isCompleted : task.isCompleted)
-        .toList();
-
-    filteredList.sort((a, b) {
-      if (_sortEarliest) {
-        return a.dateAdded.compareTo(b.dateAdded);
-      } else {
-        return b.dateAdded.compareTo(a.dateAdded);
-      }
-    });
-
-    setState(() {
-      filteredTasks = filteredList;
-    });
-
-    Provider.of<TaskFiltersNotifier>(context, listen: false).updateFilters(
-      TaskFilters(
-        isUpcomingTasksSelected: _isUpcomingTasksSelected,
-        searchQuery: _searchQuery,
-        sortEarliest: _sortEarliest,
-      ),
-    );
-  }
-
-  void _toggleTaskView() {
-    setState(() {
-      _isUpcomingTasksSelected = !_isUpcomingTasksSelected;
-    });
-    _filterTasksAsync();
-  }
-
-  void _navigateToTaskDetails(Task task) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TaskDetailsPage(task: task),
-      ),
-    );
+  Future<void> _fetchTasks() async {
+    try {
+      List<Task> tasks = await Task.getAllTasks(); // Fetch all tasks
+      setState(() {
+        _tasks = tasks; // Update the list of tasks
+      });
+    } catch (error) {
+      debugPrint('Error fetching tasks: $error');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Tasks',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-                _filterTasksAsync();
-              },
-              decoration: InputDecoration(
-                hintText: 'Search tasks...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24.0),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16.0),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed:
-                        _isUpcomingTasksSelected ? null : _toggleTaskView,
-                    style: TextButton.styleFrom(
-                      backgroundColor: _isUpcomingTasksSelected
-                          ? Colors.blue.withOpacity(0.2)
-                          : null,
-                    ),
-                    child: const Text('Upcoming'),
-                  ),
-                ),
-                const SizedBox(width: 16.0),
-                Expanded(
-                  child: TextButton(
-                    onPressed:
-                        !_isUpcomingTasksSelected ? null : _toggleTaskView,
-                    style: TextButton.styleFrom(
-                      backgroundColor: !_isUpcomingTasksSelected
-                          ? Colors.blue.withOpacity(0.2)
-                          : null,
-                    ),
-                    child: const Text('Completed'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16.0),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Sort by:'),
-                DropdownButton<bool>(
-                  value: _sortEarliest,
-                  onChanged: (value) {
-                    setState(() {
-                      _sortEarliest = value!;
-                    });
-                    _filterTasksAsync();
-                  },
-                  items: const [
-                    DropdownMenuItem(value: true, child: Text('Earliest')),
-                    DropdownMenuItem(value: false, child: Text('Latest')),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16.0),
-          Expanded(
-            child: filteredTasks.isEmpty
-                ? Center(
-                    child: Text(
-                      _isUpcomingTasksSelected
-                          ? 'No upcoming tasks'
-                          : 'No completed tasks',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  )
-                : ListView.separated(
-                    itemCount: filteredTasks.length,
-                    itemBuilder: (context, index) {
-                      final task = filteredTasks[index];
-                      return ListTile(
-                        title: Text(
-                          task.id.toString(),
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        // subtitle: Text(
-                        //   '${task.description}\nDate Added: ${DateFormat('MMM d, yyyy').format(task.dateAdded)}',
-                        //   maxLines: 2,
-                        //   overflow: TextOverflow.ellipsis,
-                        // ),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () => _navigateToTaskDetails(task),
-                      );
-                    },
-                    separatorBuilder: (context, index) => const Divider(),
-                  ),
-          ),
-        ],
+      appBar: AppBar(
+        title: const Text('Tasks'),
       ),
+      body: _tasks.isNotEmpty
+          ? TaskContainer(tasks: _tasks)
+          : const Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 }

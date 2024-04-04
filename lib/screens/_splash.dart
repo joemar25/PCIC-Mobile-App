@@ -24,27 +24,19 @@ class _SplashScreenState extends State<SplashScreen> {
     Session session = Session();
     String? token = await session.getToken();
     await Future.delayed(const Duration(seconds: 3));
-    if (token != null) {
-      // Token exists, navigate to the dashboard
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const DashboardPage()),
-      );
-    } else {
-      // No token, navigate to the starting page
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const StartingPage()),
-      );
+    // Token exists, navigate to the dashboard
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const DashboardPage()),
+    );
     }
-  }
 
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Color(0xFFD2FFCB),
+      backgroundColor: const Color(0xFFD2FFCB),
       body: FutureBuilder(
         future: Future.delayed(const Duration(seconds: 4)),
         builder: (context, snapshot) {
