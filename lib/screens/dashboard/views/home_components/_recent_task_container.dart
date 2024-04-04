@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_recent_task_footer.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_recent_task_header.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
@@ -53,7 +54,7 @@ class _RecentTaskContainerState extends State<RecentTaskContainer> {
           ),
         );
       },
-    );
+    ).animate().fadeIn(delay: 200.ms, duration: 450.ms);
   }
 
   void _navigateToTaskDetails(BuildContext context, Task task) {

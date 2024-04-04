@@ -163,9 +163,19 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 16),
               const SearchButton(),
               const SizedBox(height: 16),
-              const Text(
-                'Recent Task',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              const Row(
+                children: [
+                  Icon(
+                    Icons.access_time,
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(
+                    'Recent Task',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
               const SizedBox(height: 8),
               RecentTaskContainer(tasks: _tasks),
