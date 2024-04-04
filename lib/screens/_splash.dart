@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/_starting.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_home.dart';
-import 'package:lottie/lottie.dart';
 import 'package:pcic_mobile_app/utils/_app_session.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -40,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    // final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: const Color(0xFFD2FFCB),
