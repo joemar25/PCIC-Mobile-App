@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pcic_mobile_app/screens/_starting.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_home.dart';
 import 'package:lottie/lottie.dart';
-// import 'package:pcic_mobile_app/utils/_app_colors.dart';
 import 'package:pcic_mobile_app/utils/_app_session.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -24,6 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Session session = Session();
     String? token = await session.getToken();
     await Future.delayed(const Duration(seconds: 3));
+    // Check if the token exists
     if (token != null) {
       // Token exists, navigate to the dashboard
       Navigator.pushReplacement(
@@ -31,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
         MaterialPageRoute(builder: (context) => const DashboardPage()),
       );
     } else {
-      // No token, navigate to the starting page
+      // Token does not exist, navigate to the starting page
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const StartingPage()),

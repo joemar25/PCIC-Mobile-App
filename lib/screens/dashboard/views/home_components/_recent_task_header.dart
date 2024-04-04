@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 
 class RecentTaskHeader extends StatelessWidget {
-  const RecentTaskHeader({super.key});
+  final Task task;
+
+  const RecentTaskHeader({super.key, required this.task});
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(
+    return Padding(
+      padding: const EdgeInsets.symmetric(
         horizontal: 12,
         vertical: 10,
       ),
@@ -14,32 +17,36 @@ class RecentTaskHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: 8),
             child: Row(
               children: [
-                Image(
-                  image: AssetImage('assets/storage/images/FormImage.png'),
+                Image.asset(
+                  'assets/storage/images/FormImage.png',
                   height: 55,
                   width: 55,
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Natural Disaster',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
+                      '${task.csvData?['serviceGroup']} ${task.ppirInsuranceId}',
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text(
-                      'ID Number',
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.w100),
-                    )
+                      '${task.csvData?['priority']}',
+                      // 'PPIR INSURANCE ID: ${task.ppirInsuranceId}',
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w100,
+                      ),
+                    ),
                   ],
                 ),
               ],

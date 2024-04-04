@@ -37,6 +37,7 @@ Your project contains issues that can be fixed by running "dart fix" from the co
 
 ```cmd
     dart fix
+    dart fix --apply
 ```
 
 ## Mapbox

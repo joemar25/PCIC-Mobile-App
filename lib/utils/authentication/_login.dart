@@ -112,8 +112,16 @@ class _LoginPageState extends State<LoginPage> {
                       Row(
                         children: [
                           Checkbox(
-                            value: true,
-                            onChanged: null,
+                            value:
+                                false, // Set the value to a variable to handle its state
+                            onChanged: (value) {
+                              // Handle the checkbox state change here
+                              setState(() {
+                                // Update the checkbox value when the state changes
+                                // This will be used to remember the user
+                                // You can store this value in a variable or persist it using SharedPreferences
+                              });
+                            },
                             fillColor: MaterialStateProperty.all(
                                 const Color(0xFF89C53F)),
                             checkColor: Colors.white,
@@ -154,9 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                     );
                     // Login successful, initialize the session with the user token
                     String? token = await userCredential.user?.getIdToken();
-                    if (token != null) {
-                      _session.init(token);
-                    }
+                    _session.init(token!);
                     // Login successful, navigate to the next screen
                     Navigator.push(
                       context,
