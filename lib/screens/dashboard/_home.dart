@@ -166,9 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
-                    RecentTaskContainer(
-                      tasks: _tasks.map((task) => task.id.toString()).toList(),
-                    ),
+                    RecentTaskContainer(tasks: _tasks),
                   ],
                 ),
               ),

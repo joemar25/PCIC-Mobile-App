@@ -25,13 +25,11 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _checkExistingToken() async {
     String? token = await _session.getToken();
-    if (token != null) {
-      // Token exists, navigate to the home page
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const DashboardPage()),
-      );
-    }
+    // Token exists, navigate to the home page
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const DashboardPage()),
+    );
   }
 
   @override
@@ -154,9 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                     );
                     // Login successful, initialize the session with the user token
                     String? token = await userCredential.user?.getIdToken();
-                    if (token != null) {
-                      _session.init(token);
-                    }
+                    _session.init(token!);
                     // Login successful, navigate to the next screen
                     Navigator.push(
                       context,

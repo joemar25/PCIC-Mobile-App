@@ -10,14 +10,12 @@ class StartingPage extends StatelessWidget {
   Future<void> _checkExistingToken(BuildContext context) async {
     Session session = Session();
     String? token = await session.getToken();
-    if (token != null) {
-      // Token exists, navigate to the dashboard
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const DashboardPage()),
-      );
+    // Token exists, navigate to the dashboard
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const DashboardPage()),
+    );
     }
-  }
 
   @override
   Widget build(BuildContext context) {
