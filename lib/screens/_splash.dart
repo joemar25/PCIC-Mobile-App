@@ -44,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Color(0xFFD2FFCB),
+      backgroundColor: const Color(0xFFD2FFCB),
       body: FutureBuilder(
         future: Future.delayed(const Duration(seconds: 4)),
         builder: (context, snapshot) {
