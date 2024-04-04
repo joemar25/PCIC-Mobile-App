@@ -25,11 +25,13 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _checkExistingToken() async {
     String? token = await _session.getToken();
-    // Token exists, navigate to the home page
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const DashboardPage()),
-    );
+    if (token != null) {
+      // Token exists, navigate to the home page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const DashboardPage()),
+      );
+    }
   }
 
   @override
@@ -110,8 +112,16 @@ class _LoginPageState extends State<LoginPage> {
                       Row(
                         children: [
                           Checkbox(
-                            value: true,
-                            onChanged: null,
+                            value:
+                                false, // Set the value to a variable to handle its state
+                            onChanged: (value) {
+                              // Handle the checkbox state change here
+                              setState(() {
+                                // Update the checkbox value when the state changes
+                                // This will be used to remember the user
+                                // You can store this value in a variable or persist it using SharedPreferences
+                              });
+                            },
                             fillColor: MaterialStateProperty.all(
                                 const Color(0xFF89C53F)),
                             checkColor: Colors.white,
