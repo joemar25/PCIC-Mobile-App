@@ -73,6 +73,7 @@ class Task {
       for (List<dynamic> row in csvList) {
         String ppirInsuranceId = row[7].toString();
         csvDataMap[ppirInsuranceId] = {
+          // Task Number
           'serviceGroup': row[1],
           'serviceType': row[2],
           'priority': row[3],
@@ -92,8 +93,21 @@ class Task {
           'ppirSouth': row[19],
           'ppirEast': row[20],
           'ppirWest': row[21],
-
-          // Task Number	Service Group	Service Type	Priority	Task Status	Assignee	ppir_assignmentid	ppir_insuranceid	ppir_farmername	ppir_address	ppir_farmertype	ppir_mobileno	ppir_groupname	ppir_groupaddress	ppir_lendername	ppir_lenderaddress	ppir_cicno	ppir_farmloc	ppir_north	ppir_south	ppir_east	ppir_west	ppir_area_aci	ppir_area_act	ppir_dopds_aci	ppir_dopds_act	ppir_doptp_aci	ppir_doptp_act	ppir_svp_aci	ppir_svp_act	ppir_variety	ppir_stagecrop	ppir_remarks	ppir_name_insured	ppir_name_iuia	ppir_sig_insured	ppir_sig_iuia
+          // ppir_area_aci
+          // ppir_area_act
+          // ppir_dopds_aci
+          // ppir_dopds_act
+          // ppir_doptp_aci
+          // ppir_doptp_act
+          // ppir_svp_aci
+          // ppir_svp_act
+          // ppir_variety
+          // ppir_stagecrop
+          // ppir_remarks
+          // ppir_name_insured
+          // ppir_name_iuia
+          // ppir_sig_insured
+          // ppir_sig_iuia
         };
       }
 

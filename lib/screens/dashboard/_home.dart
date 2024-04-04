@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pcic_mobile_app/screens/_splash.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/_logout.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_message.dart';
 import 'package:pcic_mobile_app/screens/dashboard/_task.dart';
@@ -10,6 +11,7 @@ import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_recent_
 import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_search_button.dart';
 import 'package:pcic_mobile_app/utils/_app_session.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -91,23 +93,39 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late Session _session;
   String? _token;
   List<Task> _tasks = [];
 
   @override
   void initState() {
     super.initState();
-    _session = Session();
-    _retrieveToken();
+    _checkLoginStatus();
     _fetchTasks();
   }
 
-  Future<void> _retrieveToken() async {
-    String? token = await _session.getToken();
-    setState(() {
-      _token = token;
-    });
+  Future<void> _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    if (token == null) {
+      // Redirect to the splash screen if token is null
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const SplashScreen()),
+      );
+    } else {
+      setState(() {
+        _token = token;
+      });
+    }
+  }
+
+  Future<void> _handleLogout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token');
+
+    // Redirect to the splash screen
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const SplashScreen()),
+    );
   }
 
   Future<void> _fetchTasks() async {
@@ -121,59 +139,43 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> _handleLogout() async {
-    try {
-      await FirebaseAuth.instance.signOut();
-      // Clear the session token
-      await _session.stop();
-      // Navigate to the logout success page
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LogoutSuccessPage()),
-      );
-    } catch (e) {
-      // Handle logout error
-      print('Logout error: $e');
-      // Show an error message to the user
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Logout failed. Please try again.')),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    // If there's no token, show a loading indicator while waiting for the redirection to complete.
+    if (_token == null) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: HomeHeader(onLogout: _handleLogout),
       ),
-      body: _token != null
-          ? SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 16),
-                    const ProfileContainer(),
-                    const SizedBox(height: 16),
-                    const SearchButton(),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Recent Task',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    RecentTaskContainer(tasks: _tasks),
-                  ],
-                ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              const ProfileContainer(),
+              const SizedBox(height: 16),
+              const SearchButton(),
+              const SizedBox(height: 16),
+              const Text(
+                'Recent Task',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-            )
-          : const Center(
-              child: Text('Please log in to access the dashboard.'),
-            ),
+              const SizedBox(height: 8),
+              RecentTaskContainer(tasks: _tasks),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
