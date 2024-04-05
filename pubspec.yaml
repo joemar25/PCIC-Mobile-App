@@ -39,6 +39,7 @@ dependencies:
   camera: ^0.10.5+9
   flutter_animate: ^4.5.0 #decide latur
   # flutter_plugin_android_lifecycle: ^2.0.17
+  signature: ^5.4.1
 
 dev_dependencies:
   flutter_test:

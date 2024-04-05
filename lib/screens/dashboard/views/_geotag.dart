@@ -155,6 +155,7 @@ class _GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
             builder: (context) => PCICFormPage(
               imageFile: screenshotFilePath,
               gpxFile: gpxFilePath,
+              task: widget.task,
             ),
           ),
         );
