@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 
 class Task {
   final int id;
-  late final bool isCompleted;
+  bool isCompleted;
   final DateTime dateAdded;
   final DateTime dateAccess;
   final int ppirAssignmentId;
@@ -25,6 +25,10 @@ class Task {
     required this.ppirInsuranceId,
     this.csvData,
   });
+
+  void setCompleted(bool value) {
+    isCompleted = value;
+  }
 
   Map<String, bool> getColumnStatus() {
     Map<String, bool> columnStatus = {};

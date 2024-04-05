@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/tasks_components/_signature_section.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/_geotag.dart';
 
@@ -14,6 +15,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
   Map<String, String> formData = {};
   Map<String, bool> columnStatus = {};
   bool isEditing = false;
+  bool hasChanges = false;
 
   @override
   void initState() {
@@ -23,8 +25,8 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
   }
 
   void _initializeFormData() {
-    formData = widget.task.csvData?.map((key, value) =>
-            MapEntry(key, value != null ? value.toString() : '')) ??
+    formData = widget.task.csvData
+            ?.map((key, value) => MapEntry(key, value?.toString() ?? '')) ??
         {};
   }
 
@@ -32,13 +34,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
     columnStatus = widget.task.getColumnStatus();
   }
 
-  void _updateColumnStatus(String label, String value) {
-    setState(() {
-      columnStatus[label] = value.isNotEmpty;
-    });
-  }
-
-  void _navigateToGeotagPage(BuildContext context) {
+  void _navigateToGeotagPage() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => GeotagPage(task: widget.task)),
@@ -51,10 +47,11 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
       appBar: AppBar(
         title: const Text('Task Details'),
         actions: [
-          IconButton(
-            onPressed: isEditing ? _saveFormData : _startEditing,
-            icon: Icon(isEditing ? Icons.save : Icons.edit),
-          ),
+          if (isEditing)
+            IconButton(
+              onPressed: _saveFormData,
+              icon: const Icon(Icons.save),
+            ),
         ],
       ),
       body: SingleChildScrollView(
@@ -70,14 +67,11 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
             _buildFormFields(),
             const SizedBox(height: 24.0),
             ElevatedButton(
-              onPressed: _saveFormData,
-              child: const Text('Save'),
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () => _navigateToGeotagPage(context),
+              onPressed: _navigateToGeotagPage,
               child: const Text('Go to Geotag'),
             ),
+            const SizedBox(height: 20),
+            SignatureSection(task: widget.task),
           ],
         ),
       ),
@@ -86,7 +80,16 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
 
   Widget _buildFormFields() {
     return Column(
-      children: formData.entries.map((entry) {
+      children: formData.entries
+          .where((entry) =>
+              entry.key != 'serviceGroup' &&
+              entry.key != 'serviceType' &&
+              entry.key != 'taskStatus' &&
+              entry.key != 'ppirNameInsured' &&
+              entry.key != 'ppirNameIuia' &&
+              entry.key != 'ppirSigInsured' &&
+              entry.key != 'ppirSigIuia')
+          .map((entry) {
         final label = entry.key;
         final value = entry.value;
         return _buildFormField(label, value);
@@ -96,6 +99,8 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
 
   Widget _buildFormField(String label, String initialValue) {
     bool hasValue = columnStatus[label] ?? false;
+    bool canEdit = !hasValue || (isEditing && !hasValue);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -116,17 +121,20 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
             flex: 2,
             child: TextFormField(
               initialValue: initialValue,
-              enabled: isEditing && !hasValue,
+              enabled: canEdit,
               onChanged: (value) {
                 setState(() {
                   formData[label] = value;
+                  if (!isEditing && value.isNotEmpty) {
+                    isEditing = true;
+                  }
+                  hasChanges = true;
                 });
               },
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
                 filled: true,
-                fillColor:
-                    isEditing && !hasValue ? Colors.white : Colors.grey[200],
+                fillColor: canEdit ? Colors.white : Colors.grey,
               ),
             ),
           ),
@@ -135,7 +143,34 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
     );
   }
 
-  void _saveFormData() {
+  void _saveFormData() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Save'),
+          content: const Text('Are you sure you want to save changes?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _performSave();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _performSave() async {
     // Update the task's CSV data with the form data
     widget.task.updateCsvData(formData);
 
@@ -154,17 +189,12 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
       setState(() {
         isEditing = false;
         columnStatus = widget.task.getColumnStatus();
+        hasChanges = false;
       });
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Error saving form data')),
       );
-    });
-  }
-
-  void _startEditing() {
-    setState(() {
-      isEditing = true;
     });
   }
 }
