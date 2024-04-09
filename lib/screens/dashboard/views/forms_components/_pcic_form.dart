@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/forms_components/_success.dart';
@@ -8,16 +9,22 @@ import 'package:pcic_mobile_app/screens/dashboard/views/tasks_components/_signat
 import 'package:pcic_mobile_app/utils/controls/_control_actual_seeds.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 
+import '../../../../utils/controls/_map_service.dart';
+
 class PCICFormPage extends StatefulWidget {
   final String imageFile;
   final String gpxFile;
   final Task task;
+  final List<LatLng> routePoints;
+  final LatLng initialRoutePoint;
 
   const PCICFormPage({
     super.key,
     required this.imageFile,
     required this.gpxFile,
     required this.task,
+    required this.routePoints,
+    required this.initialRoutePoint,
   });
 
   @override
@@ -29,12 +36,21 @@ class _PCICFormPageState extends State<PCICFormPage> {
   Set<String> uniqueTitles = {};
   List<DropdownMenuItem<String>> uniqueSeedsItems = [];
   final _formData = <String, dynamic>{};
+  double _calculatedArea = 0.0;
 
   @override
   void initState() {
     super.initState();
     _initializeFormData();
     _initializeSeeds();
+    _calculateArea();
+  }
+
+  void _calculateArea() {
+    final mapService = MapService();
+    setState(() {
+      _calculatedArea = mapService.calculateAreaOfPolygon(widget.routePoints);
+    });
   }
 
   void _initializeFormData() {
@@ -250,6 +266,16 @@ class _PCICFormPageState extends State<PCICFormPage> {
                   height: 200,
                   fit: BoxFit.cover,
                 ),
+                const SizedBox(height: 10),
+                Text(
+                  'Total Area Result: ${_calculateResult()}',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Initial Route Point: ${widget.initialRoutePoint.latitude}, ${widget.initialRoutePoint.longitude}',
+                  style: const TextStyle(fontSize: 16),
+                ),
                 const SizedBox(height: 20),
                 const Text(
                   'GPX File',
@@ -258,7 +284,6 @@ class _PCICFormPageState extends State<PCICFormPage> {
                 const SizedBox(height: 10),
                 _GPXFileButtons(
                   openGpxFile: () => _openGpxFile(widget.gpxFile),
-                  downloadGpxFile: () => _downloadGpxFile(widget.gpxFile),
                 ),
                 const SizedBox(height: 20),
                 _FormButtons(
@@ -271,6 +296,10 @@ class _PCICFormPageState extends State<PCICFormPage> {
         ),
       ),
     );
+  }
+
+  double _calculateResult() {
+    return _calculatedArea;
   }
 }
 
@@ -307,27 +336,18 @@ class _FormButtons extends StatelessWidget {
 // GPX File Buttons
 class _GPXFileButtons extends StatelessWidget {
   final VoidCallback openGpxFile;
-  final VoidCallback downloadGpxFile;
 
   const _GPXFileButtons({
     required this.openGpxFile,
-    required this.downloadGpxFile,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        ElevatedButton(
-          onPressed: openGpxFile,
-          child: const Text('Open GPX File'),
-        ),
-        ElevatedButton(
-          onPressed: downloadGpxFile,
-          child: const Text('Download GPX File'),
-        ),
-      ],
+    return Center(
+      child: ElevatedButton(
+        onPressed: openGpxFile,
+        child: const Text('Open GPX File'),
+      ),
     );
   }
 }

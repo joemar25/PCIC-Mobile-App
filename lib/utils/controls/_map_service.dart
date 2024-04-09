@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -172,9 +173,36 @@ class MapService {
     mapController.dispose();
     // currentLocationLayer?.dispose();
   }
+
+  // calculation
+  double calculateAreaOfPolygon(List<LatLng> points) {
+    if (points.length < 3) {
+      return 0.0; // Not a polygon
+    }
+    double radius = 6378137.0; // Earth's radius in meters
+    double area = 0.0;
+
+    for (int i = 0; i < points.length; i++) {
+      LatLng p1 = points[i];
+      LatLng p2 = points[(i + 1) % points.length]; // Wrap around at the end
+
+      double lat1 = p1.latitudeInRad;
+      double lon1 = p1.longitudeInRad;
+      double lat2 = p2.latitudeInRad;
+      double lon2 = p2.longitudeInRad;
+
+      // Calculate segment area (using spherical excess formula)
+      double segmentArea = 2 *
+          atan2(
+            tan((lon2 - lon1) / 2) * tan((lat1 + lat2) / 2),
+            1 + tan(lat1 / 2) * tan(lat2 / 2) * cos(lon1 - lon2),
+          );
+      area += segmentArea;
+    }
+
+    return (area * radius * radius).abs();
+  }
 }
-
-
 
 
 
