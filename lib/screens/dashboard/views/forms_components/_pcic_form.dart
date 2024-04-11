@@ -1,3 +1,4 @@
+// pcic_form.dart
 import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -54,19 +55,24 @@ class _PCICFormPageState extends State<PCICFormPage> {
   }
 
   void _initializeFormData() {
-    _formData['ppirAreaAct'] = widget.task.csvData?['ppirAreaAct'] ?? '';
+    _formData['ppirAreaAct'] = _calculatedArea
+        .toStringAsFixed(2); // Set calculated area as uneditable data
     _formData['ppirDopdsAct'] = widget.task.csvData?['ppirDopdsAct'] ?? '';
     _formData['ppirDoptpAct'] = widget.task.csvData?['ppirDoptpAct'] ?? '';
 
     // Check if the ppirVariety value is present in the uniqueTitles set
-    String? ppirVarietyValue = widget.task.csvData?['ppirVariety'];
-    if (ppirVarietyValue != null && uniqueTitles.contains(ppirVarietyValue)) {
+    String? ppirVarietyValue = widget.task.csvData?['ppirVariety'] ??
+        ''; // Provide a default empty string
+    if (ppirVarietyValue!.isNotEmpty &&
+        uniqueTitles.contains(ppirVarietyValue)) {
       _formData['ppirVariety'] = ppirVarietyValue;
     } else {
       _formData['ppirVariety'] = null;
     }
 
     _formData['ppirRemarks'] = widget.task.csvData?['ppirRemarks'] ?? '';
+    _formData['initialRoutePoint'] =
+        '${widget.initialRoutePoint.latitude}, ${widget.initialRoutePoint.longitude}'; // Set initial route point as uneditable data
   }
 
   void _initializeSeeds() {
@@ -247,6 +253,18 @@ class _PCICFormPageState extends State<PCICFormPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                _FormField(
+                  labelText: 'Initial Route Point',
+                  initialValue: _formData['initialRoutePoint'],
+                  enabled: false,
+                ),
+                const SizedBox(height: 20),
+                _FormField(
+                  labelText: 'Area Planted',
+                  initialValue: _formData['ppirAreaAct'],
+                  enabled: false,
+                ),
+                const SizedBox(height: 20),
                 _FormSection(
                     formData: _formData, uniqueSeedsItems: uniqueSeedsItems),
                 const SizedBox(height: 20),
@@ -260,28 +278,18 @@ class _PCICFormPageState extends State<PCICFormPage> {
                   'Map Screenshot',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
                 Image.file(
                   File(widget.imageFile),
                   height: 200,
                   fit: BoxFit.cover,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Total Area Result: ${_calculateResult()}',
-                  style: const TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Initial Route Point: ${widget.initialRoutePoint.latitude}, ${widget.initialRoutePoint.longitude}',
-                  style: const TextStyle(fontSize: 16),
                 ),
                 const SizedBox(height: 20),
                 const Text(
                   'GPX File',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
                 _GPXFileButtons(
                   openGpxFile: () => _openGpxFile(widget.gpxFile),
                 ),
@@ -296,10 +304,6 @@ class _PCICFormPageState extends State<PCICFormPage> {
         ),
       ),
     );
-  }
-
-  double _calculateResult() {
-    return _calculatedArea;
   }
 }
 
@@ -357,13 +361,13 @@ class _GPXFileButtons extends StatelessWidget {
 class _FormField extends StatelessWidget {
   final String labelText;
   final String initialValue;
-  final Function(String) onChanged;
+  final bool enabled;
   final int maxLines;
 
   const _FormField({
     required this.labelText,
     required this.initialValue,
-    required this.onChanged,
+    this.enabled = true,
     this.maxLines = 1,
   });
 
@@ -371,7 +375,7 @@ class _FormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       initialValue: initialValue,
-      onChanged: onChanged,
+      enabled: enabled,
       maxLines: maxLines,
       decoration: InputDecoration(
         labelText: labelText,
@@ -395,22 +399,15 @@ class _FormSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _FormField(
-          labelText: 'Area Planted*',
-          initialValue: formData['ppirAreaAct'],
-          onChanged: (value) => formData['ppirAreaAct'] = value,
-        ),
         const SizedBox(height: 16),
         _FormField(
           labelText: 'Date of Planting (DS)*',
           initialValue: formData['ppirDopdsAct'],
-          onChanged: (value) => formData['ppirDopdsAct'] = value,
         ),
         const SizedBox(height: 16),
         _FormField(
           labelText: 'Date of Planting (TP)*',
           initialValue: formData['ppirDoptpAct'],
-          onChanged: (value) => formData['ppirDoptpAct'] = value,
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
@@ -431,7 +428,6 @@ class _FormSection extends StatelessWidget {
         _FormField(
           labelText: 'Remarks',
           initialValue: formData['ppirRemarks'],
-          onChanged: (value) => formData['ppirRemarks'] = value,
           maxLines: 3,
         ),
       ],
