@@ -37,26 +37,17 @@ class _PCICFormPageState extends State<PCICFormPage> {
   Set<String> uniqueTitles = {};
   List<DropdownMenuItem<String>> uniqueSeedsItems = [];
   final _formData = <String, dynamic>{};
-  double _calculatedArea = 0.0;
+  double? _calculatedArea; // Initialize to null
+  final _areaPlantedController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _initializeFormData();
     _initializeSeeds();
-    _calculateArea();
-  }
-
-  void _calculateArea() {
-    final mapService = MapService();
-    setState(() {
-      _calculatedArea = mapService.calculateAreaOfPolygon(widget.routePoints);
-    });
   }
 
   void _initializeFormData() {
-    _formData['ppirAreaAct'] = _calculatedArea
-        .toStringAsFixed(2); // Set calculated area as uneditable data
     _formData['ppirDopdsAct'] = widget.task.csvData?['ppirDopdsAct'] ?? '';
     _formData['ppirDoptpAct'] = widget.task.csvData?['ppirDoptpAct'] ?? '';
 
@@ -247,63 +238,90 @@ class _PCICFormPageState extends State<PCICFormPage> {
           title: const Text('PCIC Form'),
           leading: Container(),
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _FormField(
-                  labelText: 'Initial Route Point',
-                  initialValue: _formData['initialRoutePoint'],
-                  enabled: false,
+        body: FutureBuilder<double>(
+          future: _calculateAreaAsync(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasData) {
+                _calculatedArea = snapshot.data;
+                _areaPlantedController.text =
+                    _calculatedArea?.toStringAsFixed(2) ?? '';
+              } else {
+                // Handle error case
+              }
+            }
+
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _FormField(
+                      labelText: 'Initial Route Point',
+                      initialValue: _formData['initialRoutePoint'],
+                      enabled: false,
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _areaPlantedController,
+                      decoration: const InputDecoration(
+                        labelText: 'Area Planted',
+                        border: OutlineInputBorder(),
+                      ),
+                      enabled: false,
+                    ),
+                    const SizedBox(height: 20),
+                    _FormSection(
+                        formData: _formData,
+                        uniqueSeedsItems: uniqueSeedsItems),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Signatures:',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SignatureSection(task: widget.task),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Map Screenshot',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20),
+                    Image.file(
+                      File(widget.imageFile),
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'GPX File',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20),
+                    _GPXFileButtons(
+                      openGpxFile: () => _openGpxFile(widget.gpxFile),
+                    ),
+                    const SizedBox(height: 20),
+                    _FormButtons(
+                      cancelForm: _cancelForm,
+                      submitForm: _submitForm,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20),
-                _FormField(
-                  labelText: 'Area Planted',
-                  initialValue: _formData['ppirAreaAct'],
-                  enabled: false,
-                ),
-                const SizedBox(height: 20),
-                _FormSection(
-                    formData: _formData, uniqueSeedsItems: uniqueSeedsItems),
-                const SizedBox(height: 20),
-                const Text(
-                  'Signatures:',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                SignatureSection(task: widget.task),
-                const SizedBox(height: 20),
-                const Text(
-                  'Map Screenshot',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-                Image.file(
-                  File(widget.imageFile),
-                  height: 200,
-                  fit: BoxFit.cover,
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'GPX File',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-                _GPXFileButtons(
-                  openGpxFile: () => _openGpxFile(widget.gpxFile),
-                ),
-                const SizedBox(height: 20),
-                _FormButtons(
-                  cancelForm: _cancelForm,
-                  submitForm: _submitForm,
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
+  }
+
+  Future<double> _calculateAreaAsync() async {
+    final mapService = MapService();
+    return mapService.calculateAreaOfPolygon(widget.routePoints);
   }
 }
 
