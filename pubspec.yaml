@@ -40,6 +40,7 @@ dependencies:
   flutter_animate: ^4.5.0 #decide latur
   # flutter_plugin_android_lifecycle: ^2.0.17
   signature: ^5.4.1
+  external_path: ^1.0.3
 
 dev_dependencies:
   flutter_test:

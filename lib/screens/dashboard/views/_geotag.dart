@@ -1,10 +1,10 @@
 // geotag.dart
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
 import 'package:gpx/gpx.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/forms_components/_pcic_form.dart';
 import 'package:pcic_mobile_app/utils/_app_gpx.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
@@ -167,7 +167,7 @@ class _GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
           isLoading = false;
         });
         // Handle the exception gracefully
-        print('Exception caught: $e');
+        debugPrint('Exception caught: $e');
         // Show an error message to the user
         // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
@@ -181,16 +181,40 @@ class _GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   }
 
   Future<String> _saveGpxFile(String gpxString) async {
-    final directory = await getExternalStorageDirectory();
-    final file = File('${directory!.path}/route.gpx');
+    final filePath = await ExternalPath.getExternalStoragePublicDirectory(
+      ExternalPath.DIRECTORY_DOWNLOADS,
+    );
+    final downloadsDirectory = Directory(filePath);
+    final insuranceId = widget.task.ppirInsuranceId;
+    final insuranceDirectory =
+        Directory('${downloadsDirectory.path}/$insuranceId');
+
+    // Create the insurance directory if it doesn't exist
+    if (!await insuranceDirectory.exists()) {
+      await insuranceDirectory.create(recursive: true);
+    }
+
+    final file = File('${insuranceDirectory.path}/$insuranceId.gpx');
     await file.writeAsString(gpxString);
     debugPrint('GPX file saved: ${file.path}');
     return file.path;
   }
 
   Future<String> _saveMapScreenshot(Uint8List screenshotBytes) async {
-    final directory = await getExternalStorageDirectory();
-    final file = File('${directory!.path}/map_screenshot.png');
+    final filePath = await ExternalPath.getExternalStoragePublicDirectory(
+      ExternalPath.DIRECTORY_DOWNLOADS,
+    );
+    final downloadsDirectory = Directory(filePath);
+    final insuranceId = widget.task.ppirInsuranceId;
+    final insuranceDirectory =
+        Directory('${downloadsDirectory.path}/$insuranceId');
+
+    // Create the insurance directory if it doesn't exist
+    if (!await insuranceDirectory.exists()) {
+      await insuranceDirectory.create(recursive: true);
+    }
+
+    final file = File('${insuranceDirectory.path}/$insuranceId.png');
     await file.writeAsBytes(screenshotBytes);
     debugPrint('Map screenshot saved: ${file.path}');
     return file.path;
