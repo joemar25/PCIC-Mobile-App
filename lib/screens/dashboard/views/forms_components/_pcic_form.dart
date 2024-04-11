@@ -1,23 +1,31 @@
+// pcic_form.dart
 import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/forms_components/_success.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/tasks_components/_signature_section.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_actual_seeds.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
+import 'package:pcic_mobile_app/utils/controls/_map_service.dart';
 
 class PCICFormPage extends StatefulWidget {
   final String imageFile;
   final String gpxFile;
   final Task task;
+  final List<LatLng> routePoints;
+  final LatLng initialRoutePoint;
 
   const PCICFormPage({
     super.key,
     required this.imageFile,
     required this.gpxFile,
     required this.task,
+    required this.routePoints,
+    required this.initialRoutePoint,
   });
 
   @override
@@ -29,28 +37,33 @@ class _PCICFormPageState extends State<PCICFormPage> {
   Set<String> uniqueTitles = {};
   List<DropdownMenuItem<String>> uniqueSeedsItems = [];
   final _formData = <String, dynamic>{};
+  final _areaPlantedController = TextEditingController();
+  final _areaInHectaresController = TextEditingController();
+  final _totalDistanceController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _initializeFormData();
     _initializeSeeds();
+    _calculateAreaAndDistance();
   }
 
   void _initializeFormData() {
-    _formData['ppirAreaAct'] = widget.task.csvData?['ppirAreaAct'] ?? '';
     _formData['ppirDopdsAct'] = widget.task.csvData?['ppirDopdsAct'] ?? '';
     _formData['ppirDoptpAct'] = widget.task.csvData?['ppirDoptpAct'] ?? '';
 
-    // Check if the ppirVariety value is present in the uniqueTitles set
-    String? ppirVarietyValue = widget.task.csvData?['ppirVariety'];
-    if (ppirVarietyValue != null && uniqueTitles.contains(ppirVarietyValue)) {
+    String? ppirVarietyValue = widget.task.csvData?['ppirVariety'] ?? '';
+    if (ppirVarietyValue!.isNotEmpty &&
+        uniqueTitles.contains(ppirVarietyValue)) {
       _formData['ppirVariety'] = ppirVarietyValue;
     } else {
       _formData['ppirVariety'] = null;
     }
 
     _formData['ppirRemarks'] = widget.task.csvData?['ppirRemarks'] ?? '';
+    _formData['initialRoutePoint'] =
+        '${widget.initialRoutePoint.latitude}, ${widget.initialRoutePoint.longitude}';
   }
 
   void _initializeSeeds() {
@@ -70,6 +83,52 @@ class _PCICFormPageState extends State<PCICFormPage> {
           child: Text(seedTitle),
         ));
       }
+    }
+  }
+
+  void _calculateAreaAndDistance() {
+    final mapService = MapService();
+    final distance = mapService.calculateTotalDistance(widget.routePoints);
+
+    double area = 0.0;
+    double areaInHectares = 0.0;
+
+    if (widget.routePoints.isNotEmpty) {
+      final initialPoint = widget.routePoints.first;
+      final closingPoint = widget.routePoints.last;
+
+      if (_isCloseEnough(initialPoint, closingPoint)) {
+        area = mapService.calculateAreaOfPolygon(widget.routePoints);
+        areaInHectares = area / 10000;
+      }
+    }
+
+    setState(() {
+      _areaPlantedController.text = area > 0 ? _formatNumber(area, 'm²') : '';
+      _areaInHectaresController.text =
+          areaInHectares > 0 ? _formatNumber(areaInHectares, 'ha') : '';
+      _totalDistanceController.text = _formatNumber(distance, 'm');
+    });
+  }
+
+  bool _isCloseEnough(LatLng point1, LatLng point2) {
+    const double threshold = 10.0; // Adjust the threshold as needed
+    final distance = const Distance().as(LengthUnit.Meter, point1, point2);
+    return distance <= threshold;
+  }
+
+  String _formatNumber(double value, String unit) {
+    final formatter = NumberFormat('#,##0.00', 'en_US');
+
+    switch (unit) {
+      case 'm²':
+        return '${formatter.format(value)} m²';
+      case 'ha':
+        return '${formatter.format(value)} ha';
+      case 'm':
+        return '${formatter.format(value)} m';
+      default:
+        return formatter.format(value);
     }
   }
 
@@ -101,15 +160,10 @@ class _PCICFormPageState extends State<PCICFormPage> {
   }
 
   void _saveFormData() {
-    // Update the task's CSV data with the changed form data
     widget.task.updateCsvData(_getChangedData());
-
-    // Mark the task as completed
     widget.task.isCompleted = true;
 
-    // Save the updated CSV data back to the file
     widget.task.saveCsvData().then((_) {
-      // Update the task data in Firebase
       _updateTaskInFirebase();
 
       Navigator.pushReplacement(
@@ -231,8 +285,43 @@ class _PCICFormPageState extends State<PCICFormPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                _FormField(
+                  labelText: 'Initial Route Point',
+                  initialValue: _formData['initialRoutePoint'],
+                  enabled: false,
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _areaPlantedController,
+                  decoration: const InputDecoration(
+                    labelText: 'Area Planted',
+                    border: OutlineInputBorder(),
+                  ),
+                  enabled: false,
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _areaInHectaresController,
+                  decoration: const InputDecoration(
+                    labelText: 'Area (Hectares)',
+                    border: OutlineInputBorder(),
+                  ),
+                  enabled: false,
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _totalDistanceController,
+                  decoration: const InputDecoration(
+                    labelText: 'Total Distance',
+                    border: OutlineInputBorder(),
+                  ),
+                  enabled: false,
+                ),
+                const SizedBox(height: 20),
                 _FormSection(
-                    formData: _formData, uniqueSeedsItems: uniqueSeedsItems),
+                  formData: _formData,
+                  uniqueSeedsItems: uniqueSeedsItems,
+                ),
                 const SizedBox(height: 20),
                 const Text(
                   'Signatures:',
@@ -244,7 +333,7 @@ class _PCICFormPageState extends State<PCICFormPage> {
                   'Map Screenshot',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
                 Image.file(
                   File(widget.imageFile),
                   height: 200,
@@ -255,10 +344,9 @@ class _PCICFormPageState extends State<PCICFormPage> {
                   'GPX File',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
                 _GPXFileButtons(
                   openGpxFile: () => _openGpxFile(widget.gpxFile),
-                  downloadGpxFile: () => _downloadGpxFile(widget.gpxFile),
                 ),
                 const SizedBox(height: 20),
                 _FormButtons(
@@ -274,7 +362,7 @@ class _PCICFormPageState extends State<PCICFormPage> {
   }
 }
 
-// Buttons
+// Form Buttons
 class _FormButtons extends StatelessWidget {
   final VoidCallback cancelForm;
   final VoidCallback submitForm;
@@ -307,43 +395,33 @@ class _FormButtons extends StatelessWidget {
 // GPX File Buttons
 class _GPXFileButtons extends StatelessWidget {
   final VoidCallback openGpxFile;
-  final VoidCallback downloadGpxFile;
 
   const _GPXFileButtons({
     required this.openGpxFile,
-    required this.downloadGpxFile,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        ElevatedButton(
-          onPressed: openGpxFile,
-          child: const Text('Open GPX File'),
-        ),
-        ElevatedButton(
-          onPressed: downloadGpxFile,
-          child: const Text('Download GPX File'),
-        ),
-      ],
+    return Center(
+      child: ElevatedButton(
+        onPressed: openGpxFile,
+        child: const Text('Open GPX File'),
+      ),
     );
   }
 }
 
 // Form Section
-
 class _FormField extends StatelessWidget {
   final String labelText;
   final String initialValue;
-  final Function(String) onChanged;
+  final bool enabled;
   final int maxLines;
 
   const _FormField({
     required this.labelText,
     required this.initialValue,
-    required this.onChanged,
+    this.enabled = true,
     this.maxLines = 1,
   });
 
@@ -351,7 +429,7 @@ class _FormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       initialValue: initialValue,
-      onChanged: onChanged,
+      enabled: enabled,
       maxLines: maxLines,
       decoration: InputDecoration(
         labelText: labelText,
@@ -375,22 +453,15 @@ class _FormSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _FormField(
-          labelText: 'Area Planted*',
-          initialValue: formData['ppirAreaAct'],
-          onChanged: (value) => formData['ppirAreaAct'] = value,
-        ),
         const SizedBox(height: 16),
         _FormField(
           labelText: 'Date of Planting (DS)*',
           initialValue: formData['ppirDopdsAct'],
-          onChanged: (value) => formData['ppirDopdsAct'] = value,
         ),
         const SizedBox(height: 16),
         _FormField(
           labelText: 'Date of Planting (TP)*',
           initialValue: formData['ppirDoptpAct'],
-          onChanged: (value) => formData['ppirDoptpAct'] = value,
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
@@ -411,7 +482,6 @@ class _FormSection extends StatelessWidget {
         _FormField(
           labelText: 'Remarks',
           initialValue: formData['ppirRemarks'],
-          onChanged: (value) => formData['ppirRemarks'] = value,
           maxLines: 3,
         ),
       ],

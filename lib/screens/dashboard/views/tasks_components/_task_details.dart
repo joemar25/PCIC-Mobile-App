@@ -82,13 +82,8 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
     return Column(
       children: formData.entries
           .where((entry) =>
-              entry.key != 'serviceGroup' &&
-              entry.key != 'serviceType' &&
-              entry.key != 'taskStatus' &&
-              entry.key != 'ppirNameInsured' &&
-              entry.key != 'ppirNameIuia' &&
-              entry.key != 'ppirSigInsured' &&
-              entry.key != 'ppirSigIuia')
+              !_shouldExcludeField(entry.key) &&
+              (!_hasValue(entry.key) || isEditing))
           .map((entry) {
         final label = entry.key;
         final value = entry.value;
@@ -97,9 +92,29 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
     );
   }
 
+  bool _shouldExcludeField(String key) {
+    // Define fields to exclude from the form
+    const excludeFields = {
+      'serviceGroup',
+      'serviceType',
+      'taskStatus',
+      'ppirNameInsured',
+      'ppirNameIuia',
+      'ppirSigInsured',
+      'ppirSigIuia'
+    };
+    return excludeFields.contains(key);
+  }
+
+  bool _hasValue(String key) {
+    // Check if a field has a value or is marked as completed
+    bool hasValueInFormData = formData[key]?.isNotEmpty ?? false;
+    bool isCompleted = columnStatus[key] ?? false;
+    return hasValueInFormData || isCompleted;
+  }
+
   Widget _buildFormField(String label, String initialValue) {
-    bool hasValue = columnStatus[label] ?? false;
-    bool canEdit = !hasValue || (isEditing && !hasValue);
+    bool canEdit = true; // Assume fields displayed can always be edited
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -125,16 +140,14 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
               onChanged: (value) {
                 setState(() {
                   formData[label] = value;
-                  if (!isEditing && value.isNotEmpty) {
-                    isEditing = true;
-                  }
+                  isEditing = true;
                   hasChanges = true;
                 });
               },
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
                 filled: true,
-                fillColor: canEdit ? Colors.white : Colors.grey,
+                fillColor: Colors.white,
               ),
             ),
           ),

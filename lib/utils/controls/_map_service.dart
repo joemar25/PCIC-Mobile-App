@@ -1,3 +1,5 @@
+// map_service.dart
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -11,7 +13,7 @@ import 'dart:math' as math;
 class MapService {
   final MapController mapController = MapController();
   final List<LatLng> routePoints = [];
-  double currentZoom = 21.0;
+  double currentZoom = 20.0;
   final List<Marker> markers = [];
   CurrentLocationLayer? currentLocationLayer;
 
@@ -80,9 +82,9 @@ class MapService {
 
     // Calculate the bounds of the route points
     if (routePoints.isNotEmpty) {
-      double minLat = routePoints.first.latitude;
+      double minLat = routePoints.last.latitude;
       double maxLat = routePoints.first.latitude;
-      double minLng = routePoints.first.longitude;
+      double minLng = routePoints.last.longitude;
       double maxLng = routePoints.first.longitude;
 
       for (final point in routePoints) {
@@ -98,15 +100,10 @@ class MapService {
       );
 
       // Center the map to fit the route bounds
-      mapController.fitBounds(
-        bounds,
-        options: const FitBoundsOptions(
-          padding: EdgeInsets.all(50.0),
-        ),
-      );
+      mapController.fitBounds(bounds);
 
       // Delay the screenshot capture to allow the map to animate and render
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 1000));
     }
 
     final mapWidget = buildMap();
@@ -123,9 +120,9 @@ class MapService {
       child: FlutterMap(
         mapController: mapController,
         options: MapOptions(
-          center: const LatLng(13.138769, 123.734005),
-          zoom: currentZoom,
-          maxZoom: 23.0,
+          initialCenter: const LatLng(13.138769, 123.734005),
+          initialZoom: currentZoom,
+          maxZoom: 22.0,
           onPositionChanged: (position, hasGesture) {
             currentZoom = position.zoom!;
           },
@@ -150,8 +147,8 @@ class MapService {
             markers: markers,
           ),
           CurrentLocationLayer(
-            followOnLocationUpdate: FollowOnLocationUpdate.always,
-            turnOnHeadingUpdate: TurnOnHeadingUpdate.never,
+            alignPositionOnUpdate: AlignOnUpdate.always,
+            alignDirectionOnUpdate: AlignOnUpdate.never,
             style: const LocationMarkerStyle(
               marker: DefaultLocationMarker(
                 child: Icon(
@@ -172,74 +169,45 @@ class MapService {
     mapController.dispose();
     // currentLocationLayer?.dispose();
   }
+
+  // calculation
+  double calculateAreaOfPolygon(List<LatLng> points) {
+    if (points.length < 3) {
+      return 0.0; // Not a polygon
+    }
+    double radius = 6378137.0; // Earth's radius in meters
+    double area = 0.0;
+
+    for (int i = 0; i < points.length; i++) {
+      LatLng p1 = points[i];
+      LatLng p2 = points[(i + 1) % points.length]; // Wrap around at the end
+
+      double lat1 = p1.latitudeInRad;
+      double lon1 = p1.longitudeInRad;
+      double lat2 = p2.latitudeInRad;
+      double lon2 = p2.longitudeInRad;
+
+      // Calculate segment area (using spherical excess formula)
+      double segmentArea = 2 *
+          atan2(
+            tan((lon2 - lon1) / 2) * tan((lat1 + lat2) / 2),
+            1 + tan(lat1 / 2) * tan(lat2 / 2) * cos(lon1 - lon2),
+          );
+      area += segmentArea;
+    }
+
+    return (area * radius * radius).abs();
+  }
+
+  double calculateTotalDistance(List<LatLng> points) {
+    double totalDistance = 0.0;
+    for (int i = 0; i < points.length - 1; i++) {
+      totalDistance += const Distance().as(
+        LengthUnit.Meter,
+        points[i],
+        points[i + 1],
+      );
+    }
+    return totalDistance;
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // return MediaQuery(
-    //   data: const MediaQueryData(),
-    //   child: FlutterMap(
-    //     mapController: mapController,
-    //     options: MapOptions(
-    //       center: const LatLng(13.138769, 123.734005),
-    //       zoom: currentZoom,
-    //       maxZoom: 23.0,
-    //       onPositionChanged: (position, hasGesture) {
-    //         currentZoom = position.zoom!;
-    //       },
-    //     ),
-    //     children: [
-    //       TileLayer(
-    //         urlTemplate:
-    //             // 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    //             'https://api.mapbox.com/styles/v1/quanbysolutions/cluhoxol502q801oi8od2cmvz/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicXVhbmJ5c29sdXRpb25zIiwiYSI6ImNsdWhrejRwdDJyYnAya3A2NHFqbXlsbHEifQ.WJ5Ng-AO-dTrlkUHD_ebMw',
-    //         tileProvider: CancellableNetworkTileProvider(),
-    //       ),
-    //       PolylineLayer(
-    //         polylines: [
-    //           Polyline(
-    //             points: routePoints,
-    //             strokeWidth: 4.0,
-    //             color: Colors.blue,
-    //           ),
-    //         ],
-    //       ),
-    //       MarkerLayer(
-    //         markers: markers,
-    //       ),
-    //       CurrentLocationLayer(
-    //         followOnLocationUpdate: FollowOnLocationUpdate.always,
-    //         turnOnHeadingUpdate: TurnOnHeadingUpdate.never,
-    //         style: const LocationMarkerStyle(
-    //           marker: DefaultLocationMarker(
-    //             child: Icon(
-    //               Icons.person_pin_circle_outlined,
-    //               color: Colors.white,
-    //             ),
-    //           ),
-    //           markerSize: Size(40, 40),
-    //           markerDirection: MarkerDirection.heading,
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // );
