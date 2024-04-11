@@ -103,7 +103,7 @@ class MapService {
       mapController.fitBounds(bounds);
 
       // Delay the screenshot capture to allow the map to animate and render
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 1000));
     }
 
     final mapWidget = buildMap();
@@ -197,5 +197,17 @@ class MapService {
     }
 
     return (area * radius * radius).abs();
+  }
+
+  double calculateTotalDistance(List<LatLng> points) {
+    double totalDistance = 0.0;
+    for (int i = 0; i < points.length - 1; i++) {
+      totalDistance += const Distance().as(
+        LengthUnit.Meter,
+        points[i],
+        points[i + 1],
+      );
+    }
+    return totalDistance;
   }
 }

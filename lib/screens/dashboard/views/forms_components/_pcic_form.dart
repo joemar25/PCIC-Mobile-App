@@ -2,6 +2,7 @@
 import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -9,8 +10,7 @@ import 'package:pcic_mobile_app/screens/dashboard/views/forms_components/_succes
 import 'package:pcic_mobile_app/screens/dashboard/views/tasks_components/_signature_section.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_actual_seeds.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
-
-import '../../../../utils/controls/_map_service.dart';
+import 'package:pcic_mobile_app/utils/controls/_map_service.dart';
 
 class PCICFormPage extends StatefulWidget {
   final String imageFile;
@@ -37,23 +37,23 @@ class _PCICFormPageState extends State<PCICFormPage> {
   Set<String> uniqueTitles = {};
   List<DropdownMenuItem<String>> uniqueSeedsItems = [];
   final _formData = <String, dynamic>{};
-  double? _calculatedArea; // Initialize to null
   final _areaPlantedController = TextEditingController();
+  final _areaInHectaresController = TextEditingController();
+  final _totalDistanceController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _initializeFormData();
     _initializeSeeds();
+    _calculateAreaAndDistance();
   }
 
   void _initializeFormData() {
     _formData['ppirDopdsAct'] = widget.task.csvData?['ppirDopdsAct'] ?? '';
     _formData['ppirDoptpAct'] = widget.task.csvData?['ppirDoptpAct'] ?? '';
 
-    // Check if the ppirVariety value is present in the uniqueTitles set
-    String? ppirVarietyValue = widget.task.csvData?['ppirVariety'] ??
-        ''; // Provide a default empty string
+    String? ppirVarietyValue = widget.task.csvData?['ppirVariety'] ?? '';
     if (ppirVarietyValue!.isNotEmpty &&
         uniqueTitles.contains(ppirVarietyValue)) {
       _formData['ppirVariety'] = ppirVarietyValue;
@@ -63,7 +63,7 @@ class _PCICFormPageState extends State<PCICFormPage> {
 
     _formData['ppirRemarks'] = widget.task.csvData?['ppirRemarks'] ?? '';
     _formData['initialRoutePoint'] =
-        '${widget.initialRoutePoint.latitude}, ${widget.initialRoutePoint.longitude}'; // Set initial route point as uneditable data
+        '${widget.initialRoutePoint.latitude}, ${widget.initialRoutePoint.longitude}';
   }
 
   void _initializeSeeds() {
@@ -83,6 +83,52 @@ class _PCICFormPageState extends State<PCICFormPage> {
           child: Text(seedTitle),
         ));
       }
+    }
+  }
+
+  void _calculateAreaAndDistance() {
+    final mapService = MapService();
+    final distance = mapService.calculateTotalDistance(widget.routePoints);
+
+    double area = 0.0;
+    double areaInHectares = 0.0;
+
+    if (widget.routePoints.isNotEmpty) {
+      final initialPoint = widget.routePoints.first;
+      final closingPoint = widget.routePoints.last;
+
+      if (_isCloseEnough(initialPoint, closingPoint)) {
+        area = mapService.calculateAreaOfPolygon(widget.routePoints);
+        areaInHectares = area / 10000;
+      }
+    }
+
+    setState(() {
+      _areaPlantedController.text = area > 0 ? _formatNumber(area, 'm²') : '';
+      _areaInHectaresController.text =
+          areaInHectares > 0 ? _formatNumber(areaInHectares, 'ha') : '';
+      _totalDistanceController.text = _formatNumber(distance, 'm');
+    });
+  }
+
+  bool _isCloseEnough(LatLng point1, LatLng point2) {
+    const double threshold = 10.0; // Adjust the threshold as needed
+    final distance = const Distance().as(LengthUnit.Meter, point1, point2);
+    return distance <= threshold;
+  }
+
+  String _formatNumber(double value, String unit) {
+    final formatter = NumberFormat('#,##0.00', 'en_US');
+
+    switch (unit) {
+      case 'm²':
+        return '${formatter.format(value)} m²';
+      case 'ha':
+        return '${formatter.format(value)} ha';
+      case 'm':
+        return '${formatter.format(value)} m';
+      default:
+        return formatter.format(value);
     }
   }
 
@@ -114,15 +160,10 @@ class _PCICFormPageState extends State<PCICFormPage> {
   }
 
   void _saveFormData() {
-    // Update the task's CSV data with the changed form data
     widget.task.updateCsvData(_getChangedData());
-
-    // Mark the task as completed
     widget.task.isCompleted = true;
 
-    // Save the updated CSV data back to the file
     widget.task.saveCsvData().then((_) {
-      // Update the task data in Firebase
       _updateTaskInFirebase();
 
       Navigator.pushReplacement(
@@ -238,94 +279,90 @@ class _PCICFormPageState extends State<PCICFormPage> {
           title: const Text('PCIC Form'),
           leading: Container(),
         ),
-        body: FutureBuilder<double>(
-          future: _calculateAreaAsync(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasData) {
-                _calculatedArea = snapshot.data;
-                _areaPlantedController.text =
-                    _calculatedArea?.toStringAsFixed(2) ?? '';
-              } else {
-                // Handle error case
-              }
-            }
-
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _FormField(
-                      labelText: 'Initial Route Point',
-                      initialValue: _formData['initialRoutePoint'],
-                      enabled: false,
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: _areaPlantedController,
-                      decoration: const InputDecoration(
-                        labelText: 'Area Planted',
-                        border: OutlineInputBorder(),
-                      ),
-                      enabled: false,
-                    ),
-                    const SizedBox(height: 20),
-                    _FormSection(
-                        formData: _formData,
-                        uniqueSeedsItems: uniqueSeedsItems),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Signatures:',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    SignatureSection(task: widget.task),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Map Screenshot',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 20),
-                    Image.file(
-                      File(widget.imageFile),
-                      height: 200,
-                      fit: BoxFit.cover,
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'GPX File',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 20),
-                    _GPXFileButtons(
-                      openGpxFile: () => _openGpxFile(widget.gpxFile),
-                    ),
-                    const SizedBox(height: 20),
-                    _FormButtons(
-                      cancelForm: _cancelForm,
-                      submitForm: _submitForm,
-                    ),
-                  ],
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _FormField(
+                  labelText: 'Initial Route Point',
+                  initialValue: _formData['initialRoutePoint'],
+                  enabled: false,
                 ),
-              ),
-            );
-          },
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _areaPlantedController,
+                  decoration: const InputDecoration(
+                    labelText: 'Area Planted',
+                    border: OutlineInputBorder(),
+                  ),
+                  enabled: false,
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _areaInHectaresController,
+                  decoration: const InputDecoration(
+                    labelText: 'Area (Hectares)',
+                    border: OutlineInputBorder(),
+                  ),
+                  enabled: false,
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _totalDistanceController,
+                  decoration: const InputDecoration(
+                    labelText: 'Total Distance',
+                    border: OutlineInputBorder(),
+                  ),
+                  enabled: false,
+                ),
+                const SizedBox(height: 20),
+                _FormSection(
+                  formData: _formData,
+                  uniqueSeedsItems: uniqueSeedsItems,
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Signatures:',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                SignatureSection(task: widget.task),
+                const SizedBox(height: 20),
+                const Text(
+                  'Map Screenshot',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                Image.file(
+                  File(widget.imageFile),
+                  height: 200,
+                  fit: BoxFit.cover,
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'GPX File',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                _GPXFileButtons(
+                  openGpxFile: () => _openGpxFile(widget.gpxFile),
+                ),
+                const SizedBox(height: 20),
+                _FormButtons(
+                  cancelForm: _cancelForm,
+                  submitForm: _submitForm,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
-
-  Future<double> _calculateAreaAsync() async {
-    final mapService = MapService();
-    return mapService.calculateAreaOfPolygon(widget.routePoints);
-  }
 }
 
-// Buttons
+// Form Buttons
 class _FormButtons extends StatelessWidget {
   final VoidCallback cancelForm;
   final VoidCallback submitForm;
@@ -375,7 +412,6 @@ class _GPXFileButtons extends StatelessWidget {
 }
 
 // Form Section
-
 class _FormField extends StatelessWidget {
   final String labelText;
   final String initialValue;
