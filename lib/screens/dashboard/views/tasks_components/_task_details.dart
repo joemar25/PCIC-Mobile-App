@@ -59,16 +59,21 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Task ${widget.task.csvData?['serviceGroup'] ?? ''} ${widget.task.ppirInsuranceId}',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 16.0),
             _buildFormFields(),
             const SizedBox(height: 24.0),
-            ElevatedButton(
-              onPressed: _navigateToGeotagPage,
-              child: const Text('Go to Geotag'),
+            Center(
+              child: ElevatedButton(
+                onPressed: _navigateToGeotagPage,
+                child: const Padding(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
+                  child: Text(
+                    'Go to Geotag',
+                    style:
+                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 20),
             SignatureSection(task: widget.task),
@@ -80,16 +85,26 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
 
   Widget _buildFormFields() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: formData.entries
           .where((entry) =>
               !_shouldExcludeField(entry.key) &&
               (!_hasValue(entry.key) || isEditing))
           .map((entry) {
-        final label = entry.key;
+        final label = _formatLabel(entry.key);
         final value = entry.value;
         return _buildFormField(label, value);
       }).toList(),
     );
+  }
+
+  String _formatLabel(String key) {
+    // Remove "ppir" prefix and separate the remaining words by space
+    return key.replaceFirst('ppir', '').splitMapJoin(
+          RegExp(r'[A-Z]'),
+          onMatch: (match) => ' ${match.group(0)}',
+          onNonMatch: (nonMatch) => nonMatch,
+        );
   }
 
   bool _shouldExcludeField(String key) {
@@ -139,9 +154,8 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
               enabled: canEdit,
               onChanged: (value) {
                 setState(() {
-                  formData[label] = value;
+                  formData['ppir$label'.replaceAll(' ', '')] = value;
                   isEditing = true;
-                  hasChanges = true;
                 });
               },
               decoration: const InputDecoration(
