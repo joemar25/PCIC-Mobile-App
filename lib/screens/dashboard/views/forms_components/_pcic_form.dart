@@ -11,6 +11,7 @@ import 'package:pcic_mobile_app/screens/dashboard/views/tasks_components/_signat
 import 'package:pcic_mobile_app/utils/controls/_control_actual_seeds.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 import 'package:pcic_mobile_app/utils/controls/_map_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class PCICFormPage extends StatefulWidget {
   final String imageFile;
@@ -47,6 +48,24 @@ class _PCICFormPageState extends State<PCICFormPage> {
     _initializeFormData();
     _initializeSeeds();
     _calculateAreaAndDistance();
+    _requestExternalStoragePermission();
+  }
+
+  Future<void> _requestExternalStoragePermission() async {
+    final status = await Permission.manageExternalStorage.request();
+    if (status.isGranted) {
+      // Permission granted, you can now access external storage
+      debugPrint('MANAGE_EXTERNAL_STORAGE permission granted');
+    } else {
+      // Permission denied, handle accordingly (e.g., show an error message)
+      debugPrint('MANAGE_EXTERNAL_STORAGE permission denied');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content:
+              Text('External storage permission is required to open GPX files'),
+        ),
+      );
+    }
   }
 
   void _initializeFormData() {
@@ -251,22 +270,45 @@ class _PCICFormPageState extends State<PCICFormPage> {
 
   void _openGpxFile(String gpxFilePath) async {
     try {
-      final externalStorageDirectory = await getExternalStorageDirectory();
-      final gpxFile = File('${externalStorageDirectory!.path}/route.gpx');
+      final filePath = gpxFilePath;
+      final downloadsDirectory = Directory(filePath);
+      final gpxFile = File(downloadsDirectory.path);
+      debugPrint("path = $gpxFile");
 
       if (await gpxFile.exists()) {
-        OpenFile.open(gpxFile.path);
+        final status = await Permission.manageExternalStorage.status;
+        if (status.isGranted) {
+          final result = await OpenFile.open(gpxFile.path);
+          if (result.type == ResultType.done) {
+            // File opened successfully
+            debugPrint('GPX file opened successfully');
+          } else {
+            // Error opening the file
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Error opening GPX file')),
+            );
+            debugPrint('Error opening GPX file: ${result.message}');
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'External storage permission is required to open GPX files'),
+            ),
+          );
+          debugPrint('MANAGE_EXTERNAL_STORAGE permission denied');
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('GPX file not found')),
         );
-        print('GPX file not found: ${gpxFile.path}');
+        debugPrint('GPX file not found: ${gpxFile.path}');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Error opening GPX file')),
       );
-      print('Error opening GPX file: $e');
+      debugPrint('Error opening GPX file: $e');
     }
   }
 

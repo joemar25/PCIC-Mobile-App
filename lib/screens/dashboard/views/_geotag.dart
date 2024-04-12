@@ -82,14 +82,14 @@ class _GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   void _trackRoutePoints() async {
     while (isRoutingStarted && mounted) {
       LatLng? position = await _locationService.getCurrentLocation();
-      if (position != null) {
+      if (position != null && mounted) {
         setState(() {
           currentLocation =
               'Lat: ${position.latitude}, Long: ${position.longitude}';
           _mapService.addRoutePoint(position);
         });
-        await Future.delayed(const Duration(seconds: 1));
       }
+      await Future.delayed(const Duration(seconds: 1));
     }
   }
 
@@ -112,7 +112,7 @@ class _GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
       ),
     );
 
-    if (shouldStop == true) {
+    if (shouldStop == true && mounted) {
       setState(() {
         isLoading = true;
       });
@@ -133,49 +133,51 @@ class _GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
           screenshotFilePath = await _saveMapScreenshot(screenshotBytes);
         }
 
-        setState(() {
-          isRoutingStarted = false;
-          _mapService.clearMarkers();
-          isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            isRoutingStarted = false;
+            _mapService.clearMarkers();
+            isLoading = false;
+          });
 
-        // Show a snackbar with the file locations
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                'Files saved:\nGPX: $gpxFilePath\nScreenshot: $screenshotFilePath'),
-            duration: const Duration(seconds: 2),
-          ),
-        );
-
-        // Navigate to the forms page
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PCICFormPage(
-              imageFile: screenshotFilePath,
-              gpxFile: gpxFilePath,
-              task: widget.task,
-              routePoints: _mapService.routePoints,
-              initialRoutePoint: _mapService.routePoints.first,
+          // Show a snackbar with the file locations
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  'Files saved:\nGPX: $gpxFilePath\nScreenshot: $screenshotFilePath'),
+              duration: const Duration(seconds: 2),
             ),
-          ),
-        );
+          );
+
+          // Navigate to the forms page
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PCICFormPage(
+                imageFile: screenshotFilePath,
+                gpxFile: gpxFilePath,
+                task: widget.task,
+                routePoints: _mapService.routePoints,
+                initialRoutePoint: _mapService.routePoints.first,
+              ),
+            ),
+          );
+        }
       } catch (e) {
-        setState(() {
-          isLoading = false;
-        });
-        // Handle the exception gracefully
-        debugPrint('Exception caught: $e');
-        // Show an error message to the user
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('An error occurred while saving the files.'),
-            duration: Duration(seconds: 2),
-          ),
-        );
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+          });
+          // Handle the exception gracefully
+          debugPrint('Exception caught: $e');
+          // Show an error message to the user
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('An error occurred while saving the files.'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
       }
     }
   }
