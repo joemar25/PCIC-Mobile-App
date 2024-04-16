@@ -158,7 +158,7 @@ class _GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                 gpxFile: gpxFilePath,
                 task: widget.task,
                 routePoints: _mapService.routePoints,
-                initialRoutePoint: _mapService.routePoints.first,
+                lastCoordinates: _mapService.routePoints.last,
               ),
             ),
           );

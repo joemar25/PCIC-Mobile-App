@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pcic_mobile_app/screens/dashboard/views/forms_components/_date_control.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/forms_components/_success.dart';
 import 'package:pcic_mobile_app/screens/dashboard/views/tasks_components/_signature_section.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_actual_seeds.dart';
@@ -18,7 +19,7 @@ class PCICFormPage extends StatefulWidget {
   final String gpxFile;
   final Task task;
   final List<LatLng> routePoints;
-  final LatLng initialRoutePoint;
+  final LatLng lastCoordinates;
 
   const PCICFormPage({
     super.key,
@@ -26,7 +27,7 @@ class PCICFormPage extends StatefulWidget {
     required this.gpxFile,
     required this.task,
     required this.routePoints,
-    required this.initialRoutePoint,
+    required this.lastCoordinates,
   });
 
   @override
@@ -81,8 +82,13 @@ class _PCICFormPageState extends State<PCICFormPage> {
     }
 
     _formData['ppirRemarks'] = widget.task.csvData?['ppirRemarks'] ?? '';
-    _formData['initialRoutePoint'] =
-        '${widget.initialRoutePoint.latitude}, ${widget.initialRoutePoint.longitude}';
+
+    String lastCoordinateDateTime =
+        DateFormat.yMMMMd().add_jms().format(DateTime.now());
+    _formData['areaPlanted'] = lastCoordinateDateTime;
+
+    _formData['lastCoordinates'] =
+        '${widget.lastCoordinates.latitude}, ${widget.lastCoordinates.longitude}';
   }
 
   void _initializeSeeds() {
@@ -314,90 +320,106 @@ class _PCICFormPageState extends State<PCICFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('PCIC Form'),
-          leading: Container(),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('PCIC Form'),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => _cancelForm(),
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _FormField(
-                  labelText: 'Initial Route Point',
-                  initialValue: _formData['initialRoutePoint'],
-                  enabled: false,
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _areaPlantedController,
-                  decoration: const InputDecoration(
-                    labelText: 'Area Planted',
-                    border: OutlineInputBorder(),
-                  ),
-                  enabled: false,
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _areaInHectaresController,
-                  decoration: const InputDecoration(
-                    labelText: 'Area (Hectares)',
-                    border: OutlineInputBorder(),
-                  ),
-                  enabled: false,
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _totalDistanceController,
-                  decoration: const InputDecoration(
-                    labelText: 'Total Distance',
-                    border: OutlineInputBorder(),
-                  ),
-                  enabled: false,
-                ),
-                const SizedBox(height: 20),
-                _FormSection(
-                  formData: _formData,
-                  uniqueSeedsItems: uniqueSeedsItems,
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Signatures:',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                SignatureSection(task: widget.task),
-                const SizedBox(height: 20),
-                const Text(
-                  'Map Screenshot',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-                Image.file(
-                  File(widget.imageFile),
-                  height: 200,
-                  fit: BoxFit.cover,
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'GPX File',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-                _GPXFileButtons(
-                  openGpxFile: () => _openGpxFile(widget.gpxFile),
-                ),
-                const SizedBox(height: 20),
-                _FormButtons(
-                  cancelForm: _cancelForm,
-                  submitForm: _submitForm,
-                ),
-              ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _FormField(
+              labelText: 'Last Coordinates',
+              initialValue: _formData['lastCoordinates'],
+              enabled: false,
             ),
-          ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: _areaPlantedController,
+              decoration: const InputDecoration(
+                labelText: 'Date and Time',
+                border: OutlineInputBorder(),
+              ),
+              enabled: false,
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: _areaInHectaresController,
+              decoration: const InputDecoration(
+                labelText: 'Area (Hectares)',
+                border: OutlineInputBorder(),
+              ),
+              enabled: false,
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: _totalDistanceController,
+              decoration: const InputDecoration(
+                labelText: 'Total Distance',
+                border: OutlineInputBorder(),
+              ),
+              enabled: false,
+            ),
+            const SizedBox(height: 20),
+            _FormSection(
+              formData: _formData,
+              uniqueSeedsItems: uniqueSeedsItems,
+            ),
+            const SizedBox(height: 30),
+            const Text(
+              'Signatures',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SignatureSection(task: widget.task),
+            const SizedBox(height: 20),
+            const Text(
+              'Map Screenshot',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            Image.file(
+              File(widget.imageFile),
+              height: 200,
+              fit: BoxFit.cover,
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'GPX File',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            _GPXFileButtons(
+              openGpxFile: () => _openGpxFile(widget.gpxFile),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        elevation: 0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+              onPressed: _cancelForm,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: _submitForm,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+              ),
+              child: const Text('Submit'),
+            ),
+          ],
         ),
       ),
     );
@@ -495,21 +517,50 @@ class _FormSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: 16),
-        _FormField(
-          labelText: 'Date of Planting (DS)*',
-          initialValue: formData['ppirDopdsAct'],
+        const SizedBox(height: 20),
+        const Text(
+          'Date of Planting',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        DateInputField(
+          labelText: 'DS*',
+          initialDate: formData['ppirDopdsAct'] != null &&
+                  formData['ppirDopdsAct'].isNotEmpty
+              ? DateFormat('yyyy-MM-dd').parse(formData['ppirDopdsAct'])
+              : null,
+          onDateChanged: (DateTime? date) {
+            if (date != null) {
+              formData['ppirDopdsAct'] = DateFormat('yyyy-MM-dd').format(date);
+            } else {
+              formData['ppirDopdsAct'] = null;
+            }
+          },
         ),
         const SizedBox(height: 16),
-        _FormField(
-          labelText: 'Date of Planting (TP)*',
-          initialValue: formData['ppirDoptpAct'],
+        DateInputField(
+          labelText: 'TP*',
+          initialDate: formData['ppirDoptpAct'] != null &&
+                  formData['ppirDoptpAct'].isNotEmpty
+              ? DateFormat('yyyy-MM-dd').parse(formData['ppirDoptpAct'])
+              : null,
+          onDateChanged: (DateTime? date) {
+            if (date != null) {
+              formData['ppirDoptpAct'] = DateFormat('yyyy-MM-dd').format(date);
+            } else {
+              formData['ppirDoptpAct'] = null;
+            }
+          },
+        ),
+        const SizedBox(height: 30),
+        const Text(
+          'Seed Varieties Planted and Remarks',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
           value: formData['ppirVariety'],
           decoration: const InputDecoration(
-            labelText: 'Seed Variety Planted*',
+            labelText: 'Select Seed Variety*',
           ),
           items: uniqueSeedsItems,
           onChanged: (value) {
