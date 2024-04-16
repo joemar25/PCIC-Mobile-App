@@ -9,10 +9,10 @@ class SignatureSection extends StatefulWidget {
   const SignatureSection({super.key, required this.task});
 
   @override
-  _SignatureSectionState createState() => _SignatureSectionState();
+  SignatureSectionState createState() => SignatureSectionState();
 }
 
-class _SignatureSectionState extends State<SignatureSection> {
+class SignatureSectionState extends State<SignatureSection> {
   final _confirmedByNameController = TextEditingController();
   final _preparedByNameController = TextEditingController();
 
@@ -56,7 +56,8 @@ class _SignatureSectionState extends State<SignatureSection> {
       children: [
         const Text(
           'Confirmed by:',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: 16, fontWeight: FontWeight.normal, color: Colors.black),
         ),
         TextFormField(
           controller: _confirmedByNameController,
@@ -82,14 +83,15 @@ class _SignatureSectionState extends State<SignatureSection> {
             child: Signature(
               controller: _confirmedBySignatureController,
               height: 200,
-              backgroundColor: Colors.grey,
+              backgroundColor: Colors.white70,
             ),
           ),
         ),
         const SizedBox(height: 20),
         const Text(
           'Prepared by:',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: 16, fontWeight: FontWeight.normal, color: Colors.black),
         ),
         TextFormField(
           controller: _preparedByNameController,
@@ -115,7 +117,7 @@ class _SignatureSectionState extends State<SignatureSection> {
             child: Signature(
               controller: _preparedBySignatureController,
               height: 200,
-              backgroundColor: Colors.grey,
+              backgroundColor: Colors.white70,
             ),
           ),
         ),
