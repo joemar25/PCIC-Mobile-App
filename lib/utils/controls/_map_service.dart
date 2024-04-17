@@ -80,27 +80,18 @@ class MapService {
   Future<Uint8List?> captureMapScreenshot() async {
     final ScreenshotController screenshotController = ScreenshotController();
 
-    // Calculate the bounds of the route points
     if (routePoints.isNotEmpty) {
-      double minLat = routePoints.last.latitude;
-      double maxLat = routePoints.first.latitude;
-      double minLng = routePoints.last.longitude;
-      double maxLng = routePoints.first.longitude;
+      // Calculate the total distance of the route points
+      double totalDistance = calculateTotalDistance(routePoints);
 
-      for (final point in routePoints) {
-        minLat = math.min(minLat, point.latitude);
-        maxLat = math.max(maxLat, point.latitude);
-        minLng = math.min(minLng, point.longitude);
-        maxLng = math.max(maxLng, point.longitude);
-      }
+      // Determine the zoom level based on the total distance
+      double zoomLevel = calculateZoomLevel(totalDistance);
 
-      final bounds = LatLngBounds(
-        LatLng(minLat, minLng),
-        LatLng(maxLat, maxLng),
-      );
+      // Calculate the center point of the route
+      LatLng centerPoint = calculateCenterPoint(routePoints);
 
-      // Center the map to fit the route bounds
-      mapController.fitBounds(bounds);
+      // Move the map to the center point and set the zoom level
+      mapController.move(centerPoint, zoomLevel);
 
       // Delay the screenshot capture to allow the map to animate and render
       await Future.delayed(const Duration(milliseconds: 1000));
@@ -111,7 +102,35 @@ class MapService {
       child: mapWidget,
     );
 
-    return await screenshotController.captureFromWidget(containerWidget);
+    return await screenshotController.captureFromWidget(
+      containerWidget,
+
+      // Increase pixelRatio for higher resolution
+      pixelRatio: 3.0,
+    );
+  }
+
+  double calculateZoomLevel(double totalDistance) {
+    // Calculate the zoom level based on the total distance
+    // You can adjust the formula based on your needs
+    double zoomLevel = 18.0 - (totalDistance / 10000.0);
+    return zoomLevel.clamp(
+        10.0, 20.0); // Clamp the zoom level between 10 and 20
+  }
+
+  LatLng calculateCenterPoint(List<LatLng> points) {
+    double latSum = 0.0;
+    double lngSum = 0.0;
+
+    for (var point in points) {
+      latSum += point.latitude;
+      lngSum += point.longitude;
+    }
+
+    double centerLat = latSum / points.length;
+    double centerLng = lngSum / points.length;
+
+    return LatLng(centerLat, centerLng);
   }
 
   Widget buildMap() {

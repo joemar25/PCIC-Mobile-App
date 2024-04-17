@@ -16,10 +16,10 @@ class GeotagPage extends StatefulWidget {
   const GeotagPage({super.key, required this.task});
 
   @override
-  _GeotagPageState createState() => _GeotagPageState();
+  GeotagPageState createState() => GeotagPageState();
 }
 
-class _GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
+class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   final LocationService _locationService = LocationService();
   final MapService _mapService = MapService();
 
