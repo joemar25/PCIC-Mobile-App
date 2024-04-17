@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/_settings.dart';
+import 'package:pcic_mobile_app/screens/settings/_settings.dart';
 
 class HomeHeader extends StatelessWidget {
   final VoidCallback onLogout;

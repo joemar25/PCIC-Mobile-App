@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/_starting.dart';
-import 'package:pcic_mobile_app/screens/dashboard/_home.dart';
-import 'package:pcic_mobile_app/utils/_app_session.dart';
+import 'package:pcic_mobile_app/screens/home/_home.dart';
+import 'package:pcic_mobile_app/utils/agent/_session.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

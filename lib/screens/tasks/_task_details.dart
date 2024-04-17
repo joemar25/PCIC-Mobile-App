@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/tasks_components/_signature_section.dart';
+import 'package:pcic_mobile_app/screens/tasks/_signature_section.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/_geotag.dart';
+import 'package:pcic_mobile_app/screens/geotag/_geotag.dart';
 
 class TaskDetailsPage extends StatefulWidget {
   final Task task;

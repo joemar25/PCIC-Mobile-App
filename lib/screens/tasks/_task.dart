@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/tasks_components/_task_container.dart'; // Import the TaskContainer widget
+import 'package:pcic_mobile_app/screens/tasks/_task_container.dart'; // Import the TaskContainer widget
 
 class TaskPage extends StatefulWidget {
   const TaskPage({super.key});
 
   @override
-  _TaskPageState createState() => _TaskPageState();
+  TaskPageState createState() => TaskPageState();
 }
 
-class _TaskPageState extends State<TaskPage> {
+class TaskPageState extends State<TaskPage> {
   List<Task> _tasks = []; // Initialize an empty list of tasks
 
   @override

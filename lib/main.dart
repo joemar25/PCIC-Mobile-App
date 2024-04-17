@@ -1,23 +1,25 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:pcic_mobile_app/utils/_app_firebase.dart';
 import 'package:provider/provider.dart';
-import 'package:pcic_mobile_app/screens/_splash.dart';
-import 'package:pcic_mobile_app/screens/_starting.dart';
-import 'package:pcic_mobile_app/screens/dashboard/_home.dart';
-import 'package:pcic_mobile_app/screens/dashboard/_message.dart';
-import 'package:pcic_mobile_app/screens/dashboard/_task.dart';
-import 'package:pcic_mobile_app/utils/controls/_filter_message.dart';
-import 'package:pcic_mobile_app/utils/controls/_filter_task.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/_geotag.dart';
-import 'package:pcic_mobile_app/utils/authentication/_login.dart';
-import 'package:pcic_mobile_app/utils/authentication/_signup.dart';
-import 'package:pcic_mobile_app/utils/authentication/_verify_login.dart';
-import 'package:pcic_mobile_app/utils/authentication/_verify_signup.dart';
-import 'package:pcic_mobile_app/utils/_app_routes.dart';
-import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
-import 'package:firebase_core/firebase_core.dart';
+
+import 'utils/app/_firebase.dart';
+import 'utils/controls/_filter_task.dart';
+import 'utils/agent/_login.dart';
+import 'utils/agent/_signup.dart';
+import 'utils/agent/_verify_login.dart';
+import 'utils/agent/_verify_signup.dart';
+import 'utils/app/_routes.dart';
+import 'utils/controls/_control_task.dart';
+
+import 'screens/_splash.dart';
+import 'screens/_starting.dart';
+import 'screens/home/_home.dart';
+import 'screens/messages/_view.dart';
+import 'screens/tasks/_task.dart';
+import 'screens/messages/_filter.dart';
+import 'screens/geotag/_geotag.dart';
 
 void main() async {
   await dotenv.load(fileName: "assets/config/.env");
