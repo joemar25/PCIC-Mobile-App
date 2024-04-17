@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_recent_task_footer.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/home_components/_recent_task_header.dart';
+import 'package:pcic_mobile_app/screens/home/_recent_task_footer.dart';
+import 'package:pcic_mobile_app/screens/home/_recent_task_header.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
-import 'package:pcic_mobile_app/screens/dashboard/views/tasks_components/_task_details.dart'; // Import the TaskDetailsPage
+import 'package:pcic_mobile_app/screens/tasks/_task_details.dart'; // Import the TaskDetailsPage
 
 class RecentTaskContainer extends StatefulWidget {
   const RecentTaskContainer({super.key, required this.tasks});

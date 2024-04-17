@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:pcic_mobile_app/screens/dashboard/_home.dart';
-import 'package:pcic_mobile_app/utils/_app_session.dart';
-import 'package:pcic_mobile_app/utils/authentication/_signup.dart';
-import 'package:pcic_mobile_app/utils/authentication/_verify_login.dart';
+import 'package:pcic_mobile_app/screens/home/_home.dart';
+import 'package:pcic_mobile_app/utils/agent/_session.dart';
+import 'package:pcic_mobile_app/utils/agent/_signup.dart';
+import 'package:pcic_mobile_app/utils/agent/_verify_login.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
