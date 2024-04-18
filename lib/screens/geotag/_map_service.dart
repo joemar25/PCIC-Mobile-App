@@ -8,7 +8,6 @@ import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_ti
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:screenshot/screenshot.dart';
-import 'dart:math' as math;
 
 class MapService {
   final MapController mapController = MapController();

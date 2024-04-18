@@ -11,7 +11,7 @@ import 'package:pcic_mobile_app/screens/pcic_form/_success.dart';
 import 'package:pcic_mobile_app/screens/tasks/_signature_section.dart';
 import 'package:pcic_mobile_app/utils/seeds/_dropdown.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
-import 'package:pcic_mobile_app/utils/controls/_map_service.dart';
+import 'package:pcic_mobile_app/screens/geotag/_map_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PCICFormPage extends StatefulWidget {
@@ -84,8 +84,9 @@ class _PCICFormPageState extends State<PCICFormPage> {
     _formData['ppirRemarks'] = widget.task.csvData?['ppirRemarks'] ?? '';
 
     String lastCoordinateDateTime =
-        DateFormat.yMMMMd().add_jms().format(DateTime.now());
-    _formData['areaPlanted'] = lastCoordinateDateTime;
+        DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+
+    _areaPlantedController.text = lastCoordinateDateTime;
 
     _formData['lastCoordinates'] =
         '${widget.lastCoordinates.latitude}, ${widget.lastCoordinates.longitude}';
@@ -129,7 +130,7 @@ class _PCICFormPageState extends State<PCICFormPage> {
     }
 
     setState(() {
-      _areaPlantedController.text = area > 0 ? _formatNumber(area, 'm²') : '';
+      // _areaPlantedController.text = area > 0 ? _formatNumber(area, 'm²') : '';
       _areaInHectaresController.text =
           areaInHectares > 0 ? _formatNumber(areaInHectares, 'ha') : '';
       _totalDistanceController.text = _formatNumber(distance, 'm');
@@ -352,7 +353,7 @@ class _PCICFormPageState extends State<PCICFormPage> {
             TextFormField(
               controller: _areaInHectaresController,
               decoration: const InputDecoration(
-                labelText: 'Area (Hectares)',
+                labelText: 'Total Area (Hectares)',
                 border: OutlineInputBorder(),
               ),
               enabled: false,

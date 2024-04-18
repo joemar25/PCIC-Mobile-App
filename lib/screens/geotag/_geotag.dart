@@ -1,15 +1,18 @@
 // geotag.dart
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
 import 'package:gpx/gpx.dart';
+import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:pcic_mobile_app/screens/pcic_form/_pcic_form.dart';
-import 'package:pcic_mobile_app/utils/app/_gpx.dart';
-import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
-import 'package:pcic_mobile_app/utils/controls/_location_service.dart';
-import 'package:pcic_mobile_app/utils/controls/_map_service.dart';
+
+import '../../utils/app/_gpx.dart';
+import '../../utils/controls/_control_task.dart';
+import '_location_service.dart';
+import '_map_service.dart';
+import '../pcic_form/_pcic_form.dart';
 
 class GeotagPage extends StatefulWidget {
   final Task task;
@@ -30,18 +33,19 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   bool isRoutingStarted = false;
   bool isLoading = false;
 
+  StreamSubscription<LatLng>? _locationSubscription;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _locationService.requestLocationPermission().then((_) {
-      _getCurrentLocation(addMarker: false);
-    });
+    _initializeLocation();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _locationSubscription?.cancel();
     _mapService.dispose();
     super.dispose();
   }
@@ -49,48 +53,64 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
+      _locationSubscription?.cancel();
       _mapService.dispose();
     }
   }
 
+  Future<void> _initializeLocation() async {
+    await _locationService.requestLocationPermission();
+    _getCurrentLocation(addMarker: false);
+  }
+
   Future<void> _getCurrentLocation({bool addMarker = true}) async {
     LatLng? position = await _locationService.getCurrentLocation();
-    if (position != null && mounted) {
-      setState(() {
-        currentLocation =
-            'Lat: ${position.latitude}, Long: ${position.longitude}';
-        _mapService.moveMap(position);
+    if (position != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            currentLocation =
+                'Lat: ${position.latitude}, Long: ${position.longitude}';
+            _mapService.moveMap(position);
+          });
+          if (addMarker) {
+            _mapService.addMarker(position);
+          }
+        }
       });
-      if (addMarker) {
-        _mapService.addMarker(position);
-      }
     }
   }
 
   void _startRouting() async {
     LatLng? position = await _locationService.getCurrentLocation();
-    if (position != null && mounted) {
-      setState(() {
-        isRoutingStarted = true;
-        _mapService.clearRoutePoints();
-        _mapService.addColoredMarker(position, Colors.green);
+    if (position != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            isRoutingStarted = true;
+            _mapService.clearRoutePoints();
+            _mapService.addColoredMarker(position, Colors.green);
+          });
+          _trackRoutePoints();
+        }
       });
-      _trackRoutePoints();
     }
   }
 
-  void _trackRoutePoints() async {
-    while (isRoutingStarted && mounted) {
-      LatLng? position = await _locationService.getCurrentLocation();
-      if (position != null && mounted) {
-        setState(() {
-          currentLocation =
-              'Lat: ${position.latitude}, Long: ${position.longitude}';
-          _mapService.addRoutePoint(position);
-        });
-      }
-      await Future.delayed(const Duration(seconds: 1));
-    }
+  void _trackRoutePoints() {
+    _locationSubscription =
+        _locationService.getLocationStream().listen((position) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            currentLocation =
+                'Lat: ${position.latitude}, Long: ${position.longitude}';
+            _mapService
+                .addRoutePoint(LatLng(position.latitude, position.longitude));
+          });
+        }
+      });
+    });
   }
 
   void _stopRouting() async {
@@ -112,10 +132,12 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
       ),
     );
 
-    if (shouldStop == true && mounted) {
+    if (shouldStop == true) {
       setState(() {
         isLoading = true;
       });
+
+      _locationSubscription?.cancel();
 
       try {
         List<Wpt> routePoints = _mapService.routePoints
@@ -133,51 +155,55 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
           screenshotFilePath = await _saveMapScreenshot(screenshotBytes);
         }
 
-        if (mounted) {
-          setState(() {
-            isRoutingStarted = false;
-            _mapService.clearMarkers();
-            isLoading = false;
-          });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {
+              isRoutingStarted = false;
+              _mapService.clearMarkers();
+              isLoading = false;
+            });
 
-          // Show a snackbar with the file locations
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                  'Files saved:\nGPX: $gpxFilePath\nScreenshot: $screenshotFilePath'),
-              duration: const Duration(seconds: 2),
-            ),
-          );
-
-          // Navigate to the forms page
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PCICFormPage(
-                imageFile: screenshotFilePath,
-                gpxFile: gpxFilePath,
-                task: widget.task,
-                routePoints: _mapService.routePoints,
-                lastCoordinates: _mapService.routePoints.last,
+            // Show a snackbar with the file locations
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                    'Files saved:\nGPX: $gpxFilePath\nScreenshot: $screenshotFilePath'),
+                duration: const Duration(seconds: 2),
               ),
-            ),
-          );
-        }
+            );
+
+            // Navigate to the forms page
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PCICFormPage(
+                  imageFile: screenshotFilePath,
+                  gpxFile: gpxFilePath,
+                  task: widget.task,
+                  routePoints: _mapService.routePoints,
+                  lastCoordinates: _mapService.routePoints.last,
+                ),
+              ),
+            );
+          }
+        });
       } catch (e) {
-        if (mounted) {
-          setState(() {
-            isLoading = false;
-          });
-          // Handle the exception gracefully
-          debugPrint('Exception caught: $e');
-          // Show an error message to the user
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('An error occurred while saving the files.'),
-              duration: Duration(seconds: 2),
-            ),
-          );
-        }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+            });
+            // Handle the exception gracefully
+            debugPrint('Exception caught: $e');
+            // Show an error message to the user
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('An error occurred while saving the files.'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+        });
       }
     }
   }
@@ -196,7 +222,12 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
       await insuranceDirectory.create(recursive: true);
     }
 
-    final file = File('${insuranceDirectory.path}/$insuranceId.gpx');
+    // Get the current date and time
+    final dateTime = DateTime.now();
+    final formattedDateTime = DateFormat('yyyyMMdd_HHmmss').format(dateTime);
+
+    final file = File(
+        '${insuranceDirectory.path}/${insuranceId}_$formattedDateTime.gpx');
     await file.writeAsString(gpxString);
     debugPrint('GPX file saved: ${file.path}');
     return file.path;
@@ -216,7 +247,12 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
       await insuranceDirectory.create(recursive: true);
     }
 
-    final file = File('${insuranceDirectory.path}/$insuranceId.png');
+    // Get the current date and time
+    final dateTime = DateTime.now();
+    final formattedDateTime = DateFormat('yyyyMMdd_HHmmss').format(dateTime);
+
+    final file = File(
+        '${insuranceDirectory.path}/${insuranceId}_$formattedDateTime.png');
     await file.writeAsBytes(screenshotBytes);
     debugPrint('Map screenshot saved: ${file.path}');
     return file.path;
@@ -342,11 +378,21 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                                 ElevatedButton(
                                   onPressed:
                                       isRoutingStarted ? null : _startRouting,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: isRoutingStarted
+                                        ? Colors.grey
+                                        : Colors.blue,
+                                  ),
                                   child: const Text('Start Routing'),
                                 ),
                                 ElevatedButton(
                                   onPressed:
                                       isRoutingStarted ? _stopRouting : null,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: isRoutingStarted
+                                        ? Colors.blue
+                                        : Colors.grey,
+                                  ),
                                   child: const Text('Stop Routing'),
                                 ),
                                 Visibility(
@@ -356,7 +402,13 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.blue,
                                     ),
-                                    child: const Text('Pin Drop'),
+                                    child: const Row(
+                                      children: [
+                                        Icon(Icons.pin_drop),
+                                        SizedBox(width: 4),
+                                        Text('Pin Drop'),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],

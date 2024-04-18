@@ -24,4 +24,20 @@ class LocationService {
       return null;
     }
   }
+
+  Stream<LatLng> getLocationStream() {
+    return Geolocator.getPositionStream()
+        .distinct(
+          (Position prev, Position curr) =>
+              Geolocator.distanceBetween(
+                prev.latitude,
+                prev.longitude,
+                curr.latitude,
+                curr.longitude,
+              ) <
+              10,
+        )
+        .map((Position position) =>
+            LatLng(position.latitude, position.longitude));
+  }
 }
