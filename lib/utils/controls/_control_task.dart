@@ -75,15 +75,18 @@ class Task {
 
       // Create a map to store the CSV data with ppir_insuranceid as the key
       Map<String, Map<String, dynamic>> csvDataMap = {};
-      for (List<dynamic> row in csvList) {
+      for (List<dynamic> row in csvList.skip(1)) {
+        // Skip the header row
         String ppirInsuranceId = row[7].toString();
         csvDataMap[ppirInsuranceId] = {
-          // Task Number
+          // Convert all values to strings
           'serviceGroup': row[1],
           'serviceType': row[2],
           'priority': row[3],
           'taskStatus': row[4],
           'assignee': row[5],
+          'ppirAssignmentId': row[6],
+          'ppirInsuranceId': row[7],
           'ppirFarmerName': row[8],
           'ppirAddress': row[9],
           'ppirFarmerType': row[10],
@@ -98,21 +101,25 @@ class Task {
           'ppirSouth': row[19],
           'ppirEast': row[20],
           'ppirWest': row[21],
-          'ppirAreaAci': row[22],
-          'ppirAreaAct': row[23],
-          'ppirDopdsAci': row[24],
-          'ppirDopdsAct': row[25],
-          'ppirDoptpAci': row[26],
-          'ppirDoptpAct': row[27],
-          'ppirSvpAci': row[28],
-          'ppirSvpAct': row[29],
-          'ppirVariety': row[30],
-          'ppirStagecrop': row[30],
-          'ppirRemarks': row[31],
-          'ppirNameInsured': row[32],
-          'ppirNameIuia': row[33],
-          'ppirSigInsured': row[34],
-          'ppirSigIuia': row[35],
+          'ppirAtt1': row[22],
+          'ppirAtt2': row[23],
+          'ppirAtt3': row[24],
+          'ppirAtt4': row[25],
+          'ppirAreaAci': row[26],
+          'ppirAreaAct': row[27],
+          'ppirDopdsAci': row[28],
+          'ppirDopdsAct': row[29],
+          'ppirDoptpAci': row[30],
+          'ppirDoptpAct': row[31],
+          'ppirSvpAci': row[32],
+          'ppirSvpAct': row[33],
+          'ppirVariety': row[34],
+          'ppirStagecrop': row[35],
+          'ppirRemarks': row[36],
+          'ppirNameInsured': row[37],
+          'ppirNameIuia': row[38],
+          'ppirSigInsured': row[39],
+          'ppirSigIuia': row[40],
         };
       }
 
@@ -248,6 +255,8 @@ class Task {
       'priority': 3,
       'taskStatus': 4,
       'assignee': 5,
+      'ppirAssignmentId': 6,
+      'ppirInsuranceId': 7,
       'ppirFarmerName': 8,
       'ppirAddress': 9,
       'ppirFarmerType': 10,
@@ -262,21 +271,25 @@ class Task {
       'ppirSouth': 19,
       'ppirEast': 20,
       'ppirWest': 21,
-      'ppirAreaAci': 22,
-      'ppirAreaAct': 23,
-      'ppirDopdsAci': 24,
-      'ppirDopdsAct': 25,
-      'ppirDoptpAci': 26,
-      'ppirDoptpAct': 27,
-      'ppirSvpAci': 28,
-      'ppirSvpAct': 29,
-      'ppirVariety': 30,
-      'ppirStagecrop': 31,
-      'ppirRemarks': 32,
-      'ppirNameInsured': 33,
-      'ppirNameIuia': 34,
-      'ppirSigInsured': 35,
-      'ppirSigIuia': 36,
+      'ppirAtt1': 22,
+      'ppirAtt2': 23,
+      'ppirAtt3': 24,
+      'ppirAtt4': 25,
+      'ppirAreaAci': 26,
+      'ppirAreaAct': 27,
+      'ppirDopdsAci': 28,
+      'ppirDopdsAct': 29,
+      'ppirDoptpAci': 30,
+      'ppirDoptpAct': 31,
+      'ppirSvpAci': 32,
+      'ppirSvpAct': 33,
+      'ppirVariety': 34,
+      'ppirStagecrop': 35,
+      'ppirRemarks': 36,
+      'ppirNameInsured': 37,
+      'ppirNameIuia': 38,
+      'ppirSigInsured': 39,
+      'ppirSigIuia': 40,
     };
     return columnIndices[columnName] ?? -1;
   }
@@ -298,5 +311,16 @@ class Task {
     debugPrint(csvFilePath);
 
     return csvFilePath;
+  }
+
+  void debugPrintCsvData() {
+    debugPrint('Current CSV Data:');
+    csvData?.forEach((key, value) {
+      if (value is String || value is int || value is double || value is bool) {
+        debugPrint('$key: $value');
+      } else {
+        debugPrint('$key: Unsupported data type');
+      }
+    });
   }
 }
