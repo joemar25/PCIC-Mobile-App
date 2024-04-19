@@ -319,6 +319,39 @@ class _PCICFormPageState extends State<PCICFormPage> {
     }
   }
 
+  void _viewScreenshot(String screenshotPath) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Screenshot'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.6,
+                ),
+                child: Image.file(
+                  File(screenshotPath),
+                  fit: BoxFit.contain,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text('This is the screenshot captured during the task.'),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -340,7 +373,7 @@ class _PCICFormPageState extends State<PCICFormPage> {
               initialValue: _formData['lastCoordinates'],
               enabled: false,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             TextFormField(
               controller: _areaPlantedController,
               decoration: const InputDecoration(
@@ -349,7 +382,7 @@ class _PCICFormPageState extends State<PCICFormPage> {
               ),
               enabled: false,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             TextFormField(
               controller: _areaInHectaresController,
               decoration: const InputDecoration(
@@ -358,7 +391,7 @@ class _PCICFormPageState extends State<PCICFormPage> {
               ),
               enabled: false,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             TextFormField(
               controller: _totalDistanceController,
               decoration: const InputDecoration(
@@ -367,34 +400,38 @@ class _PCICFormPageState extends State<PCICFormPage> {
               ),
               enabled: false,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             _FormSection(
               formData: _formData,
               uniqueSeedsItems: uniqueSeedsItems,
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 24),
             const Text(
               'Signatures',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SignatureSection(task: widget.task),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             const Text(
               'Map Screenshot',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
-            Image.file(
-              File(widget.imageFile),
-              height: 200,
-              fit: BoxFit.cover,
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => _viewScreenshot(widget.imageFile),
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                textStyle: const TextStyle(fontSize: 16),
+              ),
+              child: const Text('View Screenshot'),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             const Text(
               'GPX File',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             _GPXFileButtons(
               openGpxFile: () => _openGpxFile(widget.gpxFile),
             ),
@@ -427,36 +464,6 @@ class _PCICFormPageState extends State<PCICFormPage> {
   }
 }
 
-// Form Buttons
-class _FormButtons extends StatelessWidget {
-  final VoidCallback cancelForm;
-  final VoidCallback submitForm;
-
-  const _FormButtons({
-    required this.cancelForm,
-    required this.submitForm,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        ElevatedButton(
-          onPressed: cancelForm,
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: submitForm,
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-          child: const Text('Submit'),
-        ),
-      ],
-    );
-  }
-}
-
 // GPX File Buttons
 class _GPXFileButtons extends StatelessWidget {
   final VoidCallback openGpxFile;
@@ -470,6 +477,10 @@ class _GPXFileButtons extends StatelessWidget {
     return Center(
       child: ElevatedButton(
         onPressed: openGpxFile,
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          textStyle: const TextStyle(fontSize: 16),
+        ),
         child: const Text('Open GPX File'),
       ),
     );
@@ -518,10 +529,10 @@ class _FormSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: 20),
+        const SizedBox(height: 16),
         const Text(
           'Date of Planting',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         DateInputField(
           labelText: 'DS*',
@@ -552,10 +563,10 @@ class _FormSection extends StatelessWidget {
             }
           },
         ),
-        const SizedBox(height: 30),
+        const SizedBox(height: 24),
         const Text(
           'Seed Varieties Planted and Remarks',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(

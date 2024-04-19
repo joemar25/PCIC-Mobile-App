@@ -54,6 +54,15 @@ satilite view: mapbox://styles/mapbox/satellite-v9
     flutter build apk
 ```
 
-nav bar from dashboard shoud be SettingsPage not Test
+nav bar from dashboard should be SettingsPage not Test
 
 By pressing s while naka flutter run, maga screenshot sya sa chrome or device man
+
+## TODO
+
+making sure that .task is added
+    within its value
+
+saving routes is not yet implemented (markers)
+apply algo for prediction of the path (dijkstra's algo)
+genetic algo & particle
