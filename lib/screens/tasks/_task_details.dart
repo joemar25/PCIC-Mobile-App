@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/screens/tasks/_signature_section.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 import 'package:pcic_mobile_app/screens/geotag/_geotag.dart';
 
@@ -8,10 +7,10 @@ class TaskDetailsPage extends StatefulWidget {
   const TaskDetailsPage({super.key, required this.task});
 
   @override
-  _TaskDetailsPageState createState() => _TaskDetailsPageState();
+  TaskDetailsPageState createState() => TaskDetailsPageState();
 }
 
-class _TaskDetailsPageState extends State<TaskDetailsPage> {
+class TaskDetailsPageState extends State<TaskDetailsPage> {
   Map<String, String> formData = {};
   Map<String, bool> columnStatus = {};
   bool isEditing = false;
@@ -75,8 +74,6 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            SignatureSection(task: widget.task),
           ],
         ),
       ),
@@ -86,50 +83,74 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
   Widget _buildFormFields() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: formData.entries
-          .where((entry) =>
-              !_shouldExcludeField(entry.key) &&
-              (!_hasValue(entry.key) || isEditing))
-          .map((entry) {
-        final label = _formatLabel(entry.key);
-        final value = entry.value;
-        return _buildFormField(label, value);
-      }).toList(),
+      children: [
+        _buildFormField('Farmer Name', formData['ppirFarmerName']),
+        _buildFormField('Address', formData['ppirAddress']),
+        _buildFormField('Type of Farmers', formData['ppirFarmerType']),
+        _buildFormField('Mobile No.', formData['ppirMobileNo']),
+        _buildFormField('Group Name', formData['ppirGroupName']),
+        _buildFormField('Group Address', formData['ppirGroupAddress']),
+        _buildFormField('Lender Name', formData['ppirLenderName']),
+        _buildFormField('Lender Address', formData['ppirLenderAddress']),
+        _buildFormField('CIC No.', formData['ppirCicNo']),
+        _buildFormField('Location of Farm', formData['ppirFarmLoc']),
+        _buildLocationSketchPlanFormField(),
+        _buildFormField('Area Planted', formData['ppirAreaAci']),
+        _buildFormField('Date of Planting (DS)', formData['ppirDopdsAci']),
+        _buildFormField('Date of Planting (TS)', formData['ppirDoptpAci']),
+        _buildFormField('Seed Variety Planted', formData['ppirVariety']),
+      ],
     );
   }
 
-  String _formatLabel(String key) {
-    // Remove "ppir" prefix and separate the remaining words by space
-    return key.replaceFirst('ppir', '').splitMapJoin(
-          RegExp(r'[A-Z]'),
-          onMatch: (match) => ' ${match.group(0)}',
-          onNonMatch: (nonMatch) => nonMatch,
-        );
+  Widget _buildLocationSketchPlanFormField() {
+    widget.task.debugPrintCsvData();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Text(
+            'Location of Sketch Plan:',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildFormField('North', formData['ppirNorth']),
+                    _buildFormField('East', formData['ppirEast']),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16.0),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildFormField('South', formData['ppirSouth']),
+                    _buildFormField('West', formData['ppirWest']),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
-  bool _shouldExcludeField(String key) {
-    // Define fields to exclude from the form
-    const excludeFields = {
-      'serviceGroup',
-      'serviceType',
-      'taskStatus',
-      'ppirNameInsured',
-      'ppirNameIuia',
-      'ppirSigInsured',
-      'ppirSigIuia'
-    };
-    return excludeFields.contains(key);
-  }
-
-  bool _hasValue(String key) {
-    // Check if a field has a value or is marked as completed
-    bool hasValueInFormData = formData[key]?.isNotEmpty ?? false;
-    bool isCompleted = columnStatus[key] ?? false;
-    return hasValueInFormData || isCompleted;
-  }
-
-  Widget _buildFormField(String label, String initialValue) {
-    bool canEdit = true; // Assume fields displayed can always be edited
+  Widget _buildFormField(String label, String? value) {
+    // Replace empty values with 'test'
+    final displayValue = value?.isNotEmpty ?? false ? value : 'test';
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -150,11 +171,11 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
           Expanded(
             flex: 2,
             child: TextFormField(
-              initialValue: initialValue,
-              enabled: canEdit,
-              onChanged: (value) {
+              initialValue: displayValue,
+              enabled: isEditing, // Make the field editable based on isEditing
+              onChanged: (newValue) {
                 setState(() {
-                  formData['ppir$label'.replaceAll(' ', '')] = value;
+                  formData['ppir$label'.replaceAll(' ', '')] = newValue;
                   isEditing = true;
                 });
               },
