@@ -61,7 +61,12 @@ By pressing s while naka flutter run, maga screenshot sya sa chrome or device ma
 ## TODO
 
 making sure that .task is added
-    within its value
+    Attachments/
+        - gpx
+        - geotag screenshot
+        - confirmed by signature
+        - prepared by signatures
+    task or the csv data
 
 saving routes is not yet implemented (markers)
 apply algo for prediction of the path (dijkstra's algo)

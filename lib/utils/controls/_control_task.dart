@@ -1,9 +1,10 @@
+// file: control_task.dart
 import 'dart:io';
 import 'package:csv/csv.dart';
+import 'package:external_path/external_path.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 
 class Task {
   final int id;
@@ -179,8 +180,20 @@ class Task {
   Future<void> saveCsvData() async {
     if (csvData != null) {
       try {
-        final directory = await getExternalStorageDirectory();
-        final csvFile = File('${directory!.path}/$ppirInsuranceId.csv');
+        final filePath = await ExternalPath.getExternalStoragePublicDirectory(
+          ExternalPath.DIRECTORY_DOWNLOADS,
+        );
+        final downloadsDirectory = Directory(filePath);
+        final insuranceId = ppirInsuranceId;
+
+        final insuranceDirectory =
+            Directory('${downloadsDirectory.path}/$insuranceId');
+
+        if (!await insuranceDirectory.exists()) {
+          await insuranceDirectory.create(recursive: true);
+        }
+
+        final csvFile = File('${insuranceDirectory.path}/task.csv');
 
         // Create a list to store the CSV rows
         List<List<dynamic>> csvRows = [];
@@ -209,6 +222,10 @@ class Task {
           'ppir_south',
           'ppir_east',
           'ppir_west',
+          'ppir_att1',
+          'ppir_att2',
+          'ppir_att3',
+          'ppir_att4',
           'ppir_area_aci',
           'ppir_area_act',
           'ppir_dopds_aci',
@@ -223,17 +240,46 @@ class Task {
           'ppir_name_insured',
           'ppir_name_iuia',
           'ppir_sig_insured',
-          'ppir_sig_iuia'
+          'ppir_sig_iuia',
+          'track_totalarea',
+          'track_datetime',
+          'track_lastcoord',
+          'track_totaldistance',
         ]);
 
         // Add the data row
-        List<dynamic> dataRow = List<dynamic>.filled(37, '');
+        List<dynamic> dataRow = List<dynamic>.filled(45, '');
+
+        // Fill the data row with original CSV values
+        originalCsvData?.forEach((key, value) {
+          int columnIndex = _getColumnIndex(key);
+          if (columnIndex != -1) {
+            dataRow[columnIndex] =
+                value ?? ''; // Set empty string if value is null
+          }
+        });
+
+        // Update the data row with new CSV values
         csvData!.forEach((key, value) {
           int columnIndex = _getColumnIndex(key);
           if (columnIndex != -1) {
-            dataRow[columnIndex] = value;
+            dataRow[columnIndex] =
+                value ?? ''; // Set empty string if value is null
           }
         });
+
+        // Set the additional columns
+        dataRow[41] = csvData!['trackTotalarea'] ?? '';
+        dataRow[42] = csvData!['trackDatetime'] ?? '';
+        dataRow[43] = csvData!['trackLastcoord'] ?? '';
+        dataRow[44] = csvData!['trackTotaldistance'] ?? '';
+
+        // Set the signatures and their corresponding names
+        dataRow[37] = csvData!['ppirNameInsured'] ?? '';
+        dataRow[38] = csvData!['ppirNameIuia'] ?? '';
+        dataRow[39] = csvData!['ppirSigInsured'] ?? '';
+        dataRow[40] = csvData!['ppirSigIuia'] ?? '';
+
         csvRows.add(dataRow);
 
         // Write the CSV rows to the file
@@ -290,27 +336,12 @@ class Task {
       'ppirNameIuia': 38,
       'ppirSigInsured': 39,
       'ppirSigIuia': 40,
+      'trackTotalarea': 41,
+      'trackDatetime': 42,
+      'trackLastcoord': 43,
+      'trackTotaldistance': 44,
     };
     return columnIndices[columnName] ?? -1;
-  }
-
-  Future<String> _getCsvFilePath() async {
-    Directory appDocDirectory = await getApplicationDocumentsDirectory();
-    String appDocPath = appDocDirectory.path;
-    String csvFilePath = '$appDocPath/1706671193108371-1.csv';
-
-    // Check if the CSV file exists, and create it if it doesn't
-    File csvFile = File(csvFilePath);
-    if (!await csvFile.exists()) {
-      // Create the CSV file with the header row
-      String headerRow =
-          'Task Number,Service Group,Service Type,Priority,Task Status,Assignee,ppir_assignmentid,ppir_insuranceid,ppir_farmername,ppir_address,ppir_farmertype,ppir_mobileno,ppir_groupname,ppir_groupaddress,ppir_lendername,ppir_lenderaddress,ppir_cicno,ppir_farmloc,ppir_north,ppir_south,ppir_east,ppir_west,ppir_area_aci,ppir_area_act,ppir_dopds_aci,ppir_dopds_act,ppir_doptp_aci,ppir_doptp_act,ppir_svp_aci,ppir_svp_act,ppir_variety,ppir_stagecrop,ppir_remarks,ppir_name_insured,ppir_name_iuia,ppir_sig_insured,ppir_sig_iuia\n';
-      await csvFile.writeAsString(headerRow);
-    }
-
-    debugPrint(csvFilePath);
-
-    return csvFilePath;
   }
 
   void debugPrintCsvData() {
