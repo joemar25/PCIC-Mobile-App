@@ -13,8 +13,6 @@ class TaskDetailsPage extends StatefulWidget {
 class TaskDetailsPageState extends State<TaskDetailsPage> {
   Map<String, String> formData = {};
   Map<String, bool> columnStatus = {};
-  bool isEditing = false;
-  bool hasChanges = false;
 
   @override
   void initState() {
@@ -45,13 +43,6 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Task Details'),
-        actions: [
-          if (isEditing)
-            IconButton(
-              onPressed: _saveFormData,
-              icon: const Icon(Icons.save),
-            ),
-        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -172,13 +163,7 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
             flex: 2,
             child: TextFormField(
               initialValue: displayValue,
-              enabled: isEditing, // Make the field editable based on isEditing
-              onChanged: (newValue) {
-                setState(() {
-                  formData['ppir$label'.replaceAll(' ', '')] = newValue;
-                  isEditing = true;
-                });
-              },
+              enabled: false, // Disable editing
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 filled: true,
@@ -189,60 +174,5 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
         ],
       ),
     );
-  }
-
-  void _saveFormData() async {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirm Save'),
-          content: const Text('Are you sure you want to save changes?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _performSave();
-                Navigator.of(context).pop();
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _performSave() async {
-    // Update the task's CSV data with the form data
-    widget.task.updateCsvData(formData);
-
-    // Update the task's column status based on the form data
-    Map<String, bool> updatedColumnStatus = {};
-    formData.forEach((key, value) {
-      updatedColumnStatus[key] = value.isNotEmpty;
-    });
-    widget.task.updateColumnStatus(updatedColumnStatus);
-
-    // Save the updated CSV data back to the file
-    widget.task.saveCsvData().then((_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Form data saved successfully')),
-      );
-      setState(() {
-        isEditing = false;
-        columnStatus = widget.task.getColumnStatus();
-        hasChanges = false;
-      });
-    }).catchError((error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error saving form data')),
-      );
-    });
   }
 }
