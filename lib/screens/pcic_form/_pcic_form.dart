@@ -1,11 +1,10 @@
-// pcic_form.dart
+// file: pcic_form.dart
 import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pcic_mobile_app/screens/pcic_form/_date_control.dart';
 import 'package:pcic_mobile_app/screens/pcic_form/_success.dart';
 import 'package:pcic_mobile_app/screens/tasks/_signature_section.dart';
@@ -186,6 +185,19 @@ class _PCICFormPageState extends State<PCICFormPage> {
   }
 
   void _saveFormData() {
+    // Update the additional columns
+    _formData['trackTotalarea'] = _areaInHectaresController.text;
+    _formData['trackDatetime'] = _areaPlantedController.text;
+    _formData['trackLastcoord'] = _formData['lastCoordinates'];
+    _formData['trackTotaldistance'] = _totalDistanceController.text;
+
+    // Update the remarks and signature fields with default values if null
+    _formData['ppirRemarks'] = _formData['ppirRemarks'] ?? 'no value';
+    _formData['ppirSigInsured'] = _formData['ppirSigInsured'] ?? 'no value';
+    _formData['ppirNameInsured'] = _formData['ppirNameInsured'] ?? 'no value';
+    _formData['ppirSigIuia'] = _formData['ppirSigIuia'] ?? 'no value';
+    _formData['ppirNameIuia'] = _formData['ppirNameIuia'] ?? 'no value';
+
     widget.task.updateCsvData(_getChangedData());
     widget.task.isCompleted = true;
 
@@ -254,25 +266,6 @@ class _PCICFormPageState extends State<PCICFormPage> {
         ],
       ),
     );
-  }
-
-  void _downloadGpxFile(String gpxFilePath) async {
-    try {
-      final directory = await getExternalStorageDirectory();
-      final fileName = 'route_${DateTime.now().millisecondsSinceEpoch}.gpx';
-      final file = File('${directory!.path}/$fileName');
-
-      await file.writeAsString(gpxFilePath);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('GPX file downloaded successfully')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error downloading GPX file')),
-      );
-      print('Error downloading GPX file: $e');
-    }
   }
 
   void _openGpxFile(String gpxFilePath) async {
@@ -593,3 +586,6 @@ class _FormSection extends StatelessWidget {
     );
   }
 }
+
+// Saving the signature filename and the confirmed and prepared by names
+// also remarks
