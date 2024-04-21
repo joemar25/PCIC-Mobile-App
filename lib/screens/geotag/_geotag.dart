@@ -144,6 +144,12 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
             .map((point) => Wpt(lat: point.latitude, lon: point.longitude))
             .toList();
 
+        // Add starting point coordinates to close the route
+        routePoints.add(Wpt(
+          lat: routePoints.first.lat,
+          lon: routePoints.first.lon,
+        ));
+
         var gpx = GpxUtil.createGpx(routePoints);
         var gpxString = GpxWriter().asString(gpx);
 
