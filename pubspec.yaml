@@ -41,6 +41,7 @@ dependencies:
   # flutter_plugin_android_lifecycle: ^2.0.17
   signature: ^5.4.1
   external_path: ^1.0.3
+  url_strategy: ^0.2.0
 
 dev_dependencies:
   flutter_test:
