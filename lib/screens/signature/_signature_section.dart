@@ -6,7 +6,7 @@ import 'package:signature/signature.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 
 class SignatureSection extends StatefulWidget {
-  final Task task;
+  final TaskManager task;
   const SignatureSection({super.key, required this.task});
 
   @override

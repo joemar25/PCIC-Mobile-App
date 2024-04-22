@@ -5,15 +5,15 @@ import 'package:pcic_mobile_app/screens/tasks/_task_details.dart';
 import 'package:pcic_mobile_app/screens/home/_recent_task_header.dart';
 import 'package:pcic_mobile_app/screens/home/_recent_task_footer.dart';
 
-class TaskContainer extends StatefulWidget {
-  const TaskContainer({super.key, required this.tasks});
-  final List<Task> tasks;
+class TaskView extends StatefulWidget {
+  const TaskView({super.key, required this.tasks});
+  final List<TaskManager> tasks;
 
   @override
   TaskContainerState createState() => TaskContainerState();
 }
 
-class TaskContainerState extends State<TaskContainer> {
+class TaskContainerState extends State<TaskView> {
   int _hoveredIndex = -1;
   String _sortBy = 'id';
   bool _showCompleted = false;
@@ -21,10 +21,10 @@ class TaskContainerState extends State<TaskContainer> {
   @override
   Widget build(BuildContext context) {
     // Sort tasks based on the selected sorting option
-    List<Task> sortedTasks = _sortTasks(widget.tasks, _sortBy);
+    List<TaskManager> sortedTasks = _sortTasks(widget.tasks, _sortBy);
 
     // Filter tasks based on completion status
-    List<Task> filteredTasks = _showCompleted
+    List<TaskManager> filteredTasks = _showCompleted
         ? sortedTasks.where((task) => task.isCompleted).toList()
         : sortedTasks.where((task) => !task.isCompleted).toList();
 
@@ -37,7 +37,7 @@ class TaskContainerState extends State<TaskContainer> {
             shrinkWrap: true,
             itemCount: filteredTasks.length,
             itemBuilder: (context, index) {
-              final Task task = filteredTasks[index];
+              final TaskManager task = filteredTasks[index];
               return MouseRegion(
                 onEnter: (_) => setState(() => _hoveredIndex = index),
                 onExit: (_) => setState(() => _hoveredIndex = -1),
@@ -123,7 +123,7 @@ class TaskContainerState extends State<TaskContainer> {
     );
   }
 
-  List<Task> _sortTasks(List<Task> tasks, String sortBy) {
+  List<TaskManager> _sortTasks(List<TaskManager> tasks, String sortBy) {
     switch (sortBy) {
       case 'id':
         return tasks..sort((a, b) => a.id.compareTo(b.id));
@@ -136,7 +136,7 @@ class TaskContainerState extends State<TaskContainer> {
     }
   }
 
-  void _navigateToTaskDetails(BuildContext context, Task task) {
+  void _navigateToTaskDetails(BuildContext context, TaskManager task) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => TaskDetailsPage(task: task)),

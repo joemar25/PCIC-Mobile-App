@@ -6,7 +6,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class Task {
+class TaskManager {
   final int id;
   final DateTime dateAdded;
   final DateTime dateAccess;
@@ -17,7 +17,7 @@ class Task {
   bool isCompleted;
   bool hasChanges = false;
 
-  Task({
+  TaskManager({
     required this.id,
     this.isCompleted = false,
     required this.dateAdded,
@@ -39,8 +39,8 @@ class Task {
     return columnStatus;
   }
 
-  factory Task.fromMap(Map<String, dynamic> map) {
-    return Task(
+  factory TaskManager.fromMap(Map<String, dynamic> map) {
+    return TaskManager(
       id: map['id'],
       isCompleted: map['isCompleted'],
       dateAdded: _parseDate(map['dateAdded']),
@@ -65,8 +65,8 @@ class Task {
     return DateTime.now();
   }
 
-  static Future<List<Task>> getAllTasks() async {
-    List<Task> tasks = [];
+  static Future<List<TaskManager>> getAllTasks() async {
+    List<TaskManager> tasks = [];
 
     try {
       // Load the original CSV data
@@ -136,7 +136,7 @@ class Task {
           values.forEach((key, value) {
             if (value is Map<dynamic, dynamic>) {
               Map<String, dynamic> taskData = Map<String, dynamic>.from(value);
-              Task task = Task.fromMap(taskData);
+              TaskManager task = TaskManager.fromMap(taskData);
 
               // Retrieve the CSV data for the task based on its ppirInsuranceId
               String ppirInsuranceId = task.ppirInsuranceId.toString();
@@ -200,11 +200,11 @@ class Task {
 
         // Add the header row
         csvRows.add([
-          'Task Number',
+          'TaskManager Number',
           'Service Group',
           'Service Type',
           'Priority',
-          'Task Status',
+          'TaskManager Status',
           'Assignee',
           'ppir_assignmentid',
           'ppir_insuranceid',

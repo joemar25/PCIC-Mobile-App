@@ -91,7 +91,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String? _token;
-  List<Task> _tasks = [];
+  List<TaskManager> _tasks = [];
 
   @override
   void initState() {
@@ -127,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _fetchTasks() async {
     try {
-      List<Task> tasks = await Task.getAllTasks();
+      List<TaskManager> tasks = await TaskManager.getAllTasks();
       setState(() {
         _tasks = tasks;
       });
@@ -172,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: 8,
                   ),
                   Text(
-                    'Recent Task',
+                    'Recent TaskManager',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ],
