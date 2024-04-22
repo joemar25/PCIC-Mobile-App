@@ -157,10 +157,6 @@ class PCICFormPageState extends State<PCICFormPage> {
     }
   }
 
-  Future<bool> _onWillPop() async {
-    return false;
-  }
-
   void _submitForm() {
     showDialog(
       context: context,
@@ -379,7 +375,7 @@ class PCICFormPageState extends State<PCICFormPage> {
             TextFormField(
               controller: _areaInHectaresController,
               decoration: const InputDecoration(
-                labelText: 'Total Area (Hectares)',
+                labelText: 'Actual Total Area Planted (Hectares)',
                 border: OutlineInputBorder(),
               ),
               enabled: false,
@@ -524,7 +520,7 @@ class _FormSection extends StatelessWidget {
       children: [
         const SizedBox(height: 16),
         const Text(
-          'Date of Planting',
+          'Actual Date of Planting',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         DateInputField(
@@ -565,7 +561,7 @@ class _FormSection extends StatelessWidget {
         DropdownButtonFormField<String>(
           value: formData['ppirVariety'],
           decoration: const InputDecoration(
-            labelText: 'Select Seed Variety*',
+            labelText: 'Select the Actual Seed Variety*',
           ),
           items: uniqueSeedsItems,
           onChanged: (value) {
@@ -586,10 +582,3 @@ class _FormSection extends StatelessWidget {
     );
   }
 }
-
-// Saving the signature filename and the confirmed and prepared by names
-// also remarks
-
-
-// TaskManager Number, Service Group, Service Type,   Priority        
-// 0,           P06,           Region 06 PPIR, Normal Priority,
