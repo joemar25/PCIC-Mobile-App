@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pcic_mobile_app/screens/messages/_filter.dart';
 import 'package:pcic_mobile_app/screens/messages/_detail.dart';
-import 'package:pcic_mobile_app/screens/messages/_items.dart';
-import 'package:provider/provider.dart';
+
+import 'model.dart';
 
 class MessagesPage extends StatefulWidget {
   const MessagesPage({super.key});
 
   @override
-  MessagesPageState createState() => MessagesPageState();
+  _MessagesPageState createState() => _MessagesPageState();
 }
 
-class MessagesPageState extends State<MessagesPage> {
+class _MessagesPageState extends State<MessagesPage> {
   final List<Map<String, dynamic>> messages = [
     {
       'name': 'Joemar Cardiño',
@@ -33,7 +32,7 @@ class MessagesPageState extends State<MessagesPage> {
       'color': Colors.orange,
     },
     {
-      'name': 'Mr Johny Makasalanan',
+      'name': 'Mr John Doe',
       'message': 'I have a question for you.',
       'time': DateTime(2023, 6, 3, 11, 15),
       'color': Colors.purple,
@@ -48,28 +47,11 @@ class MessagesPageState extends State<MessagesPage> {
   @override
   void initState() {
     super.initState();
-    _loadFilters();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _postFrameCallback();
-    });
-  }
-
-  void _postFrameCallback() {
     _filterMessagesAsync();
-    // Add any other state-related logic here
-  }
-
-  void _loadFilters() {
-    final filters =
-        Provider.of<MessageFiltersNotifier>(context, listen: false).filters;
-    setState(() {
-      _searchQuery = filters.searchQuery;
-      _sortEarliest = filters.sortEarliest;
-    });
   }
 
   Future<void> _filterMessagesAsync() async {
-    final filteredList = await Future.value(messages
+    final filteredList = messages
         .where((message) =>
             message['name']
                 .toLowerCase()
@@ -77,7 +59,7 @@ class MessagesPageState extends State<MessagesPage> {
             message['message']
                 .toLowerCase()
                 .contains(_searchQuery.toLowerCase()))
-        .toList());
+        .toList();
 
     filteredList.sort((a, b) {
       if (_sortEarliest) {
@@ -90,13 +72,6 @@ class MessagesPageState extends State<MessagesPage> {
     setState(() {
       filteredMessages = filteredList;
     });
-
-    Provider.of<MessageFiltersNotifier>(context, listen: false).updateFilters(
-      MessageFilters(
-        searchQuery: _searchQuery,
-        sortEarliest: _sortEarliest,
-      ),
-    );
   }
 
   void _navigateToMessageDetails(Map<String, dynamic> message) {
@@ -111,79 +86,98 @@ class MessagesPageState extends State<MessagesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Builder(
-        builder: (context) {
-          return Column(
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  'Messages',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      _searchQuery = value;
-                    });
-                    _filterMessagesAsync();
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'Search messages...',
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24.0),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Sort by:'),
-                    DropdownButton<bool>(
-                      value: _sortEarliest,
-                      onChanged: (value) {
-                        setState(() {
-                          _sortEarliest = value!;
-                        });
-                        _filterMessagesAsync();
-                      },
-                      items: const [
-                        DropdownMenuItem(value: true, child: Text('Earliest')),
-                        DropdownMenuItem(value: false, child: Text('Latest')),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: filteredMessages.length,
-                  itemBuilder: (context, index) {
-                    final message = filteredMessages[index];
-                    return MessageItem(
-                      name: message['name'],
-                      message: message['message'],
-                      time: DateFormat('MMM d, yyyy hh:mm a')
-                          .format(message['time']),
-                      color: message['color'],
-                      onTap: () => _navigateToMessageDetails(message),
-                    );
-                  },
-                ),
-              ),
-            ],
-          );
+      appBar: AppBar(
+        title: const Text('Messages'),
+      ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          // Simulate refreshing messages from server
+          await Future.delayed(const Duration(seconds: 1));
+          _filterMessagesAsync();
         },
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Flexible(
+                    child: Text(
+                      'Messages',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.filter_list),
+                    onPressed: () {
+                      // Implement filter functionality
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value;
+                  });
+                  _filterMessagesAsync();
+                },
+                decoration: InputDecoration(
+                  hintText: 'Search messages...',
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24.0),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Sort by:'),
+                  DropdownButton<bool>(
+                    value: _sortEarliest,
+                    onChanged: (value) {
+                      setState(() {
+                        _sortEarliest = value!;
+                      });
+                      _filterMessagesAsync();
+                    },
+                    items: const [
+                      DropdownMenuItem(value: true, child: Text('Earliest')),
+                      DropdownMenuItem(value: false, child: Text('Latest')),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: filteredMessages.length,
+                itemBuilder: (context, index) {
+                  final message = filteredMessages[index];
+                  return MessageModel(
+                    name: message['name'],
+                    message: message['message'],
+                    time: DateFormat('MMM d, yyyy hh:mm a')
+                        .format(message['time']),
+                    color: message['color'],
+                    onTap: () => _navigateToMessageDetails(message),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

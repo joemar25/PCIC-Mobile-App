@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class MessageItem extends StatelessWidget {
+class MessageModel extends StatelessWidget {
   final String name;
   final String message;
   final String time;
   final Color color;
   final VoidCallback onTap;
 
-  const MessageItem({
+  const MessageModel({
     super.key,
     required this.name,
     required this.message,
