@@ -1,7 +1,7 @@
 // filename: _task.dart
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
-import 'package:pcic_mobile_app/screens/tasks/_task_container.dart';
+import 'package:pcic_mobile_app/screens/tasks/_task_view.dart';
 
 class TaskPage extends StatefulWidget {
   const TaskPage({super.key});
@@ -11,7 +11,7 @@ class TaskPage extends StatefulWidget {
 }
 
 class TaskPageState extends State<TaskPage> {
-  List<Task> _tasks = []; // Initialize an empty list of tasks
+  List<TaskManager> _tasks = []; // Initialize an empty list of tasks
 
   @override
   void initState() {
@@ -21,7 +21,8 @@ class TaskPageState extends State<TaskPage> {
 
   Future<void> _fetchTasks() async {
     try {
-      List<Task> tasks = await Task.getAllTasks(); // Fetch all tasks
+      List<TaskManager> tasks =
+          await TaskManager.getAllTasks(); // Fetch all tasks
       setState(() {
         _tasks = tasks; // Update the list of tasks
       });
@@ -37,7 +38,7 @@ class TaskPageState extends State<TaskPage> {
         title: const Text('Tasks'),
       ),
       body: _tasks.isNotEmpty
-          ? TaskContainer(tasks: _tasks)
+          ? TaskView(tasks: _tasks)
           : const Center(
               child: CircularProgressIndicator(),
             ),

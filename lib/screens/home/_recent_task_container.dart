@@ -7,7 +7,7 @@ import 'package:pcic_mobile_app/screens/tasks/_task_details.dart'; // Import the
 class RecentTaskContainer extends StatefulWidget {
   const RecentTaskContainer({super.key, required this.tasks});
 
-  final List<Task> tasks;
+  final List<TaskManager> tasks;
 
   @override
   _RecentTaskContainerState createState() => _RecentTaskContainerState();
@@ -17,7 +17,7 @@ class _RecentTaskContainerState extends State<RecentTaskContainer> {
   int _hoveredIndex = -1;
   @override
   Widget build(BuildContext context) {
-    List<Task> incompleteTasks =
+    List<TaskManager> incompleteTasks =
         widget.tasks.where((task) => !task.isCompleted).toList();
 
     return ListView.builder(
@@ -25,7 +25,7 @@ class _RecentTaskContainerState extends State<RecentTaskContainer> {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: incompleteTasks.length,
       itemBuilder: (context, index) {
-        final Task task = widget.tasks[index];
+        final TaskManager task = widget.tasks[index];
         return MouseRegion(
           onEnter: (_) => setState(() => _hoveredIndex = index),
           onExit: (_) => setState(() => _hoveredIndex = -1),
@@ -58,7 +58,7 @@ class _RecentTaskContainerState extends State<RecentTaskContainer> {
     );
   }
 
-  void _navigateToTaskDetails(BuildContext context, Task task) {
+  void _navigateToTaskDetails(BuildContext context, TaskManager task) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => TaskDetailsPage(task: task)),

@@ -15,7 +15,7 @@ import '_map_service.dart';
 import '../pcic_form/_pcic_form.dart';
 
 class GeotagPage extends StatefulWidget {
-  final Task task;
+  final TaskManager task;
   const GeotagPage({super.key, required this.task});
 
   @override

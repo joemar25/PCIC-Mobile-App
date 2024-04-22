@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 
 class RecentTaskHeader extends StatelessWidget {
-  final Task task;
+  final TaskManager task;
 
   const RecentTaskHeader({super.key, required this.task});
 

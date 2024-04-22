@@ -16,7 +16,7 @@ import 'package:permission_handler/permission_handler.dart';
 class PCICFormPage extends StatefulWidget {
   final String imageFile;
   final String gpxFile;
-  final Task task;
+  final TaskManager task;
   final List<LatLng> routePoints;
   final LatLng lastCoordinates;
 
@@ -239,7 +239,7 @@ class PCICFormPageState extends State<PCICFormPage> {
     debugPrint(taskId);
 
     databaseReference.child(taskPath).update({'isCompleted': true}).then((_) {
-      debugPrint('Task updated successfully');
+      debugPrint('TaskManager updated successfully');
     }).catchError((error) {
       debugPrint('Error updating task: $error');
     });
@@ -591,5 +591,5 @@ class _FormSection extends StatelessWidget {
 // also remarks
 
 
-// Task Number, Service Group, Service Type,   Priority        
+// TaskManager Number, Service Group, Service Type,   Priority        
 // 0,           P06,           Region 06 PPIR, Normal Priority,

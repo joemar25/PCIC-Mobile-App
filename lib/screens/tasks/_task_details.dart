@@ -4,7 +4,7 @@ import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 import 'package:pcic_mobile_app/screens/geotag/_geotag.dart';
 
 class TaskDetailsPage extends StatefulWidget {
-  final Task task;
+  final TaskManager task;
   const TaskDetailsPage({super.key, required this.task});
 
   @override
@@ -63,7 +63,7 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Task Details'),
+        title: const Text('TaskManager Details'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

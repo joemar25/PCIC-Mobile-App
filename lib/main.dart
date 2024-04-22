@@ -79,7 +79,7 @@ class MyApp extends StatelessWidget {
           case AppRoutes.job:
             return MaterialPageRoute(
               builder: (context) => GeotagPage(
-                task: Task(
+                task: TaskManager(
                   id: 1,
                   isCompleted: false,
                   dateAdded: DateTime.now(),
