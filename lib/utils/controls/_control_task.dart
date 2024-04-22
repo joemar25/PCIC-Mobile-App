@@ -8,13 +8,13 @@ import 'package:flutter/services.dart';
 
 class Task {
   final int id;
-  bool isCompleted;
   final DateTime dateAdded;
   final DateTime dateAccess;
   final int ppirAssignmentId;
   final int ppirInsuranceId;
   Map<String, dynamic>? csvData;
   Map<String, dynamic>? originalCsvData;
+  bool isCompleted;
   bool hasChanges = false;
 
   Task({
