@@ -16,9 +16,20 @@ class RecentTaskContainer extends StatefulWidget {
 class _RecentTaskContainerState extends State<RecentTaskContainer> {
   int _hoveredIndex = -1;
   @override
+  @override
   Widget build(BuildContext context) {
     List<TaskManager> incompleteTasks =
         widget.tasks.where((task) => !task.isCompleted).toList();
+
+    if (incompleteTasks.isEmpty) {
+      // If there are no incomplete tasks
+      return const Center(
+        child: Text(
+          'No tasks were recently added.',
+          style: TextStyle(fontSize: 16.0),
+        ),
+      );
+    }
 
     return ListView.builder(
       shrinkWrap: true,
