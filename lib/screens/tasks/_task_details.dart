@@ -126,7 +126,7 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
               _buildFormField(
                   'Date of Planting (DS)', formData['ppirDopdsAci']),
               _buildFormField(
-                  'Date of Planting (TS)', formData['ppirDoptpAci']),
+                  'Date of Planting (TP)', formData['ppirDoptpAci']),
               _buildFormField('Seed Variety Planted', formData['ppirVariety']),
             ]),
             ElevatedButton(
