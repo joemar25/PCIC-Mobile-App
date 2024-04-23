@@ -1,10 +1,9 @@
-// filename: _task.dart
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 import 'package:pcic_mobile_app/screens/tasks/_task_view.dart';
 
 class TaskPage extends StatefulWidget {
-  const TaskPage({super.key});
+  const TaskPage({super.key, Key? id});
 
   @override
   TaskPageState createState() => TaskPageState();
@@ -40,7 +39,7 @@ class TaskPageState extends State<TaskPage> {
       body: _tasks.isNotEmpty
           ? TaskView(tasks: _tasks)
           : const Center(
-              child: CircularProgressIndicator(),
+              child: Text('No tasks'),
             ),
     );
   }
