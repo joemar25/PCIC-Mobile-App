@@ -13,7 +13,7 @@
     <!-- <uses-permission android:name="android.permission.INTERNET" /> -->
 
     <application
-        android:label="pcic_mobile_app"
+        android:label="PCIC"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

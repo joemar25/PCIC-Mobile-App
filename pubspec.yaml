@@ -37,19 +37,29 @@ dependencies:
   url_launcher: ^6.2.6
   open_file: ^3.3.2
   camera: ^0.10.5+9
-  flutter_animate: ^4.5.0 #decide latur
+  flutter_animate: ^4.5.0
   # flutter_plugin_android_lifecycle: ^2.0.17
   signature: ^5.4.1
   external_path: ^1.0.3
   url_strategy: ^0.2.0
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/image/pcic_logo.png"
+  web:
+    generate: true
+    image_path: "assets/image/pcic_logo.png"
+
 flutter:
   uses-material-design: true
   assets:
+    - assets/image/pcic_logo.png
     - assets/config/.env
     - assets/storage/images/
     - assets/storage/tasks/
