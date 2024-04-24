@@ -1,6 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 import 'package:pcic_mobile_app/screens/geotag/_geotag.dart';
+import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
 
 class TaskDetailsPage extends StatefulWidget {
   final TaskManager task;
@@ -40,42 +41,53 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
 
   Widget _buildFormSection(String title, List<Widget> fields) {
     return AnimatedSize(
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-      child: Card(
-        margin: const EdgeInsets.only(bottom: 16.0),
-        elevation: 4.0,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+        child: SizedBox(
+          width: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
+            children: [
               Text(title,
+                  textAlign: TextAlign.left,
                   style: const TextStyle(
-                      fontSize: 18.0, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 16.0),
-              ...fields,
+                      fontSize: 23.04, fontWeight: FontWeight.w300)),
+              Container(
+                width: double.maxFinite,
+                margin: const EdgeInsets.only(bottom: 10.0),
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        color: Colors.black.withOpacity(0.2), width: 1.0),
+                    borderRadius: BorderRadius.circular(10)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      const SizedBox(height: 18.0),
+                      ...fields,
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   Widget _buildFormField(String label, String? value) {
     final displayValue = value?.isNotEmpty ?? false ? value : 'test'; // N/A
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-              child: Text('$label:',
-                  style: const TextStyle(fontWeight: FontWeight.bold))),
-          const SizedBox(width: 8.0),
-          Expanded(
-              flex: 2,
-              child: Text(displayValue ?? '',
-                  style: const TextStyle(fontSize: 16.0))),
+          Text('$label:',
+              style:
+                  const TextStyle(fontWeight: FontWeight.w300, fontSize: 14.0)),
+          Text(displayValue ?? '',
+              style:
+                  const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500)),
         ],
       ),
     );
@@ -97,23 +109,37 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Task Details')),
+      appBar: AppBar(
+          centerTitle: true,
+          title: const Text(
+            'Task Details',
+            textAlign: TextAlign.center,
+          )),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            _buildFormSection('POST PLANTING INSPECTION REPORT', [
-              _buildFormField('Region', formData['serviceGroup']),
+            _buildFormSection('Post Planting Inspection Report', [
               _buildFormField('Farmer Name', formData['ppirFarmerName']),
               _buildFormField('Address', formData['ppirAddress']),
-              _buildFormField('Type of Farmers', formData['ppirFarmerType']),
               _buildFormField('Mobile No.', formData['ppirMobileNo']),
+              _buildFormField('Type of Farmers', formData['ppirFarmerType']),
+              const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4.0),
+                  child: Divider()),
               _buildFormField('Group Name', formData['ppirGroupName']),
               _buildFormField('Group Address', formData['ppirGroupAddress']),
+              const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4.0),
+                  child: Divider()),
               _buildFormField('Lender Name', formData['ppirLenderName']),
               _buildFormField('Lender Address', formData['ppirLenderAddress']),
-              _buildFormField('CIC No.', formData['ppirCicNo']),
+              const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4.0),
+                  child: Divider()),
+              _buildFormField('Region', formData['serviceGroup']),
               _buildFormField('Location of Farm', formData['ppirFarmLoc']),
+              _buildFormField('CIC No.', formData['ppirCicNo']),
             ]),
             _buildFormSection('Location Sketch Plan', [
               _buildFormField('North', formData['ppirNorth']),
@@ -129,14 +155,45 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
                   'Date of Planting (TP)', formData['ppirDoptpAci']),
               _buildFormField('Seed Variety Planted', formData['ppirVariety']),
             ]),
-            ElevatedButton(
-              onPressed: _navigateToGeotagPage,
-              child:
-                  const Text('Go to Geotag', style: TextStyle(fontSize: 16.0)),
-            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                  ),
+                  onPressed: _navigateToGeotagPage,
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        CupertinoIcons.location_solid,
+                        color: Colors.black,
+                      ),
+                      Text(
+                        'Go to Geotag',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),
     );
   }
 }
+
+
+/**
+ * 
+ * 
+ * 
+ * 
+ */
