@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/geotag/_geotag.dart';
 import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
@@ -83,10 +84,10 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
         children: [
           Text('$label:',
               style:
-                  const TextStyle(fontWeight: FontWeight.w300, fontSize: 16.0)),
+                  const TextStyle(fontWeight: FontWeight.w300, fontSize: 14.0)),
           Text(displayValue ?? '',
               style:
-                  const TextStyle(fontSize: 19.2, fontWeight: FontWeight.w400)),
+                  const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500)),
         ],
       ),
     );
@@ -108,23 +109,37 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Task Details')),
+      appBar: AppBar(
+          centerTitle: true,
+          title: const Text(
+            'Task Details',
+            textAlign: TextAlign.center,
+          )),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             _buildFormSection('Post Planting Inspection Report', [
-              _buildFormField('Region', formData['serviceGroup']),
               _buildFormField('Farmer Name', formData['ppirFarmerName']),
               _buildFormField('Address', formData['ppirAddress']),
-              _buildFormField('Type of Farmers', formData['ppirFarmerType']),
               _buildFormField('Mobile No.', formData['ppirMobileNo']),
+              _buildFormField('Type of Farmers', formData['ppirFarmerType']),
+              const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4.0),
+                  child: Divider()),
               _buildFormField('Group Name', formData['ppirGroupName']),
               _buildFormField('Group Address', formData['ppirGroupAddress']),
+              const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4.0),
+                  child: Divider()),
               _buildFormField('Lender Name', formData['ppirLenderName']),
               _buildFormField('Lender Address', formData['ppirLenderAddress']),
-              _buildFormField('CIC No.', formData['ppirCicNo']),
+              const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4.0),
+                  child: Divider()),
+              _buildFormField('Region', formData['serviceGroup']),
               _buildFormField('Location of Farm', formData['ppirFarmLoc']),
+              _buildFormField('CIC No.', formData['ppirCicNo']),
             ]),
             _buildFormSection('Location Sketch Plan', [
               _buildFormField('North', formData['ppirNorth']),
@@ -140,11 +155,34 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
                   'Date of Planting (TP)', formData['ppirDoptpAci']),
               _buildFormField('Seed Variety Planted', formData['ppirVariety']),
             ]),
-            ElevatedButton(
-              onPressed: _navigateToGeotagPage,
-              child:
-                  const Text('Go to Geotag', style: TextStyle(fontSize: 16.0)),
-            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                  ),
+                  onPressed: _navigateToGeotagPage,
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        CupertinoIcons.location_solid,
+                        color: Colors.black,
+                      ),
+                      Text(
+                        'Go to Geotag',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),
