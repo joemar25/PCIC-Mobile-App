@@ -10,10 +10,10 @@ class RecentTaskContainer extends StatefulWidget {
   final List<TaskManager> tasks;
 
   @override
-  _RecentTaskContainerState createState() => _RecentTaskContainerState();
+  RecentTaskContainerState createState() => RecentTaskContainerState();
 }
 
-class _RecentTaskContainerState extends State<RecentTaskContainer> {
+class RecentTaskContainerState extends State<RecentTaskContainer> {
   int _hoveredIndex = -1;
   @override
   @override
