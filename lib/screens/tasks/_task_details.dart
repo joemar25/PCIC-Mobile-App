@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/geotag/_geotag.dart';
-import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
+import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
 
 class TaskDetailsPage extends StatefulWidget {
   final TaskManager task;

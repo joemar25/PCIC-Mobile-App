@@ -33,6 +33,13 @@ to be followed
 
 
 
+04-25-2024
+TODO:
+- remove env file in the overall app
+- automatic folder syncing of csv to database
+- xml generation
+- .task (compression of file) to .zip first then to .task
+- file organizer (for optimal code)
 
 
 

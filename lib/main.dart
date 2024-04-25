@@ -6,13 +6,13 @@ import 'package:provider/provider.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 import 'utils/app/_firebase.dart';
-import 'utils/controls/_filter_task.dart';
+import 'screens/tasks/_filter_task.dart';
 import 'utils/agent/_login.dart';
 import 'utils/agent/_signup.dart';
 import 'utils/agent/_verify_login.dart';
 import 'utils/agent/_verify_signup.dart';
 import 'utils/app/_routes.dart';
-import 'utils/controls/_control_task.dart';
+import 'screens/tasks/_control_task.dart';
 
 import 'screens/_splash.dart';
 import 'screens/_starting.dart';
