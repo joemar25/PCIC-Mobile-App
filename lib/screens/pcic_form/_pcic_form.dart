@@ -5,13 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:open_file/open_file.dart';
-import 'package:pcic_mobile_app/utils/controls/_date_control.dart';
 import 'package:pcic_mobile_app/screens/pcic_form/_success.dart';
 import 'package:pcic_mobile_app/screens/signature/_signature_section.dart';
 import 'package:pcic_mobile_app/utils/seeds/_dropdown.dart';
-import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
+import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
 import 'package:pcic_mobile_app/screens/geotag/_map_service.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import './_form_field.dart' as form_field;
+import './_form_section.dart' as form_section;
+import '_gpx_file_button.dart' as gpx_button;
 
 class PCICFormPage extends StatefulWidget {
   final String imageFile;
@@ -357,7 +360,7 @@ class PCICFormPageState extends State<PCICFormPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _FormField(
+            form_field.FormField(
               labelText: 'Last Coordinates',
               initialValue: _formData['lastCoordinates'],
               enabled: false,
@@ -390,7 +393,7 @@ class PCICFormPageState extends State<PCICFormPage> {
               enabled: false,
             ),
             const SizedBox(height: 24),
-            _FormSection(
+            form_section.FormSection(
               formData: _formData,
               uniqueSeedsItems: uniqueSeedsItems,
             ),
@@ -421,7 +424,7 @@ class PCICFormPageState extends State<PCICFormPage> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            _GPXFileButtons(
+            gpx_button.GPXFileButton(
               openGpxFile: () => _openGpxFile(widget.gpxFile),
             ),
           ],
@@ -449,136 +452,6 @@ class PCICFormPageState extends State<PCICFormPage> {
           ],
         ),
       ),
-    );
-  }
-}
-
-// GPX File Buttons
-class _GPXFileButtons extends StatelessWidget {
-  final VoidCallback openGpxFile;
-
-  const _GPXFileButtons({
-    required this.openGpxFile,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: ElevatedButton(
-        onPressed: openGpxFile,
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-          textStyle: const TextStyle(fontSize: 16),
-        ),
-        child: const Text('Open GPX File'),
-      ),
-    );
-  }
-}
-
-// Form Section
-class _FormField extends StatelessWidget {
-  final String labelText;
-  final String initialValue;
-  final bool enabled;
-  final int maxLines;
-
-  const _FormField({
-    required this.labelText,
-    required this.initialValue,
-    this.enabled = true,
-    this.maxLines = 1,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      initialValue: initialValue,
-      enabled: enabled,
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        labelText: labelText,
-        border: const OutlineInputBorder(),
-      ),
-    );
-  }
-}
-
-class _FormSection extends StatelessWidget {
-  final Map<String, dynamic> formData;
-  final List<DropdownMenuItem<String>> uniqueSeedsItems;
-
-  const _FormSection({
-    required this.formData,
-    required this.uniqueSeedsItems,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const SizedBox(height: 16),
-        const Text(
-          'Actual Date of Planting',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        DateInputField(
-          labelText: 'DS*',
-          initialDate: formData['ppirDopdsAct'] != null &&
-                  formData['ppirDopdsAct'].isNotEmpty
-              ? DateFormat('yyyy-MM-dd').parse(formData['ppirDopdsAct'])
-              : null,
-          onDateChanged: (DateTime? date) {
-            if (date != null) {
-              formData['ppirDopdsAct'] = DateFormat('yyyy-MM-dd').format(date);
-            } else {
-              formData['ppirDopdsAct'] = null;
-            }
-          },
-        ),
-        const SizedBox(height: 16),
-        DateInputField(
-          labelText: 'TP*',
-          initialDate: formData['ppirDoptpAct'] != null &&
-                  formData['ppirDoptpAct'].isNotEmpty
-              ? DateFormat('yyyy-MM-dd').parse(formData['ppirDoptpAct'])
-              : null,
-          onDateChanged: (DateTime? date) {
-            if (date != null) {
-              formData['ppirDoptpAct'] = DateFormat('yyyy-MM-dd').format(date);
-            } else {
-              formData['ppirDoptpAct'] = null;
-            }
-          },
-        ),
-        const SizedBox(height: 24),
-        const Text(
-          'Seed Varieties Planted and Remarks',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        DropdownButtonFormField<String>(
-          value: formData['ppirVariety'],
-          decoration: const InputDecoration(
-            labelText: 'Select the Actual Seed Variety*',
-          ),
-          items: uniqueSeedsItems,
-          onChanged: (value) {
-            if (value != null) {
-              formData['ppirVariety'] = value;
-            } else {
-              formData['ppirVariety'] = null;
-            }
-          },
-        ),
-        const SizedBox(height: 16),
-        _FormField(
-          labelText: 'Remarks',
-          initialValue: formData['ppirRemarks'],
-          maxLines: 3,
-        ),
-      ],
     );
   }
 }

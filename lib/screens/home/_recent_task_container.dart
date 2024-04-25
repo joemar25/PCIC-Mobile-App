@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/home/_recent_task_footer.dart';
 import 'package:pcic_mobile_app/screens/home/_recent_task_header.dart';
-import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
+import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
 import 'package:pcic_mobile_app/screens/tasks/_task_details.dart'; // Import the TaskDetailsPage
 
 class RecentTaskContainer extends StatefulWidget {
@@ -15,7 +15,7 @@ class RecentTaskContainer extends StatefulWidget {
 
 class RecentTaskContainerState extends State<RecentTaskContainer> {
   int _hoveredIndex = -1;
-  @override
+
   @override
   Widget build(BuildContext context) {
     List<TaskManager> incompleteTasks =

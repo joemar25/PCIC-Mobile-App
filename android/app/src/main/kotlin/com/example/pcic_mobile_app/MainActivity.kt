@@ -1,4 +1,4 @@
-package com.example.pcic_mobile_app
+package com.quanby.pcic_mobile_app
 
 import io.flutter.embedding.android.FlutterActivity
 

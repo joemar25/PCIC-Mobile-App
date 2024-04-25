@@ -1,18 +1,17 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:provider/provider.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 import 'utils/app/_firebase.dart';
-import 'utils/controls/_filter_task.dart';
+import 'screens/tasks/_filter_task.dart';
 import 'utils/agent/_login.dart';
 import 'utils/agent/_signup.dart';
 import 'utils/agent/_verify_login.dart';
 import 'utils/agent/_verify_signup.dart';
 import 'utils/app/_routes.dart';
-import 'utils/controls/_control_task.dart';
+import 'screens/tasks/_control_task.dart';
 
 import 'screens/_splash.dart';
 import 'screens/_starting.dart';
@@ -26,7 +25,6 @@ void main() async {
   // Ensure URLs without the hash sign (#) are handled correctly
   setPathUrlStrategy();
 
-  await dotenv.load(fileName: "assets/config/.env");
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterDownloader.initialize(
     debug: true,

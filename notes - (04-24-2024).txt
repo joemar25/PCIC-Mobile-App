@@ -1,0 +1,83 @@
+automatic dapat dito malagay ung bultukan or onte onte na csv files (task management)
+csv file reader to database uploading (automation) - additional button (sync)
+
+comment:
+- so ang iga mean ni sir is ung uploaded file nila is ung csv '21:30' - it needs automation that will read the csv
+- after that daw itetest ung process; they will give the data that should be reflected in the app
+- it will be test, then output must be '.task'
+- assurance muna na dapat merong makukuha kasi sayang ng effort, madami na tayo gumawa. tama ka po dun madam sa sinabi mo (tumpak), keep pushing things na walang assurance is walang kwenta
+- form check, geotag check and csv loading check (dapat daw malabas ung output, sa ngayon wala pang attachments at dipa na cocompress to .task)
+- so malinaw, csv ang uploaded nila, check. un ang babasahin ng app natin '27:24'
+- PCIC's csv contains a lot of tasks
+- the expected output must a .task, for each row in the csv if finished, the file must be a xml containing all the data needed together with a folder containing all the attachments like signatures, screenshot, and gpx file
+- if 10 task is in the csv, then the expected output is 10 .task type of file
+
+
+
+
+
+
+needed for the application testing ng mga taga PCIC
+--------------------------------------------------------------------------------------
+- (done) changing the app name
+- change logo to PCIC (asset file also configured already)
+- ung paga screenshot, maga lagay ng calculation para sa zoom level para tama
+- testing ng geotag dapat pulido ung sa closing route
+--------------------------------------------------------------------------------------
+
+to be followed
+--------------------------------------------------------------------------------------
+- .task per task in the csv file as the main output
+--------------------------------------------------------------------------------------
+
+
+
+
+04-25-2024
+TODO:
+- remove env file in the overall app
+- automatic folder syncing of csv to database
+- xml generation
+- .task (compression of file) to .zip first then to .task
+- file organizer (for optimal code)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BASIC: 	  https://www.lifeprint.com/asl101/pages-layout/concepts.htm
+	  https://www.youtube.com/watch?v=lMTsarZm9I4
+
+MIDIUM:   
+	  
+
+ADVANCE:  https://www.lifeprint.com/asl101/pages-signs/advancedsigns4/index.htm
+	  https://www.youtube.com/watch?v=29zBpDvQRnc
+
+
+
+
+
+
+
+
+
+
