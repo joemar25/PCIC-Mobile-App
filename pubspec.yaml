@@ -60,10 +60,10 @@ flutter:
   uses-material-design: true
   assets:
     - assets/image/pcic_logo.png
-    - assets/config/.env
     - assets/storage/images/
     - assets/storage/tasks/
     - assets/image/
     - assets/animations/
+    # - assets/config/.env
     # - assets/cache.db
     # - assets/icon/
