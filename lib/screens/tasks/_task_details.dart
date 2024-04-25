@@ -33,8 +33,39 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
       'P02': 'II',
       'P03': 'III',
       'P04': 'IV',
+      'PMIMAROPA': 'MIMAROPA',
       'P05': 'V',
       'P06': 'VI',
+      'P07': 'VII',
+      'P08': 'VIII',
+      'P09': 'IX',
+      'P10': 'X',
+      'P11': 'XI',
+      'P12': 'XII',
+      'P13': 'XIII',
+      'PNCR': 'NCR',
+      'PCAR': 'CAR',
+      'PBARMM': 'BARMM',
+      /**
+       * https://www.philatlas.com/regions.html
+       * Region I – Ilocos Region
+       * Region II – Cagayan Valley
+       * Region III – Central Luzon
+       * Region IV‑A – CALABARZON
+       * MIMAROPA Region
+       * Region V – Bicol Region
+       * Region VI – Western Visayas
+       * Region VII – Central Visayas
+       * Region VIII – Eastern Visayas
+       * Region IX – Zamboanga Peninsula
+       * Region X – Northern Mindanao
+       * Region XI – Davao Region
+       * Region XII – SOCCSKSARGEN
+       * Region XIII – Caraga
+       * NCR – National Capital Region
+       * CAR – Cordillera Administrative Region
+       * BARMM – Bangsamoro Autonomous Region in Muslim Mindanao
+      */
     };
     return serviceCode == null ? '' : romanMap[serviceCode] ?? serviceCode;
   }
