@@ -1,9 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pcic_mobile_app/screens/home/_home.dart';
 import 'package:pcic_mobile_app/utils/agent/_session.dart';
-import 'package:pcic_mobile_app/utils/agent/_signup.dart';
-import 'package:pcic_mobile_app/utils/agent/_verify_login.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -37,6 +35,114 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFD2FFCB),
+      bottomSheet: BottomSheet(
+        backgroundColor: const Color(0xFFD2FFCB),
+        elevation: 0.0,
+        onClosing: () {},
+        builder: (BuildContext context) {
+          return Container(
+              decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(50.0),
+                      topRight: Radius.circular(50.0))),
+              height: 500,
+              width: double.maxFinite,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 30.0, horizontal: 40.0),
+                child: Column(
+                  children: [
+                    Container(
+                      height: 55,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 4.0),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.grey,
+                          ),
+                          borderRadius: BorderRadius.circular(6.0)),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            CupertinoIcons.mail,
+                            color: Colors.grey,
+                          ),
+                          const VerticalDivider(
+                            color: Colors.grey,
+                            thickness: 1.0,
+                            indent: 8.0,
+                            endIndent: 8.0,
+                          ),
+                          Expanded(
+                              flex: 1,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Email',
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 10.0,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  SizedBox(
+                                    height: 27.65,
+                                    child: TextField(
+                                      style: const TextStyle(
+                                          color: Color(0xFF000E08),
+                                          fontSize: 19.2,
+                                          fontWeight: FontWeight
+                                              .w500 // Adjust font size as needed (smaller values for smaller font)
+                                          ),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _email = value;
+                                        });
+                                      },
+                                      decoration: const InputDecoration(
+                                        hintText: 'Input your email...',
+                                        hintStyle: TextStyle(fontSize: 19.2),
+                                        border: OutlineInputBorder(
+                                          borderSide: BorderSide
+                                              .none, // Removes the border
+                                        ),
+                                        contentPadding: EdgeInsets.zero,
+
+                                        // Remove the border
+                                        filled:
+                                            false, // Remove the filled background color
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ))
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ));
+        },
+      ),
+    );
+  }
+}
+
+/** 
+ * 
+ * 
+ * shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(45.0),
+                topRight: Radius.circular(45.0))),
+ * 
+ * 
+ * 
+ * Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(25.0),
         child: Column(
@@ -238,5 +344,8 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-  }
-}
+ * 
+ * 
+ * 
+ * 
+*/
