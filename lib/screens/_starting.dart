@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/home/_home.dart';
-import 'package:pcic_mobile_app/utils/agent/_session.dart';
 import 'package:pcic_mobile_app/utils/agent/_login.dart';
+import 'package:pcic_mobile_app/utils/agent/_session.dart';
 import 'package:pcic_mobile_app/utils/agent/_signup.dart';
 
 class StartingPage extends StatelessWidget {
@@ -34,26 +34,18 @@ class StartingPage extends StatelessWidget {
         } else {
           // Return the main content of the page
           return Scaffold(
+            backgroundColor: const Color(0xFFD2FFCB),
             body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
-                    child: Container(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        height: 300,
-                        width: 300,
-                        alignment: Alignment.center,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(0xFF89C53F),
-                        ),
-                        child: Image.asset(
-                          'assets/storage/images/logo.png',
-                          height: 250,
-                          width: 250,
-                        ),
+                    child: SizedBox(
+                      width: 100, // Adjust width as needed
+                      height: 100,
+                      child: Image.asset(
+                        'assets/storage/images/icon.png',
+                        // Adjust height as needed
                       ),
                     ),
                   ),
@@ -73,17 +65,17 @@ class StartingPage extends StatelessWidget {
                           },
                           style: ElevatedButton.styleFrom(
                             minimumSize: const Size(300, 50),
-                            backgroundColor: const Color(0xFF0C7D3F),
+                            backgroundColor: const Color(0xFF0F7D40),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 40,
                               vertical: 15,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(100),
                             ),
                           ),
                           child: const Text(
-                            "Login",
+                            "Sign in",
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.white,
@@ -91,7 +83,7 @@ class StartingPage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 14),
+                        const SizedBox(height: 25),
                         ElevatedButton(
                           onPressed: () {
                             Navigator.push(
@@ -109,19 +101,15 @@ class StartingPage extends StatelessWidget {
                               vertical: 15,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              side: const BorderSide(
-                                color: Color(0xFF89C53F),
-                                width: 1,
-                              ),
+                              borderRadius: BorderRadius.circular(100),
                             ),
                           ),
                           child: const Text(
                             "Sign Up",
                             style: TextStyle(
-                              fontWeight: FontWeight.normal,
+                              fontWeight: FontWeight.bold,
                               fontSize: 16,
-                              color: Color(0xFF89C53F),
+                              color: Color(0xFF0F7D40),
                             ),
                           ),
                         ),
