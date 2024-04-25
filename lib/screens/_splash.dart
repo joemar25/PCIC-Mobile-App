@@ -10,26 +10,48 @@ class SplashScreen extends StatefulWidget {
   SplashScreenState createState() => SplashScreenState();
 }
 
-class SplashScreenState extends State<SplashScreen> {
+class SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
   @override
   void initState() {
     super.initState();
     _checkExistingToken();
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    );
+
+    _animation = Tween<double>(begin: 75.0, end: 140.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   Future<void> _checkExistingToken() async {
     Session session = Session();
     String? token = await session.getToken();
     await Future.delayed(const Duration(seconds: 3));
-    // Check if the token exists
+
     if (token != null) {
-      // Token exists, navigate to the dashboard
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const DashboardPage()),
       );
     } else {
-      // Token does not exist, navigate to the starting page
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const StartingPage()),
@@ -39,28 +61,22 @@ class SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       backgroundColor: const Color(0xFFD2FFCB),
-      body: FutureBuilder(
-        future: Future.delayed(const Duration(seconds: 3)),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-                child: Image.asset(
-              'assets/animations/loading-location.gif',
-              width: 75,
-              height: 75,
-            ));
-          } else {
-            // Navigate to the starting page
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pushReplacementNamed(context, '/starting');
-            });
-            return Container(); // Placeholder widget
-          }
-        },
+      body: Center(
+        child: AnimatedBuilder(
+          animation: _animation,
+          builder: (context, child) {
+            return SizedBox(
+              width: _animation.value,
+              height: _animation.value,
+              child: Image.asset(
+                'assets/animations/loading-location.gif',
+                fit: BoxFit.contain,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
