@@ -15,7 +15,7 @@ class RecentTaskContainer extends StatefulWidget {
 
 class RecentTaskContainerState extends State<RecentTaskContainer> {
   int _hoveredIndex = -1;
-  @override
+
   @override
   Widget build(BuildContext context) {
     List<TaskManager> incompleteTasks =
