@@ -18,8 +18,8 @@ class LoginTextField extends StatefulWidget {
 }
 
 class _LoginTextFieldState extends State<LoginTextField> {
-  // String _email = '';
-  // String _password = '';
+  bool _obscureText = true; // Initially password is obscured
+  String _passwordValue = '';
 
   @override
   Widget build(BuildContext context) {
@@ -66,9 +66,14 @@ class _LoginTextFieldState extends State<LoginTextField> {
                           fontWeight: FontWeight
                               .w500 // Adjust font size as needed (smaller values for smaller font)
                           ),
-                      onChanged: widget.onTextChanged,
+                      onChanged: (value) {
+                        setState(() {
+                          _passwordValue = value;
+                        });
+                        widget.onTextChanged(value);
+                      },
                       obscureText:
-                          widget.inputType == 'Password' ? true : false,
+                          widget.inputType == 'Password' ? _obscureText : false,
                       decoration: InputDecoration(
                         hintText: "Enter your ${widget.inputType}",
                         hintStyle: const TextStyle(fontSize: 16.0),
@@ -76,29 +81,25 @@ class _LoginTextFieldState extends State<LoginTextField> {
                           borderSide: BorderSide.none, // Removes the border
                         ),
                         contentPadding: EdgeInsets.zero,
-
-                        // Remove the border
-                        filled: false, // Remove the filled background color
+                        filled: false,
                       ),
                     ),
-                  )
+                  ),
                 ],
               )),
+          if (_passwordValue.isNotEmpty && widget.inputType == 'Password')
+            IconButton(
+              icon: Icon(
+                _obscureText ? Icons.visibility : Icons.visibility_off,
+              ),
+              onPressed: () {
+                setState(() {
+                  _obscureText = !_obscureText; // Toggle obscureText value
+                });
+              },
+            ),
         ],
       ),
     );
   }
 }
-
-
-
-/**
- * 
- * if (widget.inputType == 'Email') {
-                            _email = value;
-                          } else if (widget.inputType == 'Password') {
-                            _password = value;
-                          }
- * 
- * 
- */
