@@ -35,6 +35,8 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   bool retainPinDrop = false;
   bool showConfirmationDialog = true;
   String currentLocation = '';
+  String latitude = '';
+  String longitude = '';
   bool isColumnVisible = true;
   bool isRoutingStarted = false;
   bool isLoading = false;
@@ -75,6 +77,8 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           setState(() {
+            latitude = '${position.latitude}';
+            longitude = '${position.longitude}';
             currentLocation =
                 'Lat: ${position.latitude}, Long: ${position.longitude}';
             _mapService.moveMap(position);
@@ -109,6 +113,8 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           setState(() {
+            latitude = '${position.latitude}';
+            longitude = '${position.longitude}';
             currentLocation =
                 'Lat: ${position.latitude}, Long: ${position.longitude}';
             _mapService
@@ -342,6 +348,31 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
     return shouldPop ?? false;
   }
 
+  void _showAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm Action'),
+        content: const Text('Are you sure you want to go back?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            },
+            child: const Text('Yes'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -544,27 +575,27 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                                     const SizedBox(
                                       width: 8.0,
                                     ),
-                                    const Column(
+                                    Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
+                                        const Text(
                                           'Coordinates',
                                           style: TextStyle(
                                               fontSize: 11.11,
                                               fontWeight: FontWeight.w700,
                                               color: Color(0xFF797C7B)),
                                         ),
-                                        Text('Latitude: ',
-                                            style: TextStyle(
+                                        Text('Latitude: $latitude',
+                                            style: const TextStyle(
                                                 fontSize: 13.3,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.black)),
-                                        Text('Longitude:81.23981238',
+                                        Text('Longitude: $longitude',
                                             // Or clip, fade,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 fontSize: 13.3,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.black))
@@ -608,7 +639,13 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                       height: 45,
                       width: 45,
                       child: FloatingActionButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: isRoutingStarted
+                            ? () {
+                                _showAlert(context);
+                              }
+                            : () {
+                                Navigator.pop(context);
+                              },
                         shape: const CircleBorder(
                           side: BorderSide(color: Color(0xFFD2FFCB)),
                         ),
