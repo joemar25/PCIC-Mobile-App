@@ -200,7 +200,7 @@ class PCICFormPageState extends State<PCICFormPage> {
     widget.task.updateCsvData(_getChangedData());
     widget.task.isCompleted = true;
 
-    widget.task.saveCsvData().then((_) {
+    widget.task.saveXmlData().then((_) {
       _updateTaskInFirebase();
 
       Navigator.pushReplacement(

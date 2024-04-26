@@ -17,29 +17,6 @@ comment:
 
 
 
-needed for the application testing ng mga taga PCIC
---------------------------------------------------------------------------------------
-- (done) changing the app name
-- change logo to PCIC (asset file also configured already)
-- ung paga screenshot, maga lagay ng calculation para sa zoom level para tama
-- testing ng geotag dapat pulido ung sa closing route
---------------------------------------------------------------------------------------
-
-to be followed
---------------------------------------------------------------------------------------
-- .task per task in the csv file as the main output
---------------------------------------------------------------------------------------
-
-
-
-
-04-25-2024
-TODO:
-- remove env file in the overall app
-- automatic folder syncing of csv to database
-- xml generation
-- .task (compression of file) to .zip first then to .task
-- file organizer (for optimal code)
 
 
 
@@ -58,19 +35,6 @@ TODO:
 
 
 
-
-
-
-
-
-BASIC: 	  https://www.lifeprint.com/asl101/pages-layout/concepts.htm
-	  https://www.youtube.com/watch?v=lMTsarZm9I4
-
-MIDIUM:   
-	  
-
-ADVANCE:  https://www.lifeprint.com/asl101/pages-signs/advancedsigns4/index.htm
-	  https://www.youtube.com/watch?v=29zBpDvQRnc
 
 
 

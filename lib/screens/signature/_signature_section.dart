@@ -218,7 +218,7 @@ class SignatureSectionState extends State<SignatureSection> {
     });
 
     // Save the updated CSV data back to the file
-    widget.task.saveCsvData().then((_) {
+    widget.task.saveXmlData().then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Signatures saved successfully')),
       );
