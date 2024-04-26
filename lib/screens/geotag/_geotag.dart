@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
 import 'package:gpx/gpx.dart';
@@ -9,10 +10,10 @@ import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../utils/app/_gpx.dart';
+import '../pcic_form/_pcic_form.dart';
 import '../tasks/_control_task.dart';
 import '_location_service.dart';
 import '_map_service.dart';
-import '../pcic_form/_pcic_form.dart';
 
 class GeotagPage extends StatefulWidget {
   final TaskManager task;
@@ -343,9 +344,6 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
       child: Stack(
         children: [
           Scaffold(
-            appBar: AppBar(
-              title: const Text('Geotag'),
-            ),
             body: Column(
               children: [
                 Expanded(
@@ -427,9 +425,50 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                 ),
               ],
             ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () => _getCurrentLocation(addMarker: false),
-              child: const Icon(Icons.my_location),
+            floatingActionButton: Stack(
+              children: [
+                Positioned(
+                    top: 150.0,
+                    right: 0,
+                    bottom: 0,
+                    child: SizedBox(
+                      height: 45,
+                      width: 45,
+                      child: FloatingActionButton(
+                        onPressed: () => _getCurrentLocation(addMarker: false),
+                        shape: const CircleBorder(
+                          side: BorderSide(color: Colors.green, width: 2.0),
+                        ),
+                        backgroundColor: const Color(0xFFD2FFCB),
+                        elevation: 4.0,
+                        child: const Icon(
+                          Icons.my_location,
+                          color: Colors.black,
+                          size: 24.0,
+                        ),
+                      ),
+                    )),
+                Positioned(
+                    top: 80.0,
+                    left: 40.0,
+                    child: SizedBox(
+                      height: 45,
+                      width: 45,
+                      child: FloatingActionButton(
+                        onPressed: () => _getCurrentLocation(addMarker: false),
+                        shape: const CircleBorder(
+                          side: BorderSide(color: Color(0xFFD2FFCB)),
+                        ),
+                        backgroundColor: const Color(0xFFD2FFCB),
+                        elevation: 4.0,
+                        child: const Icon(
+                          Icons.arrow_back,
+                          color: Colors.black,
+                          size: 24.0,
+                        ),
+                      ),
+                    )),
+              ],
             ),
           ),
           if (isLoading)
@@ -446,3 +485,12 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
     );
   }
 }
+
+
+/**
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
