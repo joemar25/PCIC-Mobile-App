@@ -5,6 +5,7 @@ import 'package:external_path/external_path.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:xml/xml.dart';
 
 class TaskManager {
   final int id;
@@ -177,7 +178,7 @@ class TaskManager {
     hasChanges = true;
   }
 
-  Future<void> saveCsvData() async {
+  Future<void> saveXmlData() async {
     if (csvData != null) {
       try {
         final filePath = await ExternalPath.getExternalStoragePublicDirectory(
@@ -185,7 +186,6 @@ class TaskManager {
         );
         final downloadsDirectory = Directory(filePath);
         final insuranceId = ppirInsuranceId;
-
         final insuranceDirectory =
             Directory('${downloadsDirectory.path}/$insuranceId');
 
@@ -193,155 +193,89 @@ class TaskManager {
           await insuranceDirectory.create(recursive: true);
         }
 
-        final csvFile = File('${insuranceDirectory.path}/task.csv');
+        final xmlFile = File('${insuranceDirectory.path}/task.xml');
 
-        // Create a list to store the CSV rows
-        List<List<dynamic>> csvRows = [];
+        // Create the XML builder
+        final builder = XmlBuilder();
 
-        // Add the header row
-        csvRows.add([
-          'TaskManager Number',
-          'Service Group',
-          'Service Type',
-          'Priority',
-          'TaskManager Status',
-          'Assignee',
-          'ppir_assignmentid',
-          'ppir_insuranceid',
-          'ppir_farmername',
-          'ppir_address',
-          'ppir_farmertype',
-          'ppir_mobileno',
-          'ppir_groupname',
-          'ppir_groupaddress',
-          'ppir_lendername',
-          'ppir_lenderaddress',
-          'ppir_cicno',
-          'ppir_farmloc',
-          'ppir_north',
-          'ppir_south',
-          'ppir_east',
-          'ppir_west',
-          'ppir_att1',
-          'ppir_att2',
-          'ppir_att3',
-          'ppir_att4',
-          'ppir_area_aci',
-          'ppir_area_act',
-          'ppir_dopds_aci',
-          'ppir_dopds_act',
-          'ppir_doptp_aci',
-          'ppir_doptp_act',
-          'ppir_svp_aci',
-          'ppir_svp_act',
-          'ppir_variety',
-          'ppir_stagecrop',
-          'ppir_remarks',
-          'ppir_name_insured',
-          'ppir_name_iuia',
-          'ppir_sig_insured',
-          'ppir_sig_iuia',
-          'track_totalarea',
-          'track_datetime',
-          'track_lastcoord',
-          'track_totaldistance',
-        ]);
-
-        // Add the data row
-        List<dynamic> dataRow = List<dynamic>.filled(45, '');
-
-        // Fill the data row with original CSV values
-        originalCsvData?.forEach((key, value) {
-          int columnIndex = _getColumnIndex(key);
-          if (columnIndex != -1) {
-            dataRow[columnIndex] =
-                value ?? ''; // Set empty string if value is null
-          }
+        // Start building the XML
+        builder.processing('xml', 'version="1.0" encoding="UTF-8"');
+        builder.element('task', nest: () {
+          builder.element('taskManagerNumber',
+              nest: originalCsvData!['taskManagerNumber'] ?? '');
+          builder.element('serviceGroup', nest: csvData!['serviceGroup'] ?? '');
+          builder.element('serviceType', nest: csvData!['serviceType'] ?? '');
+          builder.element('priority', nest: csvData!['priority'] ?? '');
+          builder.element('taskManagerStatus',
+              nest: csvData!['taskStatus'] ?? '');
+          builder.element('assignee', nest: csvData!['assignee'] ?? '');
+          builder.element('ppirAssignmentid',
+              nest: csvData!['ppirAssignmentId'] ?? '');
+          builder.element('ppirInsuranceid',
+              nest: csvData!['ppirInsuranceId'] ?? '');
+          builder.element('ppirFarmername',
+              nest: csvData!['ppirFarmerName'] ?? '');
+          builder.element('ppirAddress', nest: csvData!['ppirAddress'] ?? '');
+          builder.element('ppirFarmertype',
+              nest: csvData!['ppirFarmerType'] ?? '');
+          builder.element('ppirMobileno', nest: csvData!['ppirMobileNo'] ?? '');
+          builder.element('ppirGroupname',
+              nest: csvData!['ppirGroupName'] ?? '');
+          builder.element('ppirGroupaddress',
+              nest: csvData!['ppirGroupAddress'] ?? '');
+          builder.element('ppirLendername',
+              nest: csvData!['ppirLenderName'] ?? '');
+          builder.element('ppirLenderaddress',
+              nest: csvData!['ppirLenderAddress'] ?? '');
+          builder.element('ppirCicno', nest: csvData!['ppirCicNo'] ?? '');
+          builder.element('ppirFarmloc', nest: csvData!['ppirFarmLoc'] ?? '');
+          builder.element('ppirNorth', nest: csvData!['ppirNorth'] ?? '');
+          builder.element('ppirSouth', nest: csvData!['ppirSouth'] ?? '');
+          builder.element('ppirEast', nest: csvData!['ppirEast'] ?? '');
+          builder.element('ppirWest', nest: csvData!['ppirWest'] ?? '');
+          builder.element('ppirAtt1', nest: csvData!['ppirAtt1'] ?? '');
+          builder.element('ppirAtt2', nest: csvData!['ppirAtt2'] ?? '');
+          builder.element('ppirAtt3', nest: csvData!['ppirAtt3'] ?? '');
+          builder.element('ppirAtt4', nest: csvData!['ppirAtt4'] ?? '');
+          builder.element('ppirAreaAci', nest: csvData!['ppirAreaAci'] ?? '');
+          builder.element('ppirAreaAct', nest: csvData!['ppirAreaAct'] ?? '');
+          builder.element('ppirDopdsAci', nest: csvData!['ppirDopdsAci'] ?? '');
+          builder.element('ppirDopdsAct', nest: csvData!['ppirDopdsAct'] ?? '');
+          builder.element('ppirDoptpAci', nest: csvData!['ppirDoptpAci'] ?? '');
+          builder.element('ppirDoptpAct', nest: csvData!['ppirDoptpAct'] ?? '');
+          builder.element('ppirSvpAci', nest: csvData!['ppirSvpAci'] ?? '');
+          builder.element('ppirSvpAct', nest: csvData!['ppirSvpAct'] ?? '');
+          builder.element('ppirVariety', nest: csvData!['ppirVariety'] ?? '');
+          builder.element('ppirStagecrop',
+              nest: csvData!['ppirStagecrop'] ?? '');
+          builder.element('ppirRemarks', nest: csvData!['ppirRemarks'] ?? '');
+          builder.element('ppirNameInsured',
+              nest: csvData!['ppirNameInsured'] ?? '');
+          builder.element('ppirNameIuia', nest: csvData!['ppirNameIuia'] ?? '');
+          builder.element('ppirSigInsured',
+              nest: csvData!['ppirSigInsured'] ?? '');
+          builder.element('ppirSigIuia', nest: csvData!['ppirSigIuia'] ?? '');
+          builder.element('trackTotalarea',
+              nest: csvData!['trackTotalarea'] ?? '');
+          builder.element('trackDatetime',
+              nest: csvData!['trackDatetime'] ?? '');
+          builder.element('trackLastcoord',
+              nest: csvData!['trackLastcoord'] ?? '');
+          builder.element('trackTotaldistance',
+              nest: csvData!['trackTotaldistance'] ?? '');
         });
 
-        // Update the data row with new CSV values
-        csvData!.forEach((key, value) {
-          int columnIndex = _getColumnIndex(key);
-          if (columnIndex != -1) {
-            dataRow[columnIndex] =
-                value ?? ''; // Set empty string if value is null
-          }
-        });
+        // Generate the XML string
+        final xmlString = builder.buildDocument().toXmlString(pretty: true);
 
-        // Set the additional columns
-        dataRow[41] = csvData!['trackTotalarea'] ?? '';
-        dataRow[42] = csvData!['trackDatetime'] ?? '';
-        dataRow[43] = csvData!['trackLastcoord'] ?? '';
-        dataRow[44] = csvData!['trackTotaldistance'] ?? '';
+        // Write the XML string to the file
+        await xmlFile.writeAsString(xmlString);
 
-        // Set the signatures and their corresponding names
-        dataRow[37] = csvData!['ppirNameInsured'] ?? '';
-        dataRow[38] = csvData!['ppirNameIuia'] ?? '';
-        dataRow[39] = csvData!['ppirSigInsured'] ?? '';
-        dataRow[40] = csvData!['ppirSigIuia'] ?? '';
-
-        csvRows.add(dataRow);
-
-        // Write the CSV rows to the file
-        String csvContent = const ListToCsvConverter().convert(csvRows);
-        await csvFile.writeAsString(csvContent);
-
-        debugPrint('CSV file saved: ${csvFile.path}');
+        debugPrint('XML file saved: ${xmlFile.path}');
       } catch (error) {
-        debugPrint('Error saving CSV data: $error');
+        debugPrint('Error saving XML data: $error');
       }
     }
-  }
-
-  int _getColumnIndex(String columnName) {
-    // Define a map of column names to their respective indices
-    Map<String, int> columnIndices = {
-      'serviceGroup': 1,
-      'serviceType': 2,
-      'priority': 3,
-      'taskStatus': 4,
-      'assignee': 5,
-      'ppirAssignmentId': 6,
-      'ppirInsuranceId': 7,
-      'ppirFarmerName': 8,
-      'ppirAddress': 9,
-      'ppirFarmerType': 10,
-      'ppirMobileNo': 11,
-      'ppirGroupName': 12,
-      'ppirGroupAddress': 13,
-      'ppirLenderName': 14,
-      'ppirLenderAddress': 15,
-      'ppirCicNo': 16,
-      'ppirFarmLoc': 17,
-      'ppirNorth': 18,
-      'ppirSouth': 19,
-      'ppirEast': 20,
-      'ppirWest': 21,
-      'ppirAtt1': 22,
-      'ppirAtt2': 23,
-      'ppirAtt3': 24,
-      'ppirAtt4': 25,
-      'ppirAreaAci': 26,
-      'ppirAreaAct': 27,
-      'ppirDopdsAci': 28,
-      'ppirDopdsAct': 29,
-      'ppirDoptpAci': 30,
-      'ppirDoptpAct': 31,
-      'ppirSvpAci': 32,
-      'ppirSvpAct': 33,
-      'ppirVariety': 34,
-      'ppirStagecrop': 35,
-      'ppirRemarks': 36,
-      'ppirNameInsured': 37,
-      'ppirNameIuia': 38,
-      'ppirSigInsured': 39,
-      'ppirSigIuia': 40,
-      'trackTotalarea': 41,
-      'trackDatetime': 42,
-      'trackLastcoord': 43,
-      'trackTotaldistance': 44,
-    };
-    return columnIndices[columnName] ?? -1;
   }
 
   void debugPrintCsvData() {

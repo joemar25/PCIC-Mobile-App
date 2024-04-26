@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:signature/signature.dart';
-import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
+import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
 
 class SignatureSection extends StatefulWidget {
   final TaskManager task;
@@ -218,7 +218,7 @@ class SignatureSectionState extends State<SignatureSection> {
     });
 
     // Save the updated CSV data back to the file
-    widget.task.saveCsvData().then((_) {
+    widget.task.saveXmlData().then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Signatures saved successfully')),
       );

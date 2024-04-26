@@ -7,7 +7,7 @@ import 'package:pcic_mobile_app/screens/home/_home_header.dart';
 import 'package:pcic_mobile_app/screens/home/_profile_container.dart';
 import 'package:pcic_mobile_app/screens/home/_recent_task_container.dart';
 import 'package:pcic_mobile_app/screens/home/_search_button.dart';
-import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
+import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardPage extends StatefulWidget {

@@ -8,7 +8,7 @@ import 'package:open_file/open_file.dart';
 import 'package:pcic_mobile_app/screens/pcic_form/_success.dart';
 import 'package:pcic_mobile_app/screens/signature/_signature_section.dart';
 import 'package:pcic_mobile_app/utils/seeds/_dropdown.dart';
-import 'package:pcic_mobile_app/utils/controls/_control_task.dart';
+import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
 import 'package:pcic_mobile_app/screens/geotag/_map_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:convert';
@@ -255,7 +255,7 @@ void _submitForm() {
     widget.task.updateCsvData(_getChangedData());
     widget.task.isCompleted = true;
 
-    widget.task.saveCsvData().then((_) {
+    widget.task.saveXmlData().then((_) {
       _updateTaskInFirebase();
 
       Navigator.pushReplacement(
