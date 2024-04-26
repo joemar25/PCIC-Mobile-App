@@ -68,56 +68,51 @@ class TaskManager {
     return DateTime.now();
   }
 
-  
-
   static Future<List<TaskManager>> getAllTasks() async {
+    Future<List<String>> getAssetPaths(String folderPath) async {
+      // Load the AssetManifest.json file as a string
+      String manifestContent =
+          await rootBundle.loadString('AssetManifest.json');
 
-  Future<List<String>> getAssetPaths(String folderPath) async {
-    // Load the AssetManifest.json file as a string
-    String manifestContent = await rootBundle.loadString('AssetManifest.json');
-    
-    // Parse the JSON string to extract asset paths
-    Map<String, dynamic> manifestMap = json.decode(manifestContent);
-   
-    List<String> assetPaths = manifestMap.keys
-        .where((key) => key.startsWith("assets/storage/mergedtask/"))
-        .toList();
-    
-    return assetPaths;
-  }
+      // Parse the JSON string to extract asset paths
+      Map<String, dynamic> manifestMap = json.decode(manifestContent);
 
-  Future<List<List<dynamic>>> mergeCSVsFromAssets(String folderPath) async {
-  // Get the list of asset paths
-  List<String> assetPaths = await getAssetPaths(folderPath);
- 
-  // Create a List to store the contents of all CSV files
-  List<List<dynamic>> combinedContents = [];
+      List<String> assetPaths = manifestMap.keys
+          .where((key) => key.startsWith("assets/storage/mergedtask/"))
+          .toList();
 
-  // Iterate through each CSV file
-  for (String assetPath in assetPaths) {
+      return assetPaths;
+    }
 
-    // Read the CSV file as a String from the asset bundle
-    String csvString = await rootBundle.loadString(assetPath);
-    
-    // Parse the CSV string into a 2D List of dynamic values
-    List<List<dynamic>> csvTable = CsvToListConverter().convert(csvString);
-    
-    // Exclude the first row (header) of each CSV file
-    List<List<dynamic>> dataWithoutHeader = csvTable.sublist(1);
-    
-    // Append the remaining rows to the combined contents
-    combinedContents.addAll(dataWithoutHeader);
-  }
+    Future<List<List<dynamic>>> mergeCSVsFromAssets(String folderPath) async {
+      // Get the list of asset paths
+      List<String> assetPaths = await getAssetPaths(folderPath);
 
-  // Write the combined contents to a new CSV file
-  print(combinedContents[5]);
-  return combinedContents;
-}
+      // Create a List to store the contents of all CSV files
+      List<List<dynamic>> combinedContents = [];
 
+      // Iterate through each CSV file
+      for (String assetPath in assetPaths) {
+        // Read the CSV file as a String from the asset bundle
+        String csvString = await rootBundle.loadString(assetPath);
+
+        // Parse the CSV string into a 2D List of dynamic values
+        List<List<dynamic>> csvTable =
+            const CsvToListConverter().convert(csvString);
+
+        // Exclude the first row (header) of each CSV file
+        List<List<dynamic>> dataWithoutHeader = csvTable.sublist(1);
+
+        // Append the remaining rows to the combined contents
+        combinedContents.addAll(dataWithoutHeader);
+      }
+
+      // Write the combined contents to a new CSV file
+      // print(combinedContents[5]);
+      return combinedContents;
+    }
 
     List<TaskManager> tasks = [];
-
-    
 
     try {
       // Load the original CSV data
@@ -175,14 +170,16 @@ class TaskManager {
         };
       }
 
-      DatabaseReference databaseReference = FirebaseDatabase.instance.ref().child('tasks');
+      DatabaseReference databaseReference =
+          FirebaseDatabase.instance.ref().child('tasks');
       DatabaseEvent event = await databaseReference.once();
       DataSnapshot dataSnapshot = event.snapshot;
 
       if (dataSnapshot.value != null) {
         if (dataSnapshot.value is Map<dynamic, dynamic>) {
-          Map<dynamic, dynamic> values = dataSnapshot.value as Map<dynamic, dynamic>;
-          print(values);
+          Map<dynamic, dynamic> values =
+              dataSnapshot.value as Map<dynamic, dynamic>;
+          // print(values);
           values.forEach((key, value) {
             if (value is Map<dynamic, dynamic>) {
               Map<String, dynamic> taskData = Map<String, dynamic>.from(value);
@@ -200,43 +197,31 @@ class TaskManager {
           });
 
           //upload to db if not existing
-          
+
           //get list of all ppid in db
           List<String> insuranceinDB = [];
-          values.forEach((key, value)=>(insuranceinDB.add(value["ppir_insuranceid"].toString()))
-          );
+          values.forEach((key, value) =>
+              (insuranceinDB.add(value["ppir_insuranceid"].toString())));
 
-          
           csvDataMap.forEach((key, value) {
-            if (!insuranceinDB.contains(key)){
+            if (!insuranceinDB.contains(key)) {
               //db data structure
-              
-              databaseReference.child('task-$key').set(
-                {"ppir_assignmentid" : value["ppirAssignmentId"],
+
+              databaseReference.child('task-$key').set({
+                "ppir_assignmentid": value["ppirAssignmentId"],
                 "ppir_insuranceid": int.parse(key),
                 "id": 0,
                 "isCompleted": false,
                 "dateAdded": DateTime.now().toString(),
                 "dateAccess": DateTime.now().toString(),
-                }
-              );
+              });
             }
-          
-        });
-
+          });
         }
-
-
-       
-        
-
-
       }
     } catch (error) {
       debugPrint('Error retrieving tasks from Firebase: $error');
     }
-
-
 
     return tasks;
   }
