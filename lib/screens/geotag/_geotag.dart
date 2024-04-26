@@ -5,6 +5,7 @@ import 'dart:typed_data';
 
 import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gpx/gpx.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
@@ -17,7 +18,11 @@ import '_map_service.dart';
 
 class GeotagPage extends StatefulWidget {
   final TaskManager task;
-  const GeotagPage({super.key, required this.task});
+
+  const GeotagPage({
+    super.key,
+    required this.task,
+  });
 
   @override
   GeotagPageState createState() => GeotagPageState();
@@ -349,7 +354,295 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                 Expanded(
                   child: _mapService.buildMap(),
                 ),
-                Padding(
+                SizedBox(
+                  height: 380,
+                  width: double.infinity,
+                  child: Container(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30.0),
+                          border: const Border(
+                              top: BorderSide(
+                                  width: 1, color: Color(0xFF0F7D40)),
+                              right: BorderSide(
+                                  width: 4, color: Color(0xFF0F7D40)),
+                              bottom: BorderSide(
+                                  width: 4, color: Color(0xFF0F7D40)),
+                              left: BorderSide(
+                                  width: 1, color: Color(0xFF0F7D40))),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Route Points',
+                                style: TextStyle(
+                                    fontSize: 19.2,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    children: [
+                                      ElevatedButton(
+                                          onPressed: isRoutingStarted
+                                              ? null
+                                              : _startRouting,
+                                          style: ElevatedButton.styleFrom(
+                                            minimumSize: const Size(0, 60),
+                                            shape: const CircleBorder(),
+                                            backgroundColor: isRoutingStarted
+                                                ? null
+                                                : const Color(0xFF0F7D40),
+                                          ),
+                                          child: SizedBox(
+                                              height: 35,
+                                              width: 35,
+                                              child: SvgPicture.asset(
+                                                'assets/storage/images/start.svg',
+                                                colorFilter:
+                                                    const ColorFilter.mode(
+                                                        Colors.white,
+                                                        BlendMode.srcIn),
+                                              ))),
+                                      const Text(
+                                        'Start',
+                                        style: TextStyle(
+                                            fontSize: 13.3,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      ElevatedButton(
+                                          onPressed: isRoutingStarted
+                                              ? () {
+                                                  _addMarkerAtCurrentLocation();
+                                                }
+                                              : null,
+                                          style: ElevatedButton.styleFrom(
+                                            minimumSize: const Size(0, 60),
+                                            shape: const CircleBorder(),
+                                            backgroundColor: isRoutingStarted
+                                                ? const Color(0xFF0F7D40)
+                                                : Colors.white60,
+                                          ),
+                                          child: SizedBox(
+                                              height: 35,
+                                              width: 35,
+                                              child: SvgPicture.asset(
+                                                'assets/storage/images/pindrop.svg',
+                                                colorFilter:
+                                                    const ColorFilter.mode(
+                                                        Colors.white,
+                                                        BlendMode.srcIn),
+                                              ))),
+                                      const Text(
+                                        'Pin Drop',
+                                        style: TextStyle(
+                                            fontSize: 13.3,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      ElevatedButton(
+                                          onPressed: isRoutingStarted
+                                              ? _stopRouting
+                                              : null,
+                                          style: ElevatedButton.styleFrom(
+                                            minimumSize: const Size(0, 60),
+                                            shape: const CircleBorder(),
+                                            backgroundColor: isRoutingStarted
+                                                ? const Color(0xFF0F7D40)
+                                                : Colors.white60,
+                                          ),
+                                          child: SizedBox(
+                                              height: 35,
+                                              width: 35,
+                                              child: SvgPicture.asset(
+                                                'assets/storage/images/stop.svg',
+                                                colorFilter:
+                                                    const ColorFilter.mode(
+                                                        Colors.white,
+                                                        BlendMode.srcIn),
+                                              ))),
+                                      const Text(
+                                        'Stop',
+                                        style: TextStyle(
+                                            fontSize: 13.3,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const Divider(),
+                              const Text(
+                                'Location',
+                                style: TextStyle(
+                                    fontSize: 19.2,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 35,
+                                      width: 35,
+                                      child: SvgPicture.asset(
+                                        'assets/storage/images/navigate.svg',
+                                        colorFilter: const ColorFilter.mode(
+                                            Color(0xFF0F7D40), BlendMode.srcIn),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 8.0,
+                                    ),
+                                    const Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Address',
+                                          style: TextStyle(
+                                              fontSize: 11.11,
+                                              fontWeight: FontWeight.w700,
+                                              color: Color(0xFF797C7B)),
+                                        ),
+                                        Text('Legazpi City, Albay, 4500',
+                                            style: TextStyle(
+                                                fontSize: 13.3,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black))
+                                      ],
+                                    )
+                                  ]),
+                              Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 35,
+                                      width: 35,
+                                      child: SvgPicture.asset(
+                                        'assets/storage/images/map.svg',
+                                        colorFilter: const ColorFilter.mode(
+                                            Color(0xFF0F7D40), BlendMode.srcIn),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 8.0,
+                                    ),
+                                    const Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Coordinates',
+                                          style: TextStyle(
+                                              fontSize: 11.11,
+                                              fontWeight: FontWeight.w700,
+                                              color: Color(0xFF797C7B)),
+                                        ),
+                                        Text('Latitude: ',
+                                            style: TextStyle(
+                                                fontSize: 13.3,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black)),
+                                        Text('Longitude:81.23981238',
+                                            // Or clip, fade,
+                                            style: TextStyle(
+                                                fontSize: 13.3,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black))
+                                      ],
+                                    )
+                                  ])
+                            ],
+                          ),
+                        )),
+                  ),
+                ),
+              ],
+            ),
+            floatingActionButton: Stack(
+              children: [
+                Positioned(
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: SizedBox(
+                      height: 45,
+                      width: 45,
+                      child: FloatingActionButton(
+                        onPressed: () => _getCurrentLocation(addMarker: false),
+                        shape: const CircleBorder(
+                          side: BorderSide(color: Colors.green, width: 2.0),
+                        ),
+                        backgroundColor: const Color(0xFFD2FFCB),
+                        elevation: 4.0,
+                        child: const Icon(
+                          Icons.my_location,
+                          color: Colors.black,
+                          size: 24.0,
+                        ),
+                      ),
+                    )),
+                Positioned(
+                    top: 80.0,
+                    left: 40.0,
+                    child: SizedBox(
+                      height: 45,
+                      width: 45,
+                      child: FloatingActionButton(
+                        onPressed: () => Navigator.pop(context),
+                        shape: const CircleBorder(
+                          side: BorderSide(color: Color(0xFFD2FFCB)),
+                        ),
+                        backgroundColor: const Color(0xFFD2FFCB),
+                        elevation: 4.0,
+                        child: const Icon(
+                          Icons.arrow_back,
+                          color: Colors.black,
+                          size: 24.0,
+                        ),
+                      ),
+                    )),
+              ],
+            ),
+          ),
+          if (isLoading)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black54,
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/**
+ * 
+ * 
+ * Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -423,74 +716,12 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                     ],
                   ),
                 ),
-              ],
-            ),
-            floatingActionButton: Stack(
-              children: [
-                Positioned(
-                    top: 150.0,
-                    right: 0,
-                    bottom: 0,
-                    child: SizedBox(
-                      height: 45,
-                      width: 45,
-                      child: FloatingActionButton(
-                        onPressed: () => _getCurrentLocation(addMarker: false),
-                        shape: const CircleBorder(
-                          side: BorderSide(color: Colors.green, width: 2.0),
-                        ),
-                        backgroundColor: const Color(0xFFD2FFCB),
-                        elevation: 4.0,
-                        child: const Icon(
-                          Icons.my_location,
-                          color: Colors.black,
-                          size: 24.0,
-                        ),
-                      ),
-                    )),
-                Positioned(
-                    top: 80.0,
-                    left: 40.0,
-                    child: SizedBox(
-                      height: 45,
-                      width: 45,
-                      child: FloatingActionButton(
-                        onPressed: () => _getCurrentLocation(addMarker: false),
-                        shape: const CircleBorder(
-                          side: BorderSide(color: Color(0xFFD2FFCB)),
-                        ),
-                        backgroundColor: const Color(0xFFD2FFCB),
-                        elevation: 4.0,
-                        child: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.black,
-                          size: 24.0,
-                        ),
-                      ),
-                    )),
-              ],
-            ),
-          ),
-          if (isLoading)
-            Positioned.fill(
-              child: Container(
-                color: Colors.black54,
-                child: const Center(
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
 
 
-/**
- * 
- * 
- * 
+
+
+
+
  * 
  * 
  */
