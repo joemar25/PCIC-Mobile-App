@@ -161,110 +161,106 @@ class PCICFormPageState extends State<PCICFormPage> {
     }
   }
 
+  void _saveAsXml() {
+    try {
+      final gpxFilePath = widget.gpxFile;
+      final gpxFile = File(gpxFilePath);
+      final directory = gpxFile.parent;
+      final xmlData = _convertToXml();
 
+      final xmlFile = File('${directory.path}/form_data.xml');
 
-void _saveAsXml() {
-  try {
-    final gpxFilePath = widget.gpxFile;
-    final gpxFile = File(gpxFilePath);
-    final directory = gpxFile.parent;
-    final xmlData = _convertToXml();
+      xmlFile.writeAsStringSync(xmlData);
 
-    final xmlFile = File('${directory.path}/form_data.xml');
-
-    xmlFile.writeAsStringSync(xmlData);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Form data saved as XML')),
-    );
-  } catch (e, stackTrace) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Error saving form data as XML')),
-    );
-    debugPrint('Error saving form data as XML: $e');
-    debugPrint('Stack trace: $stackTrace');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Form data saved as XML')),
+      );
+    } catch (e, stackTrace) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error saving form data as XML')),
+      );
+      debugPrint('Error saving form data as XML: $e');
+      debugPrint('Stack trace: $stackTrace');
+    }
   }
-}
 
+  String _convertToXml() {
+    final StringBuffer xmlBuffer = StringBuffer();
+    xmlBuffer.writeln('<?xml version="1.0" encoding="UTF-8"?>');
+    xmlBuffer.writeln(
+        '<TaskArchiveZipModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">');
+    xmlBuffer.writeln('<AgentId xsi:nil="true"/>');
+    xmlBuffer.writeln(
+        '<AssignedDate>${DateTime.now().toIso8601String()}</AssignedDate>');
+    xmlBuffer.writeln('<Attachments/>');
+    xmlBuffer.writeln('<AuditLogs>');
 
+    // Add your TaskAuditLogZipModel here
+    xmlBuffer.writeln('<TaskAuditLogZipModel>');
 
-String _convertToXml() {
-  final StringBuffer xmlBuffer = StringBuffer();
-  xmlBuffer.writeln('<?xml version="1.0" encoding="UTF-8"?>');
-  xmlBuffer.writeln('<TaskArchiveZipModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">');
-  xmlBuffer.writeln('<AgentId xsi:nil="true"/>');
-  xmlBuffer.writeln('<AssignedDate>${DateTime.now().toIso8601String()}</AssignedDate>');
-  xmlBuffer.writeln('<Attachments/>');
-  xmlBuffer.writeln('<AuditLogs>');
+    // Add form data inside TaskAuditLogZipModel
+    _formData.forEach((key, value) {
+      xmlBuffer.writeln('<$key>$value</$key>');
+    });
 
-  // Add your TaskAuditLogZipModel here
-  xmlBuffer.writeln('<TaskAuditLogZipModel>');
+    xmlBuffer.writeln('</TaskAuditLogZipModel>');
 
-  // Add form data inside TaskAuditLogZipModel
-  _formData.forEach((key, value) {
-    xmlBuffer.writeln('<$key>$value</$key>');
-  });
-
-  xmlBuffer.writeln('</TaskAuditLogZipModel>');
-
-  xmlBuffer.writeln('</AuditLogs>');
-  xmlBuffer.writeln('</TaskArchiveZipModel>');
-  return xmlBuffer.toString();
-}
-
-
-void _createZipFolder() {
-  try {
-    final gpxFilePath = widget.gpxFile;
-    final gpxFile = File(gpxFilePath);
-    final directory = gpxFile.parent;
-    final xmlFile = File('${directory.path}/form_data.xml');
-
-    final zipFile = File('${directory.path}/form_data.zip');
-    final zipEncoder = ZipFileEncoder();
-    zipEncoder.create(zipFile.path);
-
-    zipEncoder.addFile(xmlFile);
-    zipEncoder.addFile(gpxFile);
-
-    zipEncoder.close();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Form data saved as ZIP')),
-    );
-  } catch (e, stackTrace) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Error saving form data as ZIP')),
-    );
-    debugPrint('Error saving form data as ZIP: $e');
-    debugPrint('Stack trace: $stackTrace');
+    xmlBuffer.writeln('</AuditLogs>');
+    xmlBuffer.writeln('</TaskArchiveZipModel>');
+    return xmlBuffer.toString();
   }
-}
 
+  void _createZipFolder() {
+    try {
+      final gpxFilePath = widget.gpxFile;
+      final gpxFile = File(gpxFilePath);
+      final directory = gpxFile.parent;
+      final xmlFile = File('${directory.path}/form_data.xml');
 
-void _submitForm() {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text('Confirmation'),
-      content: const Text('Are you sure the data above is correct?'),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('No'),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-            _saveFormData();
-            _saveAsXml(); // Call the method to save as XML
-          },
-          child: const Text('Yes'),
-        ),
-      ],
-    ),
-  );
-}
+      final zipFile = File('${directory.path}/form_data.zip');
+      final zipEncoder = ZipFileEncoder();
+      zipEncoder.create(zipFile.path);
+
+      zipEncoder.addFile(xmlFile);
+      zipEncoder.addFile(gpxFile);
+
+      zipEncoder.close();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Form data saved as ZIP')),
+      );
+    } catch (e, stackTrace) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error saving form data as ZIP')),
+      );
+      debugPrint('Error saving form data as ZIP: $e');
+      debugPrint('Stack trace: $stackTrace');
+    }
+  }
+
+  void _submitForm() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmation'),
+        content: const Text('Are you sure the data above is correct?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _saveFormData();
+              _saveAsXml(); // Call the method to save as XML
+            },
+            child: const Text('Yes'),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _saveFormData() {
     // Update the additional columns
@@ -283,7 +279,10 @@ void _submitForm() {
     widget.task.updateCsvData(_getChangedData());
     widget.task.isCompleted = true;
 
-    widget.task.saveXmlData().then((_) {
+    widget.task
+        .saveXmlData(
+            widget.task.csvData?['serviceType'], widget.task.ppirInsuranceId)
+        .then((_) {
       _updateTaskInFirebase();
 
       Navigator.pushReplacement(
