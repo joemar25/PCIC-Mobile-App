@@ -258,6 +258,7 @@ void _submitForm() {
             Navigator.pop(context);
             _saveFormData();
             _saveAsXml(); // Call the method to save as XML
+            _createZipFolder();
           },
           child: const Text('Yes'),
         ),
