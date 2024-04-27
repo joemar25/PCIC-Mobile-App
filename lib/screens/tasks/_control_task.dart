@@ -245,22 +245,42 @@ class TaskManager {
     hasChanges = true;
   }
 
-  Future<void> saveXmlData() async {
+  Future<void> saveXmlData(String serviceType, int ppirInsuranceId) async {
     if (csvData != null) {
       try {
         final filePath = await ExternalPath.getExternalStoragePublicDirectory(
           ExternalPath.DIRECTORY_DOWNLOADS,
         );
-        final downloadsDirectory = Directory(filePath);
-        final insuranceId = ppirInsuranceId;
-        final insuranceDirectory =
-            Directory('${downloadsDirectory.path}/$insuranceId');
 
+        final downloadsDirectory = Directory(filePath);
+
+        // final serviceType = task.csvData?['serviceType'] ?? 'Service Group';
+        // final idMapping = {serviceType: widget.task.ppirInsuranceId};
+        final idMapping = {serviceType: ppirInsuranceId};
+
+        // Provide a default if no mapping exists
+        final mappedId = idMapping[serviceType] ?? '000000';
+
+        final baseFilename =
+            '${serviceType.replaceAll(' ', ' - ')}_${serviceType.replaceAll(' ', '_')}_$mappedId';
+
+        final insuranceDirectory =
+            Directory('${downloadsDirectory.path}/$baseFilename');
+
+        // Create the insurance directory if it doesn't exist
         if (!await insuranceDirectory.exists()) {
           await insuranceDirectory.create(recursive: true);
         }
 
-        final xmlFile = File('${insuranceDirectory.path}/task.xml');
+        // Define the Attachments directory inside the insurance directory
+        final taskDirectory = Directory(insuranceDirectory.path);
+
+        // Create the Attachments directory if it doesn't exist
+        if (!await taskDirectory.exists()) {
+          await taskDirectory.create(recursive: true);
+        }
+
+        final xmlFile = File('${taskDirectory.path}/Task.xml');
 
         // Create the XML builder
         final builder = XmlBuilder();
