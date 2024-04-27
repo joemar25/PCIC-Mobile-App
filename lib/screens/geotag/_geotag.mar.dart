@@ -233,14 +233,15 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
 
     final downloadsDirectory = Directory(filePath);
 
-    final serviceType = widget.task.csvData?['serviceType'] ?? 'Service Type';
-    final idMapping = {serviceType: widget.task.ppirInsuranceId};
+    final serviceGroup =
+        widget.task.csvData?['serviceGroup'] ?? 'Service Group';
+    final idMapping = {serviceGroup: widget.task.ppirInsuranceId};
 
     // Provide a default if no mapping exists
-    final mappedId = idMapping[serviceType] ?? '000000';
+    final mappedId = idMapping[serviceGroup] ?? '000000';
 
     final baseFilename =
-        '${serviceType.replaceAll(' ', ' - ')}_${serviceType.replaceAll(' ', '_')}_$mappedId';
+        '${serviceGroup.replaceAll(' ', ' - ')}_${serviceGroup.replaceAll(' ', '_')}_$mappedId';
 
     final insuranceDirectory =
         Directory('${downloadsDirectory.path}/$baseFilename');
@@ -276,14 +277,15 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
 
     final downloadsDirectory = Directory(filePath);
 
-    final serviceType = widget.task.csvData?['serviceType'] ?? 'Service Group';
-    final idMapping = {serviceType: widget.task.ppirInsuranceId};
+    final serviceGroup =
+        widget.task.csvData?['serviceGroup'] ?? 'Service Group';
+    final idMapping = {serviceGroup: widget.task.ppirInsuranceId};
 
     // Provide a default if no mapping exists
-    final mappedId = idMapping[serviceType] ?? '000000';
+    final mappedId = idMapping[serviceGroup] ?? '000000';
 
     final baseFilename =
-        '${serviceType.replaceAll(' ', ' - ')}_${serviceType.replaceAll(' ', '_')}_$mappedId';
+        '${serviceGroup.replaceAll(' ', ' - ')}_${serviceGroup.replaceAll(' ', '_')}_$mappedId';
 
     final insuranceDirectory =
         Directory('${downloadsDirectory.path}/$baseFilename');
