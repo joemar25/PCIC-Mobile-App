@@ -210,6 +210,7 @@ class PCICFormPageState extends State<PCICFormPage> {
     return xmlBuffer.toString();
   }
 
+
 void _createZipFile() async {
   try {
     final gpxFilePath = widget.gpxFile;
@@ -244,31 +245,30 @@ void _createZipFile() async {
     debugPrint('Stack trace: $stackTrace');
   }
 }
-
-  void _submitForm() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirmation'),
-        content: const Text('Are you sure the data above is correct?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('No'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _saveFormData();
-              _saveAsXml(); // Call the method to save as XML
-              _createZipFile();
-            },
-            child: const Text('Yes'),
-          ),
-        ],
-      ),
-    );
-  }
+  
+void _submitForm() {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Confirmation'),
+      content: const Text('Are you sure the data above is correct?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('No'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            _saveFormData();
+            _createZipFile(); // Call the method to create the ZIP file
+          },
+          child: const Text('Yes'),
+        ),
+      ],
+    ),
+  );
+}
 
   void _saveFormData() {
     // Update the additional columns

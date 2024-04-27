@@ -11,7 +11,6 @@ import 'package:pcic_mobile_app/utils/seeds/_dropdown.dart';
 import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
 import 'package:pcic_mobile_app/screens/geotag/_map_service.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:archive/archive_io.dart';
 
 import './_form_field.dart' as form_field;
 import './_form_section.dart' as form_section;
@@ -161,90 +160,6 @@ class PCICFormPageState extends State<PCICFormPage> {
     }
   }
 
-  void _saveAsXml() {
-    try {
-      final gpxFilePath = widget.gpxFile;
-      final gpxFile = File(gpxFilePath);
-      final directory = gpxFile.parent;
-      final xmlData = _convertToXml();
-
-      final xmlFile = File('${directory.path}/form_data.xml');
-
-      xmlFile.writeAsStringSync(xmlData);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Form data saved as XML')),
-      );
-    } catch (e, stackTrace) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error saving form data as XML')),
-      );
-      debugPrint('Error saving form data as XML: $e');
-      debugPrint('Stack trace: $stackTrace');
-    }
-  }
-
-  String _convertToXml() {
-    final StringBuffer xmlBuffer = StringBuffer();
-    xmlBuffer.writeln('<?xml version="1.0" encoding="UTF-8"?>');
-    xmlBuffer.writeln(
-        '<TaskArchiveZipModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">');
-    xmlBuffer.writeln('<AgentId xsi:nil="true"/>');
-    xmlBuffer.writeln(
-        '<AssignedDate>${DateTime.now().toIso8601String()}</AssignedDate>');
-    xmlBuffer.writeln('<Attachments/>');
-    xmlBuffer.writeln('<AuditLogs>');
-
-    // Add your TaskAuditLogZipModel here
-    xmlBuffer.writeln('<TaskAuditLogZipModel>');
-
-    // Add form data inside TaskAuditLogZipModel
-    _formData.forEach((key, value) {
-      xmlBuffer.writeln('<$key>$value</$key>');
-    });
-
-    xmlBuffer.writeln('</TaskAuditLogZipModel>');
-
-    xmlBuffer.writeln('</AuditLogs>');
-    xmlBuffer.writeln('</TaskArchiveZipModel>');
-    return xmlBuffer.toString();
-  }
-
-void _createZipFile() async {
-  try {
-    final gpxFilePath = widget.gpxFile;
-    final gpxFile = File(gpxFilePath);
-    final directory = gpxFile.parent;
-
-    final encoder = ZipFileEncoder();
-    final zipFilePath = '${directory.path}.zip';
-    encoder.create(zipFilePath);
-
-    // Add all files in the directory to the ZIP
-    final files = await directory.list().toList();
-    for (var file in files) {
-      if (file is File) {
-        encoder.addFile(file);
-      }
-    }
-
-    encoder.close();
-
-    // Delete the original directory
-    await directory.delete(recursive: true);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Form data saved as ZIP')),
-    );
-  } catch (e, stackTrace) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Error saving form data as ZIP')),
-    );
-    debugPrint('Error saving form data as ZIP: $e');
-    debugPrint('Stack trace: $stackTrace');
-  }
-}
-
   void _submitForm() {
     showDialog(
       context: context,
@@ -254,14 +169,12 @@ void _createZipFile() async {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('No'),
+            child: const Text('Not yet'),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               _saveFormData();
-              _saveAsXml(); // Call the method to save as XML
-              _createZipFile();
             },
             child: const Text('Yes'),
           ),
@@ -284,12 +197,15 @@ void _createZipFile() async {
     _formData['ppirSigIuia'] = _formData['ppirSigIuia'] ?? 'no value';
     _formData['ppirNameIuia'] = _formData['ppirNameIuia'] ?? 'no value';
 
+    // widget.imageFile must be save as blob and get its filename and save its mine type in the xml
+    // but it must have its unique id
+
     widget.task.updateCsvData(_getChangedData());
     widget.task.isCompleted = true;
 
     widget.task
         .saveXmlData(
-            widget.task.csvData?['serviceType'], widget.task.ppirInsuranceId)
+            widget.task.csvData?['serviceGroup'], widget.task.ppirInsuranceId)
         .then((_) {
       _updateTaskInFirebase();
 

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:signature/signature.dart';
 import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
+import 'package:uuid/uuid.dart';
 
 class SignatureSection extends StatefulWidget {
   final TaskManager task;
@@ -180,17 +181,36 @@ class SignatureSectionState extends State<SignatureSection> {
   void _performSaveSignatures() async {
     Map<String, String> signatureData = {};
 
+    // Assuming 'serviceType' contains a value like 'Region 06 PPIR' that we map to 'Region 06 - PPIR_Region 06 PPIR_138152'
+    // Example of a simple map. Update this according to actual mappings.
+    final serviceType = widget.task.csvData?['serviceType'] ?? 'Service Group';
+    final idMapping = {serviceType: widget.task.ppirInsuranceId};
+
+    // Provide a default if no mapping exists
+    final mappedId = idMapping[serviceType] ?? '000000';
+
+    final baseFilename =
+        '${serviceType.replaceAll(' ', ' - ')}_${serviceType.replaceAll(' ', '_')}_$mappedId';
+
+    // Get the directory to save signatures
+    final directory = await getExternalStorageDirectory();
+
     // Capture and save the confirmed by signature screenshot
     if (_confirmedBySignatureController.isNotEmpty) {
       final confirmedBySignatureBytes =
           await _confirmedBySignatureController.toPngBytes();
-      final confirmedByDirectory = await getExternalStorageDirectory();
-      final confirmedByFile = File(
-          '${confirmedByDirectory!.path}/${widget.task.ppirInsuranceId}_confirmed_by.png');
+
+      // Generate Unique ID for the GPX file
+      var uuid = const Uuid();
+      String generatedAttachmentId = uuid.v4();
+
+      final confirmedByFile =
+          File('${directory!.path}/$baseFilename/$generatedAttachmentId.png');
+
       await confirmedByFile.writeAsBytes(confirmedBySignatureBytes!);
+
       debugPrint('Confirmed by signature saved: ${confirmedByFile.path}');
-      signatureData['ppirSigInsured'] =
-          '${widget.task.ppirInsuranceId}_confirmed_by.png';
+      signatureData['ppirSigInsured'] = '$generatedAttachmentId.png';
     } else {
       signatureData['ppirSigInsured'] = '';
     }
@@ -199,13 +219,17 @@ class SignatureSectionState extends State<SignatureSection> {
     if (_preparedBySignatureController.isNotEmpty) {
       final preparedBySignatureBytes =
           await _preparedBySignatureController.toPngBytes();
-      final preparedByDirectory = await getExternalStorageDirectory();
-      final preparedByFile = File(
-          '${preparedByDirectory!.path}/${widget.task.ppirInsuranceId}_prepared_by.png');
+
+      // Generate Unique ID for the GPX file
+      var uuid = const Uuid();
+      String generatedAttachmentId = uuid.v4();
+
+      final preparedByFile =
+          File('${directory!.path}/$baseFilename/$generatedAttachmentId.png');
+
       await preparedByFile.writeAsBytes(preparedBySignatureBytes!);
       debugPrint('Prepared by signature saved: ${preparedByFile.path}');
-      signatureData['ppirSigIuia'] =
-          '${widget.task.ppirInsuranceId}_prepared_by.png';
+      signatureData['ppirSigIuia'] = '$generatedAttachmentId.png';
     } else {
       signatureData['ppirSigIuia'] = '';
     }
@@ -218,7 +242,10 @@ class SignatureSectionState extends State<SignatureSection> {
     });
 
     // Save the updated CSV data back to the file
-    widget.task.saveXmlData().then((_) {
+    widget.task
+        .saveXmlData(
+            widget.task.csvData?['serviceType'], widget.task.ppirInsuranceId)
+        .then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Signatures saved successfully')),
       );
