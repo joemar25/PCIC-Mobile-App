@@ -5,7 +5,6 @@ import 'package:csv/csv.dart';
 import 'package:external_path/external_path.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:xml/xml.dart';
 
@@ -196,16 +195,16 @@ class TaskManager {
             }
           });
 
-          //upload to db if not existing
+          // Upload to db if not existing
 
-          //get list of all ppid in db
+          // Get list of all ppid in db
           List<String> insuranceinDB = [];
           values.forEach((key, value) =>
               (insuranceinDB.add(value["ppir_insuranceid"].toString())));
 
           csvDataMap.forEach((key, value) {
             if (!insuranceinDB.contains(key)) {
-              //db data structure
+              // DB data structure
 
               databaseReference.child('task-$key').set({
                 "ppir_assignmentid": value["ppirAssignmentId"],
