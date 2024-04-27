@@ -657,9 +657,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                       width: 45,
                       child: FloatingActionButton(
                         onPressed: () => _getCurrentLocation(addMarker: false),
-                        shape: const CircleBorder(
-                          side: BorderSide(color: Colors.green, width: 2.0),
-                        ),
+                        shape: const CircleBorder(),
                         backgroundColor: const Color(0xFFD2FFCB),
                         elevation: 4.0,
                         child: const Icon(
@@ -673,8 +671,8 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                     top: 80.0,
                     left: 40.0,
                     child: SizedBox(
-                      height: 45,
-                      width: 45,
+                      height: 35,
+                      width: 35,
                       child: FloatingActionButton(
                         onPressed: isRoutingStarted
                             ? () {
@@ -683,9 +681,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                             : () {
                                 Navigator.pop(context);
                               },
-                        shape: const CircleBorder(
-                          side: BorderSide(color: Color(0xFFD2FFCB)),
-                        ),
+                        shape: const CircleBorder(),
                         backgroundColor: const Color(0xFFD2FFCB),
                         elevation: 4.0,
                         child: const Icon(

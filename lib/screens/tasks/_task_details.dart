@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:pcic_mobile_app/screens/geotag/_geotag.dart';
 import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
 
@@ -79,17 +79,27 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title,
-                  textAlign: TextAlign.left,
-                  style: const TextStyle(
-                      fontSize: 23.04, fontWeight: FontWeight.w300)),
+              Container(
+                padding: const EdgeInsets.only(bottom: 12.0),
+                alignment: Alignment.center,
+                child: Text(title,
+                    style: const TextStyle(
+                      fontSize: 19.2,
+                      fontWeight: FontWeight.bold,
+                    )),
+              ),
               Container(
                 width: double.maxFinite,
-                margin: const EdgeInsets.only(bottom: 10.0),
+                margin: const EdgeInsets.only(bottom: 16.0),
                 decoration: BoxDecoration(
-                    border: Border.all(
-                        color: Colors.black.withOpacity(0.2), width: 1.0),
-                    borderRadius: BorderRadius.circular(10)),
+                    color: const Color(0xFFD2FFCB).withOpacity(0.25),
+                    border: const Border(
+                        top: BorderSide(width: 2.0, color: Color(0xFF0F7D40)),
+                        right: BorderSide(width: 5.0, color: Color(0xFF0F7D40)),
+                        bottom:
+                            BorderSide(width: 5.0, color: Color(0xFF0F7D40)),
+                        left: BorderSide(width: 2.0, color: Color(0xFF0F7D40))),
+                    borderRadius: BorderRadius.circular(30.0)),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -114,11 +124,16 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('$label:',
-              style:
-                  const TextStyle(fontWeight: FontWeight.w300, fontSize: 14.0)),
-          Text(displayValue ?? '',
-              style:
-                  const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500)),
+              style: const TextStyle(
+                  color: Color(0xFF0F7D40),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13.3)),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4.0),
+            child: Text(displayValue ?? '',
+                style: const TextStyle(
+                    fontSize: 16.0, fontWeight: FontWeight.w600)),
+          )
         ],
       ),
     );
@@ -150,6 +165,37 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            Padding(
+                padding: EdgeInsets.only(bottom: 16.0),
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                        onPressed: _navigateToGeotagPage,
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(0, 60),
+                          shape: const CircleBorder(),
+                          backgroundColor: const Color(0xFF0F7D40),
+                        ),
+                        child: SizedBox(
+                            height: 35,
+                            width: 35,
+                            child: SvgPicture.asset(
+                              'assets/storage/images/geotag.svg',
+                              colorFilter: const ColorFilter.mode(
+                                  Colors.white, BlendMode.srcIn),
+                            ))),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text(
+                        'Go to Geotag',
+                        style: TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    )
+                  ],
+                )),
             _buildFormSection('Post Planting Inspection Report', [
               _buildFormField('Farmer Name', formData['ppirFarmerName']),
               _buildFormField('Address', formData['ppirAddress']),
@@ -186,34 +232,6 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
                   'Date of Planting (TP)', formData['ppirDoptpAci']),
               _buildFormField('Seed Variety Planted', formData['ppirVariety']),
             ]),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                  ),
-                  onPressed: _navigateToGeotagPage,
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        CupertinoIcons.location_solid,
-                        color: Colors.black,
-                      ),
-                      Text(
-                        'Go to Geotag',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            )
           ],
         ),
       ),
