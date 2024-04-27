@@ -210,32 +210,40 @@ class PCICFormPageState extends State<PCICFormPage> {
     return xmlBuffer.toString();
   }
 
-  void _createZipFolder() {
-    try {
-      final gpxFilePath = widget.gpxFile;
-      final gpxFile = File(gpxFilePath);
-      final directory = gpxFile.parent;
-      final xmlFile = File('${directory.path}/form_data.xml');
-      final zipFile = File('${directory.path}/form_data.zip');
-      final zipEncoder = ZipFileEncoder();
-      zipEncoder.create(zipFile.path);
+void _createZipFile() async {
+  try {
+    final gpxFilePath = widget.gpxFile;
+    final gpxFile = File(gpxFilePath);
+    final directory = gpxFile.parent;
 
-      zipEncoder.addFile(xmlFile);
-      zipEncoder.addFile(gpxFile);
+    final encoder = ZipFileEncoder();
+    final zipFilePath = '${directory.path}.zip';
+    encoder.create(zipFilePath);
 
-      zipEncoder.close();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Form data saved as ZIP')),
-      );
-    } catch (e, stackTrace) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error saving form data as ZIP')),
-      );
-      debugPrint('Error saving form data as ZIP: $e');
-      debugPrint('Stack trace: $stackTrace');
+    // Add all files in the directory to the ZIP
+    final files = await directory.list().toList();
+    for (var file in files) {
+      if (file is File) {
+        encoder.addFile(file);
+      }
     }
+
+    encoder.close();
+
+    // Delete the original directory
+    await directory.delete(recursive: true);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Form data saved as ZIP')),
+    );
+  } catch (e, stackTrace) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Error saving form data as ZIP')),
+    );
+    debugPrint('Error saving form data as ZIP: $e');
+    debugPrint('Stack trace: $stackTrace');
   }
+}
 
   void _submitForm() {
     showDialog(
@@ -253,7 +261,7 @@ class PCICFormPageState extends State<PCICFormPage> {
               Navigator.pop(context);
               _saveFormData();
               _saveAsXml(); // Call the method to save as XML
-              _createZipFolder();
+              _createZipFile();
             },
             child: const Text('Yes'),
           ),

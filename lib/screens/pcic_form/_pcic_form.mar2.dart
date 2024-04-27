@@ -11,6 +11,7 @@ import 'package:pcic_mobile_app/utils/seeds/_dropdown.dart';
 import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
 import 'package:pcic_mobile_app/screens/geotag/_map_service.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:archive/archive_io.dart';
 
 import './_form_field.dart' as form_field;
 import './_form_section.dart' as form_section;
@@ -209,29 +210,65 @@ class PCICFormPageState extends State<PCICFormPage> {
     return xmlBuffer.toString();
   }
 
-  void _submitForm() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirmation'),
-        content: const Text('Are you sure the data above is correct?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('No'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _saveFormData();
-              _saveAsXml(); // Call the method to save as XML
-            },
-            child: const Text('Yes'),
-          ),
-        ],
-      ),
+
+void _createZipFile() async {
+  try {
+    final gpxFilePath = widget.gpxFile;
+    final gpxFile = File(gpxFilePath);
+    final directory = gpxFile.parent;
+
+    final encoder = ZipFileEncoder();
+    final zipFilePath = '${directory.path}.zip';
+    encoder.create(zipFilePath);
+
+    // Add all files in the directory to the ZIP
+    final files = await directory.list().toList();
+    for (var file in files) {
+      if (file is File) {
+        encoder.addFile(file);
+      }
+    }
+
+    encoder.close();
+
+    // Delete the original directory
+    await directory.delete(recursive: true);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Form data saved as ZIP')),
     );
+  } catch (e, stackTrace) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Error saving form data as ZIP')),
+    );
+    debugPrint('Error saving form data as ZIP: $e');
+    debugPrint('Stack trace: $stackTrace');
   }
+}
+  
+void _submitForm() {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Confirmation'),
+      content: const Text('Are you sure the data above is correct?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('No'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            _saveFormData();
+            _createZipFile(); // Call the method to create the ZIP file
+          },
+          child: const Text('Yes'),
+        ),
+      ],
+    ),
+  );
+}
 
   void _saveFormData() {
     // Update the additional columns
