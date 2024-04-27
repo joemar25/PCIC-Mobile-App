@@ -11,7 +11,7 @@ import 'package:pcic_mobile_app/utils/seeds/_dropdown.dart';
 import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
 import 'package:pcic_mobile_app/screens/geotag/_map_service.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'dart:convert';
+import 'package:archive/archive_io.dart';
 
 import './_form_field.dart' as form_field;
 import './_form_section.dart' as form_section;
@@ -170,9 +170,9 @@ void _saveAsXml() {
     final directory = gpxFile.parent;
     final xmlData = _convertToXml();
 
-    final file = File('${directory.path}/form_data.xml');
+    final xmlFile = File('${directory.path}/form_data.xml');
 
-    file.writeAsStringSync(xmlData);
+    xmlFile.writeAsStringSync(xmlData);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Form data saved as XML')),
@@ -212,6 +212,34 @@ String _convertToXml() {
   return xmlBuffer.toString();
 }
 
+
+void _createZipFolder() {
+  try {
+    final gpxFilePath = widget.gpxFile;
+    final gpxFile = File(gpxFilePath);
+    final directory = gpxFile.parent;
+    final xmlFile = File('${directory.path}/form_data.xml');
+
+    final zipFile = File('${directory.path}/form_data.zip');
+    final zipEncoder = ZipFileEncoder();
+    zipEncoder.create(zipFile.path);
+
+    zipEncoder.addFile(xmlFile);
+    zipEncoder.addFile(gpxFile);
+
+    zipEncoder.close();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Form data saved as ZIP')),
+    );
+  } catch (e, stackTrace) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Error saving form data as ZIP')),
+    );
+    debugPrint('Error saving form data as ZIP: $e');
+    debugPrint('Stack trace: $stackTrace');
+  }
+}
 
 
 void _submitForm() {
