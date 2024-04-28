@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/home/_home.dart';
 import 'package:pcic_mobile_app/utils/agent/_session.dart';
@@ -97,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     LoginTextField(
                       inputType: 'Email',
-                      icon: CupertinoIcons.mail,
+                      svgPath: 'assets/storage/images/mail.svg',
                       onTextChanged: updateParentEmail,
                     ),
                     const SizedBox(
@@ -105,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     LoginTextField(
                       inputType: 'Password',
-                      icon: CupertinoIcons.lock,
+                      svgPath: 'assets/storage/images/lock.svg',
                       onTextChanged: updateParentPassword,
                     ),
                     const SizedBox(

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class LoginTextField extends StatefulWidget {
   // final String password;
-  final IconData icon; //
+  final String svgPath; //
   final String inputType;
 
   final Function(String) onTextChanged;
 
   const LoginTextField(
       {super.key,
-      required this.icon,
+      required this.svgPath,
       required this.inputType,
       required this.onTextChanged});
 
@@ -34,10 +35,7 @@ class _LoginTextFieldState extends State<LoginTextField> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(
-            widget.icon,
-            color: Colors.grey,
-          ),
+          SvgPicture.asset(widget.svgPath),
           const VerticalDivider(
             color: Colors.grey,
             thickness: 1.0,
@@ -53,8 +51,8 @@ class _LoginTextFieldState extends State<LoginTextField> {
                   Text(
                     widget.inputType,
                     style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 10.0,
+                        color: Color(0xFF0F7D40),
+                        fontSize: 11.1,
                         fontWeight: FontWeight.w500),
                   ),
                   SizedBox(
