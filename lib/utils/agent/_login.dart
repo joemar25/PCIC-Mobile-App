@@ -17,6 +17,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String parentEmail = '';
   String parentPassword = '';
+  bool _isLoading = false;
 
   final Session _session = Session();
 
@@ -119,6 +120,10 @@ class _LoginPageState extends State<LoginPage> {
                         Expanded(
                           child: ElevatedButton(
                               onPressed: () async {
+                                setState(() {
+                                  _isLoading = true;
+                                });
+
                                 try {
                                   UserCredential userCredential =
                                       await FirebaseAuth.instance
@@ -147,11 +152,26 @@ class _LoginPageState extends State<LoginPage> {
                                   debugPrint('Login error: $e');
                                   // Show an error message to the user
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
+                                    SnackBar(
+                                      content: const Text(
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 13.3,
+                                              fontWeight: FontWeight.w600),
                                           'Login failed. Please check your email and password.'),
+                                      backgroundColor: Colors.white,
+                                      duration: const Duration(seconds: 3),
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
                                     ),
                                   );
+                                } finally {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
                                 }
                               },
                               style: ElevatedButton.styleFrom(
@@ -160,17 +180,30 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 backgroundColor: const Color(0xFF0F7D40),
                               ),
-                              child: const Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 13.0, horizontal: 8.0),
-                                child: Text(
-                                  'Sign in',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              )),
+                              child: _isLoading
+                                  ? const Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 13.0, horizontal: 8.0),
+                                      child: SizedBox(
+                                        width: 23,
+                                        height: 23,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 4,
+                                        ),
+                                      ),
+                                    )
+                                  : const Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 13.0, horizontal: 8.0),
+                                      child: Text(
+                                        'Sign in',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    )),
                         ),
                       ],
                     ),
