@@ -1,10 +1,10 @@
 // file: pcic_form.dart
 import 'dart:io';
+import 'package:external_path/external_path.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:open_file/open_file.dart';
 import 'package:pcic_mobile_app/screens/pcic_form/_success.dart';
 import 'package:pcic_mobile_app/screens/signature/_signature_section.dart';
 import 'package:pcic_mobile_app/utils/seeds/_dropdown.dart';
@@ -15,7 +15,6 @@ import 'package:archive/archive_io.dart';
 
 import './_form_field.dart' as form_field;
 import './_form_section.dart' as form_section;
-import '_gpx_file_button.dart' as gpx_button;
 
 class PCICFormPage extends StatefulWidget {
   final String imageFile;
@@ -161,91 +160,93 @@ class PCICFormPageState extends State<PCICFormPage> {
     }
   }
 
-  void _saveAsXml() {
+  void _createZipFile(BuildContext context) async {
     try {
-      final gpxFilePath = widget.gpxFile;
-      final gpxFile = File(gpxFilePath);
-      final directory = gpxFile.parent;
-      final xmlData = _convertToXml();
-
-      final xmlFile = File('${directory.path}/form_data.xml');
-
-      xmlFile.writeAsStringSync(xmlData);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Form data saved as XML')),
+      final filePath = await ExternalPath.getExternalStoragePublicDirectory(
+        ExternalPath.DIRECTORY_DOWNLOADS,
       );
+
+      final downloadsDirectory = Directory(filePath);
+
+      final serviceType = widget.task.csvData?['serviceType'] ?? 'Service Type';
+      final idMapping = {serviceType: widget.task.ppirInsuranceId};
+
+      // Provide a default if no mapping exists
+      final mappedId = idMapping[serviceType] ?? '000000';
+
+      final baseFilename =
+          '${serviceType.replaceAll(' ', ' - ')}_${serviceType.replaceAll(' ', '_')}_$mappedId';
+
+      final directory = Directory('${downloadsDirectory.path}/$baseFilename');
+
+      // Create the insurance directory if it doesn't exist
+      if (!await directory.exists()) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No files found to zip')),
+        );
+        return;
+      }
+
+      final zipFilePath = '${downloadsDirectory.path}/$baseFilename.task';
+      final zipFile = File(zipFilePath);
+
+      // Delete the existing ZIP file if it already exists
+      if (await zipFile.exists()) {
+        await zipFile.delete();
+      }
+
+      final zipFileStream = zipFile.openWrite();
+      final archive = Archive();
+
+      // Recursively add files to the archive
+      await addFilesToArchive(directory, directory.path, archive);
+
+      final zipData = ZipEncoder().encode(archive);
+      zipFileStream.add(zipData!);
+      await zipFileStream.close();
+      await directory.delete(recursive: true);
+
+      // Verify the ZIP file
+      if (await zipFile.exists()) {
+        final zipSize = await zipFile.length();
+        debugPrint('ZIP file created successfully. Size: $zipSize bytes');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Form data saved as ZIP')),
+        );
+      } else {
+        debugPrint('Failed to create ZIP file');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error saving form data as ZIP')),
+        );
+      }
     } catch (e, stackTrace) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error saving form data as XML')),
+        const SnackBar(content: Text('Error saving form data as ZIP')),
       );
-      debugPrint('Error saving form data as XML: $e');
+      debugPrint('Error saving form data as ZIP: $e');
       debugPrint('Stack trace: $stackTrace');
     }
   }
 
-  String _convertToXml() {
-    final StringBuffer xmlBuffer = StringBuffer();
-    xmlBuffer.writeln('<?xml version="1.0" encoding="UTF-8"?>');
-    xmlBuffer.writeln(
-        '<TaskArchiveZipModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">');
-    xmlBuffer.writeln('<AgentId xsi:nil="true"/>');
-    xmlBuffer.writeln(
-        '<AssignedDate>${DateTime.now().toIso8601String()}</AssignedDate>');
-    xmlBuffer.writeln('<Attachments/>');
-    xmlBuffer.writeln('<AuditLogs>');
-
-    // Add your TaskAuditLogZipModel here
-    xmlBuffer.writeln('<TaskAuditLogZipModel>');
-
-    // Add form data inside TaskAuditLogZipModel
-    _formData.forEach((key, value) {
-      xmlBuffer.writeln('<$key>$value</$key>');
-    });
-
-    xmlBuffer.writeln('</TaskAuditLogZipModel>');
-
-    xmlBuffer.writeln('</AuditLogs>');
-    xmlBuffer.writeln('</TaskArchiveZipModel>');
-    return xmlBuffer.toString();
-  }
-
-void _createZipFile() async {
-  try {
-    final gpxFilePath = widget.gpxFile;
-    final gpxFile = File(gpxFilePath);
-    final directory = gpxFile.parent;
-
-    final encoder = ZipFileEncoder();
-    final zipFilePath = '${directory.path}.zip';
-    encoder.create(zipFilePath);
-
-    // Add all files in the directory to the ZIP
-    final files = await directory.list().toList();
+  Future<void> addFilesToArchive(
+      Directory dir, String rootPath, Archive archive) async {
+    final files = dir.listSync();
     for (var file in files) {
       if (file is File) {
-        encoder.addFile(file);
+        final fileContent = await file.readAsBytes();
+        final archiveFile = ArchiveFile(
+          file.path.replaceAll('$rootPath/', ''),
+          fileContent.length,
+          fileContent,
+        );
+        archive.addFile(archiveFile);
+      } else if (file is Directory) {
+        await addFilesToArchive(file, rootPath, archive);
       }
     }
-
-    encoder.close();
-
-    // Delete the original directory
-    await directory.delete(recursive: true);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Form data saved as ZIP')),
-    );
-  } catch (e, stackTrace) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Error saving form data as ZIP')),
-    );
-    debugPrint('Error saving form data as ZIP: $e');
-    debugPrint('Stack trace: $stackTrace');
   }
-}
 
-  void _submitForm() {
+  void _submitForm(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -260,8 +261,7 @@ void _createZipFile() async {
             onPressed: () {
               Navigator.pop(context);
               _saveFormData();
-              _saveAsXml(); // Call the method to save as XML
-              _createZipFile();
+              _createZipFile(context);
             },
             child: const Text('Yes'),
           ),
@@ -355,50 +355,6 @@ void _createZipFile() async {
         ],
       ),
     );
-  }
-
-  void _openGpxFile(String gpxFilePath) async {
-    try {
-      final filePath = gpxFilePath;
-      final downloadsDirectory = Directory(filePath);
-      final gpxFile = File(downloadsDirectory.path);
-      debugPrint("path = $gpxFile");
-
-      if (await gpxFile.exists()) {
-        final status = await Permission.manageExternalStorage.status;
-        if (status.isGranted) {
-          final result = await OpenFile.open(gpxFile.path);
-          if (result.type == ResultType.done) {
-            // File opened successfully
-            debugPrint('GPX file opened successfully');
-          } else {
-            // Error opening the file
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Error opening GPX file')),
-            );
-            debugPrint('Error opening GPX file: ${result.message}');
-          }
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                  'External storage permission is required to open GPX files'),
-            ),
-          );
-          debugPrint('MANAGE_EXTERNAL_STORAGE permission denied');
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('GPX file not found')),
-        );
-        debugPrint('GPX file not found: ${gpxFile.path}');
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error opening GPX file')),
-      );
-      debugPrint('Error opening GPX file: $e');
-    }
   }
 
   void _viewScreenshot(String screenshotPath) {
@@ -513,10 +469,11 @@ void _createZipFile() async {
               'GPX File',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
-            gpx_button.GPXFileButton(
-              openGpxFile: () => _openGpxFile(widget.gpxFile),
-            ),
+            // MAR: this is commented because it is not in our scope, this is just for testing
+            // const SizedBox(height: 16),
+            // gpx_button.GPXFileButton(
+            //   openGpxFile: () => _openGpxFile(widget.gpxFile),
+            // ),
           ],
         ),
       ),
@@ -533,7 +490,7 @@ void _createZipFile() async {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: _submitForm,
+              onPressed: () => _submitForm(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
               ),
