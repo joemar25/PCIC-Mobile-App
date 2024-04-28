@@ -187,7 +187,7 @@ class PCICFormPageState extends State<PCICFormPage> {
         return;
       }
 
-      final zipFilePath = '${downloadsDirectory.path}/$baseFilename.zip';
+      final zipFilePath = '${downloadsDirectory.path}/$baseFilename.task';
       final zipFile = File(zipFilePath);
 
       // Delete the existing ZIP file if it already exists
