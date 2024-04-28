@@ -87,8 +87,12 @@ class _LoginTextFieldState extends State<LoginTextField> {
               )),
           if (_passwordValue.isNotEmpty && widget.inputType == 'Password')
             IconButton(
-              icon: Icon(
-                _obscureText ? Icons.visibility : Icons.visibility_off,
+              icon: SvgPicture.asset(
+                _obscureText
+                    ? 'assets/storage/images/show-eye.svg'
+                    : 'assets/storage/images/slash-eye.svg',
+                height: 24,
+                width: 24,
               ),
               onPressed: () {
                 setState(() {
