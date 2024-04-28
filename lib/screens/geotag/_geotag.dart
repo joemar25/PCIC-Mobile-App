@@ -434,7 +434,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                             border: Border.all(),
                             boxShadow: const [
                               BoxShadow(
-                                  color: Colors.black,
+                                  color: Color(0xFF0F7D40),
                                   offset: Offset(0, 10),
                                   spreadRadius: -6)
                             ]),

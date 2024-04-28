@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:pcic_mobile_app/screens/_splash.dart';
 import 'package:pcic_mobile_app/screens/home/_home_header.dart';
 import 'package:pcic_mobile_app/screens/home/_recent_task_container.dart';
+import 'package:pcic_mobile_app/screens/home/_search_button.dart';
 import 'package:pcic_mobile_app/screens/home/_task_count_countainer.dart';
 import 'package:pcic_mobile_app/screens/messages/_view.dart';
 import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
@@ -166,11 +167,21 @@ class HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 16),
+                const SizedBox(height: 8.0),
                 const TaskCountContainer(),
-                const SizedBox(height: 16),
-                // const SearchButton(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 16.0),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Text('Recent Tasks',
+                      style: TextStyle(
+                          fontSize: 23.04, fontWeight: FontWeight.bold)),
+                ),
+                const SizedBox(height: 8.0),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  child: SearchButton(),
+                ),
+                const SizedBox(height: 16.0),
                 RecentTaskContainer(tasks: _tasks),
                 const SizedBox(height: 8),
               ],
