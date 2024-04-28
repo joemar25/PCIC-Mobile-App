@@ -92,14 +92,15 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
                 width: double.maxFinite,
                 margin: const EdgeInsets.only(bottom: 16.0),
                 decoration: BoxDecoration(
-                    color: const Color(0xFFD2FFCB).withOpacity(0.25),
-                    border: const Border(
-                        top: BorderSide(width: 2.0, color: Color(0xFF0F7D40)),
-                        right: BorderSide(width: 5.0, color: Color(0xFF0F7D40)),
-                        bottom:
-                            BorderSide(width: 5.0, color: Color(0xFF0F7D40)),
-                        left: BorderSide(width: 2.0, color: Color(0xFF0F7D40))),
-                    borderRadius: BorderRadius.circular(30.0)),
+                    color: Colors.white,
+                    border: Border.all(),
+                    boxShadow: const [
+                      BoxShadow(
+                          color: Color(0xFF0F7D40),
+                          offset: Offset(0, 10),
+                          spreadRadius: -6)
+                    ],
+                    borderRadius: BorderRadius.circular(20.0)),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(

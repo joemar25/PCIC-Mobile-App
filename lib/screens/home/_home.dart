@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pcic_mobile_app/screens/_splash.dart';
-import 'package:pcic_mobile_app/screens/messages/_view.dart';
-import 'package:pcic_mobile_app/screens/tasks/_task.dart';
 import 'package:pcic_mobile_app/screens/home/_home_header.dart';
-import 'package:pcic_mobile_app/screens/home/_profile_container.dart';
 import 'package:pcic_mobile_app/screens/home/_recent_task_container.dart';
 import 'package:pcic_mobile_app/screens/home/_search_button.dart';
+import 'package:pcic_mobile_app/screens/home/_task_count_countainer.dart';
+import 'package:pcic_mobile_app/screens/messages/_view.dart';
 import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
+import 'package:pcic_mobile_app/screens/tasks/_task.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -153,39 +153,37 @@ class HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: HomeHeader(onLogout: _handleLogout),
-      ),
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false,
+          title: Padding(
+            padding: const EdgeInsets.only(left: 6.0),
+            child: HomeHeader(onLogout: _handleLogout),
+          )),
       body: RefreshIndicator(
         onRefresh: _onRefresh,
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 16),
-                const ProfileContainer(),
-                const SizedBox(height: 16),
-                const SearchButton(),
-                const SizedBox(height: 16),
-                const Row(
-                  children: [
-                    Icon(
-                      Icons.access_time,
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    Text(
-                      'Recent Task',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ],
+                const SizedBox(height: 8.0),
+                const TaskCountContainer(),
+                const SizedBox(height: 16.0),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Text('Recent Tasks',
+                      style: TextStyle(
+                          fontSize: 23.04, fontWeight: FontWeight.bold)),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 8.0),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  child: SearchButton(),
+                ),
+                const SizedBox(height: 16.0),
                 RecentTaskContainer(tasks: _tasks),
+                const SizedBox(height: 8),
               ],
             ),
           ),
