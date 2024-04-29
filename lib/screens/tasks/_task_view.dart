@@ -36,14 +36,207 @@ class TaskContainerState extends State<TaskView> {
                   ElevatedButton(
                     onPressed: () {
                       showBottomSheet(
+                          backgroundColor: Colors.white,
                           context: context,
                           builder: (BuildContext context) {
-                            return SizedBox(
-                                height: 100,
+                            return Container(
+                                height: 200,
                                 width: double.infinity,
-                                child: ElevatedButton(
-                                  child: Text('Close'),
-                                  onPressed: () => Navigator.pop(context),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(),
+                                    borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(15.0),
+                                        topRight: Radius.circular(15.0))),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 21.0, vertical: 10.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Filter By:',
+                                            style: TextStyle(
+                                                fontSize: 16.0,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: SvgPicture.asset(
+                                                  'assets/storage/images/close.svg'))
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          TextButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                _showCompleted = true;
+                                                Navigator.pop(context);
+                                              });
+                                            },
+                                            style: TextButton.styleFrom(
+                                              // padding: EdgeInsets.zero,
+                                              // foregroundColor: Colors.black,
+                                              backgroundColor:
+                                                  const Color(0xFFD2FFCB),
+                                              shape: RoundedRectangleBorder(
+                                                side: const BorderSide(
+                                                  color: Colors.black,
+                                                  width: 1.0,
+                                                  style: BorderStyle.solid,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(5.0),
+                                              ),
+                                            ),
+                                            child: const Text(
+                                              'Completed Task',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 11.11,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 5.0,
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                _showCompleted = false;
+                                                Navigator.pop(context);
+                                              });
+                                            },
+                                            style: TextButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color(0xFFD9F7FA),
+                                              // foregroundColor: Colors.black,
+                                              shape: RoundedRectangleBorder(
+                                                  side: const BorderSide(
+                                                    color: Colors.black,
+                                                    width: 1.0,
+                                                    style: BorderStyle.solid,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          5.0)),
+                                            ),
+                                            child: const Text(
+                                              'Current Task',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 11.11,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const Text('Sort By:',
+                                          style: TextStyle(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.w600)),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          TextButton(
+                                            onPressed: () {
+                                              // Add your button action logic here
+                                            },
+                                            style: TextButton.styleFrom(
+                                              // padding: EdgeInsets.zero,
+                                              // foregroundColor: Colors.black,
+                                              backgroundColor:
+                                                  const Color(0xFFD2FFCB),
+                                              shape: RoundedRectangleBorder(
+                                                side: const BorderSide(
+                                                  color: Colors.black,
+                                                  width: 1.0,
+                                                  style: BorderStyle.solid,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(5.0),
+                                              ),
+                                            ),
+                                            child: const Text(
+                                              'ID',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 11.11,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 5.0,
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              // Add your button action logic here
+                                            },
+                                            style: TextButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color(0xFFD9F7FA),
+                                              // foregroundColor: Colors.black,
+                                              shape: RoundedRectangleBorder(
+                                                  side: const BorderSide(
+                                                    color: Colors.black,
+                                                    width: 1.0,
+                                                    style: BorderStyle.solid,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          5.0)),
+                                            ),
+                                            child: const Text(
+                                              'Date Added',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 11.11,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 5.0,
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              // Add your button action logic here
+                                            },
+                                            style: TextButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color(0xFFD9F7FA),
+                                              // foregroundColor: Colors.black,
+                                              shape: RoundedRectangleBorder(
+                                                  side: const BorderSide(
+                                                    color: Colors.black,
+                                                    width: 1.0,
+                                                    style: BorderStyle.solid,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          5.0)),
+                                            ),
+                                            child: const Text(
+                                              'Date Access',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 11.11,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ));
                           });
                     },
