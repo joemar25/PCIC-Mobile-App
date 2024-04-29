@@ -4,7 +4,7 @@ import 'package:pcic_mobile_app/screens/_splash.dart';
 import 'package:pcic_mobile_app/screens/home/_home_header.dart';
 import 'package:pcic_mobile_app/screens/home/_recent_task_container.dart';
 import 'package:pcic_mobile_app/screens/home/_search_button.dart';
-import 'package:pcic_mobile_app/screens/home/_task_count_countainer.dart';
+import 'package:pcic_mobile_app/screens/home/_task_count_container.dart';
 import 'package:pcic_mobile_app/screens/messages/_view.dart';
 import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
 import 'package:pcic_mobile_app/screens/tasks/_task.dart';
