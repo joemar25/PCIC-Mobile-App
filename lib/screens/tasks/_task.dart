@@ -34,7 +34,12 @@ class TaskPageState extends State<TaskPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tasks'),
+        centerTitle: true,
+        title: const Text(
+          'Tasks',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 19.2, fontWeight: FontWeight.w600),
+        ),
       ),
       body: _tasks.isNotEmpty
           ? TaskView(tasks: _tasks)
