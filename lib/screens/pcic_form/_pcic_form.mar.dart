@@ -3,10 +3,8 @@ import 'dart:io';
 import 'package:external_path/external_path.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pcic_mobile_app/screens/pcic_form/_success.dart';
 import 'package:pcic_mobile_app/screens/signature/_signature_section.dart';
@@ -18,7 +16,6 @@ import 'package:archive/archive_io.dart';
 
 import './_form_field.dart' as form_field;
 import './_form_section.dart' as form_section;
-import '_gpx_file_button.dart' as gpx_button;
 
 class PCICFormPage extends StatefulWidget {
   final String imageFile;
@@ -48,6 +45,7 @@ class PCICFormPageState extends State<PCICFormPage> {
   final _areaPlantedController = TextEditingController();
   final _areaInHectaresController = TextEditingController();
   final _totalDistanceController = TextEditingController();
+
   final _signatureSectionKey = GlobalKey<SignatureSectionState>();
 
   @override
@@ -215,25 +213,19 @@ class PCICFormPageState extends State<PCICFormPage> {
       if (await zipFile.exists()) {
         final zipSize = await zipFile.length();
         debugPrint('ZIP file created successfully. Size: $zipSize bytes');
-        SchedulerBinding.instance.addPostFrameCallback((_) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Form data saved as ZIP')),
-          );
-        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Form data saved as ZIP')),
+        );
       } else {
         debugPrint('Failed to create ZIP file');
-        SchedulerBinding.instance.addPostFrameCallback((_) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error saving form data as ZIP')),
-          );
-        });
-      }
-    } catch (e, stackTrace) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Error saving form data as ZIP')),
         );
-      });
+      }
+    } catch (e, stackTrace) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error saving form data as ZIP')),
+      );
       debugPrint('Error saving form data as ZIP: $e');
       debugPrint('Stack trace: $stackTrace');
     }
@@ -327,6 +319,37 @@ class PCICFormPageState extends State<PCICFormPage> {
     });
   }
 
+  void _saveSignatureFiles(Map<String, String> signatureData) async {
+    final directory = await getExternalStorageDirectory();
+    final serviceType = widget.task.csvData?['serviceType'] ?? 'Service Group';
+    final idMapping = {serviceType: widget.task.ppirInsuranceId};
+    final mappedId = idMapping[serviceType] ?? '000000';
+    final baseFilename =
+        '${serviceType.replaceAll(' ', ' - ')}_${serviceType.replaceAll(' ', '_')}_$mappedId';
+
+    // Save the confirmed by signature file
+    if (signatureData['ppirSigInsured']!.isNotEmpty) {
+      final confirmedBySignatureBytes = await _signatureSectionKey
+          .currentState?.confirmedBySignatureController
+          .toPngBytes();
+      final confirmedByFile = File(
+          '${directory!.path}/$baseFilename/${signatureData['ppirSigInsured']}');
+      await confirmedByFile.writeAsBytes(confirmedBySignatureBytes!);
+      debugPrint('Confirmed by signature saved: ${confirmedByFile.path}');
+    }
+
+    // Save the prepared by signature file
+    if (signatureData['ppirSigIuia']!.isNotEmpty) {
+      final preparedBySignatureBytes = await _signatureSectionKey
+          .currentState?.preparedBySignatureController
+          .toPngBytes();
+      final preparedByFile = File(
+          '${directory!.path}/$baseFilename/${signatureData['ppirSigIuia']}');
+      await preparedByFile.writeAsBytes(preparedBySignatureBytes!);
+      debugPrint('Prepared by signature saved: ${preparedByFile.path}');
+    }
+  }
+
   Map<String, dynamic> _getChangedData() {
     Map<String, dynamic> changedData = {};
 
@@ -375,50 +398,6 @@ class PCICFormPageState extends State<PCICFormPage> {
       ),
     );
   }
-
-  // void _openGpxFile(String gpxFilePath) async {
-  //   try {
-  //     final filePath = gpxFilePath;
-  //     final downloadsDirectory = Directory(filePath);
-  //     final gpxFile = File(downloadsDirectory.path);
-  //     debugPrint("path = $gpxFile");
-
-  //     if (await gpxFile.exists()) {
-  //       final status = await Permission.manageExternalStorage.status;
-  //       if (status.isGranted) {
-  //         final result = await OpenFile.open(gpxFile.path);
-  //         if (result.type == ResultType.done) {
-  //           // File opened successfully
-  //           debugPrint('GPX file opened successfully');
-  //         } else {
-  //           // Error opening the file
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //             const SnackBar(content: Text('Error opening GPX file')),
-  //           );
-  //           debugPrint('Error opening GPX file: ${result.message}');
-  //         }
-  //       } else {
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           const SnackBar(
-  //             content: Text(
-  //                 'External storage permission is required to open GPX files'),
-  //           ),
-  //         );
-  //         debugPrint('MANAGE_EXTERNAL_STORAGE permission denied');
-  //       }
-  //     } else {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(content: Text('GPX file not found')),
-  //       );
-  //       debugPrint('GPX file not found: ${gpxFile.path}');
-  //     }
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Error opening GPX file')),
-  //     );
-  //     debugPrint('Error opening GPX file: $e');
-  //   }
-  // }
 
   void _viewScreenshot(String screenshotPath) {
     showDialog(
@@ -511,10 +490,7 @@ class PCICFormPageState extends State<PCICFormPage> {
               'Signatures',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SignatureSection(
-              key: _signatureSectionKey,
-              task: widget.task,
-            ),
+            SignatureSection(task: widget.task),
             const SizedBox(height: 24),
             const Text(
               'Map Screenshot',
@@ -535,6 +511,7 @@ class PCICFormPageState extends State<PCICFormPage> {
               'GPX File',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
+            // MAR: this is commented because it is not in our scope, this is just for testing
             // const SizedBox(height: 16),
             // gpx_button.GPXFileButton(
             //   openGpxFile: () => _openGpxFile(widget.gpxFile),
@@ -565,40 +542,5 @@ class PCICFormPageState extends State<PCICFormPage> {
         ),
       ),
     );
-  }
-
-  void _saveSignatureFiles(Map<String, String> signatureData) async {
-    final directory = await getExternalStorageDirectory();
-    final serviceType = widget.task.csvData?['serviceType'] ?? 'Service Group';
-    final idMapping = {serviceType: widget.task.ppirInsuranceId};
-    final mappedId = idMapping[serviceType] ?? '000000';
-    final baseFilename =
-        '${serviceType.replaceAll(' ', ' - ')}_${serviceType.replaceAll(' ', '_')}_$mappedId';
-
-    // Save the confirmed by signature file
-    if (signatureData['ppirSigInsured']?.isNotEmpty == true) {
-      final confirmedBySignatureBytes = await _signatureSectionKey
-          .currentState?.confirmedBySignatureController
-          .toPngBytes();
-      if (confirmedBySignatureBytes != null) {
-        final confirmedByFile = File(
-            '${directory!.path}/$baseFilename/${signatureData['ppirSigInsured']}');
-        await confirmedByFile.writeAsBytes(confirmedBySignatureBytes);
-        debugPrint('Confirmed by signature saved: ${confirmedByFile.path}');
-      }
-    }
-
-    // Save the prepared by signature file
-    if (signatureData['ppirSigIuia']?.isNotEmpty == true) {
-      final preparedBySignatureBytes = await _signatureSectionKey
-          .currentState?.preparedBySignatureController
-          .toPngBytes();
-      if (preparedBySignatureBytes != null) {
-        final preparedByFile = File(
-            '${directory!.path}/$baseFilename/${signatureData['ppirSigIuia']}');
-        await preparedByFile.writeAsBytes(preparedBySignatureBytes);
-        debugPrint('Prepared by signature saved: ${preparedByFile.path}');
-      }
-    }
   }
 }
