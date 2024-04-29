@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/home/_recent_task_data.dart';
-import 'package:pcic_mobile_app/screens/home/_search_button.dart';
 import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
-import 'package:pcic_mobile_app/screens/tasks/_task_details.dart'; // Import the TaskDetailsPage
+import 'package:pcic_mobile_app/screens/tasks/_task_details.dart';
 
 class RecentTaskContainer extends StatefulWidget {
   const RecentTaskContainer({super.key, required this.tasks});
@@ -18,11 +17,11 @@ class RecentTaskContainerState extends State<RecentTaskContainer> {
 
   @override
   Widget build(BuildContext context) {
+    // Only considering tasks that are not completed
     List<TaskManager> incompleteTasks =
         widget.tasks.where((task) => !task.isCompleted).toList();
 
     if (incompleteTasks.isEmpty) {
-      // If there are no incomplete tasks
       return const Center(
         child: Text(
           'No tasks were recently added.',
@@ -32,40 +31,45 @@ class RecentTaskContainerState extends State<RecentTaskContainer> {
     }
 
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: incompleteTasks.length,
-          itemBuilder: (context, index) {
-            final TaskManager task = widget.tasks[index];
-            return MouseRegion(
-              onEnter: (_) => setState(() => _hoveredIndex = index),
-              onExit: (_) => setState(() => _hoveredIndex = -1),
-              child: GestureDetector(
-                onTap: () => _navigateToTaskDetails(
-                    context, task), // Navigate to TaskDetailsPage
-                child: Container(
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  decoration: BoxDecoration(
-                      border: Border.all(),
-                      color: _hoveredIndex == index
-                          ? Colors.grey[200]
-                          : Colors.white,
-                      borderRadius: BorderRadius.circular(15.0),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Color(0xFF0F7D40), offset: Offset(-5, 5))
-                      ]),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [TaskData(task: task)],
-                  ),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: incompleteTasks.length,
+        itemBuilder: (context, index) {
+          final TaskManager task =
+              incompleteTasks[index]; // Corrected to use filtered list
+          return MouseRegion(
+            onEnter: (_) => setState(() => _hoveredIndex = index),
+            onExit: (_) => setState(() => _hoveredIndex = -1),
+            child: GestureDetector(
+              onTap: () => _navigateToTaskDetails(
+                  context, task), // Navigate to TaskDetailsPage
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                    border: Border.all(),
+                    color: _hoveredIndex == index
+                        ? Colors.grey[200]
+                        : Colors.white,
+                    borderRadius: BorderRadius.circular(15.0),
+                    boxShadow: const [
+                      BoxShadow(color: Color(0xFF0F7D40), offset: Offset(-5, 5))
+                    ]),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TaskData(
+                        task:
+                            task), // Assuming TaskData is a widget that takes a task and displays its details
+                  ],
                 ),
               ),
-            );
-          },
-        ));
+            ),
+          );
+        },
+      ),
+    );
   }
 
   void _navigateToTaskDetails(BuildContext context, TaskManager task) {
