@@ -183,7 +183,7 @@ class HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 16.0),
                 RecentTaskContainer(tasks: _tasks),
-                const SizedBox(height: 8),
+                const SizedBox(height: 8.0),
               ],
             ),
           ),

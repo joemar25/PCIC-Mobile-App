@@ -160,7 +160,7 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
           centerTitle: true,
           title: const Text(
             'Task Details',
-            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 19.2, fontWeight: FontWeight.w600),
           )),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
