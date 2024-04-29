@@ -29,9 +29,9 @@ class TaskContainerState extends State<TaskView> {
       children: [
         Padding(
             padding: const EdgeInsets.symmetric(horizontal: 21.0),
-            child: SizedBox(
-              height: 100,
-              child: Row(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(
                 children: [
                   ElevatedButton(
                     onPressed: () {
@@ -59,7 +59,7 @@ class TaskContainerState extends State<TaskView> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
+                                          const Text(
                                             'Filter By:',
                                             style: TextStyle(
                                                 fontSize: 16.0,
@@ -80,7 +80,6 @@ class TaskContainerState extends State<TaskView> {
                                             onPressed: () {
                                               setState(() {
                                                 _showCompleted = true;
-                                                Navigator.pop(context);
                                               });
                                             },
                                             style: TextButton.styleFrom(
@@ -113,7 +112,6 @@ class TaskContainerState extends State<TaskView> {
                                             onPressed: () {
                                               setState(() {
                                                 _showCompleted = false;
-                                                Navigator.pop(context);
                                               });
                                             },
                                             style: TextButton.styleFrom(
@@ -280,10 +278,64 @@ class TaskContainerState extends State<TaskView> {
                         // contentPadding: EdgeInsets.zero,
                       ),
                     ),
-                  ))
+                  )),
                 ],
               ),
-            )
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  children: [
+                    const Text(
+                      'Applied Filter:',
+                      style: TextStyle(
+                          fontSize: 13.3, fontWeight: FontWeight.w600),
+                    ),
+                    SizedBox(
+                      width: 4.0,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      decoration: BoxDecoration(
+                          color: const Color(0xFF0F7D40),
+                          border: Border.all(),
+                          borderRadius: BorderRadius.circular(15.0)),
+                      child: const Text(
+                        'Completed',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11.11,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 4.0,
+                    ),
+                    const Text(
+                      'Order by:',
+                      style: TextStyle(
+                          fontSize: 13.3, fontWeight: FontWeight.w600),
+                    ),
+                    SizedBox(
+                      width: 4.0,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(),
+                          borderRadius: BorderRadius.circular(15.0)),
+                      child: const Text(
+                        'ID',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 11.11,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ])
 
             // child: Row(
             //   children: [
