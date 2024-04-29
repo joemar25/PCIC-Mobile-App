@@ -341,13 +341,17 @@ class PCICFormPageState extends State<PCICFormPage> {
 
   void _updateTaskInFirebase() {
     final databaseReference = FirebaseDatabase.instance.ref();
-    final taskId = 'task-${widget.task.ppirInsuranceId}';
-    final taskPath = 'tasks/$taskId';
+    final taskId = widget.task.ppirInsuranceId.toString();
+    final taskPath = 'tasks/task-$taskId';
 
-    debugPrint(taskId);
+    debugPrint('Updating task: $taskPath');
 
-    databaseReference.child(taskPath).update({'isCompleted': true}).then((_) {
-      debugPrint('TaskManager updated successfully');
+    final updatedTask = <String, dynamic>{
+      'isCompleted': true,
+    };
+
+    databaseReference.child(taskPath).update(updatedTask).then((_) {
+      debugPrint('Task updated successfully');
     }).catchError((error) {
       debugPrint('Error updating task: $error');
     });
@@ -530,11 +534,11 @@ class PCICFormPageState extends State<PCICFormPage> {
               ),
               child: const Text('View Screenshot'),
             ),
-            const SizedBox(height: 24),
-            const Text(
-              'GPX File',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            // const SizedBox(height: 24),
+            // const Text(
+            //   'GPX File',
+            //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            // ),
             // const SizedBox(height: 16),
             // gpx_button.GPXFileButton(
             //   openGpxFile: () => _openGpxFile(widget.gpxFile),

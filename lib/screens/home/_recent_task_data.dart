@@ -14,7 +14,7 @@ class TaskData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
