@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:pcic_mobile_app/screens/home/_recent_task_data.dart';
+import 'package:pcic_mobile_app/screens/home/_search_button.dart';
 import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
 import 'package:pcic_mobile_app/screens/tasks/_task_details.dart';
 import 'package:pcic_mobile_app/screens/tasks/_task_filter_button.dart';
@@ -18,6 +18,7 @@ class TaskContainerState extends State<TaskView> {
   int _hoveredIndex = -1;
   String _sortBy = 'ID';
   bool _showCompleted = false;
+  String _searchQuery = '';
 
   void _updateShowComplete(bool newState) {
     setState(() {
@@ -28,6 +29,12 @@ class TaskContainerState extends State<TaskView> {
   void _updateSortBy(String newValue) {
     setState(() {
       _sortBy = newValue;
+    });
+  }
+
+  void _updateSearchQuery(String newValue) {
+    setState(() {
+      _searchQuery = newValue;
     });
   }
 
@@ -54,25 +61,7 @@ class TaskContainerState extends State<TaskView> {
                   const SizedBox(
                     width: 8.0,
                   ),
-                  Expanded(
-                      child: Container(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    height: 45,
-                    decoration: BoxDecoration(
-                        border: Border.all(),
-                        borderRadius: BorderRadius.circular(5.0)),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search Task',
-                        border: InputBorder.none,
-                        suffixIcon: Padding(
-                            padding: const EdgeInsets.all(6.0),
-                            child: SvgPicture.asset(
-                                'assets/storage/images/search.svg')),
-                      ),
-                    ),
-                  )),
+                  SearchButton(onUpdateValue: _updateSearchQuery),
                 ],
               ),
               FilterFooter(
@@ -94,6 +83,20 @@ class TaskContainerState extends State<TaskView> {
                     itemCount: filteredTasks.length,
                     itemBuilder: (context, index) {
                       final TaskManager task = filteredTasks[index];
+                      //Move this validation later
+                      String serviceGroup = task.csvData?['serviceGroup'] ?? '';
+                      int ppirInsuranceId = task.ppirInsuranceId;
+
+                      bool matchesSearchQuery = _searchQuery.isEmpty ||
+                          '$serviceGroup-$ppirInsuranceId'
+                              .toLowerCase()
+                              .contains(_searchQuery.toLowerCase());
+
+                      if (!matchesSearchQuery) {
+                        return const SizedBox
+                            .shrink(); // Skip rendering if task doesn't match search query
+                      }
+
                       return MouseRegion(
                           onEnter: (_) => setState(() => _hoveredIndex = index),
                           onExit: (_) => setState(() => _hoveredIndex = -1),
@@ -118,7 +121,9 @@ class TaskContainerState extends State<TaskView> {
                                       ]),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [TaskData(task: task)],
+                                    children: [
+                                      TaskData(task: task),
+                                    ],
                                   ),
                                 )),
                           ));
@@ -130,54 +135,54 @@ class TaskContainerState extends State<TaskView> {
     );
   }
 
-  Widget _buildButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _showCompleted = true;
-            });
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: _showCompleted ? Colors.green : null,
-          ),
-          child: const Text('Complete'),
-        ),
-        const SizedBox(width: 10),
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _showCompleted = false;
-            });
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: !_showCompleted ? Colors.green : null,
-          ),
-          child: const Text('Current'),
-        ),
-      ],
-    );
-  }
+  // Widget _buildButtons() {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.end,
+  //     children: [
+  //       ElevatedButton(
+  //         onPressed: () {
+  //           setState(() {
+  //             _showCompleted = true;
+  //           });
+  //         },
+  //         style: ElevatedButton.styleFrom(
+  //           backgroundColor: _showCompleted ? Colors.green : null,
+  //         ),
+  //         child: const Text('Complete'),
+  //       ),
+  //       const SizedBox(width: 10),
+  //       ElevatedButton(
+  //         onPressed: () {
+  //           setState(() {
+  //             _showCompleted = false;
+  //           });
+  //         },
+  //         style: ElevatedButton.styleFrom(
+  //           backgroundColor: !_showCompleted ? Colors.green : null,
+  //         ),
+  //         child: const Text('Current'),
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildSortByDropdown() {
-    return DropdownButton<String>(
-      value: _sortBy,
-      onChanged: (newValue) {
-        setState(() {
-          _sortBy = newValue!;
-        });
-      },
-      items: <String>['id', 'dateAdded', 'dateAccess']
-          .map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text('Sort by $value'),
-        );
-      }).toList(),
-    );
-  }
+  // Widget _buildSortByDropdown() {
+  //   return DropdownButton<String>(
+  //     value: _sortBy,
+  //     onChanged: (newValue) {
+  //       setState(() {
+  //         _sortBy = newValue!;
+  //       });
+  //     },
+  //     items: <String>['id', 'dateAdded', 'dateAccess']
+  //         .map<DropdownMenuItem<String>>((String value) {
+  //       return DropdownMenuItem<String>(
+  //         value: value,
+  //         child: Text('Sort by $value'),
+  //       );
+  //     }).toList(),
+  //   );
+  // }
 
   List<TaskManager> _sortTasks(List<TaskManager> tasks, String sortBy) {
     switch (sortBy) {

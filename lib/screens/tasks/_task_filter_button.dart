@@ -68,6 +68,33 @@ class _FilterButtonState extends State<FilterButton> {
                             TextButton(
                               onPressed: () {
                                 setState(() {
+                                  _setShowComplete(false);
+                                });
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: const Color(0xFFD9F7FA),
+                                shape: RoundedRectangleBorder(
+                                    side: const BorderSide(
+                                      color: Colors.black,
+                                      width: 1.0,
+                                      style: BorderStyle.solid,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5.0)),
+                              ),
+                              child: const Text(
+                                'Current Task',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 11.11,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 5.0,
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
                                   _setShowComplete(true);
                                 });
                               },
@@ -86,33 +113,6 @@ class _FilterButtonState extends State<FilterButton> {
                                 'Completed Task',
                                 style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 11.11,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 5.0,
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  _setShowComplete(false);
-                                });
-                              },
-                              style: TextButton.styleFrom(
-                                backgroundColor: const Color(0xFFD9F7FA),
-                                shape: RoundedRectangleBorder(
-                                    side: const BorderSide(
-                                      color: Colors.black,
-                                      width: 1.0,
-                                      style: BorderStyle.solid,
-                                    ),
-                                    borderRadius: BorderRadius.circular(5.0)),
-                              ),
-                              child: const Text(
-                                'Current Task',
-                                style: TextStyle(
-                                    color: Colors.black,
                                     fontSize: 11.11,
                                     fontWeight: FontWeight.w500),
                               ),

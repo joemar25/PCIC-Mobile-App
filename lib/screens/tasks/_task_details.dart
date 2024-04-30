@@ -96,11 +96,11 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
                     border: Border.all(),
                     boxShadow: const [
                       BoxShadow(
-                          color: Color(0xFF0F7D40),
-                          offset: Offset(0, 10),
-                          spreadRadius: -6)
+                        color: Color(0xFF0F7D40),
+                        offset: Offset(-5, 5),
+                      )
                     ],
-                    borderRadius: BorderRadius.circular(20.0)),
+                    borderRadius: BorderRadius.circular(15.0)),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(

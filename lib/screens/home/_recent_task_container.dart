@@ -4,7 +4,9 @@ import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
 import 'package:pcic_mobile_app/screens/tasks/_task_details.dart';
 
 class RecentTaskContainer extends StatefulWidget {
-  const RecentTaskContainer({super.key, required this.tasks});
+  final String searchQuery;
+  const RecentTaskContainer(
+      {super.key, required this.tasks, required this.searchQuery});
 
   final List<TaskManager> tasks;
 
@@ -39,6 +41,19 @@ class RecentTaskContainerState extends State<RecentTaskContainer> {
         itemBuilder: (context, index) {
           final TaskManager task =
               incompleteTasks[index]; // Corrected to use filtered list
+          //Move this validation later
+          String serviceGroup = task.csvData?['serviceGroup'] ?? '';
+          int ppirInsuranceId = task.ppirInsuranceId;
+
+          bool matchesSearchQuery = widget.searchQuery.isEmpty ||
+              '$serviceGroup-$ppirInsuranceId'
+                  .toLowerCase()
+                  .contains(widget.searchQuery.toLowerCase());
+
+          if (!matchesSearchQuery) {
+            return const SizedBox
+                .shrink(); // Skip rendering if task doesn't match search query
+          }
           return MouseRegion(
             onEnter: (_) => setState(() => _hoveredIndex = index),
             onExit: (_) => setState(() => _hoveredIndex = -1),

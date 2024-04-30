@@ -92,6 +92,7 @@ class HomeScreen extends StatefulWidget {
 class HomeScreenState extends State<HomeScreen> {
   String? _token;
   List<TaskManager> _tasks = [];
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -140,6 +141,12 @@ class HomeScreenState extends State<HomeScreen> {
     await _fetchTasks();
   }
 
+  void _updateSearchQuery(String newValue) {
+    setState(() {
+      _searchQuery = newValue;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // If there's no token, show a loading indicator while waiting for the redirection to complete.
@@ -177,12 +184,17 @@ class HomeScreenState extends State<HomeScreen> {
                           fontSize: 23.04, fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(height: 8.0),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.0),
-                  child: SearchButton(),
+                  child: SearchButton(
+                    onUpdateValue: _updateSearchQuery,
+                  ),
                 ),
                 const SizedBox(height: 16.0),
-                RecentTaskContainer(tasks: _tasks),
+                RecentTaskContainer(
+                  tasks: _tasks,
+                  searchQuery: _searchQuery,
+                ),
                 const SizedBox(height: 8.0),
               ],
             ),
