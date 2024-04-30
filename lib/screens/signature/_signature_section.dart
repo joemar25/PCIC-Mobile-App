@@ -114,12 +114,17 @@ class SignatureSectionState extends State<SignatureSection> {
     });
   }
 
-  Map<String, String> getSignatureData() {
-    Map<String, String> signatureData = {};
-    signatureData['ppirSigInsured'] = 'insured_signature.png';
-    signatureData['ppirSigIuia'] = 'iuia_signature.png';
+  Future<Map<String, dynamic>> getSignatureData() async {
+    Map<String, dynamic> signatureData = {};
+
+    final confirmedByBytes = await _confirmedBySignatureController.toPngBytes();
+    final preparedByBytes = await _preparedBySignatureController.toPngBytes();
+
+    signatureData['ppirSigInsured'] = confirmedByBytes;
+    signatureData['ppirSigIuia'] = preparedByBytes;
     signatureData['ppirNameInsured'] = _confirmedByNameController.text;
     signatureData['ppirNameIuia'] = _preparedByNameController.text;
+
     return signatureData;
   }
 

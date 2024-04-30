@@ -7,7 +7,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 // import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pcic_mobile_app/screens/pcic_form/_success.dart';
 import 'package:pcic_mobile_app/screens/signature/_signature_section.dart';
 import 'package:pcic_mobile_app/utils/seeds/_dropdown.dart';
@@ -165,7 +164,7 @@ class PCICFormPageState extends State<PCICFormPage> {
     }
   }
 
-  void _createZipFile(BuildContext context) async {
+  void _createTaskFile(BuildContext context) async {
     try {
       final filePath = await ExternalPath.getExternalStoragePublicDirectory(
         ExternalPath.DIRECTORY_DOWNLOADS,
@@ -186,10 +185,13 @@ class PCICFormPageState extends State<PCICFormPage> {
 
       // Create the insurance directory if it doesn't exist
       if (!await directory.exists()) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No files found to zip')),
-        );
-        return;
+        await directory.create(recursive: true);
+      }
+
+      // Create the Attachments directory if it doesn't exist
+      final attachmentsDirectory = Directory('${directory.path}/Attachments');
+      if (!await attachmentsDirectory.exists()) {
+        await attachmentsDirectory.create(recursive: true);
       }
 
       final zipFilePath = '${downloadsDirectory.path}/$baseFilename.task';
@@ -257,7 +259,7 @@ class PCICFormPageState extends State<PCICFormPage> {
     }
   }
 
-  void _submitForm(BuildContext context) {
+  void _submitForm(BuildContext context) async {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -269,10 +271,10 @@ class PCICFormPageState extends State<PCICFormPage> {
             child: const Text('No'),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
               _saveFormData();
-              _createZipFile(context);
+              _createTaskFile(context);
             },
             child: const Text('Yes'),
           ),
@@ -281,10 +283,10 @@ class PCICFormPageState extends State<PCICFormPage> {
     );
   }
 
-  void _saveFormData() {
+  void _saveFormData() async {
     // Get the signature data from the SignatureSection
     final signatureData =
-        _signatureSectionKey.currentState?.getSignatureData() ?? {};
+        await _signatureSectionKey.currentState?.getSignatureData() ?? {};
 
     // Update the additional columns
     _formData['trackTotalarea'] = _areaInHectaresController.text;
@@ -304,27 +306,27 @@ class PCICFormPageState extends State<PCICFormPage> {
     widget.task.isCompleted = true;
 
     // Save the signature files
-    _saveSignatureFiles(signatureData);
+    _saveSignatureFiles(signatureData, widget.task.csvData?['serviceType'],
+        widget.task.ppirInsuranceId);
 
-    widget.task
-        .saveXmlData(
-            widget.task.csvData?['serviceType'], widget.task.ppirInsuranceId)
-        .then((_) {
-      _updateTaskInFirebase();
+    // Save the XML file
+    await widget.task.saveXmlData(
+        widget.task.csvData?['serviceType'], widget.task.ppirInsuranceId);
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const FormSuccessPage(
-            isSaveSuccessful: true,
-          ),
+    // Create the .task file
+    _createTaskFile(context);
+
+    // Update the task in Firebase after saving the files
+    _updateTaskInFirebase();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const FormSuccessPage(
+          isSaveSuccessful: true,
         ),
-      );
-    }).catchError((error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error saving form data')),
-      );
-    });
+      ),
+    );
   }
 
   Map<String, dynamic> _getChangedData() {
@@ -571,38 +573,48 @@ class PCICFormPageState extends State<PCICFormPage> {
     );
   }
 
-  void _saveSignatureFiles(Map<String, String> signatureData) async {
-    final directory = await getExternalStorageDirectory();
-    final serviceType = widget.task.csvData?['serviceType'] ?? 'Service Group';
-    final idMapping = {serviceType: widget.task.ppirInsuranceId};
-    final mappedId = idMapping[serviceType] ?? '000000';
-    final baseFilename =
-        '${serviceType.replaceAll(' ', ' - ')}_${serviceType.replaceAll(' ', '_')}_$mappedId';
+  void _saveSignatureFiles(Map<String, dynamic> signatureData,
+      String? serviceType, int ppirInsuranceId) async {
+    try {
+      final filePath = await ExternalPath.getExternalStoragePublicDirectory(
+        ExternalPath.DIRECTORY_DOWNLOADS,
+      );
 
-    // Save the confirmed by signature file
-    if (signatureData['ppirSigInsured']?.isNotEmpty == true) {
-      final confirmedBySignatureBytes = await _signatureSectionKey
-          .currentState?.confirmedBySignatureController
-          .toPngBytes();
-      if (confirmedBySignatureBytes != null) {
+      final downloadsDirectory = Directory(filePath);
+
+      if (serviceType == null || serviceType.isEmpty) {
+        serviceType = 'Service Type';
+      }
+
+      final baseFilename =
+          '${serviceType.replaceAll(' ', ' - ')}_${serviceType.replaceAll(' ', '_')}_$ppirInsuranceId';
+
+      final insuranceDirectory =
+          Directory('${downloadsDirectory.path}/$baseFilename');
+
+      // Create the insurance directory if it doesn't exist
+      if (!await insuranceDirectory.exists()) {
+        await insuranceDirectory.create(recursive: true);
+      }
+
+      // Save the confirmed by signature file
+      if (signatureData['ppirSigInsured'] != null) {
         final confirmedByFile = File(
-            '${directory!.path}/$baseFilename/${signatureData['ppirSigInsured']}');
-        await confirmedByFile.writeAsBytes(confirmedBySignatureBytes);
+            '${insuranceDirectory.path}/Attachments/insured_signature.png');
+        await confirmedByFile.writeAsBytes(signatureData['ppirSigInsured']);
         debugPrint('Confirmed by signature saved: ${confirmedByFile.path}');
       }
-    }
 
-    // Save the prepared by signature file
-    if (signatureData['ppirSigIuia']?.isNotEmpty == true) {
-      final preparedBySignatureBytes = await _signatureSectionKey
-          .currentState?.preparedBySignatureController
-          .toPngBytes();
-      if (preparedBySignatureBytes != null) {
-        final preparedByFile = File(
-            '${directory!.path}/$baseFilename/${signatureData['ppirSigIuia']}');
-        await preparedByFile.writeAsBytes(preparedBySignatureBytes);
+      // Save the prepared by signature file
+      if (signatureData['ppirSigIuia'] != null) {
+        final preparedByFile =
+            File('${insuranceDirectory.path}/Attachments/iuia_signature.png');
+        await preparedByFile.writeAsBytes(signatureData['ppirSigIuia']);
         debugPrint('Prepared by signature saved: ${preparedByFile.path}');
       }
+    } catch (e, stackTrace) {
+      debugPrint('Error saving signature files: $e');
+      debugPrint('Stack trace: $stackTrace');
     }
   }
 }
