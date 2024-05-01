@@ -7,15 +7,16 @@ import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
 import 'package:gpx/gpx.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:pcic_mobile_app/screens/geotag/_geotag_bottomsheet.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:uuid/uuid.dart';
+import 'package:tuple/tuple.dart';
 
 import '../../utils/app/_gpx.dart';
 import '../pcic_form/_pcic_form.dart';
 import '../tasks/_control_task.dart';
 import '_location_service.dart';
 import '_map_service.dart';
+import '_geotag_bottomsheet.dart';
 
 class GeotagPage extends StatefulWidget {
   final TaskManager task;
@@ -168,13 +169,12 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
         var gpx = GpxUtil.createGpx(routePoints);
         var gpxString = GpxWriter().asString(gpx);
 
-        String gpxFilePath = await _saveGpxFile(gpxString);
-        String screenshotFilePath = '';
-
         final screenshotBytes = await _mapService.captureMapScreenshot();
-        if (screenshotBytes != null) {
-          screenshotFilePath = await _saveMapScreenshot(screenshotBytes);
-        }
+
+        final filePaths =
+            await _saveFilesAndScreenshot(gpxString, screenshotBytes!);
+        String gpxFilePath = filePaths.item1;
+        String screenshotFilePath = filePaths.item2;
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
@@ -183,15 +183,6 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
               _mapService.clearMarkers();
               isLoading = false;
             });
-
-            // Show a snackbar with the file locations
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                    'Files saved:\nGPX: $gpxFilePath\nScreenshot: $screenshotFilePath'),
-                duration: const Duration(seconds: 2),
-              ),
-            );
 
             // Navigate to the forms page
             Navigator.pushReplacement(
@@ -229,7 +220,8 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
     }
   }
 
-  Future<String> _saveGpxFile(String gpxString) async {
+  Future<Tuple2<String, String>> _saveFilesAndScreenshot(
+      String gpxString, Uint8List screenshotBytes) async {
     final filePath = await ExternalPath.getExternalStoragePublicDirectory(
       ExternalPath.DIRECTORY_DOWNLOADS,
     );
@@ -248,10 +240,13 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
     final insuranceDirectory =
         Directory('${downloadsDirectory.path}/$baseFilename');
 
-    // Create the insurance directory if it doesn't exist
-    if (!await insuranceDirectory.exists()) {
-      await insuranceDirectory.create(recursive: true);
+    // Delete the insurance directory if it already exists
+    if (await insuranceDirectory.exists()) {
+      await insuranceDirectory.delete(recursive: true);
     }
+
+    // Create the insurance directory
+    await insuranceDirectory.create(recursive: true);
 
     // Define the Attachments directory inside the insurance directory
     final attachmentsDirectory =
@@ -262,58 +257,22 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
       await attachmentsDirectory.create(recursive: true);
     }
 
-    // Generate a unique ID for the GPX file
+    // Generate a unique ID for the files
     var uuid = const Uuid();
-    String filename = uuid.v4();
+    String gpxFilename = '${uuid.v4()}.gpx';
+    String screenshotFilename = '${uuid.v4()}.png';
 
-    final file = File('${attachmentsDirectory.path}/$filename.gpx');
-    await file.writeAsString(gpxString);
-    debugPrint('GPX file saved: ${file.path}');
-    return file.path;
-  }
+    final gpxFile = File('${attachmentsDirectory.path}/$gpxFilename');
+    final screenshotFile =
+        File('${attachmentsDirectory.path}/$screenshotFilename');
 
-  Future<String> _saveMapScreenshot(Uint8List screenshotBytes) async {
-    final filePath = await ExternalPath.getExternalStoragePublicDirectory(
-      ExternalPath.DIRECTORY_DOWNLOADS,
-    );
+    await gpxFile.writeAsString(gpxString);
+    await screenshotFile.writeAsBytes(screenshotBytes);
 
-    final downloadsDirectory = Directory(filePath);
+    debugPrint('GPX file saved: ${gpxFile.path}');
+    debugPrint('Map screenshot saved: ${screenshotFile.path}');
 
-    final serviceType = widget.task.csvData?['serviceType'] ?? 'Service Group';
-    final idMapping = {serviceType: widget.task.ppirInsuranceId};
-
-    // Provide a default if no mapping exists
-    final mappedId = idMapping[serviceType] ?? '000000';
-
-    final baseFilename =
-        '${serviceType.replaceAll(' ', ' - ')}_${serviceType.replaceAll(' ', '_')}_$mappedId';
-
-    final insuranceDirectory =
-        Directory('${downloadsDirectory.path}/$baseFilename');
-
-    // Create the insurance directory if it doesn't exist
-    if (!await insuranceDirectory.exists()) {
-      await insuranceDirectory.create(recursive: true);
-    }
-
-    // Define the Attachments directory inside the insurance directory
-    final attachmentsDirectory =
-        Directory('${insuranceDirectory.path}/Attachments');
-
-    // Create the Attachments directory if it doesn't exist
-    if (!await attachmentsDirectory.exists()) {
-      await attachmentsDirectory.create(recursive: true);
-    }
-
-    // Generate a unique ID for the GPX file
-    var uuid = const Uuid();
-    String filename = uuid.v4();
-
-    final file = File('${attachmentsDirectory.path}/$filename.png');
-
-    await file.writeAsBytes(screenshotBytes);
-    debugPrint('Map screenshot saved: ${file.path}');
-    return file.path;
+    return Tuple2(gpxFile.path, screenshotFile.path);
   }
 
   Future<void> _addMarkerAtCurrentLocation() async {
@@ -608,3 +567,6 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
  * 
  * 
  */
+
+
+// if directory exist already then delete it for the first time again to avoid duplicated files
