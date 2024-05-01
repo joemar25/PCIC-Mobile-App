@@ -5,9 +5,10 @@ import 'dart:typed_data';
 
 import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:gpx/gpx.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:pcic_mobile_app/screens/geotag/_geotag_bottomsheet.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../utils/app/_gpx.dart';
@@ -31,6 +32,8 @@ class GeotagPage extends StatefulWidget {
 class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   final LocationService _locationService = LocationService();
   final MapService _mapService = MapService();
+
+  final panelController = PanelController();
 
   bool retainPinDrop = false;
   bool showConfirmationDialog = true;
@@ -410,239 +413,48 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
     );
   }
 
+// Refactor this later - tat
+  void _handleStopRoutingRequest() {
+    _stopRouting();
+  }
+
+  void _handleStartRoutingRequest() {
+    _startRouting();
+  }
+
+  void _handleAddMarkerCurrentLocation() {
+    _addMarkerAtCurrentLocation();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final panelMaxHeight = MediaQuery.of(context).size.height * 0.45;
+    final panelMinHeight = MediaQuery.of(context).size.height * 0.22;
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Stack(
         children: [
           Scaffold(
-            body: Column(
-              children: [
-                Expanded(
-                  child: _mapService.buildMap(),
-                ),
-                SizedBox(
-                  height: 380,
-                  width: double.infinity,
-                  child: Container(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15.0),
-                            border: Border.all(),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color(0xFF0F7D40),
-                                offset: Offset(-5, 5),
-                              )
-                            ]),
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'Route Points',
-                                style: TextStyle(
-                                    fontSize: 19.2,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    children: [
-                                      ElevatedButton(
-                                          onPressed: isRoutingStarted
-                                              ? null
-                                              : _startRouting,
-                                          style: ElevatedButton.styleFrom(
-                                            minimumSize: const Size(0, 60),
-                                            shape: const CircleBorder(),
-                                            backgroundColor: isRoutingStarted
-                                                ? null
-                                                : const Color(0xFF0F7D40),
-                                          ),
-                                          child: SizedBox(
-                                              height: 35,
-                                              width: 35,
-                                              child: SvgPicture.asset(
-                                                'assets/storage/images/start.svg',
-                                                colorFilter:
-                                                    const ColorFilter.mode(
-                                                        Colors.white,
-                                                        BlendMode.srcIn),
-                                              ))),
-                                      const Text(
-                                        'Start',
-                                        style: TextStyle(
-                                            fontSize: 13.3,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      ElevatedButton(
-                                          onPressed: isRoutingStarted
-                                              ? () {
-                                                  _addMarkerAtCurrentLocation();
-                                                }
-                                              : null,
-                                          style: ElevatedButton.styleFrom(
-                                            minimumSize: const Size(0, 60),
-                                            shape: const CircleBorder(),
-                                            backgroundColor: isRoutingStarted
-                                                ? const Color(0xFF0F7D40)
-                                                : Colors.white60,
-                                          ),
-                                          child: SizedBox(
-                                              height: 35,
-                                              width: 35,
-                                              child: SvgPicture.asset(
-                                                'assets/storage/images/pindrop.svg',
-                                                colorFilter:
-                                                    const ColorFilter.mode(
-                                                        Colors.white,
-                                                        BlendMode.srcIn),
-                                              ))),
-                                      const Text(
-                                        'Pin Drop',
-                                        style: TextStyle(
-                                            fontSize: 13.3,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      ElevatedButton(
-                                          onPressed: isRoutingStarted
-                                              ? _stopRouting
-                                              : null,
-                                          style: ElevatedButton.styleFrom(
-                                            minimumSize: const Size(0, 60),
-                                            shape: const CircleBorder(),
-                                            backgroundColor: isRoutingStarted
-                                                ? const Color(0xFF0F7D40)
-                                                : Colors.white60,
-                                          ),
-                                          child: SizedBox(
-                                              height: 35,
-                                              width: 35,
-                                              child: SvgPicture.asset(
-                                                'assets/storage/images/stop.svg',
-                                                colorFilter:
-                                                    const ColorFilter.mode(
-                                                        Colors.white,
-                                                        BlendMode.srcIn),
-                                              ))),
-                                      const Text(
-                                        'Stop',
-                                        style: TextStyle(
-                                            fontSize: 13.3,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              const Divider(),
-                              const Text(
-                                'Location',
-                                style: TextStyle(
-                                    fontSize: 19.2,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: 35,
-                                      width: 35,
-                                      child: SvgPicture.asset(
-                                        'assets/storage/images/navigate.svg',
-                                        colorFilter: const ColorFilter.mode(
-                                            Color(0xFF0F7D40), BlendMode.srcIn),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 8.0,
-                                    ),
-                                    const Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Address',
-                                          style: TextStyle(
-                                              fontSize: 11.11,
-                                              fontWeight: FontWeight.w700,
-                                              color: Color(0xFF797C7B)),
-                                        ),
-                                        Text('Legazpi City, Albay, 4500',
-                                            style: TextStyle(
-                                                fontSize: 13.3,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black))
-                                      ],
-                                    )
-                                  ]),
-                              Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: 35,
-                                      width: 35,
-                                      child: SvgPicture.asset(
-                                        'assets/storage/images/map.svg',
-                                        colorFilter: const ColorFilter.mode(
-                                            Color(0xFF0F7D40), BlendMode.srcIn),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 8.0,
-                                    ),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          'Coordinates',
-                                          style: TextStyle(
-                                              fontSize: 11.11,
-                                              fontWeight: FontWeight.w700,
-                                              color: Color(0xFF797C7B)),
-                                        ),
-                                        Text('Latitude: $latitude',
-                                            style: const TextStyle(
-                                                fontSize: 13.3,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black)),
-                                        Text('Longitude: $longitude',
-                                            // Or clip, fade,
-                                            style: const TextStyle(
-                                                fontSize: 13.3,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black))
-                                      ],
-                                    )
-                                  ])
-                            ],
-                          ),
-                        )),
-                  ),
-                ),
-              ],
+            body: SlidingUpPanel(
+              controller: panelController,
+              parallaxEnabled: true,
+              parallaxOffset: 0.3,
+              minHeight: panelMinHeight,
+              maxHeight: panelMaxHeight,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(30.0)),
+              body: _mapService.buildMap(),
+              panelBuilder: (controller) => GeoTagBottomSheet(
+                  controller: controller,
+                  panelController: panelController,
+                  latitude: latitude,
+                  longitude: longitude,
+                  isRoutingStarted: isRoutingStarted,
+                  onStartRoutingRequest: _handleStartRoutingRequest,
+                  onStopRoutingRequest: _handleStopRoutingRequest,
+                  onAddMarkerCurrentLocationRequest:
+                      _handleAddMarkerCurrentLocation),
             ),
             floatingActionButton: Stack(
               children: [
@@ -784,6 +596,9 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                     ],
                   ),
                 ),
+
+
+-------------------------------
 
 
 
