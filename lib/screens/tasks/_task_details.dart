@@ -140,15 +140,15 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
     );
   }
 
-  void _debugPrintCsvData() {
-    debugPrint('CSV Data:');
-    formData.forEach((key, value) {
-      debugPrint('$key: $value');
-    });
-  }
+  // void _debugPrintCsvData() {
+  //   debugPrint('CSV Data:');
+  //   formData.forEach((key, value) {
+  //     debugPrint('$key: $value');
+  //   });
+  // }
 
   void _navigateToGeotagPage() {
-    _debugPrintCsvData(); // Debug CSV before navigating
+    // _debugPrintCsvData(); // Debug CSV before navigating
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => GeotagPage(task: widget.task)));
   }
@@ -167,7 +167,7 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
         child: Column(
           children: [
             Padding(
-                padding: EdgeInsets.only(bottom: 16.0),
+                padding: const EdgeInsets.only(bottom: 16.0),
                 child: Column(
                   children: [
                     ElevatedButton(

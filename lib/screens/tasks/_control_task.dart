@@ -366,15 +366,4 @@ class TaskManager {
       }
     }
   }
-
-  void debugPrintCsvData() {
-    debugPrint('Current CSV Data:');
-    csvData?.forEach((key, value) {
-      if (value is String || value is int || value is double || value is bool) {
-        debugPrint('$key: $value');
-      } else {
-        debugPrint('$key: Unsupported data type');
-      }
-    });
-  }
 }

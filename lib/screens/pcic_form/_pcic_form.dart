@@ -197,7 +197,7 @@ class PCICFormPageState extends State<PCICFormPage> {
       final zipFilePath = '${downloadsDirectory.path}/$baseFilename.task';
       final zipFile = File(zipFilePath);
 
-      // Delete the existing ZIP file if it already exists
+      // Delete the existing TASK file if it already exists
       if (await zipFile.exists()) {
         await zipFile.delete();
       }
@@ -205,58 +205,128 @@ class PCICFormPageState extends State<PCICFormPage> {
       final zipFileStream = zipFile.openWrite();
       final archive = Archive();
 
-      // Recursively add files to the archive
-      await addFilesToArchive(directory, directory.path, archive);
+      // Get the list of ArchiveFile objects
+      final archiveFiles = await addFilesToArchive(directory, directory.path);
 
+      // Add the files to the archive
+      for (final archiveFile in archiveFiles) {
+        archive.addFile(archiveFile);
+      }
+
+      // Write the ZIP archive data
       final zipData = ZipEncoder().encode(archive);
       zipFileStream.add(zipData!);
       await zipFileStream.close();
-      await directory.delete(recursive: true);
 
-      // Verify the ZIP file
+      // Verify the TASK file
       if (await zipFile.exists()) {
         final zipSize = await zipFile.length();
-        debugPrint('ZIP file created successfully. Size: $zipSize bytes');
+        debugPrint('TASK file created successfully. Size: $zipSize bytes');
         SchedulerBinding.instance.addPostFrameCallback((_) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Form data saved as ZIP')),
+            const SnackBar(content: Text('Form data saved as TASK')),
           );
         });
+
+        // Delete the directory after the TASK file is successfully created
+        await _deleteDirectory(directory);
       } else {
-        debugPrint('Failed to create ZIP file');
+        debugPrint('Failed to create TASK file');
         SchedulerBinding.instance.addPostFrameCallback((_) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error saving form data as ZIP')),
+            const SnackBar(content: Text('Error saving form data as TASK')),
           );
         });
       }
     } catch (e, stackTrace) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error saving form data as ZIP')),
+          const SnackBar(content: Text('Error saving form data as TASK')),
         );
       });
-      debugPrint('Error saving form data as ZIP: $e');
+      debugPrint('Error saving form data as TASK: $e');
       debugPrint('Stack trace: $stackTrace');
     }
   }
 
-  Future<void> addFilesToArchive(
-      Directory dir, String rootPath, Archive archive) async {
+  Future<void> _deleteDirectory(Directory directory) async {
+    try {
+      if (await directory.exists()) {
+        await directory.delete(recursive: true);
+        debugPrint('Directory deleted: ${directory.path}');
+      } else {
+        debugPrint('Directory does not exist: ${directory.path}');
+      }
+    } catch (e) {
+      debugPrint('Error deleting directory: ${directory.path}');
+      debugPrint('Error details: $e');
+    }
+  }
+
+  Future<List<ArchiveFile>> addFilesToArchive(
+      Directory dir, String rootPath) async {
+    final archiveFiles = <ArchiveFile>[];
     final files = dir.listSync();
+
     for (var file in files) {
       if (file is File) {
-        final fileContent = await file.readAsBytes();
-        final archiveFile = ArchiveFile(
-          file.path.replaceAll('$rootPath/', ''),
-          fileContent.length,
-          fileContent,
-        );
-        archive.addFile(archiveFile);
+        try {
+          final fileContent = await file.readAsBytes();
+          if (fileContent.isNotEmpty) {
+            final archiveFile = ArchiveFile(
+              file.path.replaceAll('$rootPath/', ''),
+              fileContent.length,
+              fileContent,
+            );
+            archiveFiles.add(archiveFile);
+          } else {
+            debugPrint('Skipping empty file: ${file.path}');
+          }
+        } catch (e) {
+          debugPrint('Error adding file to archive: ${file.path}');
+          debugPrint('Error details: $e');
+        }
       } else if (file is Directory) {
-        await addFilesToArchive(file, rootPath, archive);
+        final attachmentsDirectory = Directory('${file.path}/Attachments');
+        if (await attachmentsDirectory.exists()) {
+          final signatureFiles = [
+            File('${attachmentsDirectory.path}/insured_signature.png'),
+            File('${attachmentsDirectory.path}/iuia_signature.png'),
+          ];
+
+          for (final signatureFile in signatureFiles) {
+            if (await signatureFile.exists()) {
+              final fileContent = await signatureFile.readAsBytes();
+              final archiveFile = ArchiveFile(
+                signatureFile.path.replaceAll('$rootPath/', ''),
+                fileContent.length,
+                fileContent,
+              );
+              archiveFiles.add(archiveFile);
+            } else {
+              debugPrint('Signature file not found: ${signatureFile.path}');
+            }
+          }
+        }
+
+        final xmlFile = File('${file.path}/Task.xml');
+        if (await xmlFile.exists()) {
+          final fileContent = await xmlFile.readAsBytes();
+          final archiveFile = ArchiveFile(
+            xmlFile.path.replaceAll('$rootPath/', ''),
+            fileContent.length,
+            fileContent,
+          );
+          archiveFiles.add(archiveFile);
+        } else {
+          debugPrint('XML file not found: ${xmlFile.path}');
+        }
+
+        archiveFiles.addAll(await addFilesToArchive(file, rootPath));
       }
     }
+
+    return archiveFiles;
   }
 
   void _submitForm(BuildContext context) async {
