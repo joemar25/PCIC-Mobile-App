@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/home/_recent_task_data.dart';
 import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
 import 'package:pcic_mobile_app/screens/tasks/_task_details.dart';
+import 'package:pcic_mobile_app/theme/_theme_extension.dart';
 
 class RecentTaskContainer extends StatefulWidget {
   final String searchQuery;
@@ -19,15 +20,17 @@ class RecentTaskContainerState extends State<RecentTaskContainer> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData t = context.pcicTheme;
+
     // Only considering tasks that are not completed
     List<TaskManager> incompleteTasks =
         widget.tasks.where((task) => !task.isCompleted).toList();
 
     if (incompleteTasks.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'No tasks were recently added.',
-          style: TextStyle(fontSize: 16.0),
+          style: t.textTheme.bodyLarge,
         ),
       );
     }
@@ -63,7 +66,7 @@ class RecentTaskContainerState extends State<RecentTaskContainer> {
               child: Container(
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
-                    border: Border.all(),
+                    border: Border.all(width: 0.5),
                     color: _hoveredIndex == index
                         ? Colors.grey[200]
                         : Colors.white,

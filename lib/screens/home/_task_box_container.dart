@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:pcic_mobile_app/theme/_theme_extension.dart';
 
 class TaskCountBox extends StatefulWidget {
   final String label;
@@ -13,6 +14,7 @@ class TaskCountBox extends StatefulWidget {
 class _TaskCountBoxState extends State<TaskCountBox> {
   @override
   Widget build(BuildContext context) {
+    ThemeData t = context.pcicTheme;
     Color containerColor, circleColor;
     String imagePath;
 
@@ -54,12 +56,11 @@ class _TaskCountBoxState extends State<TaskCountBox> {
             children: [
               Text(
                 widget.label,
-                style: const TextStyle(
-                    fontSize: 16.0, fontWeight: FontWeight.w600),
+                style: t.textTheme.bodyLarge,
               ),
               Text('Tasks: ${widget.count}',
-                  style: const TextStyle(
-                      fontSize: 13.3, fontWeight: FontWeight.w500))
+                  style: t.textTheme.bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w500))
             ],
           )
         ],

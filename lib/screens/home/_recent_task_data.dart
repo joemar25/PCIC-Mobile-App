@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
+import 'package:pcic_mobile_app/theme/_theme_extension.dart';
 
 class TaskData extends StatelessWidget {
   final TaskManager task;
@@ -13,27 +14,26 @@ class TaskData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData t = context.pcicTheme;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
               '${task.csvData?['serviceGroup']}-${task.ppirInsuranceId}',
-              style:
-                  const TextStyle(fontSize: 19.2, fontWeight: FontWeight.w600),
+              style: t.textTheme.bodyLarge,
             ),
             Text('${task.csvData?['priority']}',
-                style: const TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF0F7D40))),
-            Text('Last Access: ${formatDate(task.dateAccess)}',
-                style: const TextStyle(
-                  fontSize: 13.3,
-                  fontWeight: FontWeight.w600,
-                ))
+                style: t.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: t.primaryColor)), //customize this base on priority
+            Text(
+              'Last Access: ${formatDate(task.dateAccess)}',
+              style: t.textTheme.bodySmall,
+            )
           ]),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -45,9 +45,9 @@ class TaskData extends StatelessWidget {
                 height: 35,
                 width: 35,
               ),
-              const Text(
+              Text(
                 'View Task',
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 13.3),
+                style: t.textTheme.bodySmall,
               )
             ],
           )

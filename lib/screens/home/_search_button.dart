@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:pcic_mobile_app/theme/_theme_extension.dart';
 
 class SearchButton extends StatefulWidget {
   final ValueChanged<String> onUpdateValue;
@@ -12,13 +13,16 @@ class SearchButton extends StatefulWidget {
 class _SearchButtonState extends State<SearchButton> {
   @override
   Widget build(BuildContext context) {
+    ThemeData t = context.pcicTheme;
+
     return Expanded(
         child: Container(
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       height: 45,
       decoration: BoxDecoration(
-          border: Border.all(), borderRadius: BorderRadius.circular(5.0)),
+          border: Border.all(width: 0.5),
+          borderRadius: BorderRadius.circular(5.0)),
       child: TextField(
         onChanged: widget.onUpdateValue,
         decoration: InputDecoration(

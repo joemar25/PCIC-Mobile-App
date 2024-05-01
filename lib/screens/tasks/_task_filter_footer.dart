@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pcic_mobile_app/theme/_theme_extension.dart';
 
 class FilterFooter extends StatefulWidget {
   final bool showComplete;
@@ -13,13 +14,14 @@ class FilterFooter extends StatefulWidget {
 class _FilterFooterState extends State<FilterFooter> {
   @override
   Widget build(BuildContext context) {
+    ThemeData t = context.pcicTheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         children: [
-          const Text(
+          Text(
             'Applied Filter:',
-            style: TextStyle(fontSize: 13.3, fontWeight: FontWeight.w600),
+            style: t.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
           ),
           const SizedBox(
             width: 4.0,
@@ -30,22 +32,22 @@ class _FilterFooterState extends State<FilterFooter> {
                 color: widget.showComplete
                     ? const Color(0xFF0F7D40)
                     : const Color(0xFFD9F7FA),
-                border: Border.all(),
+                border: Border.all(width: 0.5),
                 borderRadius: BorderRadius.circular(15.0)),
             child: Text(
               widget.showComplete ? 'Completed' : 'Current',
               style: TextStyle(
                   color: widget.showComplete ? Colors.white : Colors.black,
                   fontSize: 11.11,
-                  fontWeight: FontWeight.w600),
+                  fontWeight: FontWeight.w500),
             ),
           ),
           const SizedBox(
             width: 4.0,
           ),
-          const Text(
+          Text(
             'Order by:',
-            style: TextStyle(fontSize: 13.3, fontWeight: FontWeight.w600),
+            style: t.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
           ),
           const SizedBox(
             width: 4.0,
@@ -54,14 +56,12 @@ class _FilterFooterState extends State<FilterFooter> {
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             decoration: BoxDecoration(
                 color: Colors.white,
-                border: Border.all(),
+                border: Border.all(width: 0.5),
                 borderRadius: BorderRadius.circular(15.0)),
             child: Text(
               widget.orderBy,
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 11.11,
-                  fontWeight: FontWeight.w600),
+              style:
+                  t.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
             ),
           ),
         ],

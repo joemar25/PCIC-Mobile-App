@@ -161,6 +161,7 @@ class HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.white,
+          elevation: 0,
           automaticallyImplyLeading: false,
           title: Padding(
             padding: const EdgeInsets.only(left: 6.0),
@@ -181,7 +182,7 @@ class HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 10.0),
                   child: Text('Recent Tasks',
                       style: TextStyle(
-                          fontSize: 23.04, fontWeight: FontWeight.bold)),
+                          fontSize: 19.2, fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(height: 8.0),
                 Padding(
