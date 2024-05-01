@@ -330,6 +330,39 @@ class PCICFormPageState extends State<PCICFormPage> {
   }
 
   void _submitForm(BuildContext context) async {
+    // Get a list of keys for the enabled fields
+    final enabledFieldKeys = _formData.keys.where((key) {
+      return key != 'lastCoordinates' &&
+          key != 'trackTotalarea' &&
+          key != 'trackDatetime' &&
+          key != 'trackLastcoord' &&
+          key != 'trackTotaldistance' &&
+          key != 'ppirRemarks'; // Add 'ppirRemarks' to the excluded keys
+    }).toList();
+
+    // Check if any of the enabled fields are empty
+    bool hasEmptyFields = enabledFieldKeys.any((key) =>
+        _formData[key] == null || _formData[key].toString().trim().isEmpty);
+
+    if (hasEmptyFields) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Incomplete Form'),
+          content: const Text(
+              'Please fill in all required fields before submitting the form.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    // Show the confirmation dialog
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
