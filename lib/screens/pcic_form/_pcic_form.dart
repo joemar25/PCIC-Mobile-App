@@ -337,20 +337,30 @@ class PCICFormPageState extends State<PCICFormPage> {
           key != 'trackDatetime' &&
           key != 'trackLastcoord' &&
           key != 'trackTotaldistance' &&
-          key != 'ppirRemarks'; // Add 'ppirRemarks' to the excluded keys
+          key != 'ppirRemarks';
     }).toList();
 
     // Check if any of the enabled fields are empty
-    bool hasEmptyFields = enabledFieldKeys.any((key) =>
+    bool hasEmptyEnabledFields = enabledFieldKeys.any((key) =>
         _formData[key] == null || _formData[key].toString().trim().isEmpty);
 
-    if (hasEmptyFields) {
+    // Get the signature data from the SignatureSection
+    final signatureData =
+        await _signatureSectionKey.currentState?.getSignatureData() ?? {};
+
+    // Check if any of the signature fields are empty
+    bool hasEmptySignatureFields = signatureData['ppirSigInsured'] == null ||
+        signatureData['ppirNameInsured']?.trim().isEmpty == true ||
+        signatureData['ppirSigIuia'] == null ||
+        signatureData['ppirNameIuia']?.trim().isEmpty == true;
+
+    if (hasEmptyEnabledFields || hasEmptySignatureFields) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Incomplete Form'),
           content: const Text(
-              'Please fill in all required fields before submitting the form.'),
+              'Please fill in all required fields and provide signatures before submitting the form.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
