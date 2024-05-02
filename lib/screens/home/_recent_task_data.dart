@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
-import 'package:pcic_mobile_app/theme/_theme_extension.dart';
+import 'package:pcic_mobile_app/theme/_theme.dart';
 
 class TaskData extends StatelessWidget {
   final TaskManager task;
@@ -14,8 +14,7 @@ class TaskData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData t = context.pcicTheme;
-
+    final t = Theme.of(context).extension<CustomThemeExtension>()!;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
       child: Row(
@@ -24,15 +23,19 @@ class TaskData extends StatelessWidget {
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
               '${task.csvData?['serviceGroup']}-${task.ppirInsuranceId}',
-              style: t.textTheme.bodyLarge,
+              style: TextStyle(fontSize: t.title, fontWeight: FontWeight.bold),
             ),
-            Text('${task.csvData?['priority']}',
-                style: t.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: t.primaryColor)), //customize this base on priority
+            Text(
+              '${task.csvData?['priority']}',
+              style: TextStyle(
+                fontSize: t.caption,
+              ),
+            ), //customize this base on priority
             Text(
               'Last Access: ${formatDate(task.dateAccess)}',
-              style: t.textTheme.bodySmall,
+              style: TextStyle(
+                fontSize: t.caption,
+              ),
             )
           ]),
           Column(
@@ -47,7 +50,9 @@ class TaskData extends StatelessWidget {
               ),
               Text(
                 'View Task',
-                style: t.textTheme.bodySmall,
+                style: TextStyle(
+                  fontSize: t.caption,
+                ),
               )
             ],
           )

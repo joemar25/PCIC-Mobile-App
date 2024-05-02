@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:pcic_mobile_app/theme/_theme_extension.dart';
 
 class SearchButton extends StatefulWidget {
   final ValueChanged<String> onUpdateValue;
@@ -13,8 +12,6 @@ class SearchButton extends StatefulWidget {
 class _SearchButtonState extends State<SearchButton> {
   @override
   Widget build(BuildContext context) {
-    ThemeData t = context.pcicTheme;
-
     return Expanded(
         child: Container(
       alignment: Alignment.center,

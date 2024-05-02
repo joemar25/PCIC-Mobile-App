@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/theme/_theme_extension.dart';
 
 class FilterFooter extends StatefulWidget {
   final bool showComplete;
@@ -14,14 +13,12 @@ class FilterFooter extends StatefulWidget {
 class _FilterFooterState extends State<FilterFooter> {
   @override
   Widget build(BuildContext context) {
-    ThemeData t = context.pcicTheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         children: [
           Text(
             'Applied Filter:',
-            style: t.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
           ),
           const SizedBox(
             width: 4.0,
@@ -47,7 +44,6 @@ class _FilterFooterState extends State<FilterFooter> {
           ),
           Text(
             'Order by:',
-            style: t.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
           ),
           const SizedBox(
             width: 4.0,
@@ -60,8 +56,6 @@ class _FilterFooterState extends State<FilterFooter> {
                 borderRadius: BorderRadius.circular(15.0)),
             child: Text(
               widget.orderBy,
-              style:
-                  t.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
             ),
           ),
         ],

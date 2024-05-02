@@ -8,6 +8,7 @@ import 'package:pcic_mobile_app/screens/home/_task_count_container.dart';
 import 'package:pcic_mobile_app/screens/messages/_view.dart';
 import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
 import 'package:pcic_mobile_app/screens/tasks/_task.dart';
+import 'package:pcic_mobile_app/theme/_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -149,6 +150,7 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Theme.of(context).extension<CustomThemeExtension>()!;
     // If there's no token, show a loading indicator while waiting for the redirection to complete.
     if (_token == null) {
       return const Scaffold(
@@ -178,15 +180,15 @@ class HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 8.0),
                 const TaskCountContainer(),
                 const SizedBox(height: 16.0),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Text('Recent Tasks',
                       style: TextStyle(
-                          fontSize: 19.2, fontWeight: FontWeight.bold)),
+                          fontSize: t.headline, fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(height: 8.0),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: SearchButton(
                     onUpdateValue: _updateSearchQuery,
                   ),
