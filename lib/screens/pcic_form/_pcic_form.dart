@@ -229,7 +229,7 @@ class PCICFormPageState extends State<PCICFormPage> {
         });
 
         // Delete the directory after the TASK file is successfully created
-        await _deleteDirectory(directory);
+        // await _deleteDirectory(directory);
       } else {
         debugPrint('Failed to create TASK file');
         SchedulerBinding.instance.addPostFrameCallback((_) {
