@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import 'package:pcic_mobile_app/screens/home/_home.dart';
+import 'package:pcic_mobile_app/screens/_splash.dart';
 import 'package:pcic_mobile_app/utils/app/_colors.dart';
 
 class FormSuccessPage extends StatelessWidget {
@@ -12,7 +12,7 @@ class FormSuccessPage extends StatelessWidget {
       Future.delayed(const Duration(seconds: 1), () {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const DashboardPage()),
+          MaterialPageRoute(builder: (context) => const SplashScreen()),
         );
       });
     }
