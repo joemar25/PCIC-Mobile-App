@@ -330,6 +330,49 @@ class PCICFormPageState extends State<PCICFormPage> {
   }
 
   void _submitForm(BuildContext context) async {
+    // Get a list of keys for the enabled fields
+    final enabledFieldKeys = _formData.keys.where((key) {
+      return key != 'lastCoordinates' &&
+          key != 'trackTotalarea' &&
+          key != 'trackDatetime' &&
+          key != 'trackLastcoord' &&
+          key != 'trackTotaldistance' &&
+          key != 'ppirRemarks';
+    }).toList();
+
+    // Check if any of the enabled fields are empty
+    bool hasEmptyEnabledFields = enabledFieldKeys.any((key) =>
+        _formData[key] == null || _formData[key].toString().trim().isEmpty);
+
+    // Get the signature data from the SignatureSection
+    final signatureData =
+        await _signatureSectionKey.currentState?.getSignatureData() ?? {};
+
+    // Check if any of the signature fields are empty
+    bool hasEmptySignatureFields = signatureData['ppirSigInsured'] == null ||
+        signatureData['ppirNameInsured']?.trim().isEmpty == true ||
+        signatureData['ppirSigIuia'] == null ||
+        signatureData['ppirNameIuia']?.trim().isEmpty == true;
+
+    if (hasEmptyEnabledFields || hasEmptySignatureFields) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Incomplete Form'),
+          content: const Text(
+              'Please fill in all required fields and provide signatures before submitting the form.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    // Show the confirmation dialog
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
