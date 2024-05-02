@@ -58,6 +58,14 @@ class PCICFormPageState extends State<PCICFormPage> {
     _requestExternalStoragePermission();
   }
 
+  @override
+  void dispose() {
+    _areaPlantedController.dispose();
+    _areaInHectaresController.dispose();
+    _totalDistanceController.dispose();
+    super.dispose();
+  }
+
   Future<void> _requestExternalStoragePermission() async {
     final status = await Permission.manageExternalStorage.request();
     if (status.isGranted) {
@@ -164,6 +172,7 @@ class PCICFormPageState extends State<PCICFormPage> {
     }
   }
 
+  // safe
   void _createTaskFile(BuildContext context) async {
     try {
       final filePath = await ExternalPath.getExternalStoragePublicDirectory(
@@ -222,28 +231,39 @@ class PCICFormPageState extends State<PCICFormPage> {
       if (await zipFile.exists()) {
         final zipSize = await zipFile.length();
         debugPrint('TASK file created successfully. Size: $zipSize bytes');
-        SchedulerBinding.instance.addPostFrameCallback((_) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Form data saved as TASK')),
-          );
-        });
+
+        // Check if the widget is still mounted before performing UI operations
+        if (mounted) {
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Form data saved as TASK')),
+            );
+          });
+        }
 
         // Delete the directory after the TASK file is successfully created
-        await _deleteDirectory(directory);
+        // await _deleteDirectory(directory);
       } else {
         debugPrint('Failed to create TASK file');
+
+        // Check if the widget is still mounted before performing UI operations
+        if (mounted) {
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Error saving form data as TASK')),
+            );
+          });
+        }
+      }
+    } catch (e, stackTrace) {
+      // Check if the widget is still mounted before performing UI operations
+      if (mounted) {
         SchedulerBinding.instance.addPostFrameCallback((_) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Error saving form data as TASK')),
           );
         });
       }
-    } catch (e, stackTrace) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error saving form data as TASK')),
-        );
-      });
       debugPrint('Error saving form data as TASK: $e');
       debugPrint('Stack trace: $stackTrace');
     }
@@ -266,7 +286,7 @@ class PCICFormPageState extends State<PCICFormPage> {
   Future<List<ArchiveFile>> addFilesToArchive(
       Directory dir, String rootPath) async {
     final archiveFiles = <ArchiveFile>[];
-    final files = dir.listSync();
+    final files = dir.listSync(recursive: true);
 
     for (var file in files) {
       if (file is File) {
@@ -287,42 +307,8 @@ class PCICFormPageState extends State<PCICFormPage> {
           debugPrint('Error details: $e');
         }
       } else if (file is Directory) {
-        final attachmentsDirectory = Directory('${file.path}/Attachments');
-        if (await attachmentsDirectory.exists()) {
-          final signatureFiles = [
-            File('${attachmentsDirectory.path}/insured_signature.png'),
-            File('${attachmentsDirectory.path}/iuia_signature.png'),
-          ];
-
-          for (final signatureFile in signatureFiles) {
-            if (await signatureFile.exists()) {
-              final fileContent = await signatureFile.readAsBytes();
-              final archiveFile = ArchiveFile(
-                signatureFile.path.replaceAll('$rootPath/', ''),
-                fileContent.length,
-                fileContent,
-              );
-              archiveFiles.add(archiveFile);
-            } else {
-              debugPrint('Signature file not found: ${signatureFile.path}');
-            }
-          }
-        }
-
-        final xmlFile = File('${file.path}/Task.xml');
-        if (await xmlFile.exists()) {
-          final fileContent = await xmlFile.readAsBytes();
-          final archiveFile = ArchiveFile(
-            xmlFile.path.replaceAll('$rootPath/', ''),
-            fileContent.length,
-            fileContent,
-          );
-          archiveFiles.add(archiveFile);
-        } else {
-          debugPrint('XML file not found: ${xmlFile.path}');
-        }
-
-        archiveFiles.addAll(await addFilesToArchive(file, rootPath));
+        final subArchiveFiles = await addFilesToArchive(file, rootPath);
+        archiveFiles.addAll(subArchiveFiles);
       }
     }
 
@@ -386,8 +372,26 @@ class PCICFormPageState extends State<PCICFormPage> {
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
-              _saveFormData();
-              _createTaskFile(context);
+              try {
+                _saveFormData();
+                _createTaskFile(context);
+
+                if (mounted) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const FormSuccessPage(
+                        isSaveSuccessful: true,
+                      ),
+                    ),
+                  ).then((_) {
+                    _resetForm();
+                  });
+                }
+              } catch (e) {
+                debugPrint('Error submitting form: $e');
+                // Handle the error appropriately
+              }
             },
             child: const Text('Yes'),
           ),
@@ -432,14 +436,16 @@ class PCICFormPageState extends State<PCICFormPage> {
     // Update the task in Firebase after saving the files
     _updateTaskInFirebase();
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const FormSuccessPage(
-          isSaveSuccessful: true,
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const FormSuccessPage(
+            isSaveSuccessful: true,
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   Map<String, dynamic> _getChangedData() {
@@ -469,6 +475,17 @@ class PCICFormPageState extends State<PCICFormPage> {
       debugPrint('Task updated successfully');
     }).catchError((error) {
       debugPrint('Error updating task: $error');
+    });
+  }
+
+  void _resetForm() {
+    setState(() {
+      _formData.clear();
+      _areaPlantedController.clear();
+      _areaInHectaresController.clear();
+      _totalDistanceController.clear();
+      _signatureSectionKey.currentState?.confirmedBySignatureController.clear();
+      _signatureSectionKey.currentState?.preparedBySignatureController.clear();
     });
   }
 
