@@ -150,7 +150,7 @@ class PCICFormPageState extends State<PCICFormPage> {
   }
 
   String _formatNumber(double value, String unit) {
-    final formatter = NumberFormat('#,##0.00', 'en_US');
+    final formatter = NumberFormat('#,##0.############', 'en_US');
 
     switch (unit) {
       case 'm²':
@@ -606,7 +606,7 @@ class PCICFormPageState extends State<PCICFormPage> {
             TextFormField(
               controller: _areaInHectaresController,
               decoration: const InputDecoration(
-                labelText: 'Actual Total Area Planted (Hectares)',
+                labelText: 'Actual Total Area (Hectares)',
                 border: OutlineInputBorder(),
               ),
               enabled: false,
