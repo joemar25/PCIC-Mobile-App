@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pcic_mobile_app/screens/geotag/_geotag.dart';
 import 'package:pcic_mobile_app/screens/tasks/_control_task.dart';
+import 'package:pcic_mobile_app/theme/_theme.dart';
 
 class TaskDetailsPage extends StatefulWidget {
   final TaskManager task;
@@ -71,6 +72,7 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
   }
 
   Widget _buildFormSection(String title, List<Widget> fields) {
+    final t = Theme.of(context).extension<CustomThemeExtension>()!;
     return AnimatedSize(
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
@@ -83,8 +85,8 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
                 padding: const EdgeInsets.only(bottom: 12.0),
                 alignment: Alignment.center,
                 child: Text(title,
-                    style: const TextStyle(
-                      fontSize: 19.2,
+                    style: TextStyle(
+                      fontSize: t.headline,
                       fontWeight: FontWeight.bold,
                     )),
               ),
@@ -118,6 +120,7 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
   }
 
   Widget _buildFormField(String label, String? value) {
+    final t = Theme.of(context).extension<CustomThemeExtension>()!;
     final displayValue = value?.isNotEmpty ?? false ? value : 'test'; // N/A
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2.0),
@@ -125,15 +128,15 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('$label:',
-              style: const TextStyle(
-                  color: Color(0xFF0F7D40),
+              style: TextStyle(
+                  color: const Color(0xFF0F7D40),
                   fontWeight: FontWeight.w600,
-                  fontSize: 13.3)),
+                  fontSize: t.caption)),
           Padding(
             padding: const EdgeInsets.only(bottom: 4.0),
             child: Text(displayValue ?? '',
-                style: const TextStyle(
-                    fontSize: 16.0, fontWeight: FontWeight.w600)),
+                style:
+                    TextStyle(fontSize: t.body, fontWeight: FontWeight.w600)),
           )
         ],
       ),
@@ -155,12 +158,13 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Theme.of(context).extension<CustomThemeExtension>()!;
     return Scaffold(
       appBar: AppBar(
           centerTitle: true,
-          title: const Text(
+          title: Text(
             'Task Details',
-            style: TextStyle(fontSize: 19.2, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: t.title, fontWeight: FontWeight.bold),
           )),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -185,12 +189,12 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
                               colorFilter: const ColorFilter.mode(
                                   Colors.white, BlendMode.srcIn),
                             ))),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Text(
                         'Go to Geotag',
                         style: TextStyle(
-                            fontSize: 16.0,
+                            fontSize: t.body,
                             color: Colors.black,
                             fontWeight: FontWeight.w600),
                       ),

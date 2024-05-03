@@ -56,7 +56,7 @@ class _TaskCountBoxState extends State<TaskCountBox> {
             children: [
               Text(
                 widget.label,
-                style: TextStyle(fontSize: t.body),
+                style: TextStyle(fontSize: t.body, fontWeight: FontWeight.w600),
               ),
               Text(
                 'Tasks: ${widget.count}',

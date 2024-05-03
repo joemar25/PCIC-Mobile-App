@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/screens/home/_home.dart';
+import 'package:pcic_mobile_app/theme/_theme.dart';
 import 'package:pcic_mobile_app/utils/agent/_session.dart';
 import 'package:pcic_mobile_app/utils/agent/_signup.dart';
 import 'package:pcic_mobile_app/utils/agent/_verify_login.dart';
@@ -52,6 +53,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Theme.of(context).extension<CustomThemeExtension>()!;
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -71,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const Text(
               'Sign in to your account',
-              style: TextStyle(fontSize: 27.65, fontWeight: FontWeight.w500),
+              style: TextStyle(fontSize: 27.65, fontWeight: FontWeight.w600),
             )
           ],
         ),

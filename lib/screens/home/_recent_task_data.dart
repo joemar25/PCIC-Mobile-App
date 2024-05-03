@@ -28,13 +28,14 @@ class TaskData extends StatelessWidget {
             Text(
               '${task.csvData?['priority']}',
               style: TextStyle(
-                fontSize: t.caption,
-              ),
+                  fontSize: t.caption,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF0F7D40)),
             ), //customize this base on priority
             Text(
               'Last Access: ${formatDate(task.dateAccess)}',
               style: TextStyle(
-                fontSize: t.caption,
+                fontSize: t.overline,
               ),
             )
           ]),
@@ -51,7 +52,7 @@ class TaskData extends StatelessWidget {
               Text(
                 'View Task',
                 style: TextStyle(
-                  fontSize: t.caption,
+                  fontSize: t.overline,
                 ),
               )
             ],

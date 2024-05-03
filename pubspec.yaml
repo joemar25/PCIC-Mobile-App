@@ -77,13 +77,12 @@ flutter:
     # - assets/cache.db
     # - assets/icon/
   fonts:
-    - family: DMSans
+    - family: Manrope
       fonts:
-        - asset: fonts/DMSans-Regular.ttf
-          weight: 400
-        - asset: fonts/DMSans-Medium.ttf
-          weight: 500
-        - asset: fonts/DMSans-Bold.ttf
-          weight: 700
-        - asset: fonts/DMSans-Light.ttf
-          weight: 300
+        - asset: fonts/Manrope-ExtraLight.ttf
+        - asset: fonts/Manrope-Light.ttf
+        - asset: fonts/Manrope-Regular.ttf
+        - asset: fonts/Manrope-Medium.ttf
+        - asset: fonts/Manrope-SemiBold.ttf
+        - asset: fonts/Manrope-Bold.ttf
+        - asset: fonts/Manrope-ExtraBold.ttf

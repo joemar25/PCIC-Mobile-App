@@ -388,7 +388,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final panelMaxHeight = MediaQuery.of(context).size.height * 0.45;
-    final panelMinHeight = MediaQuery.of(context).size.height * 0.22;
+    final panelMinHeight = MediaQuery.of(context).size.height * 0.25;
 
     return WillPopScope(
       onWillPop: _onWillPop,

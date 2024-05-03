@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
         extensions: const <ThemeExtension<dynamic>>[
           CustomThemeExtension.lightMode, // or CustomThemeExtension.darkMode
         ],
-        fontFamily: 'DMSans',
+        fontFamily: 'Manrope',
       ),
       debugShowCheckedModeBanner: false,
       title: "PCIC Mobile App",

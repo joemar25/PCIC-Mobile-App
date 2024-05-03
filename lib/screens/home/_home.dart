@@ -67,7 +67,7 @@ class DashboardPageState extends State<DashboardPage> {
             _buildNavigationBarItem(Icons.calendar_today, 'Tasks'),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: Color(0xFF0F7D40),
+          selectedItemColor: const Color(0xFF0F7D40),
           unselectedItemColor: Colors.grey,
           onTap: _onItemTapped,
         ),

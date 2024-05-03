@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:pcic_mobile_app/theme/_theme.dart';
 
 class LoginTextField extends StatefulWidget {
   // final String password;
@@ -24,6 +25,7 @@ class _LoginTextFieldState extends State<LoginTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Theme.of(context).extension<CustomThemeExtension>()!;
     return Container(
       height: 55,
       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
@@ -50,17 +52,17 @@ class _LoginTextFieldState extends State<LoginTextField> {
                 children: [
                   Text(
                     widget.inputType,
-                    style: const TextStyle(
-                        color: Color(0xFF0F7D40),
-                        fontSize: 11.1,
-                        fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                        color: const Color(0xFF0F7D40),
+                        fontSize: t.overline,
+                        fontWeight: FontWeight.w600),
                   ),
                   SizedBox(
                     height: 27.65,
                     child: TextField(
-                      style: const TextStyle(
-                          color: Color(0xFF000E08),
-                          fontSize: 19.2,
+                      style: TextStyle(
+                          color: const Color(0xFF000E08),
+                          fontSize: t.title,
                           fontWeight: FontWeight
                               .w500 // Adjust font size as needed (smaller values for smaller font)
                           ),
@@ -74,7 +76,7 @@ class _LoginTextFieldState extends State<LoginTextField> {
                           widget.inputType == 'Password' ? _obscureText : false,
                       decoration: InputDecoration(
                         hintText: "Enter your ${widget.inputType}",
-                        hintStyle: const TextStyle(fontSize: 16.0),
+                        hintStyle: TextStyle(fontSize: t.body),
                         border: const OutlineInputBorder(
                           borderSide: BorderSide.none, // Removes the border
                         ),
