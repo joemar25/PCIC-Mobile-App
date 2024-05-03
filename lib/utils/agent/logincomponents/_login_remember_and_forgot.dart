@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pcic_mobile_app/theme/_theme.dart';
 
 class RememberAndForgot extends StatefulWidget {
   // final Function(String) onTextChanged;
@@ -13,6 +14,7 @@ class _RememberAndForgotState extends State<RememberAndForgot> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Theme.of(context).extension<CustomThemeExtension>()!;
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
         child: Row(
@@ -30,18 +32,18 @@ class _RememberAndForgotState extends State<RememberAndForgot> {
                           isChecked = newValue!;
                         });
                       },
-                      activeColor: const Color(0xFF58996A),
+                      activeColor: const Color(0xFF0F7D40),
                       checkColor: Colors.white,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       visualDensity: VisualDensity.compact,
                       splashRadius: 16,
                       side: const BorderSide(width: 1.0, color: Colors.black),
                     ),
-                    const Text(
+                    Text(
                       'Remember Me',
                       style: TextStyle(
                           color: Colors.grey,
-                          fontSize: 12.0,
+                          fontSize: t.overline,
                           fontWeight: FontWeight.w500),
                     )
                   ],
@@ -52,14 +54,14 @@ class _RememberAndForgotState extends State<RememberAndForgot> {
               onTap: () {
                 // Handle Forgot Password action
               },
-              child: const Text(
+              child: Text(
                 "Forgot Password",
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
-                    decorationColor: Color(0xFF58996A),
+                    decorationColor: const Color(0xFF0F7D40),
                     decoration: TextDecoration.underline,
-                    color: Color(0xFF58996A),
-                    fontSize: 12.0),
+                    color: const Color(0xFF0F7D40),
+                    fontSize: t.overline),
               ),
             ),
           ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pcic_mobile_app/screens/settings/_settings.dart';
+import 'package:pcic_mobile_app/theme/_theme.dart';
 
 class HomeHeader extends StatelessWidget {
   final VoidCallback onLogout;
@@ -9,26 +10,22 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = Theme.of(context).extension<CustomThemeExtension>()!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Column(
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Welcome back,',
-              style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: t.title, color: Colors.grey),
             ),
             Text(
               'Agent 007',
-              style: TextStyle(
-                  fontSize: 19.2,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold),
+              style:
+                  TextStyle(fontSize: t.headline, fontWeight: FontWeight.bold),
             )
           ],
         ),

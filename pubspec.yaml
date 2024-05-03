@@ -50,6 +50,7 @@ dependencies:
   shimmer: ^3.0.0
   sliding_up_panel: ^2.0.0+1
   tuple: ^2.0.2
+  device_info_plus: ^10.1.0 # permission handler - JC please use this
 
 dev_dependencies:
   flutter_test:
@@ -75,3 +76,13 @@ flutter:
     # - assets/config/.env
     # - assets/cache.db
     # - assets/icon/
+  fonts:
+    - family: Manrope
+      fonts:
+        - asset: fonts/Manrope-ExtraLight.ttf
+        - asset: fonts/Manrope-Light.ttf
+        - asset: fonts/Manrope-Regular.ttf
+        - asset: fonts/Manrope-Medium.ttf
+        - asset: fonts/Manrope-SemiBold.ttf
+        - asset: fonts/Manrope-Bold.ttf
+        - asset: fonts/Manrope-ExtraBold.ttf

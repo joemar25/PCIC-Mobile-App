@@ -24,10 +24,9 @@ class RecentTaskContainerState extends State<RecentTaskContainer> {
         widget.tasks.where((task) => !task.isCompleted).toList();
 
     if (incompleteTasks.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'No tasks were recently added.',
-          style: TextStyle(fontSize: 16.0),
         ),
       );
     }
@@ -63,7 +62,7 @@ class RecentTaskContainerState extends State<RecentTaskContainer> {
               child: Container(
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
-                    border: Border.all(),
+                    border: Border.all(width: 0.5),
                     color: _hoveredIndex == index
                         ? Colors.grey[200]
                         : Colors.white,

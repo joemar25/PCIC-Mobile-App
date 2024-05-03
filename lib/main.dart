@@ -1,25 +1,25 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:pcic_mobile_app/theme/_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:url_strategy/url_strategy.dart';
 
-import 'utils/app/_firebase.dart';
+import 'screens/_splash.dart';
+import 'screens/_starting.dart';
+import 'screens/geotag/_geotag.dart';
+import 'screens/home/_home.dart';
+import 'screens/messages/_filter.dart';
+import 'screens/messages/_view.dart';
+import 'screens/tasks/_control_task.dart';
 import 'screens/tasks/_filter_task.dart';
+import 'screens/tasks/_task.dart';
 import 'utils/agent/_login.dart';
 import 'utils/agent/_signup.dart';
 import 'utils/agent/_verify_login.dart';
 import 'utils/agent/_verify_signup.dart';
+import 'utils/app/_firebase.dart';
 import 'utils/app/_routes.dart';
-import 'screens/tasks/_control_task.dart';
-
-import 'screens/_splash.dart';
-import 'screens/_starting.dart';
-import 'screens/home/_home.dart';
-import 'screens/messages/_view.dart';
-import 'screens/tasks/_task.dart';
-import 'screens/messages/_filter.dart';
-import 'screens/geotag/_geotag.dart';
 
 void main() async {
   // Ensure URLs without the hash sign (#) are handled correctly
@@ -51,6 +51,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        extensions: const <ThemeExtension<dynamic>>[
+          CustomThemeExtension.lightMode, // or CustomThemeExtension.darkMode
+        ],
+        fontFamily: 'Manrope',
+      ),
       debugShowCheckedModeBanner: false,
       title: "PCIC Mobile App",
       initialRoute: AppRoutes.splash,
