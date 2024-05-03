@@ -76,3 +76,13 @@ flutter:
     # - assets/config/.env
     # - assets/cache.db
     # - assets/icon/
+  fonts:
+    - family: Manrope
+      fonts:
+        - asset: fonts/Manrope-ExtraLight.ttf
+        - asset: fonts/Manrope-Light.ttf
+        - asset: fonts/Manrope-Regular.ttf
+        - asset: fonts/Manrope-Medium.ttf
+        - asset: fonts/Manrope-SemiBold.ttf
+        - asset: fonts/Manrope-Bold.ttf
+        - asset: fonts/Manrope-ExtraBold.ttf

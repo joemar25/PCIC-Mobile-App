@@ -18,7 +18,8 @@ class _SearchButtonState extends State<SearchButton> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       height: 45,
       decoration: BoxDecoration(
-          border: Border.all(), borderRadius: BorderRadius.circular(5.0)),
+          border: Border.all(width: 0.5),
+          borderRadius: BorderRadius.circular(5.0)),
       child: TextField(
         onChanged: widget.onUpdateValue,
         decoration: InputDecoration(

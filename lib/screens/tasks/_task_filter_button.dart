@@ -203,13 +203,14 @@ class _FilterButtonState extends State<FilterButton> {
             });
       },
       style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white,
         minimumSize: const Size(45, 45),
         padding: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
           side: const BorderSide(
             color: Colors.black,
-            width: 1.0,
+            width: 0.5,
           ),
         ),
       ),

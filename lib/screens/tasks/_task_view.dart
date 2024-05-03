@@ -109,7 +109,7 @@ class TaskContainerState extends State<TaskView> {
                                   margin:
                                       const EdgeInsets.symmetric(vertical: 8),
                                   decoration: BoxDecoration(
-                                      border: Border.all(),
+                                      border: Border.all(width: 0.5),
                                       color: _hoveredIndex == index
                                           ? Colors.grey[200]
                                           : Colors.white,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:pcic_mobile_app/theme/_theme.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class GeoTagBottomSheet extends StatefulWidget {
@@ -36,11 +37,12 @@ class _GeoTagBottomSheetState extends State<GeoTagBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Theme.of(context).extension<CustomThemeExtension>()!;
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           GestureDetector(
             onTap: togglePanel,
@@ -53,9 +55,9 @@ class _GeoTagBottomSheetState extends State<GeoTagBottomSheet> {
                       borderRadius: BorderRadius.circular(30.0))),
             ),
           ),
-          const Text(
+          Text(
             'Route Points',
-            style: TextStyle(fontSize: 19.2, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: t.title, fontWeight: FontWeight.bold),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -81,10 +83,10 @@ class _GeoTagBottomSheetState extends State<GeoTagBottomSheet> {
                             colorFilter: const ColorFilter.mode(
                                 Colors.white, BlendMode.srcIn),
                           ))),
-                  const Text(
+                  Text(
                     'Start',
                     style: TextStyle(
-                        fontSize: 13.3,
+                        fontSize: t.caption,
                         color: Colors.black,
                         fontWeight: FontWeight.w600),
                   ),
@@ -113,10 +115,10 @@ class _GeoTagBottomSheetState extends State<GeoTagBottomSheet> {
                             colorFilter: const ColorFilter.mode(
                                 Colors.white, BlendMode.srcIn),
                           ))),
-                  const Text(
+                  Text(
                     'Pin Drop',
                     style: TextStyle(
-                        fontSize: 13.3,
+                        fontSize: t.caption,
                         color: Colors.black,
                         fontWeight: FontWeight.w600),
                   ),
@@ -143,10 +145,10 @@ class _GeoTagBottomSheetState extends State<GeoTagBottomSheet> {
                             colorFilter: const ColorFilter.mode(
                                 Colors.white, BlendMode.srcIn),
                           ))),
-                  const Text(
+                  Text(
                     'Stop',
                     style: TextStyle(
-                        fontSize: 13.3,
+                        fontSize: t.caption,
                         color: Colors.black,
                         fontWeight: FontWeight.w600),
                   ),
@@ -157,41 +159,41 @@ class _GeoTagBottomSheetState extends State<GeoTagBottomSheet> {
           const Divider(
             color: Color(0xFF0F7D40),
           ),
-          const Text(
+          Text(
             'Location',
-            style: TextStyle(fontSize: 19.2, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: t.title, fontWeight: FontWeight.bold),
           ),
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            SizedBox(
-              height: 35,
-              width: 35,
-              child: SvgPicture.asset(
-                'assets/storage/images/navigate.svg',
-                colorFilter:
-                    const ColorFilter.mode(Color(0xFF0F7D40), BlendMode.srcIn),
-              ),
-            ),
-            const SizedBox(
-              width: 8.0,
-            ),
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Address',
-                  style: TextStyle(
-                      fontSize: 11.11,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF797C7B)),
-                ),
-                Text('Legazpi City, Albay, 4500',
-                    style: TextStyle(
-                        fontSize: 13.3,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black))
-              ],
-            )
-          ]),
+          // Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          //   SizedBox(
+          //     height: 35,
+          //     width: 35,
+          //     child: SvgPicture.asset(
+          //       'assets/storage/images/navigate.svg',
+          //       colorFilter:
+          //           const ColorFilter.mode(Color(0xFF0F7D40), BlendMode.srcIn),
+          //     ),
+          //   ),
+          //   const SizedBox(
+          //     width: 8.0,
+          //   ),
+          //   const Column(
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     children: [
+          //       Text(
+          //         'Address',
+          //         style: TextStyle(
+          //             fontSize: 11.11,
+          //             fontWeight: FontWeight.w700,
+          //             color: Color(0xFF797C7B)),
+          //       ),
+          //       Text('Legazpi City, Albay, 4500',
+          //           style: TextStyle(
+          //               fontSize: t.caption,
+          //               fontWeight: FontWeight.bold,
+          //               color: Colors.black))
+          //     ],
+          //   )
+          // ]),
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             SizedBox(
               height: 35,
@@ -209,22 +211,23 @@ class _GeoTagBottomSheetState extends State<GeoTagBottomSheet> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Coordinates',
                   style: TextStyle(
-                      fontSize: 11.11,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF797C7B)),
+                    fontSize: t.overline,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF0F7D40),
+                  ),
                 ),
                 Text('Latitude: ${widget.latitude}',
-                    style: const TextStyle(
-                        fontSize: 13.3,
+                    style: TextStyle(
+                        fontSize: t.caption,
                         fontWeight: FontWeight.bold,
                         color: Colors.black)),
                 Text('Longitude: ${widget.longitude}',
                     // Or clip, fade,
-                    style: const TextStyle(
-                        fontSize: 13.3,
+                    style: TextStyle(
+                        fontSize: t.caption,
                         fontWeight: FontWeight.bold,
                         color: Colors.black))
               ],
