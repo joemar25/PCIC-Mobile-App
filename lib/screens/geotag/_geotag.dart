@@ -5,18 +5,19 @@ import 'dart:typed_data';
 
 import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gpx/gpx.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:uuid/uuid.dart';
 import 'package:tuple/tuple.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../utils/app/_gpx.dart';
 import '../pcic_form/_pcic_form.dart';
 import '../tasks/_control_task.dart';
+import '_geotag_bottomsheet.dart';
 import '_location_service.dart';
 import '_map_service.dart';
-import '_geotag_bottomsheet.dart';
 
 class GeotagPage extends StatefulWidget {
   final TaskManager task;
@@ -35,6 +36,9 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   final MapService _mapService = MapService();
 
   final panelController = PanelController();
+
+  static const double fabHeightClosed = 225.0;
+  double fabHeight = fabHeightClosed;
 
   bool retainPinDrop = false;
   bool showConfirmationDialog = true;
@@ -393,9 +397,14 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Stack(
+        alignment: Alignment.topCenter,
         children: [
           Scaffold(
             body: SlidingUpPanel(
+              onPanelSlide: (position) => setState(() {
+                final panelMaxScrollElement = panelMaxHeight - panelMinHeight;
+                fabHeight = position * panelMaxScrollElement + fabHeightClosed;
+              }),
               controller: panelController,
               parallaxEnabled: true,
               parallaxOffset: 0.3,
@@ -418,21 +427,21 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
             floatingActionButton: Stack(
               children: [
                 Positioned(
-                    top: 0,
                     right: 0,
-                    bottom: 0,
+                    bottom: fabHeight,
                     child: SizedBox(
-                      height: 45,
-                      width: 45,
+                      height: 40,
+                      width: 40,
                       child: FloatingActionButton(
                         onPressed: () => _getCurrentLocation(addMarker: false),
                         shape: const CircleBorder(),
-                        backgroundColor: const Color(0xFFD2FFCB),
+                        backgroundColor: const Color(0xFF0F7D40),
                         elevation: 4.0,
-                        child: const Icon(
-                          Icons.my_location,
-                          color: Colors.black,
-                          size: 24.0,
+                        child: SvgPicture.asset(
+                          'assets/storage/images/position.svg',
+                          colorFilter: const ColorFilter.mode(
+                              Colors.white, BlendMode.srcIn),
+                          // size: 20.0,
                         ),
                       ),
                     )),
@@ -440,25 +449,24 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                     top: 80.0,
                     left: 40.0,
                     child: SizedBox(
-                      height: 35,
-                      width: 35,
+                      height: 40,
+                      width: 40,
                       child: FloatingActionButton(
-                        onPressed: isRoutingStarted
-                            ? () {
-                                _showAlert(context);
-                              }
-                            : () {
-                                Navigator.pop(context);
-                              },
-                        shape: const CircleBorder(),
-                        backgroundColor: const Color(0xFFD2FFCB),
-                        elevation: 4.0,
-                        child: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.black,
-                          size: 24.0,
-                        ),
-                      ),
+                          onPressed: isRoutingStarted
+                              ? () {
+                                  _showAlert(context);
+                                }
+                              : () {
+                                  Navigator.pop(context);
+                                },
+                          shape: const CircleBorder(),
+                          backgroundColor: Color(0xFF0F7D40),
+                          elevation: 4.0,
+                          child: SvgPicture.asset(
+                            'assets/storage/images/arrow-left.svg',
+                            colorFilter: const ColorFilter.mode(
+                                Colors.white, BlendMode.srcIn),
+                          )),
                     )),
               ],
             ),
