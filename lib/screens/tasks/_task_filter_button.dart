@@ -32,6 +32,7 @@ class _FilterButtonState extends State<FilterButton> {
     return ElevatedButton(
       onPressed: () {
         showBottomSheet(
+            elevation: 0.0,
             backgroundColor: Colors.white,
             context: context,
             builder: (BuildContext context) {
@@ -50,6 +51,14 @@ class _FilterButtonState extends State<FilterButton> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Center(
+                            child: Container(
+                          width: 30,
+                          height: 5,
+                          decoration: BoxDecoration(
+                              color: const Color(0xFF0F7D40),
+                              borderRadius: BorderRadius.circular(30.0)),
+                        )),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [

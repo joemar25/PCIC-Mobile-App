@@ -56,6 +56,7 @@ class DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Theme.of(context).extension<CustomThemeExtension>()!;
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -70,6 +71,9 @@ class DashboardPageState extends State<DashboardPage> {
           selectedItemColor: const Color(0xFF0F7D40),
           unselectedItemColor: Colors.grey,
           onTap: _onItemTapped,
+          backgroundColor: Colors.white,
+          selectedLabelStyle:
+              TextStyle(fontWeight: FontWeight.bold, fontSize: t.overline),
         ),
       ),
     );
@@ -163,13 +167,14 @@ class HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.white,
-          elevation: 0,
+          elevation: 0.0,
           automaticallyImplyLeading: false,
           title: Padding(
             padding: const EdgeInsets.only(left: 6.0),
             child: HomeHeader(onLogout: _handleLogout),
           )),
       body: RefreshIndicator(
+        backgroundColor: Colors.white,
         onRefresh: _onRefresh,
         child: SingleChildScrollView(
           child: Padding(
