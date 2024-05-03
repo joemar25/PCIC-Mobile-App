@@ -606,7 +606,7 @@ class PCICFormPageState extends State<PCICFormPage> {
             TextFormField(
               controller: _areaInHectaresController,
               decoration: const InputDecoration(
-                labelText: 'Actual Total Area Planted (Hectares)',
+                labelText: 'Actual Total Area (Hectares)',
                 border: OutlineInputBorder(),
               ),
               enabled: false,
