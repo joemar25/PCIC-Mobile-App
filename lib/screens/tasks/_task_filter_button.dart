@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:pcic_mobile_app/theme/_theme.dart';
 
 class FilterButton extends StatefulWidget {
   final ValueChanged<bool> onUpdateState;
@@ -27,6 +28,7 @@ class _FilterButtonState extends State<FilterButton> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Theme.of(context).extension<CustomThemeExtension>()!;
     return ElevatedButton(
       onPressed: () {
         showBottomSheet(
@@ -38,7 +40,7 @@ class _FilterButtonState extends State<FilterButton> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                       color: Colors.white,
-                      border: Border.all(),
+                      border: Border.all(width: 0.5),
                       borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(15.0),
                           topRight: Radius.circular(15.0))),
@@ -51,10 +53,11 @@ class _FilterButtonState extends State<FilterButton> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
+                            Text(
                               'Filter By: ',
                               style: TextStyle(
-                                  fontSize: 16.0, fontWeight: FontWeight.w600),
+                                  fontSize: t.title,
+                                  fontWeight: FontWeight.w600),
                             ),
                             TextButton(
                                 onPressed: () => Navigator.pop(context),
@@ -76,16 +79,16 @@ class _FilterButtonState extends State<FilterButton> {
                                 shape: RoundedRectangleBorder(
                                     side: const BorderSide(
                                       color: Colors.black,
-                                      width: 1.0,
+                                      width: 0.5,
                                       style: BorderStyle.solid,
                                     ),
                                     borderRadius: BorderRadius.circular(5.0)),
                               ),
-                              child: const Text(
+                              child: Text(
                                 'Current Task',
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: 11.11,
+                                    fontSize: t.overline,
                                     fontWeight: FontWeight.w500),
                               ),
                             ),
@@ -103,17 +106,17 @@ class _FilterButtonState extends State<FilterButton> {
                                 shape: RoundedRectangleBorder(
                                   side: const BorderSide(
                                     color: Colors.black,
-                                    width: 1.0,
+                                    width: 0.5,
                                     style: BorderStyle.solid,
                                   ),
                                   borderRadius: BorderRadius.circular(5.0),
                                 ),
                               ),
-                              child: const Text(
+                              child: Text(
                                 'Completed Task',
                                 style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 11.11,
+                                    fontSize: t.overline,
                                     fontWeight: FontWeight.w500),
                               ),
                             ),
@@ -133,17 +136,17 @@ class _FilterButtonState extends State<FilterButton> {
                                 shape: RoundedRectangleBorder(
                                   side: const BorderSide(
                                     color: Colors.black,
-                                    width: 1.0,
+                                    width: 0.5,
                                     style: BorderStyle.solid,
                                   ),
                                   borderRadius: BorderRadius.circular(5.0),
                                 ),
                               ),
-                              child: const Text(
+                              child: Text(
                                 'ID',
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: 11.11,
+                                    fontSize: t.overline,
                                     fontWeight: FontWeight.w500),
                               ),
                             ),
@@ -158,16 +161,16 @@ class _FilterButtonState extends State<FilterButton> {
                                 shape: RoundedRectangleBorder(
                                     side: const BorderSide(
                                       color: Colors.black,
-                                      width: 1.0,
+                                      width: 0.5,
                                       style: BorderStyle.solid,
                                     ),
                                     borderRadius: BorderRadius.circular(5.0)),
                               ),
-                              child: const Text(
+                              child: Text(
                                 'Date Added',
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: 11.11,
+                                    fontSize: t.overline,
                                     fontWeight: FontWeight.w500),
                               ),
                             ),
@@ -182,16 +185,16 @@ class _FilterButtonState extends State<FilterButton> {
                                 shape: RoundedRectangleBorder(
                                     side: const BorderSide(
                                       color: Colors.black,
-                                      width: 1.0,
+                                      width: 0.5,
                                       style: BorderStyle.solid,
                                     ),
                                     borderRadius: BorderRadius.circular(5.0)),
                               ),
-                              child: const Text(
+                              child: Text(
                                 'Date Access',
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: 11.11,
+                                    fontSize: t.overline,
                                     fontWeight: FontWeight.w500),
                               ),
                             ),
