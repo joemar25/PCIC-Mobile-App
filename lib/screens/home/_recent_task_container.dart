@@ -24,7 +24,7 @@ class RecentTaskContainerState extends State<RecentTaskContainer> {
         widget.tasks.where((task) => !task.isCompleted).toList();
 
     if (incompleteTasks.isEmpty) {
-      return Center(
+      return const Center(
         child: Text(
           'No tasks were recently added.',
         ),

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gpx/gpx.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:pcic_mobile_app/theme/_theme.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tuple/tuple.dart';
 import 'package:uuid/uuid.dart';
@@ -134,19 +135,32 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   }
 
   void _stopRouting() async {
+    final t = Theme.of(context).extension<CustomThemeExtension>()!;
     bool? shouldStop = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirmation'),
-        content: const Text('Finish routing?'),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        title: Text(
+          'Confirmation',
+          style: TextStyle(fontSize: t.title, fontWeight: FontWeight.w600),
+        ),
+        content: Text('Finish routing?', style: TextStyle(fontSize: t.caption)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: const Text(
+              'Cancel',
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('OK'),
+            child: const Text('OK',
+                style: TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.w500)),
           ),
         ],
       ),
@@ -280,6 +294,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   }
 
   Future<void> _addMarkerAtCurrentLocation() async {
+    final t = Theme.of(context).extension<CustomThemeExtension>()!;
     LatLng? position = await _locationService.getCurrentLocation();
     _mapService.addMarker(position!);
 
@@ -287,11 +302,18 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
       bool? shouldRetain = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Confirm Pin Drop'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          title: Text('Confirm Pin Drop',
+              style: TextStyle(fontSize: t.title, fontWeight: FontWeight.w600)),
           content: StatefulBuilder(
             builder: (context, setState) {
               return CheckboxListTile(
-                title: const Text('Don\'t show again'),
+                contentPadding: EdgeInsets.zero,
+                activeColor: const Color(0xFF0F7D40),
+                title: Text('Don\'t show again',
+                    style: TextStyle(fontSize: t.caption)),
                 value: retainPinDrop,
                 onChanged: (value) {
                   setState(() {
@@ -304,11 +326,15 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child: const Text('Cancel',
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.w500)),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('OK'),
+              child: const Text('OK',
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.w500)),
             ),
           ],
         ),
@@ -327,6 +353,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   }
 
   Future<bool> _onWillPop() async {
+    final t = Theme.of(context).extension<CustomThemeExtension>()!;
     if (isLoading) {
       return false;
     }
@@ -334,16 +361,31 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
     final shouldPop = await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirmation'),
-        content: const Text('Are you sure you want to cancel?'),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        title: Text(
+          'Confirmation',
+          style: TextStyle(fontSize: t.title, fontWeight: FontWeight.w600),
+        ),
+        content: Text(
+          'Are you sure you want to cancel?',
+          style: TextStyle(fontSize: t.caption),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('No'),
+            child: const Text(
+              'No',
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Yes'),
+            child: const Text('Yes',
+                style: TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.w500)),
           ),
         ],
       ),
@@ -352,24 +394,34 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   }
 
   void _showAlert(BuildContext context) {
+    final t = Theme.of(context).extension<CustomThemeExtension>()!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirm Action'),
-        content: const Text('Are you sure you want to go back?'),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        title: Text('Confirm Action',
+            style: TextStyle(fontSize: t.title, fontWeight: FontWeight.w600)),
+        content: Text('Are you sure you want to go back?',
+            style: TextStyle(fontSize: t.caption)),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: const Text('No'),
+            child: const Text('No',
+                style: TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.w500)),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.of(context).pop();
             },
-            child: const Text('Yes'),
+            child: const Text('Yes',
+                style: TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.w500)),
           ),
         ],
       ),
@@ -460,7 +512,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                                   Navigator.pop(context);
                                 },
                           shape: const CircleBorder(),
-                          backgroundColor: Color(0xFF0F7D40),
+                          backgroundColor: const Color(0xFF0F7D40),
                           elevation: 4.0,
                           child: SvgPicture.asset(
                             'assets/storage/images/arrow-left.svg',
