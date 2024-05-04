@@ -1,23 +1,23 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:pcic_mobile_app/screens/home/_home.dart';
-import 'package:pcic_mobile_app/theme/_theme.dart';
 import 'package:pcic_mobile_app/utils/agent/_session.dart';
 import 'package:pcic_mobile_app/utils/agent/_signup.dart';
 import 'package:pcic_mobile_app/utils/agent/_verify_login.dart';
-import 'package:pcic_mobile_app/utils/agent/logincomponents/_login_remember_and_forgot.dart';
-import 'package:pcic_mobile_app/utils/agent/logincomponents/_login_text_field.dart';
+import 'package:pcic_mobile_app/utils/agent/login-components/_login_remember_and_forgot.dart';
+import 'package:pcic_mobile_app/utils/agent/login-components/_login_text_field.dart';
+
+import '../../src/home/_home.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   String parentEmail = '';
   String parentPassword = '';
   bool _isLoading = false;
@@ -32,13 +32,52 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _checkExistingToken() async {
     String? token = await _session.getToken();
-    if (token != null) {
-      // Token exists, navigate to the home page
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const DashboardPage()),
-      );
+    await Future.delayed(const Duration(seconds: 1));
+    if (mounted) {
+      if (token != null) {
+        // Token exists, navigate to the home page
+        _navigateToDashboard();
+      }
     }
+  }
+
+  void _navigateToDashboard() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const DashboardPage()),
+    );
+  }
+
+  void _navigateToVerifyLogin() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const VerifyLoginPage(
+          isLoginSuccessful: true,
+        ),
+      ),
+    );
+  }
+
+  void _showLoginFailedSnackBar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text(
+          style: TextStyle(
+            color: Colors.red,
+            fontSize: 13.3,
+            fontWeight: FontWeight.w600,
+          ),
+          'Login failed. Please check your email and password.',
+        ),
+        backgroundColor: Colors.white,
+        duration: const Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+      ),
+    );
   }
 
   void updateParentEmail(String value) {
@@ -55,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _requestLocationPermission() async {
     final status = await Permission.location.request();
-    if (status.isGranted) {
+    if (mounted && status.isGranted) {
       await _getCurrentLocation();
     } else {
       debugPrint('Location permission denied');
@@ -67,7 +106,8 @@ class _LoginPageState extends State<LoginPage> {
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      debugPrint('Current location: ${position.latitude}, ${position.longitude}');
+      debugPrint(
+          'Current location: ${position.latitude}, ${position.longitude}');
     } catch (e) {
       debugPrint('Error getting current location: $e');
     }
@@ -75,7 +115,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final t = Theme.of(context).extension<CustomThemeExtension>()!;
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -147,49 +186,27 @@ class _LoginPageState extends State<LoginPage> {
                             });
 
                             try {
-                              UserCredential userCredential =
-                                  await FirebaseAuth.instance.signInWithEmailAndPassword(
+                              UserCredential userCredential = await FirebaseAuth
+                                  .instance
+                                  .signInWithEmailAndPassword(
                                 email: parentEmail,
                                 password: parentPassword,
                               );
                               // Login successful, initialize the session with the user token
-                              String? token = await userCredential.user?.getIdToken();
+                              String? token =
+                                  await userCredential.user?.getIdToken();
                               _session.init(token!);
                               // Request location permission
                               await _requestLocationPermission();
                               // Navigate to the next screen
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const VerifyLoginPage(
-                                    isLoginSuccessful: true,
-                                  ),
-                                ),
-                              );
+                              _navigateToVerifyLogin();
 
                               debugPrint('Token: $token');
                             } catch (e) {
                               // Handle login error
                               debugPrint('Login error: $e');
                               // Show an error message to the user
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text(
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 13.3,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    'Login failed. Please check your email and password.',
-                                  ),
-                                  backgroundColor: Colors.white,
-                                  duration: const Duration(seconds: 3),
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                ),
-                              );
+                              _showLoginFailedSnackBar();
                             } finally {
                               setState(() {
                                 _isLoading = false;

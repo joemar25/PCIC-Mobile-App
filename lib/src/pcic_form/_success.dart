@@ -1,15 +1,15 @@
 import "package:flutter/material.dart";
 import 'package:pcic_mobile_app/utils/app/_colors.dart';
 
-import '../../src/home/_home.dart';
+import '../home/_home.dart';
 
-class VerifyLoginPage extends StatelessWidget {
-  final bool isLoginSuccessful;
-  const VerifyLoginPage({super.key, required this.isLoginSuccessful});
+class FormSuccessPage extends StatelessWidget {
+  final bool isSaveSuccessful;
+  const FormSuccessPage({super.key, required this.isSaveSuccessful});
 
   @override
   Widget build(BuildContext context) {
-    if (isLoginSuccessful) {
+    if (isSaveSuccessful) {
       Future.delayed(const Duration(seconds: 1), () {
         Navigator.pushReplacement(
           context,
@@ -31,7 +31,7 @@ class VerifyLoginPage extends StatelessWidget {
             ),
             SizedBox(height: 20),
             Text(
-              "Login Successful",
+              "Successful",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
