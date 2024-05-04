@@ -167,7 +167,7 @@ class HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.white,
-          elevation: 0.0,
+          elevation: 1.0,
           automaticallyImplyLeading: false,
           title: Padding(
             padding: const EdgeInsets.only(left: 6.0),

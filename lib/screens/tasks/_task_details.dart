@@ -95,7 +95,7 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
                 margin: const EdgeInsets.only(bottom: 16.0),
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(width: 0.5),
+                    border: Border.all(width: 0.5, color: Colors.black38),
                     boxShadow: const [
                       BoxShadow(
                         color: Color(0xFF0F7D40),

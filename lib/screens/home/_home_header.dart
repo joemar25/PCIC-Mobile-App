@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:pcic_mobile_app/screens/profile/_profile_view.dart';
 import 'package:pcic_mobile_app/screens/settings/_settings.dart';
 import 'package:pcic_mobile_app/theme/_theme.dart';
 
@@ -20,26 +21,41 @@ class HomeHeader extends StatelessWidget {
           children: [
             Text(
               'Welcome back,',
-              style: TextStyle(fontSize: t.title, color: Colors.grey),
+              style: TextStyle(
+                  fontSize: t.caption,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500),
             ),
             Text(
-              'Agent 007',
-              style:
-                  TextStyle(fontSize: t.headline, fontWeight: FontWeight.bold),
+              'Agent 007 👋',
+              style: TextStyle(
+                fontSize: t.title,
+                fontWeight: FontWeight.bold,
+              ),
             )
           ],
         ),
         PopupMenuButton<String>(
+          splashRadius: 0.0,
           color: Colors.white,
-          offset: const Offset(-8, 45),
+          offset: const Offset(-8, 55),
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
           padding: EdgeInsets.zero,
-          icon: SvgPicture.asset(
-            'assets/storage/images/menu.svg',
-            height: 35,
-            width: 35,
-          ),
+          child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xFF0F7D40)),
+                borderRadius: BorderRadius.circular(100),
+              ),
+              child: CircleAvatar(
+                radius: 24,
+                backgroundColor: Colors.transparent,
+                child: Image.asset(
+                  'assets/storage/images/cool.png',
+                  fit: BoxFit.cover,
+                  height: 30,
+                ),
+              )),
           onSelected: (value) {
             if (value == 'Logout') {
               onLogout();
@@ -47,7 +63,12 @@ class HomeHeader extends StatelessWidget {
               // Handle other menu item selections
               switch (value) {
                 case 'Profile':
-                  // Navigate to the profile screen
+                  Navigator.push(
+                    // Navigate to the SettingsScreen
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProfilePage()),
+                  );
                   break;
                 case 'Settings':
                   Navigator.push(

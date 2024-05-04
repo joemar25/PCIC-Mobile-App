@@ -41,7 +41,7 @@ class _FilterButtonState extends State<FilterButton> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                       color: Colors.white,
-                      border: Border.all(width: 0.5),
+                      border: Border.all(width: 0.5, color: Colors.black38),
                       borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(15.0),
                           topRight: Radius.circular(15.0))),
@@ -87,7 +87,7 @@ class _FilterButtonState extends State<FilterButton> {
                                 backgroundColor: const Color(0xFFD9F7FA),
                                 shape: RoundedRectangleBorder(
                                     side: const BorderSide(
-                                      color: Colors.black,
+                                      color: Colors.black38,
                                       width: 0.5,
                                       style: BorderStyle.solid,
                                     ),
@@ -114,7 +114,7 @@ class _FilterButtonState extends State<FilterButton> {
                                 backgroundColor: const Color(0xFF0F7D40),
                                 shape: RoundedRectangleBorder(
                                   side: const BorderSide(
-                                    color: Colors.black,
+                                    color: Colors.black38,
                                     width: 0.5,
                                     style: BorderStyle.solid,
                                   ),
@@ -144,7 +144,7 @@ class _FilterButtonState extends State<FilterButton> {
                               style: TextButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                   side: const BorderSide(
-                                    color: Colors.black,
+                                    color: Colors.black38,
                                     width: 0.5,
                                     style: BorderStyle.solid,
                                   ),
@@ -169,7 +169,7 @@ class _FilterButtonState extends State<FilterButton> {
                               style: TextButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                     side: const BorderSide(
-                                      color: Colors.black,
+                                      color: Colors.black38,
                                       width: 0.5,
                                       style: BorderStyle.solid,
                                     ),
@@ -193,7 +193,7 @@ class _FilterButtonState extends State<FilterButton> {
                               style: TextButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                     side: const BorderSide(
-                                      color: Colors.black,
+                                      color: Colors.black38,
                                       width: 0.5,
                                       style: BorderStyle.solid,
                                     ),
@@ -221,7 +221,7 @@ class _FilterButtonState extends State<FilterButton> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
           side: const BorderSide(
-            color: Colors.black,
+            color: Colors.black38,
             width: 0.5,
           ),
         ),
