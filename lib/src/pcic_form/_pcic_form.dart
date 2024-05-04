@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
-// import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:archive/archive_io.dart';
 
@@ -17,7 +16,6 @@ import '../tasks/_control_task.dart';
 import './_form_field.dart' as form_field;
 import './_form_section.dart' as form_section;
 import '_success.dart';
-// import '_gpx_file_button.dart' as gpx_button;
 
 class PCICFormPage extends StatefulWidget {
   final String imageFile;
