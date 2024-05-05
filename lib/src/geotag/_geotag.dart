@@ -6,9 +6,11 @@ import 'dart:typed_data';
 import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:gpx/gpx.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tuple/tuple.dart';
 import 'package:uuid/uuid.dart';
@@ -35,20 +37,21 @@ class GeotagPage extends StatefulWidget {
 class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   final LocationService _locationService = LocationService();
   final MapService _mapService = MapService();
-
   final panelController = PanelController();
 
   static const double fabHeightClosed = 225.0;
   double fabHeight = fabHeightClosed;
 
-  bool retainPinDrop = false;
-  bool showConfirmationDialog = true;
-  String currentLocation = '';
   String latitude = '';
+  String address = '';
   String longitude = '';
+  String currentLocation = '';
+
+  bool isLoading = false;
+  bool retainPinDrop = false;
   bool isColumnVisible = true;
   bool isRoutingStarted = false;
-  bool isLoading = false;
+  bool showConfirmationDialog = true;
 
   StreamSubscription<LatLng>? _locationSubscription;
 
@@ -76,20 +79,53 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   }
 
   Future<void> _initializeLocation() async {
+    await _requestPermissions();
     await _locationService.requestLocationPermission();
     _getCurrentLocation(addMarker: false);
+  }
+
+  Future<void> _requestPermissions() async {
+    final locationStatus = await Permission.location.request();
+    final storageStatus = await Permission.manageExternalStorage.request();
+
+    if (mounted) {
+      if (locationStatus.isGranted && storageStatus.isGranted) {
+        // Permissions granted, proceed with location and geocoding
+      } else {
+        if (!locationStatus.isGranted) {
+          debugPrint('Location permission denied');
+        }
+        if (!storageStatus.isGranted) {
+          debugPrint('MANAGE_EXTERNAL_STORAGE permission denied');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content:
+                  Text('External storage permission is required to save files'),
+            ),
+          );
+        }
+      }
+    }
   }
 
   Future<void> _getCurrentLocation({bool addMarker = true}) async {
     LatLng? position = await _locationService.getCurrentLocation();
     if (position != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
         if (mounted) {
+          final placemarks = await placemarkFromCoordinates(
+            position.latitude,
+            position.longitude,
+          );
+          final placemark = placemarks.first;
+
           setState(() {
             latitude = '${position.latitude}';
             longitude = '${position.longitude}';
             currentLocation =
                 'Lat: ${position.latitude}, Long: ${position.longitude}';
+            address =
+                '${placemark.street ?? ''}, ${placemark.locality ?? ''}, ${placemark.postalCode ?? ''}, ${placemark.country ?? ''}';
             _mapService.moveMap(position);
           });
           if (addMarker) {
@@ -118,7 +154,13 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
 
   void _trackRoutePoints() {
     _locationSubscription ??=
-        _locationService.getLocationStream().listen((position) {
+        _locationService.getLocationStream().listen((position) async {
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+      final placemark = placemarks.first;
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           setState(() {
@@ -126,6 +168,8 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
             longitude = '${position.longitude}';
             currentLocation =
                 'Lat: ${position.latitude}, Long: ${position.longitude}';
+            address =
+                '${placemark.street ?? ''}, ${placemark.locality ?? ''}, ${placemark.postalCode ?? ''}, ${placemark.country ?? ''}';
             _mapService
                 .addRoutePoint(LatLng(position.latitude, position.longitude));
           });
@@ -197,6 +241,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
         String gpxFilePath = filePaths.item1;
         String screenshotFilePath = filePaths.item2;
 
+        // Wait for the current frame to complete before navigating
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
             setState(() {
@@ -204,6 +249,9 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
               _mapService.clearMarkers();
               isLoading = false;
             });
+
+            // Dispose of the MapService before navigating
+            _mapService.dispose();
 
             // Navigate to the forms page
             Navigator.pushReplacement(
@@ -474,15 +522,17 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                   const BorderRadius.vertical(top: Radius.circular(30.0)),
               body: _mapService.buildMap(),
               panelBuilder: (controller) => GeoTagBottomSheet(
-                  controller: controller,
-                  panelController: panelController,
-                  latitude: latitude,
-                  longitude: longitude,
-                  isRoutingStarted: isRoutingStarted,
-                  onStartRoutingRequest: _handleStartRoutingRequest,
-                  onStopRoutingRequest: _handleStopRoutingRequest,
-                  onAddMarkerCurrentLocationRequest:
-                      _handleAddMarkerCurrentLocation),
+                controller: controller,
+                panelController: panelController,
+                latitude: latitude,
+                longitude: longitude,
+                address: address,
+                isRoutingStarted: isRoutingStarted,
+                onStartRoutingRequest: _handleStartRoutingRequest,
+                onStopRoutingRequest: _handleStopRoutingRequest,
+                onAddMarkerCurrentLocationRequest:
+                    _handleAddMarkerCurrentLocation,
+              ),
             ),
             floatingActionButton: Stack(
               children: [
