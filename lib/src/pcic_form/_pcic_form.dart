@@ -334,45 +334,53 @@ class PCICFormPageState extends State<PCICFormPage> {
         signatureData['ppirNameIuia']?.trim().isEmpty == true;
 
     if (hasEmptyEnabledFields || hasEmptySignatureFields) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Incomplete Form'),
-          content: const Text(
-              'Please fill in all required fields and provide signatures before submitting the form.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Incomplete Form'),
+            content: const Text(
+                'Please fill in all required fields and provide signatures before submitting the form.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
       return;
     }
 
     // Show the confirmation dialog
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirmation'),
-        content: const Text('Are you sure the data above is correct?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('No'),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              _saveFormData();
-              _createTaskFile(context);
-            },
-            child: const Text('Yes'),
-          ),
-        ],
-      ),
-    );
+    if (context.mounted) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Confirmation'),
+          content: const Text('Are you sure the data above is correct?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('No'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                _saveFormData();
+                _createTaskFile(context);
+              },
+              child: const Text('Yes'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   void _saveFormData() async {

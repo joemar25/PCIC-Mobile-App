@@ -117,7 +117,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   }
 
   void _trackRoutePoints() {
-    _locationSubscription =
+    _locationSubscription ??=
         _locationService.getLocationStream().listen((position) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
@@ -173,7 +173,8 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
         isLoading = true;
       });
 
-      _locationSubscription?.cancel();
+      await _locationSubscription?.cancel();
+      _locationSubscription = null;
 
       try {
         List<Wpt> routePoints = _mapService.routePoints
@@ -300,57 +301,59 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
     LatLng? position = await _locationService.getCurrentLocation();
     _mapService.addMarker(position!);
 
-    if (showConfirmationDialog) {
-      bool? shouldRetain = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          title: Text('Confirm Pin Drop',
-              style: TextStyle(
-                  fontSize: t?.title ?? 14.0, fontWeight: FontWeight.w600)),
-          content: StatefulBuilder(
-            builder: (context, setState) {
-              return CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
-                activeColor: const Color(0xFF0F7D40),
-                title: Text('Don\'t show again',
-                    style: TextStyle(fontSize: t?.caption ?? 14.0)),
-                value: retainPinDrop,
-                onChanged: (value) {
-                  setState(() {
-                    retainPinDrop = value!;
-                  });
-                },
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel',
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.w500)),
+    if (mounted) {
+      if (showConfirmationDialog) {
+        bool? shouldRetain = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.0),
             ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('OK',
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.w500)),
+            title: Text('Confirm Pin Drop',
+                style: TextStyle(
+                    fontSize: t?.title ?? 14.0, fontWeight: FontWeight.w600)),
+            content: StatefulBuilder(
+              builder: (context, setState) {
+                return CheckboxListTile(
+                  contentPadding: EdgeInsets.zero,
+                  activeColor: const Color(0xFF0F7D40),
+                  title: Text('Don\'t show again',
+                      style: TextStyle(fontSize: t?.caption ?? 14.0)),
+                  value: retainPinDrop,
+                  onChanged: (value) {
+                    setState(() {
+                      retainPinDrop = value!;
+                    });
+                  },
+                );
+              },
             ),
-          ],
-        ),
-      );
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancel',
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.w500)),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('OK',
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.w500)),
+              ),
+            ],
+          ),
+        );
 
-      if (shouldRetain == false) {
-        _mapService.removeLastMarker();
+        if (shouldRetain == false) {
+          _mapService.removeLastMarker();
+        } else {
+          showConfirmationDialog = !retainPinDrop;
+        }
       } else {
-        showConfirmationDialog = !retainPinDrop;
-      }
-    } else {
-      if (!retainPinDrop) {
-        _mapService.removeLastMarker();
+        if (!retainPinDrop) {
+          _mapService.removeLastMarker();
+        }
       }
     }
   }
@@ -542,96 +545,3 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
     );
   }
 }
-
-/**
- * 
- * 
- * Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Current Location',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(currentLocation),
-                      const SizedBox(height: 20),
-                      Visibility(
-                        visible: isColumnVisible,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Route Points',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            const SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                ElevatedButton(
-                                  onPressed:
-                                      isRoutingStarted ? null : _startRouting,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: isRoutingStarted
-                                        ? Colors.grey
-                                        : Colors.blue,
-                                  ),
-                                  child: const Text('Start Routing'),
-                                ),
-                                ElevatedButton(
-                                  onPressed:
-                                      isRoutingStarted ? _stopRouting : null,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: isRoutingStarted
-                                        ? Colors.blue
-                                        : Colors.grey,
-                                  ),
-                                  child: const Text('Stop Routing'),
-                                ),
-                                Visibility(
-                                  visible: isRoutingStarted,
-                                  child: ElevatedButton(
-                                    onPressed: _addMarkerAtCurrentLocation,
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.blue,
-                                    ),
-                                    child: const Row(
-                                      children: [
-                                        Icon(Icons.pin_drop),
-                                        SizedBox(width: 4),
-                                        Text('Pin Drop'),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-
--------------------------------
-
-
-
-
-
-
- * 
- * 
- */
-
-
-// if directory exist already then delete it for the first time again to avoid duplicated files
