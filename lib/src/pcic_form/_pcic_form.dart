@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:archive/archive_io.dart';
 
 import '../../utils/seeds/_dropdown.dart';
@@ -53,24 +52,6 @@ class PCICFormPageState extends State<PCICFormPage> {
     _initializeFormData();
     _initializeSeeds();
     _calculateAreaAndDistance();
-    _requestExternalStoragePermission();
-  }
-
-  Future<void> _requestExternalStoragePermission() async {
-    final status = await Permission.manageExternalStorage.request();
-    if (status.isGranted) {
-      // Permission granted, you can now access external storage
-      debugPrint('MANAGE_EXTERNAL_STORAGE permission granted');
-    } else {
-      // Permission denied, handle accordingly (e.g., show an error message)
-      debugPrint('MANAGE_EXTERNAL_STORAGE permission denied');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content:
-              Text('External storage permission is required to open GPX files'),
-        ),
-      );
-    }
   }
 
   void _initializeFormData() {
@@ -247,19 +228,19 @@ class PCICFormPageState extends State<PCICFormPage> {
     }
   }
 
-  Future<void> _deleteDirectory(Directory directory) async {
-    try {
-      if (await directory.exists()) {
-        await directory.delete(recursive: true);
-        debugPrint('Directory deleted: ${directory.path}');
-      } else {
-        debugPrint('Directory does not exist: ${directory.path}');
-      }
-    } catch (e) {
-      debugPrint('Error deleting directory: ${directory.path}');
-      debugPrint('Error details: $e');
-    }
-  }
+  // Future<void> _deleteDirectory(Directory directory) async {
+  //   try {
+  //     if (await directory.exists()) {
+  //       await directory.delete(recursive: true);
+  //       debugPrint('Directory deleted: ${directory.path}');
+  //     } else {
+  //       debugPrint('Directory does not exist: ${directory.path}');
+  //     }
+  //   } catch (e) {
+  //     debugPrint('Error deleting directory: ${directory.path}');
+  //     debugPrint('Error details: $e');
+  //   }
+  // }
 
   Future<List<ArchiveFile>> addFilesToArchive(
       Directory dir, String rootPath) async {
@@ -425,19 +406,21 @@ class PCICFormPageState extends State<PCICFormPage> {
         widget.task.csvData?['serviceType'], widget.task.ppirInsuranceId);
 
     // Create the .task file
-    _createTaskFile(context);
+    if (mounted) {
+      _createTaskFile(context);
 
-    // Update the task in Firebase after saving the files
-    _updateTaskInFirebase();
+      // Update the task in Firebase after saving the files
+      _updateTaskInFirebase();
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const FormSuccessPage(
-          isSaveSuccessful: true,
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const FormSuccessPage(
+            isSaveSuccessful: true,
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   Map<String, dynamic> _getChangedData() {
@@ -492,50 +475,6 @@ class PCICFormPageState extends State<PCICFormPage> {
       ),
     );
   }
-
-  // void _openGpxFile(String gpxFilePath) async {
-  //   try {
-  //     final filePath = gpxFilePath;
-  //     final downloadsDirectory = Directory(filePath);
-  //     final gpxFile = File(downloadsDirectory.path);
-  //     debugPrint("path = $gpxFile");
-
-  //     if (await gpxFile.exists()) {
-  //       final status = await Permission.manageExternalStorage.status;
-  //       if (status.isGranted) {
-  //         final result = await OpenFile.open(gpxFile.path);
-  //         if (result.type == ResultType.done) {
-  //           // File opened successfully
-  //           debugPrint('GPX file opened successfully');
-  //         } else {
-  //           // Error opening the file
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //             const SnackBar(content: Text('Error opening GPX file')),
-  //           );
-  //           debugPrint('Error opening GPX file: ${result.message}');
-  //         }
-  //       } else {
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           const SnackBar(
-  //             content: Text(
-  //                 'External storage permission is required to open GPX files'),
-  //           ),
-  //         );
-  //         debugPrint('MANAGE_EXTERNAL_STORAGE permission denied');
-  //       }
-  //     } else {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(content: Text('GPX file not found')),
-  //       );
-  //       debugPrint('GPX file not found: ${gpxFile.path}');
-  //     }
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Error opening GPX file')),
-  //     );
-  //     debugPrint('Error opening GPX file: $e');
-  //   }
-  // }
 
   void _viewScreenshot(String screenshotPath) {
     showDialog(
@@ -647,15 +586,6 @@ class PCICFormPageState extends State<PCICFormPage> {
               ),
               child: const Text('View Screenshot'),
             ),
-            // const SizedBox(height: 24),
-            // const Text(
-            //   'GPX File',
-            //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            // ),
-            // const SizedBox(height: 16),
-            // gpx_button.GPXFileButton(
-            //   openGpxFile: () => _openGpxFile(widget.gpxFile),
-            // ),
           ],
         ),
       ),
