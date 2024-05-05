@@ -225,7 +225,7 @@ class TaskManager {
     return tasks;
   }
 
-  void updateCsvData(Map<String, dynamic> newData) {
+  void updateTaskData(Map<String, dynamic> newData) {
     csvData ??= {};
     newData.forEach((key, value) {
       if (value.toString().isNotEmpty) {
@@ -283,96 +283,120 @@ class TaskManager {
         final xmlFile = File('${taskDirectory.path}/Task.xml');
 
         // Create the XML builder
-  final builder = XmlBuilder();
+        final builder = XmlBuilder();
 
 // Start building the XML
-builder.processing('xml', 'version="1.0" encoding="UTF-8"');
-builder.element('TaskArchiveZipModel', nest: () {
-  builder.namespace('xsi', 'http://www.w3.org/2001/XMLSchema-instance');
-  builder.namespace('xsd', 'http://www.w3.org/2001/XMLSchema');
+        builder.processing('xml', 'version="1.0" encoding="UTF-8"');
+        builder.element('TaskArchiveZipModel', nest: () {
+          builder.namespace('xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+          builder.namespace('xsd', 'http://www.w3.org/2001/XMLSchema');
 
-  builder.element('AgentId', nest: () {
-    builder.attribute('xsi:nil', 'true');
-  });
-  builder.element('AssignedDate', nest: csvData!['trackDatetime'] ?? '');
+          builder.element('AgentId', nest: () {
+            builder.attribute('xsi:nil', 'true');
+          });
+          builder.element('AssignedDate',
+              nest: csvData!['trackDatetime'] ?? '');
 
-  builder.element('Attachments');
+          builder.element('Attachments');
 
-  builder.element('AuditLogs', nest: () {
-    builder.element('TaskAuditLogZipModel', nest: () {
-      builder.element('AuditLevel', nest: 'Task');
-      builder.element('Label', nest: 'Task Status');
-      builder.element('Message', nest: csvData!['taskManagerStatus'] ?? '');
-      builder.element('SnapshotValue', nest: 'For Dispatch');
-      builder.element('Source', nest: csvData!['assignee'] ?? '');
-      builder.element('TaskId', nest: csvData!['taskManagerNumber'] ?? '');
-      builder.element('Timestamp', nest: csvData!['trackDatetime'] ?? '');
-      builder.element('UpdatedValue', nest: 'In Progress');
-      builder.element('FieldLabel', nest: 'Task Status');
-      builder.element('IPAddress', nest: '');
-    });
+          builder.element('AuditLogs', nest: () {
+            builder.element('TaskAuditLogZipModel', nest: () {
+              builder.element('AuditLevel', nest: 'Task');
+              builder.element('Label', nest: 'Task Status');
+              builder.element('Message',
+                  nest: csvData!['taskManagerStatus'] ?? '');
+              builder.element('SnapshotValue', nest: 'For Dispatch');
+              builder.element('Source', nest: csvData!['assignee'] ?? '');
+              builder.element('TaskId',
+                  nest: csvData!['taskManagerNumber'] ?? '');
+              builder.element('Timestamp',
+                  nest: csvData!['trackDatetime'] ?? '');
+              builder.element('UpdatedValue', nest: 'In Progress');
+              builder.element('FieldLabel', nest: 'Task Status');
+              builder.element('IPAddress', nest: '');
+            });
 
-    builder.element('TaskAuditLogZipModel', nest: () {
-      builder.element('AuditLevel', nest: 'Field');
-      builder.element('Label', nest: 'Captured Mobile Location');
-      builder.element('Source', nest: csvData!['assignee'] ?? '');
-      builder.element('TaskId', nest: csvData!['taskManagerNumber'] ?? '');
-      builder.element('Timestamp', nest: csvData!['trackDatetime'] ?? '');
-      builder.element('UpdatedValue', nest: csvData!['trackLastcoord'] ?? '');
-      builder.element('FieldLabel', nest: 'Captured Mobile Location');
-      builder.element('IPAddress', nest: '');
-    });
-  });
+            builder.element('TaskAuditLogZipModel', nest: () {
+              builder.element('AuditLevel', nest: 'Field');
+              builder.element('Label', nest: 'Captured Mobile Location');
+              builder.element('Source', nest: csvData!['assignee'] ?? '');
+              builder.element('TaskId',
+                  nest: csvData!['taskManagerNumber'] ?? '');
+              builder.element('Timestamp',
+                  nest: csvData!['trackDatetime'] ?? '');
+              builder.element('UpdatedValue',
+                  nest: csvData!['trackLastcoord'] ?? '');
+              builder.element('FieldLabel', nest: 'Captured Mobile Location');
+              builder.element('IPAddress', nest: '');
+            });
+          });
 
-  // Add other elements from csvData
-  builder.element('taskManagerNumber', nest: originalCsvData!['taskManagerNumber'] ?? '');
-  builder.element('serviceGroup', nest: csvData!['serviceGroup'] ?? '');
-  builder.element('serviceType', nest: csvData!['serviceType'] ?? '');
-  builder.element('priority', nest: csvData!['priority'] ?? '');
-  builder.element('taskManagerStatus', nest: csvData!['taskStatus'] ?? '');
-  builder.element('assignee', nest: csvData!['assignee'] ?? '');
-  builder.element('ppirAssignmentid', nest: csvData!['ppirAssignmentId'] ?? '');
-  builder.element('ppirInsuranceid', nest: csvData!['ppirInsuranceId'] ?? '');
-  builder.element('ppirFarmername', nest: csvData!['ppirFarmerName'] ?? '');
-  builder.element('ppirAddress', nest: csvData!['ppirAddress'] ?? '');
-  builder.element('ppirFarmertype', nest: csvData!['ppirFarmerType'] ?? '');
-  builder.element('ppirMobileno', nest: csvData!['ppirMobileNo'] ?? '');
-  builder.element('ppirGroupname', nest: csvData!['ppirGroupName'] ?? '');
-  builder.element('ppirGroupaddress', nest: csvData!['ppirGroupAddress'] ?? '');
-  builder.element('ppirLendername', nest: csvData!['ppirLenderName'] ?? '');
-  builder.element('ppirLenderaddress', nest: csvData!['ppirLenderAddress'] ?? '');
-  builder.element('ppirCicno', nest: csvData!['ppirCicNo'] ?? '');
-  builder.element('ppirFarmloc', nest: csvData!['ppirFarmLoc'] ?? '');
-  builder.element('ppirNorth', nest: csvData!['ppirNorth'] ?? '');
-  builder.element('ppirSouth', nest: csvData!['ppirSouth'] ?? '');
-  builder.element('ppirEast', nest: csvData!['ppirEast'] ?? '');
-  builder.element('ppirWest', nest: csvData!['ppirWest'] ?? '');
-  builder.element('ppirAtt1', nest: csvData!['ppirAtt1'] ?? '');
-  builder.element('ppirAtt2', nest: csvData!['ppirAtt2'] ?? '');
-  builder.element('ppirAtt3', nest: csvData!['ppirAtt3'] ?? '');
-  builder.element('ppirAtt4', nest: csvData!['ppirAtt4'] ?? '');
-  builder.element('ppirAreaAci', nest: csvData!['ppirAreaAci'] ?? '');
-  builder.element('ppirAreaAct', nest: csvData!['ppirAreaAct'] ?? '');
-  builder.element('ppirDopdsAci', nest: csvData!['ppirDopdsAci'] ?? '');
-  builder.element('ppirDopdsAct', nest: csvData!['ppirDopdsAct'] ?? '');
-  builder.element('ppirDoptpAci', nest: csvData!['ppirDoptpAci'] ?? '');
-  builder.element('ppirDoptpAct', nest: csvData!['ppirDoptpAct'] ?? '');
-  builder.element('ppirSvpAci', nest: csvData!['ppirSvpAci'] ?? '');
-  builder.element('ppirSvpAct', nest: csvData!['ppirSvpAct'] ?? '');
-  builder.element('ppirVariety', nest: csvData!['ppirVariety'] ?? '');
-  builder.element('ppirStagecrop', nest: csvData!['ppirStagecrop'] ?? '');
-  builder.element('ppirRemarks', nest: csvData!['ppirRemarks'] ?? '');
-  builder.element('ppirNameInsured', nest: csvData!['ppirNameInsured'] ?? '');
+          // Add other elements from csvData
+          builder.element('taskManagerNumber',
+              nest: originalCsvData!['taskManagerNumber'] ?? '');
+          builder.element('serviceGroup', nest: csvData!['serviceGroup'] ?? '');
+          builder.element('serviceType', nest: csvData!['serviceType'] ?? '');
+          builder.element('priority', nest: csvData!['priority'] ?? '');
+          builder.element('taskManagerStatus',
+              nest: csvData!['taskStatus'] ?? '');
+          builder.element('assignee', nest: csvData!['assignee'] ?? '');
+          builder.element('ppirAssignmentid',
+              nest: csvData!['ppirAssignmentId'] ?? '');
+          builder.element('ppirInsuranceid',
+              nest: csvData!['ppirInsuranceId'] ?? '');
+          builder.element('ppirFarmername',
+              nest: csvData!['ppirFarmerName'] ?? '');
+          builder.element('ppirAddress', nest: csvData!['ppirAddress'] ?? '');
+          builder.element('ppirFarmertype',
+              nest: csvData!['ppirFarmerType'] ?? '');
+          builder.element('ppirMobileno', nest: csvData!['ppirMobileNo'] ?? '');
+          builder.element('ppirGroupname',
+              nest: csvData!['ppirGroupName'] ?? '');
+          builder.element('ppirGroupaddress',
+              nest: csvData!['ppirGroupAddress'] ?? '');
+          builder.element('ppirLendername',
+              nest: csvData!['ppirLenderName'] ?? '');
+          builder.element('ppirLenderaddress',
+              nest: csvData!['ppirLenderAddress'] ?? '');
+          builder.element('ppirCicno', nest: csvData!['ppirCicNo'] ?? '');
+          builder.element('ppirFarmloc', nest: csvData!['ppirFarmLoc'] ?? '');
+          builder.element('ppirNorth', nest: csvData!['ppirNorth'] ?? '');
+          builder.element('ppirSouth', nest: csvData!['ppirSouth'] ?? '');
+          builder.element('ppirEast', nest: csvData!['ppirEast'] ?? '');
+          builder.element('ppirWest', nest: csvData!['ppirWest'] ?? '');
+          builder.element('ppirAtt1', nest: csvData!['ppirAtt1'] ?? '');
+          builder.element('ppirAtt2', nest: csvData!['ppirAtt2'] ?? '');
+          builder.element('ppirAtt3', nest: csvData!['ppirAtt3'] ?? '');
+          builder.element('ppirAtt4', nest: csvData!['ppirAtt4'] ?? '');
+          builder.element('ppirAreaAci', nest: csvData!['ppirAreaAci'] ?? '');
+          builder.element('ppirAreaAct', nest: csvData!['ppirAreaAct'] ?? '');
+          builder.element('ppirDopdsAci', nest: csvData!['ppirDopdsAci'] ?? '');
+          builder.element('ppirDopdsAct', nest: csvData!['ppirDopdsAct'] ?? '');
+          builder.element('ppirDoptpAci', nest: csvData!['ppirDoptpAci'] ?? '');
+          builder.element('ppirDoptpAct', nest: csvData!['ppirDoptpAct'] ?? '');
+          builder.element('ppirSvpAci', nest: csvData!['ppirSvpAci'] ?? '');
+          builder.element('ppirSvpAct', nest: csvData!['ppirSvpAct'] ?? '');
+          builder.element('ppirVariety', nest: csvData!['ppirVariety'] ?? '');
+          builder.element('ppirStagecrop',
+              nest: csvData!['ppirStagecrop'] ?? '');
+          builder.element('ppirRemarks', nest: csvData!['ppirRemarks'] ?? '');
+          builder.element('ppirNameInsured',
+              nest: csvData!['ppirNameInsured'] ?? '');
 
-  builder.element('ppirNameIuia', nest: csvData!['ppirNameIuia'] ?? '');
-  builder.element('ppirSigInsured', nest: csvData!['ppirSigInsured'] ?? '');
-  builder.element('ppirSigIuia', nest: csvData!['ppirSigIuia'] ?? '');
+          builder.element('ppirNameIuia', nest: csvData!['ppirNameIuia'] ?? '');
+          builder.element('ppirSigInsured',
+              nest: csvData!['ppirSigInsured'] ?? '');
+          builder.element('ppirSigIuia', nest: csvData!['ppirSigIuia'] ?? '');
 
-  builder.element('trackTotalarea', nest: csvData!['trackTotalarea'] ?? '');
-  builder.element('trackDatetime', nest: csvData!['trackDatetime'] ?? '');
-  builder.element('trackLastcoord', nest: csvData!['trackLastcoord'] ?? '');
-  builder.element('trackTotaldistance', nest: csvData!['trackTotaldistance'] ?? '');
-});
+          builder.element('trackTotalarea',
+              nest: csvData!['trackTotalarea'] ?? '');
+          builder.element('trackDatetime',
+              nest: csvData!['trackDatetime'] ?? '');
+          builder.element('trackLastcoord',
+              nest: csvData!['trackLastcoord'] ?? '');
+          builder.element('trackTotaldistance',
+              nest: csvData!['trackTotaldistance'] ?? '');
+        });
 
         // Generate the XML string
         final xmlString = builder.buildDocument().toXmlString(pretty: true);

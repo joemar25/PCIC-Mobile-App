@@ -206,9 +206,6 @@ class PCICFormPageState extends State<PCICFormPage> {
             const SnackBar(content: Text('Form data saved as TASK')),
           );
         });
-
-        // Delete the directory after the TASK file is successfully created
-        // await _deleteDirectory(directory);
       } else {
         debugPrint('Failed to create TASK file');
         SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -217,6 +214,9 @@ class PCICFormPageState extends State<PCICFormPage> {
           );
         });
       }
+
+      // Delete the directory after the TASK folder
+      await _deleteDirectory(directory);
     } catch (e, stackTrace) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -228,19 +228,19 @@ class PCICFormPageState extends State<PCICFormPage> {
     }
   }
 
-  // Future<void> _deleteDirectory(Directory directory) async {
-  //   try {
-  //     if (await directory.exists()) {
-  //       await directory.delete(recursive: true);
-  //       debugPrint('Directory deleted: ${directory.path}');
-  //     } else {
-  //       debugPrint('Directory does not exist: ${directory.path}');
-  //     }
-  //   } catch (e) {
-  //     debugPrint('Error deleting directory: ${directory.path}');
-  //     debugPrint('Error details: $e');
-  //   }
-  // }
+  Future<void> _deleteDirectory(Directory directory) async {
+    try {
+      if (await directory.exists()) {
+        await directory.delete(recursive: true);
+        debugPrint('Directory deleted: ${directory.path}');
+      } else {
+        debugPrint('Directory does not exist: ${directory.path}');
+      }
+    } catch (e) {
+      debugPrint('Error deleting directory: ${directory.path}');
+      debugPrint('Error details: $e');
+    }
+  }
 
   Future<List<ArchiveFile>> addFilesToArchive(
       Directory dir, String rootPath) async {
@@ -402,7 +402,7 @@ class PCICFormPageState extends State<PCICFormPage> {
     _formData['ppirSigIuia'] = signatureData['ppirSigIuia'] ?? 'no value';
     _formData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
 
-    widget.task.updateCsvData(_getChangedData());
+    widget.task.updateTaskData(_getChangedData());
     widget.task.isCompleted = true;
 
     // Save the signature files
@@ -667,3 +667,5 @@ class PCICFormPageState extends State<PCICFormPage> {
     }
   }
 }
+
+// MAR Note: base on the gpx file, not the file being passed to get the hectares
