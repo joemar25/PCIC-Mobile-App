@@ -33,11 +33,9 @@ class LoginPageState extends State<LoginPage> {
   Future<void> _checkExistingToken() async {
     String? token = await _session.getToken();
     await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      if (token != null) {
-        // Token exists, navigate to the home page
-        _navigateToDashboard();
-      }
+    if (mounted && token != null) {
+      // Token exists, navigate to the home page
+      _navigateToDashboard();
     }
   }
 
@@ -92,12 +90,27 @@ class LoginPageState extends State<LoginPage> {
     });
   }
 
-  Future<void> _requestLocationPermission() async {
-    final status = await Permission.location.request();
-    if (mounted && status.isGranted) {
-      await _getCurrentLocation();
-    } else {
-      debugPrint('Location permission denied');
+  Future<void> _requestPermissions() async {
+    final locationStatus = await Permission.location.request();
+    final storageStatus = await Permission.manageExternalStorage.request();
+
+    if (mounted) {
+      if (locationStatus.isGranted && storageStatus.isGranted) {
+        await _getCurrentLocation();
+      } else {
+        if (!locationStatus.isGranted) {
+          debugPrint('Location permission denied');
+        }
+        if (!storageStatus.isGranted) {
+          debugPrint('MANAGE_EXTERNAL_STORAGE permission denied');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'External storage permission is required to open GPX files'),
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -110,6 +123,13 @@ class LoginPageState extends State<LoginPage> {
           'Current location: ${position.latitude}, ${position.longitude}');
     } catch (e) {
       debugPrint('Error getting current location: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to get current location'),
+          ),
+        );
+      }
     }
   }
 
@@ -125,11 +145,10 @@ class LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              width: 100, // Adjust width as needed
+              width: 100,
               height: 100,
               child: Image.asset(
                 'assets/storage/images/icon.png',
-                // Adjust height as needed
               ),
             ),
             const Text(
@@ -197,7 +216,7 @@ class LoginPageState extends State<LoginPage> {
                                   await userCredential.user?.getIdToken();
                               _session.init(token!);
                               // Request location permission
-                              await _requestLocationPermission();
+                              await _requestPermissions();
                               // Navigate to the next screen
                               _navigateToVerifyLogin();
 
