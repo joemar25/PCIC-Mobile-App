@@ -49,6 +49,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
 
   bool isLoading = false;
   bool retainPinDrop = false;
+  bool isInitializing = true;
   bool isColumnVisible = true;
   bool isRoutingStarted = false;
   bool showConfirmationDialog = true;
@@ -59,7 +60,11 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _initializeLocation();
+    _initializeLocation().then((_) {
+      setState(() {
+        isInitializing = false;
+      });
+    });
   }
 
   @override
@@ -507,80 +512,89 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
-          Scaffold(
-            body: SlidingUpPanel(
-              onPanelSlide: (position) => setState(() {
-                final panelMaxScrollElement = panelMaxHeight - panelMinHeight;
-                fabHeight = position * panelMaxScrollElement + fabHeightClosed;
-              }),
-              controller: panelController,
-              parallaxEnabled: true,
-              parallaxOffset: 0.3,
-              minHeight: panelMinHeight,
-              maxHeight: panelMaxHeight,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(30.0)),
-              body: _mapService.buildMap(),
-              panelBuilder: (controller) => GeoTagBottomSheet(
-                controller: controller,
-                panelController: panelController,
-                latitude: latitude,
-                longitude: longitude,
-                address: address,
-                isRoutingStarted: isRoutingStarted,
-                onStartRoutingRequest: _handleStartRoutingRequest,
-                onStopRoutingRequest: _handleStopRoutingRequest,
-                onAddMarkerCurrentLocationRequest:
-                    _handleAddMarkerCurrentLocation,
+          if (isInitializing)
+            const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
               ),
-            ),
-            floatingActionButton: Stack(
-              children: [
-                Positioned(
-                    right: 0,
-                    bottom: fabHeight,
-                    child: SizedBox(
-                      height: 40,
-                      width: 40,
-                      child: FloatingActionButton(
-                        onPressed: () => _getCurrentLocation(addMarker: false),
-                        shape: const CircleBorder(),
-                        backgroundColor: const Color(0xFF0F7D40),
-                        elevation: 4.0,
-                        child: SvgPicture.asset(
-                          'assets/storage/images/position.svg',
-                          colorFilter: const ColorFilter.mode(
-                              Colors.white, BlendMode.srcIn),
-                          // size: 20.0,
-                        ),
-                      ),
-                    )),
-                Positioned(
-                    top: 80.0,
-                    left: 40.0,
-                    child: SizedBox(
-                      height: 40,
-                      width: 40,
-                      child: FloatingActionButton(
-                          onPressed: isRoutingStarted
-                              ? () {
-                                  _showAlert(context);
-                                }
-                              : () {
-                                  Navigator.pop(context);
-                                },
+            )
+          else
+            Scaffold(
+              body: SlidingUpPanel(
+                onPanelSlide: (position) => setState(() {
+                  final panelMaxScrollElement = panelMaxHeight - panelMinHeight;
+                  fabHeight =
+                      position * panelMaxScrollElement + fabHeightClosed;
+                }),
+                controller: panelController,
+                parallaxEnabled: true,
+                parallaxOffset: 0.3,
+                minHeight: panelMinHeight,
+                maxHeight: panelMaxHeight,
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(30.0)),
+                body: _mapService.buildMap(),
+                panelBuilder: (controller) => GeoTagBottomSheet(
+                  controller: controller,
+                  panelController: panelController,
+                  latitude: latitude,
+                  longitude: longitude,
+                  address: address,
+                  isRoutingStarted: isRoutingStarted,
+                  onStartRoutingRequest: _handleStartRoutingRequest,
+                  onStopRoutingRequest: _handleStopRoutingRequest,
+                  onAddMarkerCurrentLocationRequest:
+                      _handleAddMarkerCurrentLocation,
+                ),
+              ),
+              floatingActionButton: Stack(
+                children: [
+                  Positioned(
+                      right: 0,
+                      bottom: fabHeight,
+                      child: SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: FloatingActionButton(
+                          onPressed: () =>
+                              _getCurrentLocation(addMarker: false),
                           shape: const CircleBorder(),
                           backgroundColor: const Color(0xFF0F7D40),
                           elevation: 4.0,
                           child: SvgPicture.asset(
-                            'assets/storage/images/arrow-left.svg',
+                            'assets/storage/images/position.svg',
                             colorFilter: const ColorFilter.mode(
                                 Colors.white, BlendMode.srcIn),
-                          )),
-                    )),
-              ],
+                            // size: 20.0,
+                          ),
+                        ),
+                      )),
+                  Positioned(
+                      top: 80.0,
+                      left: 40.0,
+                      child: SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: FloatingActionButton(
+                            onPressed: isRoutingStarted
+                                ? () {
+                                    _showAlert(context);
+                                  }
+                                : () {
+                                    Navigator.pop(context);
+                                  },
+                            shape: const CircleBorder(),
+                            backgroundColor: const Color(0xFF0F7D40),
+                            elevation: 4.0,
+                            child: SvgPicture.asset(
+                              'assets/storage/images/arrow-left.svg',
+                              colorFilter: const ColorFilter.mode(
+                                  Colors.white, BlendMode.srcIn),
+                            )),
+                      )),
+                ],
+              ),
             ),
-          ),
           if (isLoading)
             Positioned.fill(
               child: Container(
