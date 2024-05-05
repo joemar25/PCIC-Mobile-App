@@ -37,9 +37,9 @@ class App extends StatelessWidget {
           restorationScopeId: 'app',
           title: "PCIC Mobile App",
 
-          theme: ThemeData.light(),
-          darkTheme: ThemeData.dark(),
-          themeMode: settingsController.themeMode,
+          // theme: ThemeData.light(),
+          // darkTheme: ThemeData.dark(),
+          // themeMode: settingsController.themeMode,
 
           debugShowCheckedModeBanner: false,
 
