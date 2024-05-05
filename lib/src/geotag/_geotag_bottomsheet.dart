@@ -6,6 +6,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 class GeoTagBottomSheet extends StatefulWidget {
   final String latitude;
   final String longitude;
+  final String address;
   final bool isRoutingStarted;
 
   final VoidCallback onStopRoutingRequest;
@@ -15,16 +16,18 @@ class GeoTagBottomSheet extends StatefulWidget {
   final ScrollController controller;
   final PanelController panelController;
 
-  const GeoTagBottomSheet(
-      {super.key,
-      required this.controller,
-      required this.isRoutingStarted,
-      required this.onStopRoutingRequest,
-      required this.onStartRoutingRequest,
-      required this.onAddMarkerCurrentLocationRequest,
-      required this.latitude,
-      required this.longitude,
-      required this.panelController});
+  const GeoTagBottomSheet({
+    super.key,
+    required this.controller,
+    required this.isRoutingStarted,
+    required this.onStopRoutingRequest,
+    required this.onStartRoutingRequest,
+    required this.onAddMarkerCurrentLocationRequest,
+    required this.latitude,
+    required this.longitude,
+    required this.panelController,
+    required this.address,
+  });
 
   @override
   State<GeoTagBottomSheet> createState() => _GeoTagBottomSheetState();
@@ -165,37 +168,41 @@ class _GeoTagBottomSheetState extends State<GeoTagBottomSheet> {
             style: TextStyle(
                 fontSize: t?.title ?? 14.0, fontWeight: FontWeight.bold),
           ),
-          // Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          //   SizedBox(
-          //     height: 35,
-          //     width: 35,
-          //     child: SvgPicture.asset(
-          //       'assets/storage/images/navigate.svg',
-          //       colorFilter:
-          //           const ColorFilter.mode(Color(0xFF0F7D40), BlendMode.srcIn),
-          //     ),
-          //   ),
-          //   const SizedBox(
-          //     width: 8.0,
-          //   ),
-          //   const Column(
-          //     crossAxisAlignment: CrossAxisAlignment.start,
-          //     children: [
-          //       Text(
-          //         'Address',
-          //         style: TextStyle(
-          //             fontSize: 11.11,
-          //             fontWeight: FontWeight.w700,
-          //             color: Color(0xFF797C7B)),
-          //       ),
-          //       Text('Legazpi City, Albay, 4500',
-          //           style: TextStyle(
-          //               fontSize: t?.caption ?? 14.0,
-          //               fontWeight: FontWeight.bold,
-          //               color: Colors.black))
-          //     ],
-          //   )
-          // ]),
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            SizedBox(
+              height: 35,
+              width: 35,
+              child: SvgPicture.asset(
+                'assets/storage/images/navigate.svg',
+                colorFilter:
+                    const ColorFilter.mode(Color(0xFF0F7D40), BlendMode.srcIn),
+              ),
+            ),
+            const SizedBox(width: 8.0),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Address',
+                    style: TextStyle(
+                      fontSize: 11.11,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF797C7B),
+                    ),
+                  ),
+                  Text(
+                    widget.address,
+                    style: TextStyle(
+                      fontSize: t?.caption ?? 14.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ]),
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             SizedBox(
               height: 35,

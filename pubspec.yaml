@@ -52,7 +52,8 @@ dependencies:
   shimmer: ^3.0.0
   sliding_up_panel: ^2.0.0+1
   tuple: ^2.0.2
-  device_info_plus: ^10.1.0 # permission handler - JC please use this
+  device_info_plus: ^10.1.0 # permission handler
+  geocoding: ^3.0.0
 
 dev_dependencies:
   flutter_test:
