@@ -54,6 +54,7 @@ dependencies:
   tuple: ^2.0.2
   device_info_plus: ^10.1.0 # permission handler
   geocoding: ^3.0.0
+  flash: ^3.1.0
 
 dev_dependencies:
   flutter_test:
