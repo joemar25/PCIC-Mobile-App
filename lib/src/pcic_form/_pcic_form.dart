@@ -360,38 +360,13 @@ class PCICFormPageState extends State<PCICFormPage> {
         signatureData['ppirNameIuia']?.trim().isEmpty == true;
 
     if (hasEmptyEnabledFields || hasEmptySignatureFields) {
+      // Show an error message or handle the incomplete form data
       if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Confirmation'),
-            content: const Text('Are you sure the data above is correct?'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('No'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  Navigator.pop(context);
-                  setState(() {
-                    isSaving = true;
-                  });
-                  _saveFormData();
-                  _createTaskFile(context);
-                  setState(() {
-                    isSaving = false;
-                  });
-                },
-                child: const Text('Yes'),
-              ),
-            ],
-          ),
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please fill in all required fields')),
         );
+        return;
       }
-      return;
     }
 
     // Show the confirmation dialog
