@@ -10,6 +10,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:gpx/gpx.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
+import 'package:pcic_mobile_app/utils/app/_show_flash_message.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tuple/tuple.dart';
@@ -281,13 +282,11 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
             });
             // Handle the exception gracefully
             debugPrint('Exception caught: $e');
-            // Show an error message to the user
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('An error occurred while saving the files.'),
-                duration: Duration(seconds: 2),
-              ),
-            );
+
+            // Show an error message to the use
+            showFlashMessage(context, 'Error', 'Error Saving File',
+                'Something went wrong! Please try again.');
+            Navigator.pop(context);
           }
         });
       }

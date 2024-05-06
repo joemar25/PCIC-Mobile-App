@@ -1,19 +1,18 @@
 // file: _home.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pcic_mobile_app/src/home/_flash.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../messages/_view.dart';
 import '../splash/_splash.dart';
-
 import '../tasks/_control_task.dart';
 import '../tasks/_task.dart';
-
 import '_home_header.dart';
+import '_recent_task_container.dart';
 import '_search_button.dart';
 import '_task_count_container.dart';
-import '_recent_task_container.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -162,6 +161,7 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
     final CustomThemeExtension? t =
         Theme.of(context).extension<CustomThemeExtension>();
     // If there's no token, show a loading indicator while waiting for the redirection to complete.
@@ -174,6 +174,7 @@ class HomeScreenState extends State<HomeScreen> {
     }
 
     return Scaffold(
+      key: _key,
       appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 1.0,
