@@ -27,7 +27,6 @@ class _LoginTextFieldState extends State<LoginTextField> {
   Widget build(BuildContext context) {
     final t = Theme.of(context).extension<CustomThemeExtension>();
     return Container(
-      height: 55,
       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
       decoration: BoxDecoration(
           border: Border.all(
@@ -38,12 +37,12 @@ class _LoginTextFieldState extends State<LoginTextField> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SvgPicture.asset(widget.svgPath),
-          const VerticalDivider(
-            color: Colors.grey,
-            thickness: 1.0,
-            indent: 8.0,
-            endIndent: 8.0,
-          ),
+          const SizedBox(
+              height: 30,
+              child: VerticalDivider(
+                color: Colors.grey,
+                thickness: 1.0,
+              )),
           Expanded(
               flex: 1,
               child: Column(

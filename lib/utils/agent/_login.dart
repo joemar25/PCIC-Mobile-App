@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:pcic_mobile_app/utils/agent/_session.dart';
 import 'package:pcic_mobile_app/utils/agent/_signup.dart';
 import 'package:pcic_mobile_app/utils/agent/_verify_login.dart';
 import 'package:pcic_mobile_app/utils/agent/login-components/_login_remember_and_forgot.dart';
 import 'package:pcic_mobile_app/utils/agent/login-components/_login_text_field.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../src/home/_home.dart';
 
@@ -238,27 +238,21 @@ class LoginPageState extends State<LoginPage> {
                             ),
                             backgroundColor: const Color(0xFF0F7D40),
                           ),
-                          child: _isLoading
-                              ? const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 13.0,
-                                    horizontal: 8.0,
-                                  ),
-                                  child: SizedBox(
-                                    width: 23,
-                                    height: 23,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 13.0,
+                              horizontal: 8.0,
+                            ),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    height: 23.0,
+                                    width: 23.0,
                                     child: CircularProgressIndicator(
                                       color: Colors.white,
                                       strokeWidth: 4,
                                     ),
-                                  ),
-                                )
-                              : const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 13.0,
-                                    horizontal: 8.0,
-                                  ),
-                                  child: Text(
+                                  )
+                                : const Text(
                                     'Sign in',
                                     style: TextStyle(
                                       color: Colors.white,
@@ -266,7 +260,7 @@ class LoginPageState extends State<LoginPage> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                ),
+                          ),
                         ),
                       ),
                     ],
