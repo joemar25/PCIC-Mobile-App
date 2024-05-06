@@ -52,6 +52,24 @@ class FormSection extends StatelessWidget {
             }
           },
         ),
+
+        ///// ------------
+        const SizedBox(height: 16),
+        const Text(
+          'Actual Area Planted',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        TextFormField(
+          initialValue: formData['ppirAreaAct'],
+          decoration: const InputDecoration(
+            labelText: 'Actual Area',
+          ),
+          onChanged: (value) {
+            formData['ppirAreaAct'] = value;
+          },
+        ),
+        ///// ------------
+
         const SizedBox(height: 24),
         const Text(
           'Seed Varieties Planted and Remarks',
