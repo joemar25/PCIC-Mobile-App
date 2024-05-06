@@ -52,8 +52,6 @@ class FormSection extends StatelessWidget {
             }
           },
         ),
-
-        ///// ------------
         const SizedBox(height: 16),
         const Text(
           'Actual Area Planted',
@@ -68,8 +66,6 @@ class FormSection extends StatelessWidget {
             formData['ppirAreaAct'] = value;
           },
         ),
-        ///// ------------
-
         const SizedBox(height: 24),
         const Text(
           'Seed Varieties Planted and Remarks',
