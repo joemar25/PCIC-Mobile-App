@@ -1,12 +1,14 @@
 // file: pcic_form.dart
 import 'dart:io';
+
+import 'package:archive/archive_io.dart';
 import 'package:external_path/external_path.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:archive/archive_io.dart';
+import 'package:pcic_mobile_app/utils/app/_show_flash_message.dart';
 
 import '../../utils/seeds/_dropdown.dart';
 import '../geotag/_map_service.dart';
@@ -238,16 +240,14 @@ class PCICFormPageState extends State<PCICFormPage> {
       } else {
         debugPrint('Failed to create TASK file');
         SchedulerBinding.instance.addPostFrameCallback((_) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error saving form data as TASK')),
-          );
+          showFlashMessage(context, 'Error', 'Error Saving File',
+              'Error saving form data as TASK');
         });
       }
     } catch (e, stackTrace) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error saving form data as TASK')),
-        );
+        showFlashMessage(context, 'Error', 'Error Saving File',
+            'Error saving form data as TASK');
       });
       debugPrint('Error saving form data as TASK: $e');
       debugPrint('Stack trace: $stackTrace');
@@ -362,9 +362,9 @@ class PCICFormPageState extends State<PCICFormPage> {
     if (hasEmptyEnabledFields || hasEmptySignatureFields) {
       // Show an error message or handle the incomplete form data
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please fill in all required fields')),
-        );
+        showFlashMessage(context, 'Info', 'Form Fields',
+            'Please fill in all required fields');
+
         return;
       }
     }
