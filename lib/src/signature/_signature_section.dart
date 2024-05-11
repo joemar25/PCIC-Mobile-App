@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
 
+import '../pcic_form/_tap_to_signature.dart';
 import '../tasks/_control_task.dart';
 
 class SignatureSection extends StatefulWidget {
@@ -63,13 +64,15 @@ class SignatureSectionState extends State<SignatureSection> {
           ),
         ),
         const SizedBox(height: 10),
-        Container(
-          height: 200,
-          color: Colors.grey,
-          child: Signature(
-            controller: _confirmedBySignatureController,
+        GestureDetector(
+          child: Container(
             height: 200,
-            backgroundColor: Colors.white70,
+            color: Colors.grey,
+            child: TapToSignature(
+              controller: _confirmedBySignatureController,
+              height: 200,
+              backgroundColor: Colors.white70,
+            ),
           ),
         ),
         const SizedBox(height: 20),
@@ -85,13 +88,15 @@ class SignatureSectionState extends State<SignatureSection> {
           ),
         ),
         const SizedBox(height: 10),
-        Container(
-          height: 200,
-          color: Colors.grey,
-          child: Signature(
-            controller: _preparedBySignatureController,
+        GestureDetector(
+          child: Container(
             height: 200,
-            backgroundColor: Colors.white70,
+            color: Colors.grey,
+            child: TapToSignature(
+              controller: _preparedBySignatureController,
+              height: 200,
+              backgroundColor: Colors.white70,
+            ),
           ),
         ),
         const SizedBox(height: 20),
