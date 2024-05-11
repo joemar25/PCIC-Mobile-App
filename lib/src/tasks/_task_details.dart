@@ -153,9 +153,16 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
   // }
 
   void _navigateToGeotagPage() {
-    // _debugPrintCsvData(); // Debug CSV before navigating
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => GeotagPage(task: widget.task)));
+    if (!widget.task.isCompleted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => GeotagPage(task: widget.task)),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Task is already completed.')),
+      );
+    }
   }
 
   @override
@@ -173,37 +180,41 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: Column(
-                  children: [
-                    ElevatedButton(
-                        onPressed: _navigateToGeotagPage,
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(0, 60),
-                          shape: const CircleBorder(),
-                          backgroundColor: const Color(0xFF0F7D40),
-                        ),
-                        child: SizedBox(
-                            height: 35,
-                            width: 35,
-                            child: SvgPicture.asset(
-                              'assets/storage/images/geotag.svg',
-                              colorFilter: const ColorFilter.mode(
-                                  Colors.white, BlendMode.srcIn),
-                            ))),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Text(
-                        'Go to Geotag',
-                        style: TextStyle(
-                            fontSize: t?.body,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600),
+            if (!widget.task.isCompleted) // Render button only if task is not completed
+              Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: Column(
+                    children: [
+                      ElevatedButton(
+                          onPressed: _navigateToGeotagPage,
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(0, 60),
+                            shape: const CircleBorder(),
+                            backgroundColor: const Color(0xFF0F7D40),
+                          ),
+                          child: SizedBox(
+                              height: 35,
+                              width: 35,
+                              child: SvgPicture.asset(
+                                'assets/storage/images/geotag.svg',
+                                colorFilter: const ColorFilter.mode(
+                                    Colors.white, BlendMode.srcIn),
+                              ),
+                          ),
                       ),
-                    )
-                  ],
-                )),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          'Go to Geotag',
+                          style: TextStyle(
+                              fontSize: t?.body,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      )
+                    ],
+                  ),
+              ),
             _buildFormSection('Post Planting Inspection Report', [
               _buildFormField('Farmer Name', formData['ppirFarmerName']),
               _buildFormField('Address', formData['ppirAddress']),
@@ -240,9 +251,46 @@ class TaskDetailsPageState extends State<TaskDetailsPage> {
                   'Date of Planting (TP)', formData['ppirDoptpAci']),
               _buildFormField('Seed Variety Planted', formData['ppirVariety']),
             ]),
+            _buildFormSection('Tracking Results', [
+              _buildFormField('Last Coordinates', widget.task.csvData?['trackLastcoord']),
+              _buildFormField('Date and Time', widget.task.csvData?['trackDatetime']),
+              _buildFormField('Total Area (Hectares)', widget.task.csvData?['trackTotalarea']),
+              _buildFormField('Total Distance', widget.task.csvData?['trackTotalDistance']),
+            ]),
+            _buildFormSection('Actual Details', [
+              _buildFormField('Last Coordinates', widget.task.csvData?['ppirAreaAct']),
+              _buildFormField('Seed Variety', widget.task.csvData?['ppirVariety']),
+              _buildFormField('Actual Date of Planting (DS)', widget.task.csvData?['ppirDopdsAct']),
+              _buildFormField('Actual Date of Planting (TP)', widget.task.csvData?['ppirDoptpAct']),
+              _buildFormField('Remarks', widget.task.csvData?['ppirRemarks']),
+            ]),
+            _buildFormSection('Assignees', [
+              _buildFormField('Confirmed By', widget.task.csvData?['ppirNameInsured']),
+              _buildFormField('Prepare By', widget.task.csvData?['ppirNameIuia']),
+            ]),
           ],
         ),
       ),
     );
   }
 }
+
+
+// Tracking Results
+// Last Coordinates: trackLastcoord
+// Date and Time: trackDatetime
+// Total Area (Hectares): trackTotalarea
+// Total Distance: trackTotalDistance
+//
+// Land Details
+// Actual Area Planted: ppirAreaAct
+// Seed Variety: ppirVariety
+// Actual Date of Planting (DS): ppirDopdsAct
+// Actual Date of Planting (TP): ppirDoptpAct
+// Remarks: ppirRemarks
+//
+// Assignees
+// Confirmed By: ppirNameInsured
+// // ppirSigIuia - blob
+// Prepare By: ppirNameIuia
+// // ppirSigInsured - blob
