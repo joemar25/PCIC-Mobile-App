@@ -60,7 +60,7 @@ class DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     final CustomThemeExtension? t =
-        Theme.of(context).extension<CustomThemeExtension>();
+    Theme.of(context).extension<CustomThemeExtension>();
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -79,7 +79,7 @@ class DashboardPageState extends State<DashboardPage> {
           selectedLabelStyle: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize:
-                t?.overline ?? 14.0, // Provide a default value if t is null
+            t?.overline ?? 14.0, // Provide a default value if t is null
           ),
         ),
       ),
@@ -113,14 +113,24 @@ class HomeScreenState extends State<HomeScreen> {
     _fetchTasks();
   }
 
+  void _navigateToTaskPage(bool isCompleted) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => TaskPage(initialFilter: isCompleted),
+      ),
+    );
+  }
+
   Future<void> _checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     if (token == null) {
       // Redirect to the splash screen if token is null
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const SplashScreen()),
-      );
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const SplashScreen()),
+        );
+      }
     } else {
       setState(() {
         _token = token;
@@ -193,7 +203,7 @@ class HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 8.0),
-                const TaskCountContainer(),
+                TaskCountContainer(onTasksPressed: _navigateToTaskPage),
                 const SizedBox(height: 16.0),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),

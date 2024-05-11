@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
+import '../tasks/_task.dart';
+
 class TaskCountBox extends StatefulWidget {
   final String label;
   final int count;
@@ -13,6 +15,17 @@ class TaskCountBox extends StatefulWidget {
 }
 
 class _TaskCountBoxState extends State<TaskCountBox> {
+  void _navigateToTaskPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TaskPage(
+          initialFilter: widget.label == 'Completed',
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).extension<CustomThemeExtension>();
@@ -28,51 +41,50 @@ class _TaskCountBoxState extends State<TaskCountBox> {
       imagePath = 'assets/storage/images/clock.svg';
     }
 
-    return Container(
-      height: 100,
-      decoration: BoxDecoration(
-        color: containerColor,
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10.0),
-            decoration:
-                BoxDecoration(color: circleColor, shape: BoxShape.circle),
-            height: 45,
-            width: 45,
-            child: SvgPicture.asset(
-              imagePath,
-              colorFilter:
-                  const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+    return GestureDetector(
+      onTap: _navigateToTaskPage,
+      child: Container(
+        height: 100,
+        decoration: BoxDecoration(
+          color: containerColor,
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10.0),
+              decoration: BoxDecoration(color: circleColor, shape: BoxShape.circle),
+              height: 45,
+              width: 45,
+              child: SvgPicture.asset(
+                imagePath,
+                colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+              ),
             ),
-          ),
-          const SizedBox(
-            width: 10.0,
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.label,
-                style: TextStyle(
-                  fontSize: t?.body ?? 14.0,
-                  fontWeight: FontWeight.w600,
+            const SizedBox(width: 10.0),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.label,
+                  style: TextStyle(
+                    fontSize: t?.body ?? 14.0,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              Text(
-                'Tasks: ${widget.count}',
-                style: TextStyle(
-                  fontSize: t?.caption ?? 12.0,
+                Text(
+                  'Tasks: ${widget.count}',
+                  style: TextStyle(
+                    fontSize: t?.caption ?? 12.0,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
