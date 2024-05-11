@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '_detail.dart';
-import 'model.dart';
+import '_model.dart';
 
 class MessagesPage extends StatefulWidget {
   const MessagesPage({super.key});
@@ -32,7 +32,7 @@ class MessagesPageState extends State<MessagesPage> {
       'color': Colors.orange,
     },
     {
-      'name': 'Mr John Doe',
+      'name': 'Mr. Johnny Depp',
       'message': 'I have a question for you.',
       'time': DateTime(2023, 6, 3, 11, 15),
       'color': Colors.purple,
@@ -87,7 +87,13 @@ class MessagesPageState extends State<MessagesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Messages'),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: const Text(
+          'Messages',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 19.2, fontWeight: FontWeight.w600),
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -97,29 +103,29 @@ class MessagesPageState extends State<MessagesPage> {
         },
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Flexible(
-                    child: Text(
-                      'Messages',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.filter_list),
-                    onPressed: () {
-                      // Implement filter functionality
-                    },
-                  ),
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(16.0),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: [
+            //       const Flexible(
+            //         child: Text(
+            //           'Messages',
+            //           style: TextStyle(
+            //             fontSize: 24,
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //         ),
+            //       ),
+            //       IconButton(
+            //         icon: const Icon(Icons.filter_list),
+            //         onPressed: () {
+            //           // Implement filter functionality
+            //         },
+            //       ),
+            //     ],
+            //   ),
+            // ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextField(
