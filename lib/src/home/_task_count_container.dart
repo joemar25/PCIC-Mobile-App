@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import '_task_box_container.dart';
 
 class TaskCountContainer extends StatefulWidget {
-  const TaskCountContainer({super.key});
+  final Function(bool) onTasksPressed;
+
+  const TaskCountContainer({super.key, required this.onTasksPressed});
 
   @override
   State<TaskCountContainer> createState() => _TaskCountContainerState();
@@ -56,16 +58,22 @@ class _TaskCountContainerState extends State<TaskCountContainer> {
       child: Row(
         children: [
           Expanded(
-            child: TaskCountBox(
-              label: 'Completed',
-              count: completedTaskCount,
+            child: GestureDetector(
+              onTap: () => widget.onTasksPressed(true),
+              child: TaskCountBox(
+                label: 'Completed',
+                count: completedTaskCount,
+              ),
             ),
           ),
           const SizedBox(width: 10.0),
           Expanded(
-            child: TaskCountBox(
-              label: 'Remaining',
-              count: remainingTaskCount,
+            child: GestureDetector(
+              onTap: () => widget.onTasksPressed(false),
+              child: TaskCountBox(
+                label: 'Remaining',
+                count: remainingTaskCount,
+              ),
             ),
           ),
         ],

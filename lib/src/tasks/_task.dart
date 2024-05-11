@@ -1,10 +1,12 @@
+// filename: _task.dart
 import 'package:flutter/material.dart';
 
 import '_control_task.dart';
 import '_task_view.dart';
 
 class TaskPage extends StatefulWidget {
-  const TaskPage({super.key, Key? id});
+  const TaskPage({super.key, this.initialFilter = false});
+  final bool initialFilter;
 
   @override
   TaskPageState createState() => TaskPageState();
@@ -21,8 +23,7 @@ class TaskPageState extends State<TaskPage> {
 
   Future<void> _fetchTasks() async {
     try {
-      List<TaskManager> tasks =
-          await TaskManager.getAllTasks(); // Fetch all tasks
+      List<TaskManager> tasks = await TaskManager.getAllTasks(); // Fetch all tasks
       setState(() {
         _tasks = tasks; // Update the list of tasks
       });
@@ -44,10 +45,10 @@ class TaskPageState extends State<TaskPage> {
         ),
       ),
       body: _tasks.isNotEmpty
-          ? TaskView(tasks: _tasks)
+          ? TaskView(tasks: _tasks, initialFilter: widget.initialFilter)
           : const Center(
-              child: Text('No tasks'),
-            ),
+        child: Text('No tasks'),
+      ),
     );
   }
 }

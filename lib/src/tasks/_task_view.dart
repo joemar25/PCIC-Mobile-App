@@ -1,3 +1,4 @@
+// filename: _task_view.dart
 import 'package:flutter/material.dart';
 
 import '../home/_recent_task_data.dart';
@@ -8,8 +9,9 @@ import '_task_filter_button.dart';
 import '_task_filter_footer.dart';
 
 class TaskView extends StatefulWidget {
-  const TaskView({super.key, Key? id, required this.tasks});
+  const TaskView({super.key, required this.tasks, required this.initialFilter});
   final List<TaskManager> tasks;
+  final bool initialFilter;
 
   @override
   TaskContainerState createState() => TaskContainerState();
@@ -20,6 +22,12 @@ class TaskContainerState extends State<TaskView> {
   String _sortBy = 'ID';
   bool _showCompleted = false;
   String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _showCompleted = widget.initialFilter;
+  }
 
   void _updateShowComplete(bool newState) {
     setState(() {
