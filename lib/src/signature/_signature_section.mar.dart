@@ -41,9 +41,9 @@ class SignatureSectionState extends State<SignatureSection> {
   }
 
   void _initializeSignatureNames() {
-    _confirmedByNameController.text =
-        widget.task.csvData?['ppirNameInsured'] ?? '';
-    _preparedByNameController.text = widget.task.csvData?['ppirNameIuia'] ?? '';
+    // _confirmedByNameController.text =
+    //     widget.task.csvData?['ppirNameInsured'] ?? '';
+    // _preparedByNameController.text = widget.task.csvData?['ppirNameIuia'] ?? '';
   }
 
   @override

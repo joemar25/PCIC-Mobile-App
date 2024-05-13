@@ -1,6 +1,10 @@
+// android/app/build.gradle
 //file:noinspection Annotator
 plugins {
     id "com.android.application"
+    // START: FlutterFire Configuration
+    id 'com.google.gms.google-services'
+    // END: FlutterFire Configuration
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
 }
@@ -34,6 +38,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    // configurations.all {
+    //     resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib:1.7.10'
+    // }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
@@ -46,7 +54,7 @@ android {
         applicationId "com.quanby.pcic_mobile_app"
 
         // MAR: this is the original = minSdkVersion flutter.minSdkVersion
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -68,4 +76,7 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    // implementation platform('com.google.firebase:firebase-bom:33.0.0')
+    // implementation 'com.google.firebase:firebase-analytics'
+}

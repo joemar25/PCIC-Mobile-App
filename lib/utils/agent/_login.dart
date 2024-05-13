@@ -27,14 +27,14 @@ class LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    _checkExistingToken();
+    _checkExistingToken(context);
   }
 
-  Future<void> _checkExistingToken() async {
-    String? token = await _session.getToken();
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted && token != null) {
-      // Token exists, navigate to the home page
+  Future<void> _checkExistingToken(BuildContext context) async {
+    Session session = Session();
+    String? token = await session.getToken();
+    // Token exists, navigate to the dashboard
+    if (token != null && context.mounted) {
       _navigateToDashboard();
     }
   }

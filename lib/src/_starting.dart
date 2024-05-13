@@ -12,7 +12,7 @@ class StartingPage extends StatelessWidget {
     Session session = Session();
     String? token = await session.getToken();
     // Token exists, navigate to the dashboard
-    if (token != null) {
+    if (token != null && context.mounted) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const DashboardPage()),
