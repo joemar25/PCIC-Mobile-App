@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class MessageItem extends StatelessWidget {
   final String profilepic;
@@ -31,9 +32,9 @@ class MessageItem extends StatelessWidget {
       ),
       title: Text(
         name,
-        style: TextStyle(
+        style: const TextStyle(
           fontWeight: FontWeight.bold,
-          color: const Color(0xFF89C53F).withOpacity(0.9),
+          color: mainColor,
         ),
       ),
       subtitle: Text(

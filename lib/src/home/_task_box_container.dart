@@ -1,9 +1,8 @@
-// filename: _task_count_box.dart
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
-
 import '../tasks/_task.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:flutter/material.dart';
+import 'package:pcic_mobile_app/src/theme/_theme.dart';
+// filename: _task_count_box.dart
 
 class TaskCountBox extends StatefulWidget {
   final String label;
@@ -39,12 +38,12 @@ class _TaskCountBoxState extends State<TaskCountBox> {
     Color containerColor, circleColor;
     String imagePath;
     if (widget.label == 'Completed') {
-      containerColor = const Color(0xFFD2FFCB);
-      circleColor = const Color(0xFF0F7D40);
+      containerColor = shadowMainColor;
+      circleColor = mainColor;
       imagePath = 'assets/storage/images/completed.svg';
     } else {
-      containerColor = const Color(0xFFD9F7FA);
-      circleColor = const Color(0xFF4894FE);
+      containerColor = shadowMainColor2;
+      circleColor = mainColor2;
       imagePath = 'assets/storage/images/clock.svg';
     }
 

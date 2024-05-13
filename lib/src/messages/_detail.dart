@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class MessageDetailsPage extends StatefulWidget {
   final Map<String, dynamic> message;
@@ -28,8 +29,7 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
       // header (appbar)
       appBar: AppBar(
         elevation: 0,
-        iconTheme:
-            IconThemeData(color: const Color(0xFF89C53F).withOpacity(0.8)),
+        iconTheme: const IconThemeData(color: mainColor),
         title: Center(
           child: Row(
             children: [
@@ -40,7 +40,7 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
                     Text(
                       widget.message['name'],
                       style: const TextStyle(
-                        color: Color(0xFF89C53F),
+                        color: mainColor,
                         fontWeight: FontWeight.w500,
                         fontFamily: 'Poppins',
                         fontSize: 24.0,
@@ -60,7 +60,7 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -80,14 +80,14 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
                       Container(
                         padding: const EdgeInsets.all(16.0),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF89C53F).withOpacity(0.8),
+                          color: mainColor,
                           borderRadius: BorderRadius.circular(32.0),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.7),
+                              color: Colors.grey.withOpacity(0.2),
                               spreadRadius: 2,
                               blurRadius: 10,
-                              offset: Offset(4, 5),
+                              offset: const Offset(4, 5),
                             ),
                           ],
                         ),
@@ -110,17 +110,17 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Container(
-                          padding: EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(16.0),
                           decoration: BoxDecoration(
                             color: const Color.fromRGBO(97, 97, 97, 1)
                                 .withOpacity(0.85),
                             borderRadius: BorderRadius.circular(32),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.7),
+                                color: Colors.grey.withOpacity(0.2),
                                 spreadRadius: 2,
                                 blurRadius: 10,
-                                offset: Offset(4, 5),
+                                offset: const Offset(4, 5),
                               ),
                             ],
                           ),
@@ -140,49 +140,56 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
                 ],
               ),
             ),
-            SizedBox(height: 80), // Add space for the footer
+            const SizedBox(height: 80), // Add space for the footer
           ],
         ),
       ),
 
       // footer (text field)
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
         child: Container(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(32),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: Offset(0, 3),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _messageController,
-                  decoration: const InputDecoration(
-                    hintText: 'Reply here... ',
-                    hintStyle: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w300,
-                    ),
-                    border: InputBorder.none,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(32),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3),
                   ),
-                ),
+                ],
               ),
-              IconButton(
-                icon: const Icon(Icons.arrow_upward_sharp),
-                onPressed: _sendMessage,
-                color: const Color(0xFF89C53F).withOpacity(0.8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      decoration: const InputDecoration(
+                        hintText: 'Reply here... ',
+                        hintStyle: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w300,
+                        ),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_upward_sharp),
+                    onPressed: _sendMessage,
+                    color: mainColor,
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

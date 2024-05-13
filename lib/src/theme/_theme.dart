@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 class CustomThemeExtension extends ThemeExtension<CustomThemeExtension> {
@@ -86,3 +85,14 @@ class CustomThemeExtension extends ThemeExtension<CustomThemeExtension> {
     );
   }
 }
+
+// COLORS
+
+// green
+
+const mainColor = Color(0xFF0F7D40);
+const shadowMainColor = Color(0xFFD2FFCB);
+
+// blue
+const mainColor2 = Color(0xFF4894FE);
+const shadowMainColor2 = Color(0xFFD9F7FA);
