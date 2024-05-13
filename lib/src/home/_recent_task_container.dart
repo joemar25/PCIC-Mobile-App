@@ -6,11 +6,11 @@ import '_recent_task_data.dart';
 
 class RecentTaskContainer extends StatefulWidget {
   final String searchQuery;
-  final List<TaskManager> tasks;
+  final List<TaskManager> notCompletedTasks;
 
   const RecentTaskContainer({
     super.key,
-    required this.tasks,
+    required this.notCompletedTasks,
     required this.searchQuery,
   });
 
@@ -19,15 +19,26 @@ class RecentTaskContainer extends StatefulWidget {
 }
 
 class RecentTaskContainerState extends State<RecentTaskContainer> {
+  List<TaskManager> _notCompletedTasks = [];
   int _hoveredIndex = -1;
 
   @override
-  Widget build(BuildContext context) {
-    // Filter to get only the incomplete tasks that match the search query
-    List<TaskManager> filteredTasks = widget.tasks.where((task) {
-      bool isIncomplete = task.status != "Completed";
-      if (!isIncomplete) return false;
+  void initState() {
+    super.initState();
+    _fetchNotCompletedTasks();
+  }
 
+  Future<void> _fetchNotCompletedTasks() async {
+    List<TaskManager> tasks = await TaskManager.getNotCompletedTasks();
+    setState(() {
+      _notCompletedTasks = tasks;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Filter the tasks based on the search query
+    List<TaskManager> filteredTasks = _notCompletedTasks.where((task) {
       // Assuming `formId` and `taskId` are used for forming a service identifier
       String identifier = '${task.formId}-${task.taskId}'.toLowerCase();
       return widget.searchQuery.isEmpty ||
@@ -49,7 +60,6 @@ class RecentTaskContainerState extends State<RecentTaskContainer> {
         itemCount: filteredTasks.length,
         itemBuilder: (context, index) {
           final TaskManager task = filteredTasks[index];
-
           return MouseRegion(
             onEnter: (_) => setState(() => _hoveredIndex = index),
             onExit: (_) => setState(() => _hoveredIndex = -1),

@@ -1,17 +1,65 @@
 // filename: _home_header.dart
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../theme/_theme.dart';
 import '../settings/_view.dart';
 import '../settings/_service.dart';
 import '../settings/_controller.dart';
 import '../profile/_profile_view.dart';
 
-class HomeHeader extends StatelessWidget {
+class HomeHeader extends StatefulWidget {
   final VoidCallback onLogout;
 
   const HomeHeader({super.key, required this.onLogout});
+
+  @override
+  State<HomeHeader> createState() => _HomeHeaderState();
+}
+
+class _HomeHeaderState extends State<HomeHeader> {
+  String? userName;
+  late final VoidCallback onLogout;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserName();
+  }
+
+  Future<void> _fetchUserName() async {
+    try {
+      final User? currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        final String userId = currentUser.uid;
+        QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .where('authUid', isEqualTo: userId)
+            .get();
+
+        if (querySnapshot.docs.isNotEmpty) {
+          DocumentSnapshot userDocSnapshot = querySnapshot.docs.first;
+          Map<String, dynamic>? userData =
+              userDocSnapshot.data() as Map<String, dynamic>?;
+
+          // debugPrint('User ID: $userId');
+          // debugPrint('User data: $userData');
+
+          if (userData != null && userData.containsKey('name')) {
+            setState(() {
+              userName = userData['name'] as String?;
+            });
+          }
+        } else {
+          debugPrint('User document not found');
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching user name: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,12 +74,13 @@ class HomeHeader extends StatelessWidget {
             Text(
               'Welcome back,',
               style: TextStyle(
-                  fontSize: t?.caption ?? 14.0,
-                  color: Colors.grey,
-                  fontWeight: FontWeight.w500),
+                fontSize: t?.caption ?? 14.0,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+              ),
             ),
             Text(
-              'Agent 007 👋',
+              userName ?? 'Agent 007 👋',
               style: TextStyle(
                 fontSize: t?.title ?? 14.0,
                 fontWeight: FontWeight.bold,

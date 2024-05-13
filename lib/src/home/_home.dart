@@ -78,8 +78,7 @@ class DashboardPageState extends State<DashboardPage> {
           backgroundColor: Colors.white,
           selectedLabelStyle: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize:
-                t?.overline ?? 14.0, // Provide a default value if t is null
+            fontSize: t?.overline ?? 14.0,
           ),
         ),
       ),
@@ -227,7 +226,7 @@ class HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 16.0),
                 RecentTaskContainer(
-                  tasks: _tasks,
+                  notCompletedTasks: _tasks,
                   searchQuery: _searchQuery,
                 ),
                 const SizedBox(height: 8.0),
