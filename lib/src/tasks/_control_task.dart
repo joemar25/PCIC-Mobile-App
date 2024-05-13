@@ -165,6 +165,166 @@ class TaskManager {
     return tasks;
   }
 
+  /// Not Completed Tasks ****************************************
+  static Future<List<TaskManager>> getNotCompletedTasks() async {
+    List<TaskManager> tasks = [];
+
+    try {
+      CollectionReference tasksCollection =
+          FirebaseFirestore.instance.collection('tasks');
+      QuerySnapshot querySnapshot = await tasksCollection
+          .where('status', isNotEqualTo: 'Completed')
+          .get();
+
+      for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+        String taskId = documentSnapshot.id;
+        Map<String, dynamic> taskData =
+            documentSnapshot.data() as Map<String, dynamic>;
+
+        // Get the formDetailsId reference
+        DocumentReference? formDetailsIdRef =
+            taskData['formDetailsId'] as DocumentReference?;
+
+        if (formDetailsIdRef != null) {
+          // Get the formDetailsId document
+          DocumentSnapshot formDetailsSnapshot = await formDetailsIdRef.get();
+
+          if (formDetailsSnapshot.exists) {
+            Map<String, dynamic> formDetailsData =
+                formDetailsSnapshot.data() as Map<String, dynamic>;
+
+            // Get the formId reference
+            DocumentReference? formIdRef =
+                formDetailsData['formId'] as DocumentReference?;
+
+            if (formIdRef != null) {
+              String formId = formIdRef.id;
+              String type = formDetailsData['type'];
+
+              TaskManager task = TaskManager.fromMap({
+                'formId': formId,
+                'taskId': taskId,
+                'type': type,
+              });
+
+              tasks.add(task);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      debugPrint('Error retrieving completed tasks: $error');
+    }
+
+    return tasks;
+  }
+
+  static Future<List<TaskManager>> getForDispatchTasks() async {
+    List<TaskManager> tasks = [];
+
+    try {
+      CollectionReference tasksCollection =
+          FirebaseFirestore.instance.collection('tasks');
+      QuerySnapshot querySnapshot = await tasksCollection
+          .where('status', isEqualTo: 'For Dispatch')
+          .get();
+
+      for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+        String taskId = documentSnapshot.id;
+        Map<String, dynamic> taskData =
+            documentSnapshot.data() as Map<String, dynamic>;
+
+        // Get the formDetailsId reference
+        DocumentReference? formDetailsIdRef =
+            taskData['formDetailsId'] as DocumentReference?;
+
+        if (formDetailsIdRef != null) {
+          // Get the formDetailsId document
+          DocumentSnapshot formDetailsSnapshot = await formDetailsIdRef.get();
+
+          if (formDetailsSnapshot.exists) {
+            Map<String, dynamic> formDetailsData =
+                formDetailsSnapshot.data() as Map<String, dynamic>;
+
+            // Get the formId reference
+            DocumentReference? formIdRef =
+                formDetailsData['formId'] as DocumentReference?;
+
+            if (formIdRef != null) {
+              String formId = formIdRef.id;
+              String type = formDetailsData['type'];
+
+              TaskManager task = TaskManager.fromMap({
+                'formId': formId,
+                'taskId': taskId,
+                'type': type,
+              });
+
+              tasks.add(task);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      debugPrint('Error retrieving completed tasks: $error');
+    }
+
+    return tasks;
+  }
+
+  static Future<List<TaskManager>> getOngoingTasks() async {
+    List<TaskManager> tasks = [];
+
+    try {
+      CollectionReference tasksCollection =
+          FirebaseFirestore.instance.collection('tasks');
+      QuerySnapshot querySnapshot = await tasksCollection
+          .where('status', isEqualTo: 'For Dispatch')
+          .get();
+
+      for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+        String taskId = documentSnapshot.id;
+        Map<String, dynamic> taskData =
+            documentSnapshot.data() as Map<String, dynamic>;
+
+        // Get the formDetailsId reference
+        DocumentReference? formDetailsIdRef =
+            taskData['formDetailsId'] as DocumentReference?;
+
+        if (formDetailsIdRef != null) {
+          // Get the formDetailsId document
+          DocumentSnapshot formDetailsSnapshot = await formDetailsIdRef.get();
+
+          if (formDetailsSnapshot.exists) {
+            Map<String, dynamic> formDetailsData =
+                formDetailsSnapshot.data() as Map<String, dynamic>;
+
+            // Get the formId reference
+            DocumentReference? formIdRef =
+                formDetailsData['formId'] as DocumentReference?;
+
+            if (formIdRef != null) {
+              String formId = formIdRef.id;
+              String type = formDetailsData['type'];
+
+              TaskManager task = TaskManager.fromMap({
+                'formId': formId,
+                'taskId': taskId,
+                'type': type,
+              });
+
+              tasks.add(task);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      debugPrint('Error retrieving completed tasks: $error');
+    }
+
+    return tasks;
+  }
+
   /// Specific data getters ****************************************
   Future<String?> get status async {
     try {
