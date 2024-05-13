@@ -1,10 +1,10 @@
 name: pcic_mobile_app
-description: 'Q'
-publish_to: 'none'
+description: "Q"
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.3.2 <4.0.0'
+  sdk: ">=3.3.2 <4.0.0"
 
 dependencies:
   flutter:
@@ -64,10 +64,10 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: 'assets/image/pcic_logo.png'
+  image_path: "assets/image/pcic_logo.png"
   web:
     generate: true
-    image_path: 'assets/image/pcic_logo.png'
+    image_path: "assets/image/pcic_logo.png"
 
 flutter:
   uses-material-design: true
