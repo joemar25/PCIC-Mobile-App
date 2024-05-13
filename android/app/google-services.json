@@ -1,13 +1,51 @@
 {
   "project_info": {
-    "project_number": "331409317731",
-    "project_id": "pcic-97692",
-    "storage_bucket": "pcic-97692.appspot.com"
+    "project_number": "702340663817",
+    "project_id": "pcic-mobile-app",
+    "storage_bucket": "pcic-mobile-app.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:331409317731:android:d7acfdf16a6842c0e07d56",
+        "mobilesdk_app_id": "1:702340663817:android:09bb9489102d7ec59846d8",
+        "android_client_info": {
+          "package_name": "com.example.pcic_mobile_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXKdpMjXMMFNGD56nj4Qux717K98of3Qo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:702340663817:android:aa89459c0a548dc49846d8",
+        "android_client_info": {
+          "package_name": "com.quanby.pcic_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXKdpMjXMMFNGD56nj4Qux717K98of3Qo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:702340663817:android:a4a69e51685e466d9846d8",
         "android_client_info": {
           "package_name": "com.quanby.pcic_mobile_app"
         }
@@ -15,7 +53,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCMXBz35aNPP9HnJu-lYK7guCHgdV_LX1g"
+          "current_key": "AIzaSyBXKdpMjXMMFNGD56nj4Qux717K98of3Qo"
         }
       ],
       "services": {

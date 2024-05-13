@@ -5,13 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../home/_home_header.dart';
+import '../home/_search_button.dart';
 import '../messages/_view.dart';
 import '../splash/_splash.dart';
 import '../tasks/_control_task.dart';
 import '../tasks/_task.dart';
-import '_home_header.dart';
 import '_recent_task_container.dart';
-import '_search_button.dart';
 import '_task_count_container.dart';
 
 class DashboardPage extends StatefulWidget {

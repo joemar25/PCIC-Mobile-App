@@ -7,11 +7,11 @@ class TapToSignature extends StatefulWidget {
   final Color backgroundColor;
 
   const TapToSignature({
-    Key? key,
+    super.key,
     required this.controller,
     required this.height,
     this.backgroundColor = Colors.white,
-  }) : super(key: key);
+  });
 
   @override
   _TapToSignatureState createState() => _TapToSignatureState();
@@ -35,7 +35,7 @@ class _TapToSignatureState extends State<TapToSignature> {
                   _isConfirmed = true;
                 });
               },
-              child: Text('Tap to Sign'),
+              child: const Text('Tap to Sign'),
             ),
           )
               : Signature(

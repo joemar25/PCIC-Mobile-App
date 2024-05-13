@@ -57,12 +57,9 @@ class App extends StatelessWidget {
                 AppRoutes.message: (context) => const MessagesPage(),
                 AppRoutes.job: (context) => GeotagPage(
                       task: TaskManager(
-                        id: 1,
-                        isCompleted: false,
-                        dateAdded: DateTime.now(),
-                        dateAccess: DateTime.now(),
-                        ppirAssignmentId: 2,
-                        ppirInsuranceId: 3,
+                        formId: '',
+                        taskId: '',
+                        type: '',
                       ),
                     ),
                 AppRoutes.verifyLogin: (context) =>
