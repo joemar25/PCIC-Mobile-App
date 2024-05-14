@@ -82,7 +82,9 @@ class TaskManager {
     return {};
   }
 
-  Future<Map<String, dynamic>> getFormData(String type) async {
+  Future<Map<String, dynamic>> getFormData(String typ) async {
+    // debugPrint("--> getFormData($type)");
+
     try {
       if (type == "PPIR") {
         DocumentReference formRef =
@@ -213,7 +215,7 @@ class TaskManager {
         }
       }
     } catch (error) {
-      debugPrint('Error retrieving completed tasks: $error');
+      // debugPrint('Error retrieving completed tasks: $error');
     }
 
     return tasks;
@@ -319,7 +321,7 @@ class TaskManager {
         }
       }
     } catch (error) {
-      debugPrint('Error retrieving completed tasks: $error');
+      // debugPrint('Error retrieving completed tasks: $error');
     }
 
     return tasks;
@@ -329,10 +331,10 @@ class TaskManager {
   Future<String?> get status async {
     try {
       Map<String, dynamic> taskData = await getTaskData();
-      debugPrint("status is ${taskData['status']}");
+      // debugPrint("status is ${taskData['status']}");
       return taskData['status'];
     } catch (error) {
-      debugPrint('Error retrieving status: $error');
+      // debugPrint('Error retrieving status: $error');
     }
     return null;
   }
