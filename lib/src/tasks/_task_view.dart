@@ -60,7 +60,7 @@ class TaskContainerState extends State<TaskView> {
     try {
       List<TaskManager> sortedTasks;
 
-      debugPrint("_statusFilter = $_statusFilter");
+      // debugPrint("_statusFilter = $_statusFilter");
 
       if (_statusFilter == 'Ongoing') {
         sortedTasks = await TaskManager.getTasksByStatus('Ongoing');
@@ -72,7 +72,7 @@ class TaskContainerState extends State<TaskView> {
         sortedTasks = await TaskManager.getAllTasks();
       }
 
-      debugPrint("sortedTasks = $sortedTasks");
+      // debugPrint("sortedTasks = $sortedTasks");
 
       setState(() {
         _sortedTasks = sortedTasks;

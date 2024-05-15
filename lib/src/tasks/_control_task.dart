@@ -1,6 +1,9 @@
 // file: control_task.dart
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:csv/csv.dart';
+import 'package:flutter/services.dart';
 import 'package:xml/xml.dart';
 import 'package:intl/intl.dart';
 import 'package:external_path/external_path.dart';
@@ -27,7 +30,162 @@ class TaskManager {
     );
   }
 
+  static Future<void> syncDataFromCSV() async {
+    try {
+      debugPrint('Data sync from CSV started.');
+      // Show the loader
+      // You can use a package like flutter_easyloading to display the loader
+      // await EasyLoading.show(status: 'Syncing data...');
+
+      // Get the list of CSV files in the 'assets/storage/mergedtask/' folder
+      final manifestContent = await rootBundle.loadString('AssetManifest.json');
+      final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+      final csvFilePaths = manifestMap.keys
+          .where((path) =>
+              path.startsWith('assets/storage/mergedtask/') &&
+              path.endsWith('.csv'))
+          .toList();
+      debugPrint('Csv file paths: $csvFilePaths');
+
+      debugPrint('Loop Start...');
+      for (final csvFilePath in csvFilePaths) {
+        // Read the CSV file content
+        final csvContent = await rootBundle.loadString(csvFilePath);
+        // Parse the CSV data
+        final csvData = const CsvToListConverter().convert(csvContent);
+        debugPrint('Csv file content: $csvData');
+
+        // Iterate over each row in the CSV data
+        for (final row in csvData) {
+          // Check if the row contains PPIR data
+          if (row
+              .any((cell) => cell.toString().toLowerCase().contains('ppir'))) {
+            // Add or update the PPIR form data
+            await _addOrUpdatePPIRForm(row);
+          }
+        }
+      }
+      debugPrint('Loop End...');
+
+      // Hide the loader
+      // await EasyLoading.dismiss();
+      // debugPrint('Data sync from CSV completed.');
+    } catch (error) {
+      // Hide the loader in case of an error
+      // await EasyLoading.dismiss();
+      // debugPrint('Error syncing data from CSV: $error');
+    }
+  }
+
+  static Future<void> _addOrUpdatePPIRForm(List<dynamic> row) async {
+    debugPrint("Row: $row");
+    try {
+      // Extract the PPIR form data from the CSV row
+      final ppirFormData = {
+        'taskManagerNumber': row[0]?.toString() ?? '',
+        'serviceGroup': row[1]?.toString() ?? '',
+        'serviceType': row[2]?.toString() ?? '',
+        'priority': row[3]?.toString() ?? '',
+        'status': row[4]?.toString() ?? '',
+        'assigneeId': row[5]?.toString() ?? '',
+        'ppirAssignmentId': row[6]?.toString() ?? '',
+        'ppirInsuranceId': row[7]?.toString() ?? '',
+        'ppirFarmerName': row[8]?.toString() ?? '',
+        'ppirAddress': row[9]?.toString() ?? '',
+        'ppirFarmerType': row[10]?.toString() ?? '',
+        'ppirMobileNo': row[11]?.toString() ?? '',
+        'ppirGroupName': row[12]?.toString() ?? '',
+        'ppirGroupAddress': row[13]?.toString() ?? '',
+        'ppirLenderName': row[14]?.toString() ?? '',
+        'ppirLenderAddress': row[15]?.toString() ?? '',
+        'ppirCicNo': row[16]?.toString() ?? '',
+        'ppirFarmLoc': row[17]?.toString() ?? '',
+        'ppirNorth': row[18]?.toString() ?? '',
+        'ppirSouth': row[19]?.toString() ?? '',
+        'ppirEast': row[20]?.toString() ?? '',
+        'ppirWest': row[21]?.toString() ?? '',
+        'ppirAtt1': row[22]?.toString() ?? '',
+        'ppirAtt2': row[23]?.toString() ?? '',
+        'ppirAtt3': row[24]?.toString() ?? '',
+        'ppirAtt4': row[25]?.toString() ?? '',
+        'ppirAreaAci': row[26]?.toString() ?? '',
+        'ppirAreaAct': row[27]?.toString() ?? '',
+        'ppirDopdsAci': row[28]?.toString() ?? '',
+        'ppirDopdsAct': row[29]?.toString() ?? '',
+        'ppirDoptpAci': row[30]?.toString() ?? '',
+        'ppirDoptpAct': row[31]?.toString() ?? '',
+        'ppirSvpAci': row[32]?.toString() ?? '',
+        'ppirSvpAct': row[33]?.toString() ?? '',
+        'ppirVariety': row[34]?.toString() ?? '',
+        'ppirStagecrop': row[35]?.toString() ?? '',
+        'ppirRemarks': row[36]?.toString() ?? '',
+        'ppirNameInsured': row[37]?.toString() ?? '',
+        'ppirNameIuia': row[38]?.toString() ?? '',
+        'ppirSigInsured': row[39]?.toString() ?? '',
+        'ppirSigIuia': row[40]?.toString() ?? '',
+        'trackDatetime': '',
+        'trackLastcoord': '',
+        'trackTotalarea': '',
+        'trackTotaldistance': '',
+      };
+
+      // Check if the form details already exist based on taskManagerNumber, assigneeId, and ppirInsuranceId
+      final formDetailsCollection =
+          FirebaseFirestore.instance.collection('formDetails');
+      final querySnapshot = await formDetailsCollection
+          .where('taskManagerNumber',
+              isEqualTo: ppirFormData['taskManagerNumber'])
+          .where('assigneeId', isEqualTo: ppirFormData['assigneeId'])
+          .where('ppirInsuranceId', isEqualTo: ppirFormData['ppirInsuranceId'])
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        // If the form details don't exist, add the PPIR form and create the necessary documents
+        final ppirFormsCollection =
+            FirebaseFirestore.instance.collection('ppirForms');
+        final ppirFormRef = await ppirFormsCollection.add(ppirFormData);
+
+        final formDetailsData = {
+          'formId': ppirFormRef,
+          'type': 'PPIR',
+          'taskManagerNumber': ppirFormData['taskManagerNumber'],
+          'assigneeId': ppirFormData['assigneeId'],
+          'ppirInsuranceId': ppirFormData['ppirInsuranceId'],
+        };
+        final formDetailsRef = await formDetailsCollection.add(formDetailsData);
+
+        final taskData = {
+          'assignee': FirebaseFirestore.instance
+              .doc('users/${ppirFormData['assigneeId']}'),
+          'assignor': FirebaseFirestore.instance.doc('users/assignorId'),
+          'dateCreated': FieldValue.serverTimestamp(),
+          'dateAccess': FieldValue.serverTimestamp(),
+          'formDetailsId': formDetailsRef,
+          'status': ppirFormData['status'],
+        };
+        final taskRef =
+            await FirebaseFirestore.instance.collection('tasks').add(taskData);
+
+        await formDetailsRef.update({'taskId': taskRef});
+
+        ppirFormData['taskId'] = taskRef.id;
+        await ppirFormRef.update(ppirFormData);
+      } else {
+        // If the form details already exist, update the PPIR form data
+        final ppirFormRef = querySnapshot.docs.first.reference;
+        await ppirFormRef.update(ppirFormData);
+      }
+    } catch (error) {
+      // debugPrint('Error adding or updating PPIR form: $error');
+    }
+  }
+
   static Future<List<TaskManager>> getAllTasks() async {
+    // Show the loader
+    // await EasyLoading.show(status: 'Loading tasks...');
+
+    await syncDataFromCSV();
+
     List<TaskManager> tasks = [];
 
     try {
@@ -57,6 +215,9 @@ class TaskManager {
       // debugPrint('Error retrieving tasks from Firestore: $error');
     }
 
+    // Hide the loader
+    // await EasyLoading.dismiss();
+
     return tasks;
   }
 
@@ -82,9 +243,7 @@ class TaskManager {
     return {};
   }
 
-  Future<Map<String, dynamic>> getFormData(String typ) async {
-    // debugPrint("--> getFormData($type)");
-
+  Future<Map<String, dynamic>> getFormData(String type) async {
     try {
       if (type == "PPIR") {
         DocumentReference formRef =
@@ -215,7 +374,7 @@ class TaskManager {
         }
       }
     } catch (error) {
-      // debugPrint('Error retrieving completed tasks: $error');
+      debugPrint('Error retrieving completed tasks: $error');
     }
 
     return tasks;
@@ -321,7 +480,7 @@ class TaskManager {
         }
       }
     } catch (error) {
-      // debugPrint('Error retrieving completed tasks: $error');
+      debugPrint('Error retrieving completed tasks: $error');
     }
 
     return tasks;
@@ -331,10 +490,10 @@ class TaskManager {
   Future<String?> get status async {
     try {
       Map<String, dynamic> taskData = await getTaskData();
-      // debugPrint("status is ${taskData['status']}");
+      debugPrint("status is ${taskData['status']}");
       return taskData['status'];
     } catch (error) {
-      // debugPrint('Error retrieving status: $error');
+      debugPrint('Error retrieving status: $error');
     }
     return null;
   }
