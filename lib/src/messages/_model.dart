@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
-class MessageModel extends StatelessWidget {
+class MessageItem extends StatelessWidget {
+  final String profilepic;
   final String name;
   final String message;
   final String time;
-  final Color color;
   final VoidCallback onTap;
 
-  const MessageModel({
+  const MessageItem({
     super.key,
+    required this.profilepic,
     required this.name,
     required this.message,
     required this.time,
-    required this.color,
     required this.onTap,
   });
 
@@ -20,12 +21,12 @@ class MessageModel extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: color,
-        child: Text(
-          name[0],
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+        child: ClipOval(
+          child: Image.asset(
+            profilepic,
+            width: 55,
+            height: 55,
+            fit: BoxFit.cover,
           ),
         ),
       ),
@@ -33,6 +34,7 @@ class MessageModel extends StatelessWidget {
         name,
         style: const TextStyle(
           fontWeight: FontWeight.bold,
+          color: mainColor,
         ),
       ),
       subtitle: Text(
@@ -41,7 +43,7 @@ class MessageModel extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       ),
       trailing: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Text(
@@ -52,10 +54,6 @@ class MessageModel extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          const Icon(
-            Icons.chevron_right,
-            color: Colors.grey,
-          ),
         ],
       ),
       onTap: onTap,

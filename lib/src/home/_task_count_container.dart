@@ -1,11 +1,12 @@
-// filename: _task_count_container.dart
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
+import '../tasks/_control_task.dart';
 import '_task_box_container.dart';
 
 class TaskCountContainer extends StatefulWidget {
-  const TaskCountContainer({super.key});
+  final Function(bool) onTasksPressed;
+
+  const TaskCountContainer({super.key, required this.onTasksPressed});
 
   @override
   State<TaskCountContainer> createState() => _TaskCountContainerState();
@@ -21,24 +22,18 @@ class _TaskCountContainerState extends State<TaskCountContainer> {
     fetchTaskCounts();
   }
 
-  void fetchTaskCounts() {
-    final databaseReference = FirebaseDatabase.instance.ref();
-    final tasksReference = databaseReference.child('tasks');
-
-    tasksReference.onValue.listen((event) {
-      final tasksSnapshot = event.snapshot;
+  Future<void> fetchTaskCounts() async {
+    try {
+      List<TaskManager> tasks = await TaskManager.getAllTasks();
       int completedCount = 0;
       int remainingCount = 0;
 
-      for (var taskSnapshot in tasksSnapshot.children) {
-        final taskData = taskSnapshot.value;
-        if (taskData is Map<dynamic, dynamic>) {
-          final isCompleted = taskData['isCompleted'] as bool? ?? false;
-          if (isCompleted) {
-            completedCount++;
-          } else {
-            remainingCount++;
-          }
+      for (var task in tasks) {
+        String? status = await task.status;
+        if (status != null && status.toLowerCase() == 'completed') {
+          completedCount++;
+        } else {
+          remainingCount++;
         }
       }
 
@@ -46,7 +41,9 @@ class _TaskCountContainerState extends State<TaskCountContainer> {
         completedTaskCount = completedCount;
         remainingTaskCount = remainingCount;
       });
-    });
+    } catch (error) {
+      debugPrint('Error fetching task counts: $error');
+    }
   }
 
   @override
@@ -56,16 +53,22 @@ class _TaskCountContainerState extends State<TaskCountContainer> {
       child: Row(
         children: [
           Expanded(
-            child: TaskCountBox(
-              label: 'Completed',
-              count: completedTaskCount,
+            child: GestureDetector(
+              onTap: () => widget.onTasksPressed(true),
+              child: TaskCountBox(
+                label: 'Completed',
+                count: completedTaskCount,
+              ),
             ),
           ),
           const SizedBox(width: 10.0),
           Expanded(
-            child: TaskCountBox(
-              label: 'Remaining',
-              count: remainingTaskCount,
+            child: GestureDetector(
+              onTap: () => widget.onTasksPressed(false),
+              child: TaskCountBox(
+                label: 'Remaining',
+                count: remainingTaskCount,
+              ),
             ),
           ),
         ],

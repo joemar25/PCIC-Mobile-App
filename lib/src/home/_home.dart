@@ -1,18 +1,17 @@
-// file: _home.dart
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:pcic_mobile_app/src/home/_flash.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import '_home_header.dart';
+import '../tasks/_task.dart';
+import '_search_button.dart';
 import '../messages/_view.dart';
 import '../splash/_splash.dart';
-import '../tasks/_control_task.dart';
-import '../tasks/_task.dart';
-import '_home_header.dart';
-import '_recent_task_container.dart';
-import '_search_button.dart';
 import '_task_count_container.dart';
+import '../tasks/_control_task.dart';
+import '_recent_task_container.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:pcic_mobile_app/src/theme/_theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+// file: _home.dart
+// import 'package:pcic_mobile_app/src/home/_flash.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -61,25 +60,24 @@ class DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     final CustomThemeExtension? t =
         Theme.of(context).extension<CustomThemeExtension>();
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return PopScope(
+      // onWillPop: _onWillPop,
       child: Scaffold(
         body: _widgetOptions.elementAt(_selectedIndex),
         bottomNavigationBar: BottomNavigationBar(
           items: [
             _buildNavigationBarItem(Icons.home, 'Home'),
-            _buildNavigationBarItem(Icons.message, 'Messages'),
-            _buildNavigationBarItem(Icons.calendar_today, 'Tasks'),
+            _buildNavigationBarItem(Icons.chat_rounded, 'Messages'),
+            _buildNavigationBarItem(Icons.calendar_today_outlined, 'Tasks'),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: const Color(0xFF0F7D40),
-          unselectedItemColor: Colors.grey,
+          selectedItemColor: mainColor,
+          unselectedItemColor: Colors.black.withOpacity(0.7),
           onTap: _onItemTapped,
           backgroundColor: Colors.white,
           selectedLabelStyle: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize:
-                t?.overline ?? 14.0, // Provide a default value if t is null
+            fontSize: t?.overline ?? 14.0,
           ),
         ),
       ),
@@ -113,14 +111,25 @@ class HomeScreenState extends State<HomeScreen> {
     _fetchTasks();
   }
 
+  void _navigateToTaskPage(bool isCompleted) {
+    // mar latest
+    // Navigator.of(context).push(
+    //   MaterialPageRoute(
+    //     builder: (context) => TaskPage(initialFilter: isCompleted),
+    //   ),
+    // );
+  }
+
   Future<void> _checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     if (token == null) {
       // Redirect to the splash screen if token is null
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const SplashScreen()),
-      );
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const SplashScreen()),
+        );
+      }
     } else {
       setState(() {
         _token = token;
@@ -133,9 +142,11 @@ class HomeScreenState extends State<HomeScreen> {
     await prefs.remove('token');
 
     // Redirect to the splash screen
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const SplashScreen()),
-    );
+    if (mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const SplashScreen()),
+      );
+    }
   }
 
   Future<void> _fetchTasks() async {
@@ -161,7 +172,7 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
+    GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
     final CustomThemeExtension? t =
         Theme.of(context).extension<CustomThemeExtension>();
     // If there's no token, show a loading indicator while waiting for the redirection to complete.
@@ -174,7 +185,7 @@ class HomeScreenState extends State<HomeScreen> {
     }
 
     return Scaffold(
-      key: _key,
+      key: key,
       appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 1.0,
@@ -193,7 +204,7 @@ class HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 8.0),
-                const TaskCountContainer(),
+                TaskCountContainer(onTasksPressed: _navigateToTaskPage),
                 const SizedBox(height: 16.0),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -214,7 +225,7 @@ class HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 16.0),
                 RecentTaskContainer(
-                  tasks: _tasks,
+                  notCompletedTasks: _tasks,
                   searchQuery: _searchQuery,
                 ),
                 const SizedBox(height: 8.0),

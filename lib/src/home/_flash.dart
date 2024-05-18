@@ -12,7 +12,7 @@ class FlashPage extends StatefulWidget {
 }
 
 class _FlashPageState extends State<FlashPage> {
-  GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -380,7 +380,7 @@ class _FlashPageState extends State<FlashPage> {
                             child: Flash(
                               controller: controller,
                               position: FlashPosition.bottom,
-                              dismissDirections: [
+                              dismissDirections: const [
                                 FlashDismissDirection.startToEnd
                               ],
                               child: const SizedBox(
@@ -429,7 +429,7 @@ class _FlashPageState extends State<FlashPage> {
                                           ),
                                           end: Offset.zero));
                                 },
-                                dismissDirections: [
+                                dismissDirections: const [
                                   FlashDismissDirection.endToStart
                                 ],
                                 child: const FractionallySizedBox(

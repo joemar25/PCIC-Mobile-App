@@ -72,3 +72,9 @@ making sure that .task is added
 saving routes is not yet implemented (markers)
 apply algo for prediction of the path (dijkstra's algo)
 genetic algo & particle
+
+<!-- flutter pub outdated --}} knowing versions -->
+<!-- flutter pub upgrade --major-versions -->
+<!-- flutter pub upgrade -->
+
+<!-- flutter pub cache clean -->

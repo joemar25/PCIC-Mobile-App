@@ -1,3 +1,4 @@
+// filename: _task_view.dart
 import 'package:flutter/material.dart';
 
 import '../home/_recent_task_data.dart';
@@ -8,8 +9,10 @@ import '_task_filter_button.dart';
 import '_task_filter_footer.dart';
 
 class TaskView extends StatefulWidget {
-  const TaskView({super.key, Key? id, required this.tasks});
+  const TaskView({super.key, required this.tasks, required this.initialFilter});
+
   final List<TaskManager> tasks;
+  final String initialFilter;
 
   @override
   TaskContainerState createState() => TaskContainerState();
@@ -17,61 +20,31 @@ class TaskView extends StatefulWidget {
 
 class TaskContainerState extends State<TaskView> {
   int _hoveredIndex = -1;
-  String _sortBy = 'ID';
-  bool _showCompleted = false;
+  String _sortBy = 'Date Added';
+  String _statusFilter = 'All';
   String _searchQuery = '';
-  ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
-  int _visibleItemCount = 1;
+  List<TaskManager> _sortedTasks = [];
 
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_scrollListener);
+    _statusFilter = widget.initialFilter;
+    _sortTasks(_sortBy);
   }
 
-  @override
-  void dispose() {
-    _scrollController.removeListener(_scrollListener);
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _scrollListener() {
-    if (_scrollController.position.pixels ==
-            _scrollController.position.maxScrollExtent &&
-        !_isLoading) {
-      // Reached the end of the list, load more items
-      _loadMoreTasks();
-    }
-  }
-
-  Future<void> _loadMoreTasks() async {
-    if (_isLoading) return;
-
+  void _updateStatusFilter(String newValue) {
     setState(() {
-      _isLoading = true;
+      _statusFilter = newValue;
     });
-
-    // Simulated data loading delay
-    await Future.delayed(Duration(seconds: 2));
-
-    setState(() {
-      _isLoading = false;
-      _visibleItemCount += 1; // Increase visible item count
-    });
-  }
-
-  void _updateShowComplete(bool newState) {
-    setState(() {
-      _showCompleted = newState;
-    });
+    _sortTasks(_sortBy);
   }
 
   void _updateSortBy(String newValue) {
     setState(() {
       _sortBy = newValue;
     });
+    _sortTasks(newValue);
   }
 
   void _updateSearchQuery(String newValue) {
@@ -80,113 +53,122 @@ class TaskContainerState extends State<TaskView> {
     });
   }
 
+  Future<void> _sortTasks(String sortBy) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      List<TaskManager> sortedTasks;
+
+      // debugPrint("_statusFilter = $_statusFilter");
+
+      if (_statusFilter == 'Ongoing') {
+        sortedTasks = await TaskManager.getTasksByStatus('Ongoing');
+      } else if (_statusFilter == 'For Dispatch') {
+        sortedTasks = await TaskManager.getTasksByStatus('For Dispatch');
+      } else if (_statusFilter == 'Completed') {
+        sortedTasks = await TaskManager.getTasksByStatus('Completed');
+      } else {
+        sortedTasks = await TaskManager.getAllTasks();
+      }
+
+      // debugPrint("sortedTasks = $sortedTasks");
+
+      setState(() {
+        _sortedTasks = sortedTasks;
+      });
+    } catch (error) {
+      debugPrint("Error sorting tasks: $error");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Sort and filter tasks based on user selection
-    List<TaskManager> sortedTasks = _sortTasks(widget.tasks, _sortBy);
-    List<TaskManager> filteredTasks = sortedTasks
-        .where((task) => _showCompleted ? task.isCompleted : !task.isCompleted)
-        .toList();
-    List<TaskManager> visibleTasks =
-        filteredTasks.take(_visibleItemCount).toList();
+    List<TaskManager> tasksToDisplay = _isLoading ? [] : _sortedTasks;
 
     return Column(
       children: [
         Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 21.0),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          padding: const EdgeInsets.symmetric(horizontal: 21.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Row(
                 children: [
                   FilterButton(
-                    onUpdateState: _updateShowComplete,
+                    onUpdateState: _updateStatusFilter,
                     onUpdateValue: _updateSortBy,
                   ),
-                  const SizedBox(
-                    width: 8.0,
-                  ),
+                  const SizedBox(width: 8.0),
                   SearchButton(onUpdateValue: _updateSearchQuery),
                 ],
               ),
               FilterFooter(
-                showComplete: _showCompleted,
+                filter: _statusFilter,
                 orderBy: _sortBy,
-              )
-            ])),
-
-        // _buildButtons(),
-        // _buildSortByDropdown(),
+              ),
+            ],
+          ),
+        ),
         Expanded(
           child: RefreshIndicator(
             onRefresh: _refreshTasks,
-            child: filteredTasks.isEmpty
+            child: tasksToDisplay.isEmpty
                 ? const Center(
                     child: Text('No tasks'),
                   )
                 : ListView.builder(
-                    controller: _scrollController,
-                    itemCount: _isLoading
-                        ? visibleTasks.length + 1 // Loading indicator
-                        : visibleTasks.length,
+                    itemCount: tasksToDisplay.length,
                     itemBuilder: (context, index) {
-                      if (index < visibleTasks.length) {
-                        final TaskManager task = filteredTasks[index];
-                        //Move this validation later
-                        String serviceGroup =
-                            task.csvData?['serviceGroup'] ?? '';
-                        int ppirInsuranceId = task.ppirInsuranceId;
+                      final TaskManager task = tasksToDisplay[index];
 
-                        bool matchesSearchQuery = _searchQuery.isEmpty ||
-                            '$serviceGroup-$ppirInsuranceId'
-                                .toLowerCase()
-                                .contains(_searchQuery.toLowerCase());
+                      bool matchesSearchQuery = _searchQuery.isEmpty ||
+                          task.taskId
+                              .toLowerCase()
+                              .contains(_searchQuery.toLowerCase());
 
-                        if (!matchesSearchQuery) {
-                          return const SizedBox
-                              .shrink(); // Skip rendering if task doesn't match search query
-                        }
-
-                        return MouseRegion(
-                            onEnter: (_) =>
-                                setState(() => _hoveredIndex = index),
-                            onExit: (_) => setState(() => _hoveredIndex = -1),
-                            child: GestureDetector(
-                              onTap: () =>
-                                  _navigateToTaskDetails(context, task),
-                              child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 21.0),
-                                  child: Container(
-                                    margin:
-                                        const EdgeInsets.symmetric(vertical: 8),
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            width: 0.5, color: Colors.black38),
-                                        color: _hoveredIndex == index
-                                            ? Colors.grey[200]
-                                            : Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(15.0),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                              color: Color(0xFF0F7D40),
-                                              offset: Offset(-5, 5))
-                                        ]),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        TaskData(task: task),
-                                      ],
-                                    ),
-                                  )),
-                            ));
-                      } else {
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
+                      if (!matchesSearchQuery) {
+                        return const SizedBox.shrink();
                       }
+
+                      return MouseRegion(
+                        onEnter: (_) => setState(() => _hoveredIndex = index),
+                        onExit: (_) => setState(() => _hoveredIndex = -1),
+                        child: GestureDetector(
+                          onTap: () => _navigateToTaskDetails(context, task),
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 21.0),
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: 0.5, color: Colors.black38),
+                                color: _hoveredIndex == index
+                                    ? Colors.grey[200]
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(15.0),
+                                boxShadow: const [
+                                  BoxShadow(
+                                      color: Color(0xFF0F7D40),
+                                      offset: Offset(-5, 5)),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  TaskData(task: task),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
                     },
                   ),
           ),
@@ -195,23 +177,8 @@ class TaskContainerState extends State<TaskView> {
     );
   }
 
-  List<TaskManager> _sortTasks(List<TaskManager> tasks, String sortBy) {
-    switch (sortBy) {
-      case 'ID':
-        return tasks..sort((a, b) => a.id.compareTo(b.id));
-      case 'Date Added':
-        return tasks..sort((a, b) => a.dateAdded.compareTo(b.dateAdded));
-      case 'Date Accessed':
-        return tasks..sort((a, b) => a.dateAccess.compareTo(b.dateAccess));
-      default:
-        return tasks;
-    }
-  }
-
   Future<void> _refreshTasks() async {
-    // Ideally, you fetch tasks from your backend or local database
-    await Future.delayed(
-        const Duration(seconds: 1)); // Simulating network delay
+    await Future.delayed(const Duration(seconds: 1));
     setState(() {
       // Refresh logic or state update after fetching tasks
     });
@@ -224,55 +191,3 @@ class TaskContainerState extends State<TaskView> {
     );
   }
 }
-
-
-
-
-// Widget _buildButtons() {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.end,
-  //     children: [
-  //       ElevatedButton(
-  //         onPressed: () {
-  //           setState(() {
-  //             _showCompleted = true;
-  //           });
-  //         },
-  //         style: ElevatedButton.styleFrom(
-  //           backgroundColor: _showCompleted ? Colors.green : null,
-  //         ),
-  //         child: const Text('Complete'),
-  //       ),
-  //       const SizedBox(width: 10),
-  //       ElevatedButton(
-  //         onPressed: () {
-  //           setState(() {
-  //             _showCompleted = false;
-  //           });
-  //         },
-  //         style: ElevatedButton.styleFrom(
-  //           backgroundColor: !_showCompleted ? Colors.green : null,
-  //         ),
-  //         child: const Text('Current'),
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  // Widget _buildSortByDropdown() {
-  //   return DropdownButton<String>(
-  //     value: _sortBy,
-  //     onChanged: (newValue) {
-  //       setState(() {
-  //         _sortBy = newValue!;
-  //       });
-  //     },
-  //     items: <String>['id', 'dateAdded', 'dateAccess']
-  //         .map<DropdownMenuItem<String>>((String value) {
-  //       return DropdownMenuItem<String>(
-  //         value: value,
-  //         child: Text('Sort by $value'),
-  //       );
-  //     }).toList(),
-  //   );
-  // }
