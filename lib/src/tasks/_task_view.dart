@@ -20,6 +20,47 @@ class TaskContainerState extends State<TaskView> {
   String _sortBy = 'ID';
   bool _showCompleted = false;
   String _searchQuery = '';
+  ScrollController _scrollController = ScrollController();
+  bool _isLoading = false;
+  int _visibleItemCount = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent &&
+        !_isLoading) {
+      // Reached the end of the list, load more items
+      _loadMoreTasks();
+    }
+  }
+
+  Future<void> _loadMoreTasks() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    // Simulated data loading delay
+    await Future.delayed(Duration(seconds: 2));
+
+    setState(() {
+      _isLoading = false;
+      _visibleItemCount += 1; // Increase visible item count
+    });
+  }
 
   void _updateShowComplete(bool newState) {
     setState(() {
@@ -46,6 +87,8 @@ class TaskContainerState extends State<TaskView> {
     List<TaskManager> filteredTasks = sortedTasks
         .where((task) => _showCompleted ? task.isCompleted : !task.isCompleted)
         .toList();
+    List<TaskManager> visibleTasks =
+        filteredTasks.take(_visibleItemCount).toList();
 
     return Column(
       children: [
@@ -81,54 +124,69 @@ class TaskContainerState extends State<TaskView> {
                     child: Text('No tasks'),
                   )
                 : ListView.builder(
-                    itemCount: filteredTasks.length,
+                    controller: _scrollController,
+                    itemCount: _isLoading
+                        ? visibleTasks.length + 1 // Loading indicator
+                        : visibleTasks.length,
                     itemBuilder: (context, index) {
-                      final TaskManager task = filteredTasks[index];
-                      //Move this validation later
-                      String serviceGroup = task.csvData?['serviceGroup'] ?? '';
-                      int ppirInsuranceId = task.ppirInsuranceId;
+                      if (index < visibleTasks.length) {
+                        final TaskManager task = filteredTasks[index];
+                        //Move this validation later
+                        String serviceGroup =
+                            task.csvData?['serviceGroup'] ?? '';
+                        int ppirInsuranceId = task.ppirInsuranceId;
 
-                      bool matchesSearchQuery = _searchQuery.isEmpty ||
-                          '$serviceGroup-$ppirInsuranceId'
-                              .toLowerCase()
-                              .contains(_searchQuery.toLowerCase());
+                        bool matchesSearchQuery = _searchQuery.isEmpty ||
+                            '$serviceGroup-$ppirInsuranceId'
+                                .toLowerCase()
+                                .contains(_searchQuery.toLowerCase());
 
-                      if (!matchesSearchQuery) {
-                        return const SizedBox
-                            .shrink(); // Skip rendering if task doesn't match search query
+                        if (!matchesSearchQuery) {
+                          return const SizedBox
+                              .shrink(); // Skip rendering if task doesn't match search query
+                        }
+
+                        return MouseRegion(
+                            onEnter: (_) =>
+                                setState(() => _hoveredIndex = index),
+                            onExit: (_) => setState(() => _hoveredIndex = -1),
+                            child: GestureDetector(
+                              onTap: () =>
+                                  _navigateToTaskDetails(context, task),
+                              child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 21.0),
+                                  child: Container(
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            width: 0.5, color: Colors.black38),
+                                        color: _hoveredIndex == index
+                                            ? Colors.grey[200]
+                                            : Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(15.0),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                              color: Color(0xFF0F7D40),
+                                              offset: Offset(-5, 5))
+                                        ]),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        TaskData(task: task),
+                                      ],
+                                    ),
+                                  )),
+                            ));
+                      } else {
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
                       }
-
-                      return MouseRegion(
-                          onEnter: (_) => setState(() => _hoveredIndex = index),
-                          onExit: (_) => setState(() => _hoveredIndex = -1),
-                          child: GestureDetector(
-                            onTap: () => _navigateToTaskDetails(context, task),
-                            child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 21.0),
-                                child: Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(vertical: 8),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          width: 0.5, color: Colors.black38),
-                                      color: _hoveredIndex == index
-                                          ? Colors.grey[200]
-                                          : Colors.white,
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      boxShadow: const [
-                                        BoxShadow(
-                                            color: Color(0xFF0F7D40),
-                                            offset: Offset(-5, 5))
-                                      ]),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      TaskData(task: task),
-                                    ],
-                                  ),
-                                )),
-                          ));
                     },
                   ),
           ),
@@ -137,7 +195,40 @@ class TaskContainerState extends State<TaskView> {
     );
   }
 
-  // Widget _buildButtons() {
+  List<TaskManager> _sortTasks(List<TaskManager> tasks, String sortBy) {
+    switch (sortBy) {
+      case 'ID':
+        return tasks..sort((a, b) => a.id.compareTo(b.id));
+      case 'Date Added':
+        return tasks..sort((a, b) => a.dateAdded.compareTo(b.dateAdded));
+      case 'Date Accessed':
+        return tasks..sort((a, b) => a.dateAccess.compareTo(b.dateAccess));
+      default:
+        return tasks;
+    }
+  }
+
+  Future<void> _refreshTasks() async {
+    // Ideally, you fetch tasks from your backend or local database
+    await Future.delayed(
+        const Duration(seconds: 1)); // Simulating network delay
+    setState(() {
+      // Refresh logic or state update after fetching tasks
+    });
+  }
+
+  void _navigateToTaskDetails(BuildContext context, TaskManager task) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => TaskDetailsPage(task: task)),
+    );
+  }
+}
+
+
+
+
+// Widget _buildButtons() {
   //   return Row(
   //     mainAxisAlignment: MainAxisAlignment.end,
   //     children: [
@@ -185,33 +276,3 @@ class TaskContainerState extends State<TaskView> {
   //     }).toList(),
   //   );
   // }
-
-  List<TaskManager> _sortTasks(List<TaskManager> tasks, String sortBy) {
-    switch (sortBy) {
-      case 'ID':
-        return tasks..sort((a, b) => a.id.compareTo(b.id));
-      case 'Date Added':
-        return tasks..sort((a, b) => a.dateAdded.compareTo(b.dateAdded));
-      case 'Date Accessed':
-        return tasks..sort((a, b) => a.dateAccess.compareTo(b.dateAccess));
-      default:
-        return tasks;
-    }
-  }
-
-  Future<void> _refreshTasks() async {
-    // Ideally, you fetch tasks from your backend or local database
-    await Future.delayed(
-        const Duration(seconds: 1)); // Simulating network delay
-    setState(() {
-      // Refresh logic or state update after fetching tasks
-    });
-  }
-
-  void _navigateToTaskDetails(BuildContext context, TaskManager task) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => TaskDetailsPage(task: task)),
-    );
-  }
-}
