@@ -33,9 +33,6 @@ class TaskManager {
   static Future<void> syncDataFromCSV() async {
     try {
       debugPrint('Data sync from CSV started.');
-      // Show the loader
-      // You can use a package like flutter_easyloading to display the loader
-      // await EasyLoading.show(status: 'Syncing data...');
 
       // Get the list of CSV files in the 'assets/storage/mergedtask/' folder
       final manifestContent = await rootBundle.loadString('AssetManifest.json');
@@ -67,13 +64,9 @@ class TaskManager {
       }
       debugPrint('Loop End...');
 
-      // Hide the loader
-      // await EasyLoading.dismiss();
-      // debugPrint('Data sync from CSV completed.');
+      debugPrint('Data sync from CSV completed.');
     } catch (error) {
-      // Hide the loader in case of an error
-      // await EasyLoading.dismiss();
-      // debugPrint('Error syncing data from CSV: $error');
+      debugPrint('Error syncing data from CSV: $error');
     }
   }
 
@@ -129,22 +122,20 @@ class TaskManager {
         'trackTotaldistance': '',
       };
 
-      // Check if the form details already exist based on taskManagerNumber, assigneeId, and ppirInsuranceId
-      final formDetailsCollection =
-          FirebaseFirestore.instance.collection('formDetails');
-      final querySnapshot = await formDetailsCollection
-          .where('taskManagerNumber',
-              isEqualTo: ppirFormData['taskManagerNumber'])
-          .where('assigneeId', isEqualTo: ppirFormData['assigneeId'])
+      // Check if the PPIR form already exists in the ppirForms collection based on ppirInsuranceId and ppirAssignmentId
+      final ppirFormsCollection =
+          FirebaseFirestore.instance.collection('ppirForms');
+      final querySnapshot = await ppirFormsCollection
           .where('ppirInsuranceId', isEqualTo: ppirFormData['ppirInsuranceId'])
+          .where('ppirAssignmentId',
+              isEqualTo: ppirFormData['ppirAssignmentId'])
           .get();
 
       if (querySnapshot.docs.isEmpty) {
-        // If the form details don't exist, add the PPIR form and create the necessary documents
-        final ppirFormsCollection =
-            FirebaseFirestore.instance.collection('ppirForms');
+        // If the PPIR form doesn't exist, add it to the ppirForms collection
         final ppirFormRef = await ppirFormsCollection.add(ppirFormData);
 
+        // Create a new form details document in the formDetails collection
         final formDetailsData = {
           'formId': ppirFormRef,
           'type': 'PPIR',
@@ -152,8 +143,11 @@ class TaskManager {
           'assigneeId': ppirFormData['assigneeId'],
           'ppirInsuranceId': ppirFormData['ppirInsuranceId'],
         };
-        final formDetailsRef = await formDetailsCollection.add(formDetailsData);
+        final formDetailsRef = await FirebaseFirestore.instance
+            .collection('formDetails')
+            .add(formDetailsData);
 
+        // Create a new task document in the tasks collection
         final taskData = {
           'assignee': FirebaseFirestore.instance
               .doc('users/${ppirFormData['assigneeId']}'),
@@ -166,23 +160,22 @@ class TaskManager {
         final taskRef =
             await FirebaseFirestore.instance.collection('tasks').add(taskData);
 
+        // Update the form details document with the taskId
         await formDetailsRef.update({'taskId': taskRef});
 
+        // Add the taskId to the ppirFormData
         ppirFormData['taskId'] = taskRef.id;
         await ppirFormRef.update(ppirFormData);
       } else {
-        // If the form details already exist, update the PPIR form data
-        final ppirFormRef = querySnapshot.docs.first.reference;
-        await ppirFormRef.update(ppirFormData);
+        debugPrint('PPIR form already exists. Skipping addition/update.');
       }
     } catch (error) {
-      // debugPrint('Error adding or updating PPIR form: $error');
+      debugPrint('Error adding or updating PPIR form: $error');
     }
   }
 
   static Future<List<TaskManager>> getAllTasks() async {
-    // Show the loader
-    // await EasyLoading.show(status: 'Loading tasks...');
+    debugPrint('Loading tasks...');
 
     await syncDataFromCSV();
 
@@ -210,14 +203,10 @@ class TaskManager {
         tasks.add(task);
       }
 
-      // debugPrint('Loaded ${tasks.length} tasks from Firestore');
+      debugPrint('Loaded ${tasks.length} tasks from Firestore');
     } catch (error) {
-      // debugPrint('Error retrieving tasks from Firestore: $error');
+      debugPrint('Error retrieving tasks from Firestore: $error');
     }
-
-    // Hide the loader
-    // await EasyLoading.dismiss();
-
     return tasks;
   }
 
