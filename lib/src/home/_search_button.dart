@@ -18,26 +18,23 @@ class _SearchButtonState extends State<SearchButton> {
     return SizedBox(
       height: 50,
       child: Container(
-        // Added Container for the shadow effect
         decoration: BoxDecoration(
-          color: Colors.white, // Added white background color
-          borderRadius: BorderRadius.circular(32.0), // Added rounded edges
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(32.0),
           boxShadow: [
-            // Added BoxShadow for subtle shadow
             BoxShadow(
-              color: Colors.black.withOpacity(0.1), // Subtle shadow color
+              color: Colors.black.withOpacity(0.1),
               spreadRadius: 1,
               blurRadius: 5,
-              offset: Offset(0, 3), // changes position of shadow
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius:
-              BorderRadius.circular(32.0), // Clip the child to rounded edges
+          borderRadius: BorderRadius.circular(32.0),
           child: TextField(
             onChanged: widget.onUpdateValue,
-            textAlign: TextAlign.left, // Text aligns to the left
+            textAlign: TextAlign.left,
             decoration: InputDecoration(
               hintText: 'Search Task',
               hintStyle: const TextStyle(color: mainColor),
