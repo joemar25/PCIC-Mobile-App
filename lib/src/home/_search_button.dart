@@ -23,10 +23,10 @@ class _SearchButtonState extends State<SearchButton> {
           borderRadius: BorderRadius.circular(32.0),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: const Offset(0, 3),
+              color: Colors.black.withOpacity(0.1), // More subtle shadow color
+              spreadRadius: 1, // Reduced spread radius
+              blurRadius: 3, // Slightly increased blur radius
+              offset: const Offset(0, 1), // Adjusted offset for a softer shadow
             ),
           ],
         ),
@@ -37,16 +37,16 @@ class _SearchButtonState extends State<SearchButton> {
             textAlign: TextAlign.left,
             decoration: InputDecoration(
               hintText: 'Search Task',
-              hintStyle: const TextStyle(color: mainColor),
+              hintStyle: const TextStyle(color: Colors.grey),
               isDense: true,
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: mainColor, width: 1.0),
+                borderSide: const BorderSide(color: mainColor, width: 1.5),
                 borderRadius: BorderRadius.circular(32.0),
               ),
               enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: mainColor, width: 1.0),
+                borderSide: const BorderSide(color: mainColor, width: 1.5),
                 borderRadius: BorderRadius.circular(32.0),
               ),
               suffixIconConstraints:
