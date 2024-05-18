@@ -1,4 +1,3 @@
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
@@ -7,10 +6,10 @@ class MessageDetailsPage extends StatefulWidget {
   const MessageDetailsPage({super.key, required this.message});
 
   @override
-  _MessageDetailsPageState createState() => _MessageDetailsPageState();
+  MessageDetailsPageState createState() => MessageDetailsPageState();
 }
 
-class _MessageDetailsPageState extends State<MessageDetailsPage> {
+class MessageDetailsPageState extends State<MessageDetailsPage> {
   final TextEditingController _messageController = TextEditingController();
   final List<String> _userMessages = [];
 
