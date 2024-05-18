@@ -60,8 +60,6 @@ class TaskContainerState extends State<TaskView> {
     try {
       List<TaskManager> sortedTasks;
 
-      // debugPrint("_statusFilter = $_statusFilter");
-
       if (_statusFilter == 'Ongoing') {
         sortedTasks = await TaskManager.getTasksByStatus('Ongoing');
       } else if (_statusFilter == 'For Dispatch') {
