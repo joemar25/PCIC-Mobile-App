@@ -1,4 +1,3 @@
-// file: ppir_form/_pcic_form.dart
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -206,6 +205,7 @@ class PCICFormPageState extends State<PCICFormPage> {
     _formData['trackDatetime'] = _areaPlantedController.text;
     _formData['trackLastcoord'] = _formData['lastCoordinates'];
     _formData['trackTotaldistance'] = _totalDistanceController.text;
+    _formData['status'] = 'Completed'; // Explicitly set status to 'Completed'
 
     _formData['ppirRemarks'] = _formData['ppirRemarks'] ?? 'no value';
     _formData['ppirSigInsured'] = signatureData['ppirSigInsured'] ?? 'no value';
@@ -374,7 +374,6 @@ class PCICFormPageState extends State<PCICFormPage> {
                 ),
                 const SizedBox(height: 16),
                 GPXFileButtons(
-                  // Reusing the GPX button
                   openGpxFile: () => _openGpxFile(widget.gpxFile),
                 ),
               ],
