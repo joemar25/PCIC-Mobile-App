@@ -87,9 +87,20 @@ class TaskManager {
     return await getTasksByQuery(query);
   }
 
-  Future<void> updateTaskData(Map<String, dynamic> data) async {
+  Future<void> updatePpirFormData(
+      Map<String, dynamic> formData, Map<String, dynamic> taskData) async {
+    final formRef =
+        FirebaseFirestore.instance.collection('ppirForms').doc(formId);
     final taskRef = FirebaseFirestore.instance.collection('tasks').doc(taskId);
-    await taskRef.update(data);
+
+    final batch = FirebaseFirestore.instance.batch();
+    batch.update(formRef, formData);
+    batch.update(taskRef, taskData);
+
+    debugPrint("formData = $formData");
+    debugPrint("taskData = $taskData");
+
+    await batch.commit();
   }
 
   static Future<List<String>> _getCSVFilePaths() async {
@@ -109,6 +120,9 @@ class TaskManager {
     final query = FirebaseFirestore.instance
         .collection('tasks')
         .where('status', isNotEqualTo: 'Completed');
+
+    // Joemar Note: Only use this sync when initializing data for testing
+    // await syncDataFromCSV();
     return await getTasksByQuery(query);
   }
 
