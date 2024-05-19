@@ -37,7 +37,6 @@ class TaskManager {
       final querySnapshot = await query.get();
 
       for (final documentSnapshot in querySnapshot.docs) {
-        // debugPrint("query = $documentSnapshot");
         final taskId = documentSnapshot.id;
         final taskData = documentSnapshot.data() as Map<String, dynamic>?;
 
@@ -82,7 +81,7 @@ class TaskManager {
 
   static Future<List<String>> _getCSVFilePaths() async {
     final manifestContent = await rootBundle.loadString('AssetManifest.json');
-    final manifestMap = json.decode(manifestContent);
+    final manifestMap = json.decode(manifestContent) as Map<String, dynamic>;
 
     List<String> csvPaths = manifestMap.keys
         .where((path) =>
@@ -99,10 +98,8 @@ class TaskManager {
   }
 
   static Future<void> syncDataFromCSV() async {
-    // debugPrint("syncing data started...");
     try {
       final csvFilePaths = await _getCSVFilePaths();
-      // debugPrint("csvFilePaths = $csvFilePaths");
 
       for (final csvFilePath in csvFilePaths) {
         final csvData = await _loadCSVData(csvFilePath);
@@ -123,6 +120,9 @@ class TaskManager {
 
             if (ppirFormQuerySnapshot.docs.isEmpty) {
               await _createNewTaskAndRelatedDocuments(row);
+            } else {
+              debugPrint(
+                  'Duplicate PPIR form detected with ppirInsuranceId: $ppirInsuranceId');
             }
           }
         }
@@ -137,7 +137,6 @@ class TaskManager {
   static Future<void> _deleteDuplicateForms() async {
     final ppirFormsSnapshot =
         await FirebaseFirestore.instance.collection('ppirForms').get();
-
     final Map<String, List<QueryDocumentSnapshot>> duplicateFormsMap = {};
 
     for (final ppirForm in ppirFormsSnapshot.docs) {
@@ -154,21 +153,77 @@ class TaskManager {
 
     final List<Future> deletionFutures = [];
 
-    duplicateFormsMap.forEach((ppirInsuranceId, duplicateForms) {
+    for (var entry in duplicateFormsMap.entries) {
+      final duplicateForms = entry.value;
+
       if (duplicateForms.length > 1) {
         for (int i = 1; i < duplicateForms.length; i++) {
           final duplicateForm = duplicateForms[i];
-          final formDetailsRef = duplicateForm['taskId'] as DocumentReference?;
-          final taskRef = duplicateForm['taskId'] as DocumentReference?;
+          final data = duplicateForm.data() as Map<String, dynamic>?;
+          final formDetailsRef = data?['formDetailsId'] as DocumentReference?;
+          final taskRef = data?['taskId'] as DocumentReference?;
 
+          // Delete the ppirForm
+          debugPrint('Deleting ppirForm: ${duplicateForm.id}');
           deletionFutures.add(duplicateForm.reference.delete());
-          deletionFutures.add(formDetailsRef?.delete() ?? Future.value());
-          deletionFutures.add(taskRef?.delete() ?? Future.value());
+
+          // Delete the formDetails
+          if (formDetailsRef != null) {
+            debugPrint('Deleting formDetailsRef: ${formDetailsRef.id}');
+            try {
+              final formDetailsSnapshot = await formDetailsRef.get();
+              if (formDetailsSnapshot.exists) {
+                final formDetailsData =
+                    formDetailsSnapshot.data() as Map<String, dynamic>?;
+                final relatedTaskRef =
+                    formDetailsData?['taskId'] as DocumentReference?;
+
+                // Delete the related task
+                if (relatedTaskRef != null) {
+                  debugPrint(
+                      'Deleting related taskRef from formDetails: ${relatedTaskRef.id}');
+                  deletionFutures.add(relatedTaskRef.delete());
+                }
+
+                // Delete the formDetails
+                deletionFutures.add(formDetailsRef.delete());
+              }
+            } catch (e) {
+              debugPrint(
+                  'Error deleting formDetailsRef: ${formDetailsRef.id}, error: $e');
+            }
+          }
+
+          // Delete the task
+          if (taskRef != null) {
+            debugPrint('Deleting taskRef: ${taskRef.id}');
+            try {
+              final taskSnapshot = await taskRef.get();
+              if (taskSnapshot.exists) {
+                final taskData = taskSnapshot.data() as Map<String, dynamic>?;
+                final relatedFormDetailsRef =
+                    taskData?['formDetailsId'] as DocumentReference?;
+
+                // Delete the related formDetails
+                if (relatedFormDetailsRef != null) {
+                  debugPrint(
+                      'Deleting related formDetailsRef from task: ${relatedFormDetailsRef.id}');
+                  deletionFutures.add(relatedFormDetailsRef.delete());
+                }
+
+                // Delete the task
+                deletionFutures.add(taskRef.delete());
+              }
+            } catch (e) {
+              debugPrint('Error deleting taskRef: ${taskRef.id}, error: $e');
+            }
+          }
         }
       }
-    });
+    }
 
     await Future.wait(deletionFutures);
+    debugPrint('Deletion of duplicate forms completed.');
   }
 
   static Map<String, dynamic> _createTaskData(
@@ -257,22 +312,32 @@ class TaskManager {
     if (ppirInsuranceId.isNotEmpty &&
         assigneeEmail.isNotEmpty &&
         ppirAssignmentId.isNotEmpty) {
-      final taskRef = FirebaseFirestore.instance.collection('tasks').doc();
-      final formDetailsRef =
-          FirebaseFirestore.instance.collection('formDetails').doc();
-      final ppirFormRef =
-          FirebaseFirestore.instance.collection('ppirForms').doc();
+      final existingPPIRForms = await FirebaseFirestore.instance
+          .collection('ppirForms')
+          .where('ppirInsuranceId', isEqualTo: ppirInsuranceId)
+          .get();
 
-      final taskData = _createTaskData(row, taskRef.id, formDetailsRef);
-      final formDetailsData =
-          _createFormDetailsData(row, ppirFormRef.id, taskRef);
-      final ppirFormData = _createPPIRFormData(row, ppirFormRef.id, taskRef);
+      if (existingPPIRForms.docs.isEmpty) {
+        final taskRef = FirebaseFirestore.instance.collection('tasks').doc();
+        final formDetailsRef =
+            FirebaseFirestore.instance.collection('formDetails').doc();
+        final ppirFormRef =
+            FirebaseFirestore.instance.collection('ppirForms').doc();
 
-      final batch = FirebaseFirestore.instance.batch();
-      batch.set(taskRef, taskData);
-      batch.set(formDetailsRef, formDetailsData);
-      batch.set(ppirFormRef, ppirFormData);
-      await batch.commit();
+        final taskData = _createTaskData(row, taskRef.id, formDetailsRef);
+        final formDetailsData =
+            _createFormDetailsData(row, ppirFormRef.id, taskRef);
+        final ppirFormData = _createPPIRFormData(row, ppirFormRef.id, taskRef);
+
+        final batch = FirebaseFirestore.instance.batch();
+        batch.set(taskRef, taskData);
+        batch.set(formDetailsRef, formDetailsData);
+        batch.set(ppirFormRef, ppirFormData);
+        await batch.commit();
+      } else {
+        debugPrint(
+            'Duplicate PPIR form detected with ppirInsuranceId: $ppirInsuranceId');
+      }
     }
   }
 
@@ -369,18 +434,14 @@ class TaskManager {
 
           if (formDetailsIdRef != null) {
             final formDetailsSnapshot = await formDetailsIdRef.get();
-            // debugPrint("formDetailsSnapshot = $formDetailsSnapshot");
 
             if (formDetailsSnapshot.exists) {
               final formDetailsData =
                   formDetailsSnapshot.data() as Map<String, dynamic>?;
-              // debugPrint("formDetailsData = $formDetailsData");
 
               if (formDetailsData != null) {
                 final formIdRef =
                     formDetailsData['formId'] as DocumentReference?;
-
-                // debugPrint("formIdRef= $formIdRef");
 
                 if (formIdRef != null) {
                   final formId = formIdRef.id;
@@ -542,5 +603,3 @@ class TaskManager {
     return null;
   }
 }
-
-// latest
