@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
-
 import '_profile_body_item.dart';
+import 'package:flutter/material.dart';
 
 class ProfileBody extends StatefulWidget {
   const ProfileBody({super.key});
@@ -12,25 +11,40 @@ class ProfileBody extends StatefulWidget {
 class _ProfileBodyState extends State<ProfileBody> {
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 16.0),
-        child: Column(
-          children: [
-            ProfileBodyItem(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Column(
+        children: [
+          GestureDetector(
+            // Add GestureDetector for interactivity
+            onTap: () {},
+            child: const ProfileBodyItem(
               label: 'My Tasks',
               svgPath: 'assets/storage/images/mytask.svg',
             ),
-            SizedBox(height: 16.0),
-            ProfileBodyItem(
+          ),
+          const SizedBox(height: 16.0),
+          GestureDetector(
+            onTap: () {
+              // Handle "Settings" tap
+            },
+            child: const ProfileBodyItem(
               label: 'Settings',
               svgPath: 'assets/storage/images/settings.svg',
             ),
-            SizedBox(height: 16.0),
-            ProfileBodyItem(
+          ),
+          const SizedBox(height: 16.0),
+          GestureDetector(
+            onTap: () {
+              // Handle "Change Password" tap
+            },
+            child: const ProfileBodyItem(
               label: 'Change Password',
               svgPath: 'assets/storage/images/lock.svg',
-            )
-          ],
-        ));
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

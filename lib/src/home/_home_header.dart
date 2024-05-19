@@ -1,14 +1,13 @@
-// filename: home/_home_header.dart
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../theme/_theme.dart';
 import '../settings/_view.dart';
 import '../settings/_service.dart';
+import 'package:flutter_svg/svg.dart';
 import '../settings/_controller.dart';
+import 'package:flutter/material.dart';
 import '../profile/_profile_view.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+// filename: home/_home_header.dart
 
 class HomeHeader extends StatefulWidget {
   final VoidCallback onLogout;
@@ -21,11 +20,41 @@ class HomeHeader extends StatefulWidget {
 
 class _HomeHeaderState extends State<HomeHeader> {
   String? userName;
+  String profilePicUrl = "";
 
   @override
   void initState() {
     super.initState();
     _fetchUserName();
+    _getUserProfilePic();
+  }
+
+  Future<void> _getUserProfilePic() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      print('User ID: ${user.uid}');
+
+      try {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc('8rpFSBLQRgCGCFyVrW96')
+            .get();
+
+        if (userDoc.exists) {
+          print('User document data: ${userDoc.data()}');
+          setState(() {
+            profilePicUrl = userDoc['profilePicUrl'] ?? '';
+          });
+          print('Profile Pic URL: $profilePicUrl');
+        } else {
+          print('User document does not exist.');
+        }
+      } catch (e) {
+        print('Error fetching user document: $e');
+      }
+    } else {
+      print('No user is logged in.');
+    }
   }
 
   Future<void> _fetchUserName() async {
@@ -92,19 +121,30 @@ class _HomeHeaderState extends State<HomeHeader> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
           padding: EdgeInsets.zero,
           child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFF0F7D40)),
-                borderRadius: BorderRadius.circular(100),
+            decoration: BoxDecoration(
+              border: Border.all(color: const Color(0xFF0F7D40)),
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: CircleAvatar(
+              radius: 24,
+              backgroundColor: Colors.transparent,
+              child: ClipOval(
+                child: profilePicUrl.isNotEmpty
+                    ? Image.network(
+                        profilePicUrl,
+                        fit: BoxFit.cover,
+                        width: 48,
+                        height: 48,
+                      )
+                    : Image.asset(
+                        'assets/storage/images/cool.png',
+                        fit: BoxFit.cover,
+                        width: 48,
+                        height: 48,
+                      ),
               ),
-              child: CircleAvatar(
-                radius: 24,
-                backgroundColor: Colors.transparent,
-                child: Image.asset(
-                  'assets/storage/images/cool.png',
-                  fit: BoxFit.cover,
-                  height: 30,
-                ),
-              )),
+            ),
+          ),
           onSelected: (value) {
             if (value == 'Logout') {
               widget.onLogout();
