@@ -27,22 +27,25 @@ class TaskManager {
     );
   }
 
-  static Future<List<TaskManager>> getAllTasks() async {
-    await syncDataFromCSV();
-
+  static Future<List<TaskManager>> getTasksByQuery(Query query) async {
     List<TaskManager> tasks = [];
-    Query query = FirebaseFirestore.instance.collection('tasks');
 
     try {
       final querySnapshot = await query.get();
+      debugPrint('Tasks fetched: ${querySnapshot.docs.length}');
 
       for (final documentSnapshot in querySnapshot.docs) {
+        debugPrint(
+            'Task Document ID: ${documentSnapshot.id}'); // Debugging statement
         final taskId = documentSnapshot.id;
         final taskData = documentSnapshot.data() as Map<String, dynamic>?;
+        debugPrint('Task Data: $taskData'); // Debugging statement
 
         if (taskData != null) {
           final formDetailsIdRef =
               taskData['formDetailsId'] as DocumentReference?;
+          debugPrint(
+              'Form Details ID Ref: $formDetailsIdRef'); // Debugging statement
 
           if (formDetailsIdRef != null) {
             final formDetailsSnapshot = await formDetailsIdRef.get();
@@ -50,10 +53,13 @@ class TaskManager {
             if (formDetailsSnapshot.exists) {
               final formDetailsData =
                   formDetailsSnapshot.data() as Map<String, dynamic>?;
+              debugPrint(
+                  'Form Details Data: $formDetailsData'); // Debugging statement
 
               if (formDetailsData != null) {
                 final formIdRef =
                     formDetailsData['formId'] as DocumentReference?;
+                debugPrint('Form ID Ref: $formIdRef'); // Debugging statement
 
                 if (formIdRef != null) {
                   final formId = formIdRef.id;
@@ -76,7 +82,20 @@ class TaskManager {
       debugPrint('Error retrieving tasks: $error');
     }
 
+    debugPrint('Total tasks processed: ${tasks.length}'); // Debugging statement
     return tasks;
+  }
+
+  static Future<List<TaskManager>> getTasksByStatus(String status) async {
+    final query = FirebaseFirestore.instance
+        .collection('tasks')
+        .where('status', isEqualTo: status);
+    return await getTasksByQuery(query);
+  }
+
+  static Future<List<TaskManager>> getAllTasks() async {
+    final query = FirebaseFirestore.instance.collection('tasks');
+    return await getTasksByQuery(query);
   }
 
   static Future<List<String>> _getCSVFilePaths() async {
@@ -90,6 +109,13 @@ class TaskManager {
         .toList();
 
     return csvPaths;
+  }
+
+  static Future<List<TaskManager>> getNotCompletedTasks() async {
+    final query = FirebaseFirestore.instance
+        .collection('tasks')
+        .where('status', isNotEqualTo: 'Completed');
+    return await getTasksByQuery(query);
   }
 
   static Future<List<List<dynamic>>> _loadCSVData(String filePath) async {
@@ -416,69 +442,6 @@ class TaskManager {
       'trackLastcoord': '',
       'trackTotaldistance': '',
     };
-  }
-
-  static Future<List<TaskManager>> getTasksByQuery(Query query) async {
-    List<TaskManager> tasks = [];
-
-    try {
-      final querySnapshot = await query.get();
-
-      for (final documentSnapshot in querySnapshot.docs) {
-        final taskId = documentSnapshot.id;
-        final taskData = documentSnapshot.data() as Map<String, dynamic>?;
-
-        if (taskData != null) {
-          final formDetailsIdRef =
-              taskData['formDetailsId'] as DocumentReference?;
-
-          if (formDetailsIdRef != null) {
-            final formDetailsSnapshot = await formDetailsIdRef.get();
-
-            if (formDetailsSnapshot.exists) {
-              final formDetailsData =
-                  formDetailsSnapshot.data() as Map<String, dynamic>?;
-
-              if (formDetailsData != null) {
-                final formIdRef =
-                    formDetailsData['formId'] as DocumentReference?;
-
-                if (formIdRef != null) {
-                  final formId = formIdRef.id;
-                  final type = formDetailsData['type'];
-
-                  final task = TaskManager.fromMap({
-                    'formId': formId,
-                    'taskId': taskId,
-                    'type': type,
-                  });
-
-                  tasks.add(task);
-                }
-              }
-            }
-          }
-        }
-      }
-    } catch (error) {
-      debugPrint('Error retrieving tasks: $error');
-    }
-
-    return tasks;
-  }
-
-  static Future<List<TaskManager>> getTasksByStatus(String status) async {
-    final query = FirebaseFirestore.instance
-        .collection('tasks')
-        .where('status', isEqualTo: status);
-    return await getTasksByQuery(query);
-  }
-
-  static Future<List<TaskManager>> getNotCompletedTasks() async {
-    final query = FirebaseFirestore.instance
-        .collection('tasks')
-        .where('status', isNotEqualTo: 'Completed');
-    return await getTasksByQuery(query);
   }
 
   Future<String?> get taskManagerNumber async {
