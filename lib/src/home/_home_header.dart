@@ -1,4 +1,4 @@
-// filename: _home_header.dart
+// filename: home/_home_header.dart
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +21,6 @@ class HomeHeader extends StatefulWidget {
 
 class _HomeHeaderState extends State<HomeHeader> {
   String? userName;
-  late final VoidCallback onLogout;
 
   @override
   void initState() {
@@ -43,9 +42,6 @@ class _HomeHeaderState extends State<HomeHeader> {
           DocumentSnapshot userDocSnapshot = querySnapshot.docs.first;
           Map<String, dynamic>? userData =
               userDocSnapshot.data() as Map<String, dynamic>?;
-
-          // debugPrint('User ID: $userId');
-          // debugPrint('User data: $userData');
 
           if (userData != null && userData.containsKey('name')) {
             setState(() {
@@ -111,7 +107,7 @@ class _HomeHeaderState extends State<HomeHeader> {
               )),
           onSelected: (value) {
             if (value == 'Logout') {
-              onLogout();
+              widget.onLogout();
             } else {
               // Handle other menu item selections
               switch (value) {

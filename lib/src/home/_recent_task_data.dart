@@ -28,16 +28,26 @@ class TaskData extends StatelessWidget {
             FutureBuilder<String?>(
               future: task.taskManagerNumber,
               builder: (context, snapshot) {
+                String taskType = task.type;
+                String formattedTaskType = taskType.length > 4
+                    ? taskType.substring(taskType.length - 4)
+                    : taskType;
                 if (snapshot.hasData) {
                   return Text(
-                    '${task.type}-${snapshot.data}',
+                    '$formattedTaskType-${snapshot.data}', // this gets the task number
                     style: TextStyle(
                       fontSize: t?.title ?? 16.0,
                       fontWeight: FontWeight.bold,
                     ),
                   );
                 }
-                return const SizedBox();
+                return Text(
+                  '$formattedTaskType-Task Number',
+                  style: TextStyle(
+                    fontSize: t?.title ?? 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                );
               },
             ),
             FutureBuilder<String?>(

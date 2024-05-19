@@ -99,7 +99,7 @@ class TaskManager {
   }
 
   static Future<void> syncDataFromCSV() async {
-    debugPrint("syncing data started...");
+    // debugPrint("syncing data started...");
     try {
       final csvFilePaths = await _getCSVFilePaths();
       // debugPrint("csvFilePaths = $csvFilePaths");
@@ -107,53 +107,176 @@ class TaskManager {
       for (final csvFilePath in csvFilePaths) {
         final csvData = await _loadCSVData(csvFilePath);
 
-        // Skip the first row
-        final Iterable<List<dynamic>> rowsToProcess = csvData.skip(1);
+        // Skip the first row and empty rows
+        final Iterable<List<dynamic>> rowsToProcess =
+            csvData.skip(1).where((row) => row.isNotEmpty);
 
         for (final row in rowsToProcess) {
-          final assigneeEmail = row[5]?.toString() ?? '';
-          final ppirInsuranceId = row[7]?.toString() ?? '';
-          final ppirAssignmentId = row[6]?.toString() ?? '';
+          final ppirInsuranceId = row[7]?.toString().trim() ?? '';
 
-          final ppirFormQuerySnapshot = await FirebaseFirestore.instance
-              .collection('ppirForms')
-              .where('assigneeId', isEqualTo: assigneeEmail)
-              .where('ppirInsuranceId', isEqualTo: ppirInsuranceId)
-              .where('ppirAssignmentId', isEqualTo: ppirAssignmentId)
-              .limit(1)
-              .get();
+          if (ppirInsuranceId.isNotEmpty) {
+            final ppirFormQuerySnapshot = await FirebaseFirestore.instance
+                .collection('ppirForms')
+                .where('ppirInsuranceId', isEqualTo: ppirInsuranceId)
+                .limit(1)
+                .get();
 
-          if (ppirFormQuerySnapshot.docs.isEmpty) {
-            await _createNewTaskAndRelatedDocuments(row);
+            if (ppirFormQuerySnapshot.docs.isEmpty) {
+              await _createNewTaskAndRelatedDocuments(row);
+            }
           }
         }
       }
+
+      await _deleteDuplicateForms();
     } catch (error) {
       debugPrint('Error syncing data from CSV: $error');
     }
   }
 
-  static Future<void> _createNewTaskAndRelatedDocuments(
-      List<dynamic> row) async {
-    final taskRef = FirebaseFirestore.instance.collection('tasks').doc();
-    final formDetailsRef =
-        FirebaseFirestore.instance.collection('formDetails').doc();
-    final ppirFormRef =
-        FirebaseFirestore.instance.collection('ppirForms').doc();
+  static Future<void> _deleteDuplicateForms() async {
+    final ppirFormsSnapshot =
+        await FirebaseFirestore.instance.collection('ppirForms').get();
 
-    final taskData = _createTaskData(row, taskRef.id, formDetailsRef);
-    final formDetailsData =
-        _createFormDetailsData(row, ppirFormRef.id, taskRef);
-    final ppirFormData = _createPPIRFormData(row, ppirFormRef.id, taskRef);
+    final Map<String, List<QueryDocumentSnapshot>> duplicateFormsMap = {};
 
-    final batch = FirebaseFirestore.instance.batch();
-    batch.set(taskRef, taskData);
-    batch.set(formDetailsRef, formDetailsData);
-    batch.set(ppirFormRef, ppirFormData);
-    await batch.commit();
+    for (final ppirForm in ppirFormsSnapshot.docs) {
+      final ppirInsuranceId =
+          ppirForm['ppirInsuranceId']?.toString().trim() ?? '';
+      if (ppirInsuranceId.isNotEmpty) {
+        if (duplicateFormsMap.containsKey(ppirInsuranceId)) {
+          duplicateFormsMap[ppirInsuranceId]!.add(ppirForm);
+        } else {
+          duplicateFormsMap[ppirInsuranceId] = [ppirForm];
+        }
+      }
+    }
+
+    final List<Future> deletionFutures = [];
+
+    duplicateFormsMap.forEach((ppirInsuranceId, duplicateForms) {
+      if (duplicateForms.length > 1) {
+        for (int i = 1; i < duplicateForms.length; i++) {
+          final duplicateForm = duplicateForms[i];
+          final formDetailsRef = duplicateForm['taskId'] as DocumentReference?;
+          final taskRef = duplicateForm['taskId'] as DocumentReference?;
+
+          deletionFutures.add(duplicateForm.reference.delete());
+          deletionFutures.add(formDetailsRef?.delete() ?? Future.value());
+          deletionFutures.add(taskRef?.delete() ?? Future.value());
+        }
+      }
+    });
+
+    await Future.wait(deletionFutures);
   }
 
   static Map<String, dynamic> _createTaskData(
+      List<dynamic> row, String taskId, DocumentReference formDetailsRef) {
+    return {
+      'assignee': FirebaseFirestore.instance
+          .collection('users')
+          .doc(row[5]?.toString().trim() ?? ''),
+      'assignor': null, // Assign appropriate assignor
+      'formDetailsId': formDetailsRef,
+      'dateCreated': FieldValue.serverTimestamp(),
+      'dateAccess': FieldValue.serverTimestamp(),
+      'status': row[4]?.toString().trim() ?? '',
+    };
+  }
+
+  static Map<String, dynamic> _createFormDetailsData(
+      List<dynamic> row, String formDetailsId, DocumentReference taskRef) {
+    return {
+      'taskId': taskRef,
+      'formId':
+          FirebaseFirestore.instance.collection('ppirForms').doc(formDetailsId),
+      'type': row[2]?.toString().trim() ?? '',
+    };
+  }
+
+  static Map<String, dynamic> _createPPIRFormData(
+      List<dynamic> row, String ppirFormId, DocumentReference taskRef) {
+    return {
+      'taskId': taskRef,
+      'generatedFilename': '',
+      'taskManagerNumber': row[7]?.toString().trim() ?? '',
+      'serviceGroup': row[1]?.toString().trim() ?? '',
+      'serviceType': row[2]?.toString().trim() ?? '',
+      'priority': row[3]?.toString().trim() ?? '',
+      'status': row[4]?.toString().trim() ?? '',
+      'assigneeId': row[5]?.toString().trim() ?? '',
+      'ppirAssignmentId': row[6]?.toString().trim() ?? '',
+      'ppirInsuranceId': row[7]?.toString().trim() ?? '',
+      'ppirFarmerName': row[8]?.toString().trim() ?? '',
+      'ppirAddress': row[9]?.toString().trim() ?? '',
+      'ppirFarmerType': row[10]?.toString().trim() ?? '',
+      'ppirMobileNo': row[11]?.toString().trim() ?? '',
+      'ppirGroupName': row[12]?.toString().trim() ?? '',
+      'ppirGroupAddress': row[13]?.toString().trim() ?? '',
+      'ppirLenderName': row[14]?.toString().trim() ?? '',
+      'ppirLenderAddress': row[15]?.toString().trim() ?? '',
+      'ppirCicNo': row[16]?.toString().trim() ?? '',
+      'ppirFarmLoc': row[17]?.toString().trim() ?? '',
+      'ppirNorth': row[18]?.toString().trim() ?? '',
+      'ppirSouth': row[19]?.toString().trim() ?? '',
+      'ppirEast': row[20]?.toString().trim() ?? '',
+      'ppirWest': row[21]?.toString().trim() ?? '',
+      'ppirAtt1': row[22]?.toString().trim() ?? '',
+      'ppirAtt2': row[23]?.toString().trim() ?? '',
+      'ppirAtt3': row[24]?.toString().trim() ?? '',
+      'ppirAtt4': row[25]?.toString().trim() ?? '',
+      'ppirAreaAci': row[26]?.toString().trim() ?? '',
+      'ppirAreaAct': row[27]?.toString().trim() ?? '',
+      'ppirDopdsAci': row[28]?.toString().trim() ?? '',
+      'ppirDopdsAct': row[29]?.toString().trim() ?? '',
+      'ppirDoptpAci': row[30]?.toString().trim() ?? '',
+      'ppirDoptpAct': row[31]?.toString().trim() ?? '',
+      'ppirSvpAci': row[32]?.toString().trim() ?? '',
+      'ppirSvpAct': row[33]?.toString().trim() ?? '',
+      'ppirVariety': row[34]?.toString().trim() ?? '',
+      'ppirStagecrop': row[35]?.toString().trim() ?? '',
+      'ppirRemarks': row[36]?.toString().trim() ?? '',
+      'ppirNameInsured': row[37]?.toString().trim() ?? '',
+      'ppirNameIuia': row[38]?.toString().trim() ?? '',
+      'ppirSigInsured': row[39]?.toString().trim() ?? '',
+      'ppirSigIuia': row[40]?.toString().trim() ?? '',
+      'trackTotalarea': '',
+      'trackDatetime': FieldValue.serverTimestamp(),
+      'trackLastcoord': '',
+      'trackTotaldistance': '',
+    };
+  }
+
+  static Future<void> _createNewTaskAndRelatedDocuments(
+      List<dynamic> row) async {
+    final ppirInsuranceId = row[7]?.toString().trim() ?? '';
+    final assigneeEmail = row[5]?.toString().trim() ?? '';
+    final ppirAssignmentId = row[6]?.toString().trim() ?? '';
+
+    if (ppirInsuranceId.isNotEmpty &&
+        assigneeEmail.isNotEmpty &&
+        ppirAssignmentId.isNotEmpty) {
+      final taskRef = FirebaseFirestore.instance.collection('tasks').doc();
+      final formDetailsRef =
+          FirebaseFirestore.instance.collection('formDetails').doc();
+      final ppirFormRef =
+          FirebaseFirestore.instance.collection('ppirForms').doc();
+
+      final taskData = _createTaskData(row, taskRef.id, formDetailsRef);
+      final formDetailsData =
+          _createFormDetailsData(row, ppirFormRef.id, taskRef);
+      final ppirFormData = _createPPIRFormData(row, ppirFormRef.id, taskRef);
+
+      final batch = FirebaseFirestore.instance.batch();
+      batch.set(taskRef, taskData);
+      batch.set(formDetailsRef, formDetailsData);
+      batch.set(ppirFormRef, ppirFormData);
+      await batch.commit();
+    }
+  }
+
+  static Map<String, dynamic> createTaskData(
       List<dynamic> row, String taskId, DocumentReference formDetailsRef) {
     return {
       'assignee': FirebaseFirestore.instance
@@ -167,7 +290,7 @@ class TaskManager {
     };
   }
 
-  static Map<String, dynamic> _createFormDetailsData(
+  static Map<String, dynamic> createFormDetailsData(
       List<dynamic> row, String formDetailsId, DocumentReference taskRef) {
     return {
       'taskId': taskRef,
@@ -177,12 +300,12 @@ class TaskManager {
     };
   }
 
-  static Map<String, dynamic> _createPPIRFormData(
+  static Map<String, dynamic> createPPIRFormData(
       List<dynamic> row, String ppirFormId, DocumentReference taskRef) {
     return {
       'taskId': taskRef,
       'generatedFilename': '',
-      'taskManagerNumber': '',
+      'taskManagerNumber': row[7]?.toString() ?? '',
       'serviceGroup': row[1]?.toString() ?? '',
       'serviceType': row[2]?.toString() ?? '',
       'priority': row[3]?.toString() ?? '',
@@ -230,7 +353,7 @@ class TaskManager {
     };
   }
 
-  static Future<List<TaskManager>> _getTasksByQuery(Query query) async {
+  static Future<List<TaskManager>> getTasksByQuery(Query query) async {
     List<TaskManager> tasks = [];
 
     try {
@@ -246,18 +369,18 @@ class TaskManager {
 
           if (formDetailsIdRef != null) {
             final formDetailsSnapshot = await formDetailsIdRef.get();
-            debugPrint("formDetailsSnapshot = $formDetailsSnapshot");
+            // debugPrint("formDetailsSnapshot = $formDetailsSnapshot");
 
             if (formDetailsSnapshot.exists) {
               final formDetailsData =
                   formDetailsSnapshot.data() as Map<String, dynamic>?;
-              debugPrint("formDetailsData = $formDetailsData");
+              // debugPrint("formDetailsData = $formDetailsData");
 
               if (formDetailsData != null) {
                 final formIdRef =
                     formDetailsData['formId'] as DocumentReference?;
 
-                debugPrint("formIdRef= $formIdRef");
+                // debugPrint("formIdRef= $formIdRef");
 
                 if (formIdRef != null) {
                   final formId = formIdRef.id;
@@ -287,64 +410,29 @@ class TaskManager {
     final query = FirebaseFirestore.instance
         .collection('tasks')
         .where('status', isEqualTo: status);
-    return await _getTasksByQuery(query);
+    return await getTasksByQuery(query);
   }
 
   static Future<List<TaskManager>> getNotCompletedTasks() async {
     final query = FirebaseFirestore.instance
         .collection('tasks')
         .where('status', isNotEqualTo: 'Completed');
-    return await _getTasksByQuery(query);
+    return await getTasksByQuery(query);
   }
 
   Future<String?> get taskManagerNumber async {
     try {
       final formData = await getFormData(type);
-      String? currentNumber = formData['taskManagerNumber'];
-
-      if (currentNumber == null || currentNumber.isEmpty) {
-        final uniqueNumber = await _getUniqueTaskNumber();
-        await assignTaskManagerNumberToFormData(uniqueNumber);
-        return uniqueNumber;
-      }
-      return currentNumber;
+      return formData['ppirInsuranceId'] as String?;
     } catch (error) {
       debugPrint('Error retrieving Task Number: $error');
       return null;
     }
   }
 
-  Future<String> _getUniqueTaskNumber() async {
-    final db = FirebaseFirestore.instance;
-    final querySnapshot = await db
-        .collection('uniqueNumbers')
-        .where('isUsed', isEqualTo: false)
-        .limit(1)
-        .get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      final document = querySnapshot.docs.first;
-      final documentId = document.id;
-
-      await db
-          .collection('uniqueNumbers')
-          .doc(documentId)
-          .update({'isUsed': true});
-
-      return documentId;
-    }
-
-    return '';
-  }
-
   Future<Map<String, dynamic>> getFormData(String formType) async {
-    debugPrint("getting form data...");
-    debugPrint("formType = $formType");
     final db = FirebaseFirestore.instance;
-    debugPrint("db = $db");
-
-    final document = await db.collection(formType).doc(formId).get();
-    debugPrint("document = $document");
+    final document = await db.collection('ppirForms').doc(formId).get();
 
     if (document.exists) {
       return document.data() ?? {};
@@ -454,3 +542,5 @@ class TaskManager {
     return null;
   }
 }
+
+// latest

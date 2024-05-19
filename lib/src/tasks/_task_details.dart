@@ -149,125 +149,149 @@ class TaskDetailsPage extends StatelessWidget {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
           final formData = snapshot.data ?? {};
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                if (task.status != 'Completed')
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: Column(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () => _navigateToGeotagPage(context),
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(0, 60),
-                            shape: const CircleBorder(),
-                            backgroundColor: const Color(0xFF0F7D40),
-                          ),
-                          child: SizedBox(
-                            height: 35,
-                            width: 35,
-                            child: SvgPicture.asset(
-                              'assets/storage/images/geotag.svg',
-                              colorFilter: const ColorFilter.mode(
-                                  Colors.white, BlendMode.srcIn),
+
+          return FutureBuilder<String?>(
+            future: task.status,
+            builder: (context, statusSnapshot) {
+              if (statusSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (statusSnapshot.hasError) {
+                return Center(child: Text('Error: ${statusSnapshot.error}'));
+              }
+              final status = statusSnapshot.data;
+
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    if (status != 'Completed')
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: Column(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () => _navigateToGeotagPage(context),
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: const Size(0, 60),
+                                shape: const CircleBorder(),
+                                backgroundColor: const Color(0xFF0F7D40),
+                              ),
+                              child: SizedBox(
+                                height: 35,
+                                width: 35,
+                                child: SvgPicture.asset(
+                                  'assets/storage/images/geotag.svg',
+                                  colorFilter: const ColorFilter.mode(
+                                      Colors.white, BlendMode.srcIn),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Text(
-                            'Go to Geotag',
-                            style: TextStyle(
-                              fontSize: t?.body,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Text(
+                                'Go to Geotag',
+                                style: TextStyle(
+                                  fontSize: t?.body,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                _buildFormSection(context, 'Post Planting Inspection Report', [
-                  _buildFormField(
-                      context, 'Farmer Name', formData['ppirFarmerName']),
-                  _buildFormField(context, 'Address', formData['ppirAddress']),
-                  _buildFormField(
-                      context, 'Mobile No.', formData['ppirMobileNo']),
-                  _buildFormField(
-                      context, 'Type of Farmers', formData['ppirFarmerType']),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4.0),
-                    child: Divider(),
-                  ),
-                  _buildFormField(
-                      context, 'Group Name', formData['ppirGroupName']),
-                  _buildFormField(
-                      context, 'Group Address', formData['ppirGroupAddress']),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4.0),
-                    child: Divider(),
-                  ),
-                  _buildFormField(
-                      context, 'Lender Name', formData['ppirLenderName']),
-                  _buildFormField(
-                      context, 'Lender Address', formData['ppirLenderAddress']),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4.0),
-                    child: Divider(),
-                  ),
-                  _buildFormField(context, 'Region',
-                      _convertServiceGroupToRoman(formData['serviceGroup'])),
-                  _buildFormField(
-                      context, 'Location of Farm', formData['ppirFarmLoc']),
-                  _buildFormField(context, 'CIC No.', formData['ppirCicNo']),
-                ]),
-                _buildFormSection(context, 'Location Sketch Plan', [
-                  _buildFormField(context, 'North', formData['ppirNorth']),
-                  _buildFormField(context, 'East', formData['ppirEast']),
-                  _buildFormField(context, 'South', formData['ppirSouth']),
-                  _buildFormField(context, 'West', formData['ppirWest']),
-                ]),
-                _buildFormSection(context, 'Findings (Per ACI)', [
-                  _buildFormField(
-                      context, 'Area Planted', formData['ppirAreaAci']),
-                  _buildFormField(context, 'Date of Planting (DS)',
-                      formData['ppirDopdsAci']),
-                  _buildFormField(context, 'Date of Planting (TP)',
-                      formData['ppirDoptpAci']),
-                  _buildFormField(
-                      context, 'Seed Variety Planted', formData['ppirVariety']),
-                ]),
-                _buildFormSection(context, 'Tracking Results', [
-                  _buildFormField(
-                      context, 'Last Coordinates', formData['trackLastcoord']),
-                  _buildFormField(
-                      context, 'Date and Time', formData['trackDatetime']),
-                  _buildFormField(context, 'Total Area (Hectares)',
-                      formData['trackTotalarea']),
-                  _buildFormField(context, 'Total Distance',
-                      formData['trackTotaldistance']),
-                ]),
-                _buildFormSection(context, 'Actual Details', [
-                  _buildFormField(
-                      context, 'Last Coordinates', formData['ppirAreaAct']),
-                  _buildFormField(
-                      context, 'Seed Variety', formData['ppirVariety']),
-                  _buildFormField(context, 'Actual Date of Planting (DS)',
-                      formData['ppirDopdsAct']),
-                  _buildFormField(context, 'Actual Date of Planting (TP)',
-                      formData['ppirDoptpAct']),
-                  _buildFormField(context, 'Remarks', formData['ppirRemarks']),
-                ]),
-                _buildFormSection(context, 'Assignees', [
-                  _buildFormField(
-                      context, 'Confirmed By', formData['ppirNameInsured']),
-                  _buildFormField(
-                      context, 'Prepared By', formData['ppirNameIuia']),
-                ]),
-              ],
-            ),
+                      ),
+                    _buildFormSection(
+                        context, 'Post Planting Inspection Report', [
+                      _buildFormField(
+                          context, 'Farmer Name', formData['ppirFarmerName']),
+                      _buildFormField(
+                          context, 'Address', formData['ppirAddress']),
+                      _buildFormField(
+                          context, 'Mobile No.', formData['ppirMobileNo']),
+                      _buildFormField(context, 'Type of Farmers',
+                          formData['ppirFarmerType']),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4.0),
+                        child: Divider(),
+                      ),
+                      _buildFormField(
+                          context, 'Group Name', formData['ppirGroupName']),
+                      _buildFormField(context, 'Group Address',
+                          formData['ppirGroupAddress']),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4.0),
+                        child: Divider(),
+                      ),
+                      _buildFormField(
+                          context, 'Lender Name', formData['ppirLenderName']),
+                      _buildFormField(context, 'Lender Address',
+                          formData['ppirLenderAddress']),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4.0),
+                        child: Divider(),
+                      ),
+                      _buildFormField(
+                          context,
+                          'Region',
+                          _convertServiceGroupToRoman(
+                              formData['serviceGroup'])),
+                      _buildFormField(
+                          context, 'Location of Farm', formData['ppirFarmLoc']),
+                      _buildFormField(
+                          context, 'CIC No.', formData['ppirCicNo']),
+                    ]),
+                    _buildFormSection(context, 'Location Sketch Plan', [
+                      _buildFormField(context, 'North', formData['ppirNorth']),
+                      _buildFormField(context, 'East', formData['ppirEast']),
+                      _buildFormField(context, 'South', formData['ppirSouth']),
+                      _buildFormField(context, 'West', formData['ppirWest']),
+                    ]),
+                    _buildFormSection(context, 'Findings (Per ACI)', [
+                      _buildFormField(
+                          context, 'Area Planted', formData['ppirAreaAci']),
+                      _buildFormField(context, 'Date of Planting (DS)',
+                          formData['ppirDopdsAci']),
+                      _buildFormField(context, 'Date of Planting (TP)',
+                          formData['ppirDoptpAci']),
+                      _buildFormField(context, 'Seed Variety Planted',
+                          formData['ppirVariety']),
+                    ]),
+                    if (status == 'Completed') ...[
+                      _buildFormSection(context, 'Tracking Results', [
+                        _buildFormField(context, 'Last Coordinates',
+                            formData['trackLastcoord']),
+                        _buildFormField(context, 'Date and Time',
+                            formData['trackDatetime']?.toDate().toString()),
+                        _buildFormField(context, 'Total Area (Hectares)',
+                            formData['trackTotalarea']),
+                        _buildFormField(context, 'Total Distance',
+                            formData['trackTotaldistance']),
+                      ]),
+                      _buildFormSection(context, 'Actual Details', [
+                        _buildFormField(context, 'Last Coordinates',
+                            formData['ppirAreaAct']),
+                        _buildFormField(
+                            context, 'Seed Variety', formData['ppirVariety']),
+                        _buildFormField(context, 'Actual Date of Planting (DS)',
+                            formData['ppirDopdsAct']),
+                        _buildFormField(context, 'Actual Date of Planting (TP)',
+                            formData['ppirDoptpAct']),
+                        _buildFormField(
+                            context, 'Remarks', formData['ppirRemarks']),
+                      ]),
+                      _buildFormSection(context, 'Assignees', [
+                        _buildFormField(context, 'Confirmed By',
+                            formData['ppirNameInsured']),
+                        _buildFormField(
+                            context, 'Prepared By', formData['ppirNameIuia']),
+                      ]),
+                    ],
+                  ],
+                ),
+              );
+            },
           );
         },
       ),

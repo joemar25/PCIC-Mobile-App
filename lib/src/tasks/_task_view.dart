@@ -71,8 +71,6 @@ class TaskContainerState extends State<TaskView> {
         sortedTasks = await TaskManager.getAllTasks();
       }
 
-      // debugPrint("sortedTasks = $sortedTasks");
-
       setState(() {
         _sortedTasks = sortedTasks;
       });

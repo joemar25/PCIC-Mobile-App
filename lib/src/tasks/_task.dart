@@ -23,6 +23,8 @@ class TaskPageState extends State<TaskPage> {
   Future<void> _fetchTasks() async {
     try {
       List<TaskManager> tasks = await TaskManager.getAllTasks();
+
+      debugPrint("fetching all tasks = $tasks");
       setState(() {
         _tasks = tasks;
       });

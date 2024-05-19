@@ -138,23 +138,33 @@ class LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Container(
         width: double.infinity,
-        padding: const EdgeInsets.only(top: 100.0),
-        height: 300,
+        padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.13, ),
+        height: MediaQuery.of(context).size.height*0.4,
+        // color: Colors.red,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
-              width: 100,
-              height: 100,
+            
+            // SizedBox(
+            //   width: 100,
+            //   height: 100,
+            //   child: Image.asset(
+            //     'assets/storage/images/icon.png',
+            //   ),
+            // ),
+             Center(
               child: Image.asset(
-                'assets/storage/images/icon.png',
-              ),
+                "assets/storage/images/icon.png", 
+                height: MediaQuery.of(context).size.height*0.14,
+                fit: BoxFit.cover,)
             ),
+            SizedBox(height: MediaQuery.of(context).size.height*0.07,),
             const Text(
               'Sign in to your account',
               style: TextStyle(fontSize: 27.65, fontWeight: FontWeight.w600),
-            )
+            ), 
+            
           ],
         ),
       ),
@@ -172,7 +182,7 @@ class LoginPageState extends State<LoginPage> {
                 topRight: Radius.circular(50.0),
               ),
             ),
-            height: 500,
+            height: MediaQuery.of(context).size.height*0.55,
             width: double.maxFinite,
             child: Padding(
               padding: const EdgeInsets.symmetric(
@@ -186,7 +196,7 @@ class LoginPageState extends State<LoginPage> {
                     svgPath: 'assets/storage/images/mail.svg',
                     onTextChanged: updateParentEmail,
                   ),
-                  const SizedBox(height: 30),
+                  SizedBox(height: MediaQuery.of(context).size.height*0.04),
                   LoginTextField(
                     inputType: 'Password',
                     svgPath: 'assets/storage/images/lock.svg',
@@ -265,7 +275,7 @@ class LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 50),
+                  SizedBox(height: MediaQuery.of(context).size.height*0.06),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
