@@ -14,7 +14,7 @@ class MessagesPage extends StatefulWidget {
 class MessagesPageState extends State<MessagesPage> {
   final List<Map<String, dynamic>> messages = [
     {
-      'profilepic': 'assets/image/sean.jpg',
+      'profilepic': 'assets/image/mar.png',
       'name': 'Joemar Cardiño',
       'message': 'Hey, how are you?',
       'time': DateTime(2023, 6, 5, 10, 30),
@@ -37,7 +37,7 @@ class MessagesPageState extends State<MessagesPage> {
   List<Map<String, dynamic>> filteredMessages = [];
 
   String _searchQuery = '';
-  bool _sortEarliest = true;
+  final bool _sortEarliest = true;
 
   @override
   void initState() {
