@@ -1,10 +1,11 @@
 // file: tasks/_control_task.dart
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
-import 'package:external_path/external_path.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:xml/xml.dart';
 import 'package:flutter/foundation.dart';
 
@@ -83,7 +84,6 @@ class TaskManager {
 
   static Future<List<TaskManager>> getAllTasks() async {
     final query = FirebaseFirestore.instance.collection('tasks');
-    await syncDataFromCSV();
     return await getTasksByQuery(query);
   }
 
@@ -361,83 +361,6 @@ class TaskManager {
     }
   }
 
-  static Map<String, dynamic> createTaskData(
-      List<dynamic> row, String taskId, DocumentReference formDetailsRef) {
-    return {
-      'assignee': FirebaseFirestore.instance
-          .collection('users')
-          .doc(row[5]?.toString() ?? ''),
-      'assignor': null, // Assign appropriate assignor
-      'formDetailsId': formDetailsRef,
-      'dateCreated': FieldValue.serverTimestamp(),
-      'dateAccess': FieldValue.serverTimestamp(),
-      'status': row[4]?.toString() ?? '',
-    };
-  }
-
-  static Map<String, dynamic> createFormDetailsData(
-      List<dynamic> row, String formDetailsId, DocumentReference taskRef) {
-    return {
-      'taskId': taskRef,
-      'formId':
-          FirebaseFirestore.instance.collection('ppirForms').doc(formDetailsId),
-      'type': row[2]?.toString() ?? '',
-    };
-  }
-
-  static Map<String, dynamic> createPPIRFormData(
-      List<dynamic> row, String ppirFormId, DocumentReference taskRef) {
-    return {
-      'taskId': taskRef,
-      'generatedFilename': '',
-      'taskManagerNumber': row[7]?.toString() ?? '',
-      'serviceGroup': row[1]?.toString() ?? '',
-      'serviceType': row[2]?.toString() ?? '',
-      'priority': row[3]?.toString() ?? '',
-      'status': row[4]?.toString() ?? '',
-      'assigneeId': row[5]?.toString() ?? '',
-      'ppirAssignmentId': row[6]?.toString() ?? '',
-      'ppirInsuranceId': row[7]?.toString() ?? '',
-      'ppirFarmerName': row[8]?.toString() ?? '',
-      'ppirAddress': row[9]?.toString() ?? '',
-      'ppirFarmerType': row[10]?.toString() ?? '',
-      'ppirMobileNo': row[11]?.toString() ?? '',
-      'ppirGroupName': row[12]?.toString() ?? '',
-      'ppirGroupAddress': row[13]?.toString() ?? '',
-      'ppirLenderName': row[14]?.toString() ?? '',
-      'ppirLenderAddress': row[15]?.toString() ?? '',
-      'ppirCicNo': row[16]?.toString() ?? '',
-      'ppirFarmLoc': row[17]?.toString() ?? '',
-      'ppirNorth': row[18]?.toString() ?? '',
-      'ppirSouth': row[19]?.toString() ?? '',
-      'ppirEast': row[20]?.toString() ?? '',
-      'ppirWest': row[21]?.toString() ?? '',
-      'ppirAtt1': row[22]?.toString() ?? '',
-      'ppirAtt2': row[23]?.toString() ?? '',
-      'ppirAtt3': row[24]?.toString() ?? '',
-      'ppirAtt4': row[25]?.toString() ?? '',
-      'ppirAreaAci': row[26]?.toString() ?? '',
-      'ppirAreaAct': row[27]?.toString() ?? '',
-      'ppirDopdsAci': row[28]?.toString() ?? '',
-      'ppirDopdsAct': row[29]?.toString() ?? '',
-      'ppirDoptpAci': row[30]?.toString() ?? '',
-      'ppirDoptpAct': row[31]?.toString() ?? '',
-      'ppirSvpAci': row[32]?.toString() ?? '',
-      'ppirSvpAct': row[33]?.toString() ?? '',
-      'ppirVariety': row[34]?.toString() ?? '',
-      'ppirStagecrop': row[35]?.toString() ?? '',
-      'ppirRemarks': row[36]?.toString() ?? '',
-      'ppirNameInsured': row[37]?.toString() ?? '',
-      'ppirNameIuia': row[38]?.toString() ?? '',
-      'ppirSigInsured': row[39]?.toString() ?? '',
-      'ppirSigIuia': row[40]?.toString() ?? '',
-      'trackTotalarea': '',
-      'trackDatetime': FieldValue.serverTimestamp(),
-      'trackLastcoord': '',
-      'trackTotaldistance': '',
-    };
-  }
-
   Future<String?> get taskManagerNumber async {
     try {
       final formData = await getFormData(type);
@@ -471,11 +394,29 @@ class TaskManager {
   static Future<void> saveTaskToXML(
       Map<String, dynamic> taskData, Map<String, dynamic> formData) async {
     try {
-      final String directoryPath =
-          await ExternalPath.getExternalStoragePublicDirectory(
-              ExternalPath.DIRECTORY_DOCUMENTS);
+      final directory = await getExternalStorageDirectory();
+      final dataDirectory =
+          directory?.path ?? '/storage/emulated/0/Android/data';
+
+      final baseFilename = formData['formId'] ?? 'unknown_form';
+      final insuranceDirectory = Directory('$dataDirectory/$baseFilename');
+
+      // Create the insurance directory if it doesn't exist
+      if (!await insuranceDirectory.exists()) {
+        await insuranceDirectory.create(recursive: true);
+      }
+
+      // Define the Attachments directory inside the insurance directory
+      final attachmentsDirectory =
+          Directory('${insuranceDirectory.path}/Attachments');
+
+      // Create the Attachments directory if it doesn't exist
+      if (!await attachmentsDirectory.exists()) {
+        await attachmentsDirectory.create(recursive: true);
+      }
+
       final String fileName = 'task_${taskData['taskId']}.xml';
-      final File xmlFile = File('$directoryPath/$fileName');
+      final File xmlFile = File('${attachmentsDirectory.path}/$fileName');
 
       if (taskData.isNotEmpty && formData.isNotEmpty) {
         final builder = XmlBuilder();

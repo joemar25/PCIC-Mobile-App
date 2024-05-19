@@ -164,7 +164,7 @@ class HomeScreenState extends State<HomeScreen> {
 
   Future<void> _fetchTasks() async {
     try {
-      List<TaskManager> tasks = await TaskManager.getAllTasks();
+      List<TaskManager> tasks = await TaskManager.getNotCompletedTasks();
       if (mounted) {
         setState(() {
           _tasks = tasks;
