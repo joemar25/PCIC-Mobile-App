@@ -2,11 +2,17 @@ import '../theme/_theme.dart';
 import '../settings/_view.dart';
 import '../settings/_service.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/svg.dart';
 import '../settings/_controller.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import '../profile/_profile_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+// file: home/_home_header.dart
+
 // filename: home/_home_header.dart
 
 class HomeHeader extends StatefulWidget {
@@ -73,9 +79,11 @@ class _HomeHeaderState extends State<HomeHeader> {
               userDocSnapshot.data() as Map<String, dynamic>?;
 
           if (userData != null && userData.containsKey('name')) {
-            setState(() {
-              userName = userData['name'] as String?;
-            });
+            if (mounted) {
+              setState(() {
+                userName = userData['name'] as String?;
+              });
+            }
           }
         } else {
           debugPrint('User document not found');

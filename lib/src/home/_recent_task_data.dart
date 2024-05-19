@@ -1,9 +1,9 @@
+// filename: home/_recent_task_container.dart
 import '../theme/_theme.dart';
 import 'package:intl/intl.dart';
 import '../tasks/_control_task.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
-// filename: _recent_task_data.dart
 
 class TaskData extends StatelessWidget {
   final TaskManager task;
@@ -53,7 +53,7 @@ class TaskData extends StatelessWidget {
             FutureBuilder<String?>(
               future: task.status,
               builder: (context, snapshot) {
-                if (snapshot.hasData) {
+                if (snapshot.hasData && snapshot.data != 'Completed') {
                   return Text(
                     snapshot.data!,
                     style: TextStyle(
