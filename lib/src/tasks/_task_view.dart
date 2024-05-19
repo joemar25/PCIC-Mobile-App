@@ -1,9 +1,10 @@
 // filename: _task_view.dart
 import 'package:flutter/material.dart';
+
 import '../home/_recent_task_data.dart';
+import '../home/_search_button.dart';
 import '_control_task.dart';
 import '_task_details.dart';
-import '../home/_search_button.dart';
 import '_task_filter_button.dart';
 import '_task_filter_footer.dart';
 

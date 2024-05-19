@@ -24,14 +24,6 @@ class _SearchButtonState extends State<SearchButton> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(32.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    spreadRadius: 1,
-                    blurRadius: 3,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(32.0),
@@ -39,19 +31,19 @@ class _SearchButtonState extends State<SearchButton> {
                   onChanged: widget.onUpdateValue,
                   textAlign: TextAlign.left,
                   decoration: InputDecoration(
-                    hintText: 'Search Task',
-                    hintStyle: const TextStyle(color: Colors.grey),
+                    hintText: 'Search Task...',
+                    hintStyle: const TextStyle(color: mainColor),
                     isDense: true,
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 12, horizontal: 16),
                     focusedBorder: OutlineInputBorder(
                       borderSide:
-                          const BorderSide(color: mainColor, width: 1.5),
+                          const BorderSide(color: mainColor, width: 1.0),
                       borderRadius: BorderRadius.circular(32.0),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide:
-                          const BorderSide(color: mainColor, width: 1.5),
+                          const BorderSide(color: mainColor, width: 1.0),
                       borderRadius: BorderRadius.circular(32.0),
                     ),
                     suffixIconConstraints:
@@ -74,3 +66,30 @@ class _SearchButtonState extends State<SearchButton> {
     );
   }
 }
+ // decoration: InputDecoration(
+                  //   hintText: 'Search Task',
+                  //   hintStyle: const TextStyle(color: Colors.grey),
+                  //   isDense: true,
+                  //   contentPadding: const EdgeInsets.symmetric(
+                  //       vertical: 12, horizontal: 16),
+                  //   focusedBorder: OutlineInputBorder(
+                  //     borderSide:
+                  //         const BorderSide(color: mainColor, width: 1.5),
+                  //     borderRadius: BorderRadius.circular(32.0),
+                  //   ),
+                  //   enabledBorder: OutlineInputBorder(
+                  //     borderSide:
+                  //         const BorderSide(color: mainColor, width: 1.5),
+                  //     borderRadius: BorderRadius.circular(32.0),
+                  //   ),
+                  //   suffixIconConstraints:
+                  //       const BoxConstraints(minWidth: 50, minHeight: 50),
+                  //   suffixIcon: const Padding(
+                  //     padding: EdgeInsetsDirectional.only(end: 12.0),
+                  //     child: Icon(
+                  //       Icons.search,
+                  //       color: mainColor,
+                  //       size: 30,
+                  //     ),
+                  //   ),
+                  // ),
