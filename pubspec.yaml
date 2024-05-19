@@ -56,6 +56,7 @@ dependencies:
   geocoding: ^3.0.0
   flash: ^3.1.0
   cloud_firestore: ^4.17.3
+  lottie: ^3.1.2
 
 dev_dependencies:
   flutter_test:

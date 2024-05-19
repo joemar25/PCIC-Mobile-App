@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:lottie/lottie.dart';
 import '../../utils/agent/_session.dart';
 import '../_starting.dart';
 import '../home/_home.dart';
@@ -63,7 +63,7 @@ class SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFD2FFCB),
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
       body: Center(
         child: AnimatedBuilder(
           animation: _animation,
@@ -71,8 +71,8 @@ class SplashScreenState extends State<SplashScreen>
             return SizedBox(
               width: _animation.value,
               height: _animation.value,
-              child: Image.asset(
-                'assets/animations/loading-location.gif',
+              child: Lottie.asset(
+                'assets/animations/1.json',
                 fit: BoxFit.contain,
               ),
             );
