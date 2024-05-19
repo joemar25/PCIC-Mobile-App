@@ -122,7 +122,7 @@ class TaskManager {
         .where('status', isNotEqualTo: 'Completed');
 
     // Joemar Note: Only use this sync when initializing data for testing
-    await syncDataFromCSV();
+    // await syncDataFromCSV();
     return await getTasksByQuery(query);
   }
 
