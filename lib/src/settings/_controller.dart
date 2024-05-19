@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 class SettingsController with ChangeNotifier {
   SettingsController(this._settingsService) {
-    _themeMode = ThemeMode.light; // panakip butas lang haha
+    _themeMode = ThemeMode.light; // Default to light theme
+    loadSettings(); // Load settings asynchronously
   }
 
   final SettingsService _settingsService;

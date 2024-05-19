@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// filename: service.dart
 
 class SettingsService {
   static const String _themeModeKey = 'theme_mode';

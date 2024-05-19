@@ -1,5 +1,8 @@
 import '_profile_body_item.dart';
 import 'package:flutter/material.dart';
+import '../settings/_view.dart';
+import '../settings/_controller.dart';
+import '../settings/_service.dart';  // Import the service
 
 class ProfileBody extends StatefulWidget {
   const ProfileBody({super.key});
@@ -9,6 +12,15 @@ class ProfileBody extends StatefulWidget {
 }
 
 class _ProfileBodyState extends State<ProfileBody> {
+  late final SettingsController _settingsController;
+
+  @override
+  void initState() {
+    super.initState();
+    final settingsService = SettingsService(); // Instantiate the service
+    _settingsController = SettingsController(settingsService); // Pass the service to the controller
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -16,17 +28,14 @@ class _ProfileBodyState extends State<ProfileBody> {
       child: Column(
         children: [
           GestureDetector(
-            // Add GestureDetector for interactivity
-            onTap: () {},
-            child: const ProfileBodyItem(
-              label: 'My Tasks',
-              svgPath: 'assets/storage/images/mytask.svg',
-            ),
-          ),
-          const SizedBox(height: 16.0),
-          GestureDetector(
             onTap: () {
               // Handle "Settings" tap
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsView(controller: _settingsController),
+                ),
+              );
             },
             child: const ProfileBodyItem(
               label: 'Settings',
@@ -37,6 +46,7 @@ class _ProfileBodyState extends State<ProfileBody> {
           GestureDetector(
             onTap: () {
               // Handle "Change Password" tap
+
             },
             child: const ProfileBodyItem(
               label: 'Change Password',

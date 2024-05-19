@@ -18,7 +18,11 @@ class SettingsView extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: DropdownButton<ThemeMode>(
           value: controller.themeMode,
-          onChanged: controller.updateThemeMode,
+          onChanged: (ThemeMode? newMode) {
+            if (newMode != null) {
+              controller.updateThemeMode(newMode);
+            }
+          },
           items: const [
             DropdownMenuItem(
               value: ThemeMode.system,

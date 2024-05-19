@@ -2,14 +2,10 @@ import '../theme/_theme.dart';
 import '../settings/_view.dart';
 import '../settings/_service.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:flutter_svg/svg.dart';
 import '../settings/_controller.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import '../profile/_profile_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 // file: home/_home_header.dart
 
@@ -121,13 +117,15 @@ class _HomeHeaderState extends State<HomeHeader> {
             )
           ],
         ),
-        PopupMenuButton<String>(
-          splashRadius: 0.0,
-          color: Colors.white,
-          offset: const Offset(-8, 55),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-          padding: EdgeInsets.zero,
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ProfilePage(),
+              ),
+            );
+          },
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(color: const Color(0xFF0F7D40)),
@@ -153,76 +151,6 @@ class _HomeHeaderState extends State<HomeHeader> {
               ),
             ),
           ),
-          onSelected: (value) {
-            if (value == 'Logout') {
-              widget.onLogout();
-            } else {
-              // Handle other menu item selections
-              switch (value) {
-                case 'Profile':
-                  Navigator.push(
-                    // Navigate to the SettingsScreen
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ProfilePage()),
-                  );
-                  break;
-                case 'Settings':
-                  Navigator.push(
-                    // Navigate to the SettingsScreen
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SettingsView(
-                            controller: SettingsController(SettingsService()))),
-                  );
-                  break;
-              }
-            }
-          },
-          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-            PopupMenuItem<String>(
-              value: 'Profile',
-              child: ListTile(
-                leading: SizedBox(
-                  width: 28,
-                  height: 28,
-                  child: SvgPicture.asset(
-                    'assets/storage/images/person.svg',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                title: const Text('Profile'),
-              ),
-            ),
-            PopupMenuItem<String>(
-              value: 'Settings',
-              child: ListTile(
-                leading: SizedBox(
-                  width: 28,
-                  height: 28,
-                  child: SvgPicture.asset(
-                    'assets/storage/images/settings.svg',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                title: const Text('Settings'),
-              ),
-            ),
-            PopupMenuItem<String>(
-              value: 'Logout',
-              child: ListTile(
-                leading: SizedBox(
-                  width: 28,
-                  height: 28,
-                  child: SvgPicture.asset(
-                    'assets/storage/images/logout.svg',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                title: const Text('Logout'),
-              ),
-            ),
-          ],
         ),
       ],
     );
