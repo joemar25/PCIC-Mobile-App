@@ -182,7 +182,7 @@ class TaskManager {
     return {
       'taskId': taskRef,
       'generatedFilename': '',
-      'taskManagerNumber': '',
+      'taskManagerNumber': row[7]?.toString() ?? '',
       'serviceGroup': row[1]?.toString() ?? '',
       'serviceType': row[2]?.toString() ?? '',
       'priority': row[3]?.toString() ?? '',
@@ -300,51 +300,16 @@ class TaskManager {
   Future<String?> get taskManagerNumber async {
     try {
       final formData = await getFormData(type);
-      String? currentNumber = formData['taskManagerNumber'];
-
-      if (currentNumber == null || currentNumber.isEmpty) {
-        final uniqueNumber = await _getUniqueTaskNumber();
-        await assignTaskManagerNumberToFormData(uniqueNumber);
-        return uniqueNumber;
-      }
-      return currentNumber;
+      return formData['ppirInsuranceId'] as String?;
     } catch (error) {
       debugPrint('Error retrieving Task Number: $error');
       return null;
     }
   }
 
-  Future<String> _getUniqueTaskNumber() async {
-    final db = FirebaseFirestore.instance;
-    final querySnapshot = await db
-        .collection('uniqueNumbers')
-        .where('isUsed', isEqualTo: false)
-        .limit(1)
-        .get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      final document = querySnapshot.docs.first;
-      final documentId = document.id;
-
-      await db
-          .collection('uniqueNumbers')
-          .doc(documentId)
-          .update({'isUsed': true});
-
-      return documentId;
-    }
-
-    return '';
-  }
-
   Future<Map<String, dynamic>> getFormData(String formType) async {
-    debugPrint("getting form data...");
-    debugPrint("formType = $formType");
     final db = FirebaseFirestore.instance;
-    debugPrint("db = $db");
-
-    final document = await db.collection(formType).doc(formId).get();
-    debugPrint("document = $document");
+    final document = await db.collection('ppirForms').doc(formId).get();
 
     if (document.exists) {
       return document.data() ?? {};
