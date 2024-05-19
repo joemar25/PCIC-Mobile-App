@@ -1,21 +1,32 @@
 // map_service.dart
+import 'dart:async';
 import 'dart:math';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:screenshot/screenshot.dart';
+
+import '_location_service.dart';
 
 class MapService {
   final MapController mapController = MapController();
   final List<LatLng> routePoints = [];
   double currentZoom = 20.0;
   final List<Marker> markers = [];
-  CurrentLocationLayer? currentLocationLayer;
-  bool _isDisposed = false; // Add this flag to track disposal
+  bool _isDisposed = false;
+  StreamSubscription<LatLng>? locationSubscription;
+
+  void initLocationService() {
+    final locationService = LocationService();
+    locationService.requestLocationPermission().then((_) {
+      locationSubscription =
+          locationService.getLocationStream().listen((location) {
+        addMarker(location);
+        moveMap(location);
+      });
+    });
+  }
 
   void addMarker(LatLng point) {
     if (_isDisposed) return;
@@ -41,9 +52,9 @@ class MapService {
         width: 80.0,
         height: 80.0,
         point: point,
-        child: const Icon(
+        child: Icon(
           Icons.location_on,
-          color: Colors.green,
+          color: color,
           size: 40.0,
         ),
       ),
@@ -85,31 +96,6 @@ class MapService {
     mapController.move(mapController.center, zoom);
   }
 
-  Future<Uint8List?> captureMapScreenshot() async {
-    if (_isDisposed) return null;
-    final ScreenshotController screenshotController = ScreenshotController();
-
-    if (routePoints.isNotEmpty) {
-      double totalDistance = calculateTotalDistance(routePoints);
-      double zoomLevel = calculateZoomLevel(totalDistance);
-      LatLng centerPoint = calculateCenterPoint(routePoints);
-
-      mapController.move(centerPoint, zoomLevel);
-
-      await Future.delayed(const Duration(milliseconds: 1000));
-    }
-
-    final mapWidget = buildMap();
-    final containerWidget = Container(
-      child: mapWidget,
-    );
-
-    return await screenshotController.captureFromWidget(
-      containerWidget,
-      pixelRatio: 3.0,
-    );
-  }
-
   double calculateZoomLevel(double totalDistance) {
     double zoomLevel = 18.0 - (totalDistance / 10000.0);
     return zoomLevel.clamp(10.0, 20.0);
@@ -136,8 +122,8 @@ class MapService {
       child: FlutterMap(
         mapController: mapController,
         options: MapOptions(
-          initialCenter: const LatLng(13.138769, 123.734005),
-          initialZoom: currentZoom,
+          center: const LatLng(13.138769, 123.734005),
+          zoom: currentZoom,
           maxZoom: 22.0,
           onPositionChanged: (position, hasGesture) {
             if (_isDisposed) return;
@@ -184,9 +170,9 @@ class MapService {
   }
 
   void dispose() {
-    _isDisposed = true; // Set the flag to true on dispose
+    _isDisposed = true;
+    locationSubscription?.cancel();
     mapController.dispose();
-    // currentLocationLayer?.dispose();
   }
 
   double calculateAreaOfPolygon(List<LatLng> points) {

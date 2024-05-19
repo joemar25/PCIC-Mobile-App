@@ -1,6 +1,5 @@
 // filename: geotag/_geotag.dart
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,16 +7,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gpx/gpx.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:tuple/tuple.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../utils/app/_gpx.dart';
 import '../../utils/app/_show_flash_message.dart';
 import '../pcic_form/_pcic_form.dart';
 import '../tasks/_control_task.dart';
+import '../theme/_theme.dart';
 import '_geotag_bottomsheet.dart';
 import '_location_service.dart';
 import '_map_service.dart';
@@ -221,12 +219,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
         var gpx = GpxUtil.createGpx(routePoints);
         var gpxString = GpxWriter().asString(gpx);
 
-        final screenshotBytes = await _mapService.captureMapScreenshot();
-
-        final filePaths =
-            await _saveFilesAndScreenshot(gpxString, screenshotBytes!);
-        String gpxFilePath = filePaths.item1;
-        String screenshotFilePath = filePaths.item2;
+        final gpxFilePath = await _saveGpxFile(gpxString);
 
         // Wait for the current frame to complete before navigating
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -245,7 +238,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
               context,
               MaterialPageRoute(
                 builder: (context) => PCICFormPage(
-                  imageFile: screenshotFilePath,
+                  imageFile: '',
                   gpxFile: gpxFilePath,
                   task: widget.task,
                   routePoints: _mapService.routePoints,
@@ -264,7 +257,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
             // Handle the exception gracefully
             debugPrint('Exception caught: $e');
 
-            // Show an error message to the use
+            // Show an error message to the user
             showFlashMessage(context, 'Error', 'Error Saving File',
                 'Something went wrong! Please try again.');
             Navigator.pop(context);
@@ -274,8 +267,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
     }
   }
 
-  Future<Tuple2<String, String>> _saveFilesAndScreenshot(
-      String gpxString, Uint8List screenshotBytes) async {
+  Future<String> _saveGpxFile(String gpxString) async {
     final directory = await getExternalStorageDirectory();
     final dataDirectory = directory?.path ?? '/storage/emulated/0/Android/data';
 
@@ -303,19 +295,14 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
     // Generate a unique ID for the files
     var uuid = const Uuid();
     String gpxFilename = '${uuid.v4()}.gpx';
-    String screenshotFilename = '${uuid.v4()}.png';
 
     final gpxFile = File('${attachmentsDirectory.path}/$gpxFilename');
-    final screenshotFile =
-        File('${attachmentsDirectory.path}/$screenshotFilename');
 
     await gpxFile.writeAsString(gpxString);
-    await screenshotFile.writeAsBytes(screenshotBytes);
 
     debugPrint('GPX file saved: ${gpxFile.path}');
-    debugPrint('Map screenshot saved: ${screenshotFile.path}');
 
-    return Tuple2(gpxFile.path, screenshotFile.path);
+    return gpxFile.path;
   }
 
   Future<void> _addMarkerAtCurrentLocation() async {
@@ -458,7 +445,6 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
     );
   }
 
-// Refactor this later - tat
   void _handleStopRoutingRequest() {
     _stopRouting();
   }
