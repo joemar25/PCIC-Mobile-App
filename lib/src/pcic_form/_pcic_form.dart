@@ -205,7 +205,6 @@ class PCICFormPageState extends State<PCICFormPage> {
     _formData['trackDatetime'] = _areaPlantedController.text;
     _formData['trackLastcoord'] = _formData['lastCoordinates'];
     _formData['trackTotaldistance'] = _totalDistanceController.text;
-    _formData['status'] = 'Completed'; // Explicitly set status to 'Completed'
 
     _formData['ppirRemarks'] = _formData['ppirRemarks'] ?? 'no value';
     _formData['ppirSigInsured'] = signatureData['ppirSigInsured'] ?? 'no value';
@@ -213,8 +212,13 @@ class PCICFormPageState extends State<PCICFormPage> {
         signatureData['ppirNameInsured'] ?? 'no value';
     _formData['ppirSigIuia'] = signatureData['ppirSigIuia'] ?? 'no value';
     _formData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
+    _formData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
+    _formData['status'] = 'Completed';
 
-    await widget.task.updateTaskData(_formData);
+    // Prepare task data to update the status to 'Completed'
+    Map<String, dynamic> taskData = {'status': 'Completed'};
+
+    await widget.task.updatePpirFormData(_formData, taskData);
 
     if (mounted) {
       Navigator.pushReplacement(

@@ -1,9 +1,13 @@
+// filename: geotag/_location_service.dart
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'dart:async';
 
 class LocationService {
+  StreamSubscription<Position>? positionStream;
+
   Future<void> requestLocationPermission() async {
     final status = await Permission.location.request();
     if (status.isGranted) {
@@ -26,18 +30,15 @@ class LocationService {
   }
 
   Stream<LatLng> getLocationStream() {
-    return Geolocator.getPositionStream()
-        .distinct(
-          (Position prev, Position curr) =>
-              Geolocator.distanceBetween(
-                prev.latitude,
-                prev.longitude,
-                curr.latitude,
-                curr.longitude,
-              ) <
-              10,
-        )
-        .map((Position position) =>
-            LatLng(position.latitude, position.longitude));
+    return Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 10,
+      ),
+    ).map((Position position) => LatLng(position.latitude, position.longitude));
+  }
+
+  void dispose() {
+    positionStream?.cancel();
   }
 }
