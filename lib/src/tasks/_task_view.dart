@@ -1,13 +1,18 @@
-// filename: _task_view.dart
-import 'package:flutter/material.dart';
-import 'package:shimmer/shimmer.dart';
-
-import '../home/_recent_task_data.dart';
-import '../home/_search_button.dart';
 import '_control_task.dart';
 import '_task_details.dart';
 import '_task_filter_button.dart';
 import '_task_filter_footer.dart';
+import '../home/_search_button.dart';
+import '../home/_search_button.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import '../home/_recent_task_data.dart';
+import '../home/_recent_task_data.dart';
+// filename: _task_view.dart
+
+// filename: _task_view.dart
+
 
 class TaskView extends StatefulWidget {
   const TaskView({super.key, required this.tasks, required this.initialFilter});
@@ -107,7 +112,10 @@ class TaskContainerState extends State<TaskView> {
                     ),
                     const SizedBox(width: 8.0),
                     Expanded(
-                      child: SearchButton(onUpdateValue: _updateSearchQuery),
+                      child: SearchButton(
+                    searchQuery: _searchQuery, // Pass the search query here
+                    onUpdateValue: _updateSearchQuery,
+                  ),
                     ),
                   ],
                 ),

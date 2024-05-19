@@ -1,10 +1,8 @@
-// filename: _recent_task_container.dart
-import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/src/home/_recent_task_data.dart';
-import 'package:shimmer/shimmer.dart';
-
 import '../tasks/_control_task.dart';
 import '../tasks/_task_details.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:flutter/material.dart';
+import 'package:pcic_mobile_app/src/home/_recent_task_data.dart';
 
 class RecentTaskContainer extends StatefulWidget {
   final String searchQuery;
@@ -21,35 +19,15 @@ class RecentTaskContainer extends StatefulWidget {
 }
 
 class RecentTaskContainerState extends State<RecentTaskContainer> {
-  List<TaskManager> _notCompletedTasks = [];
   int _hoveredIndex = -1;
 
   @override
-  void initState() {
-    super.initState();
-    _fetchNotCompletedTasks();
-  }
-
-  Future<void> _fetchNotCompletedTasks() async {
-    List<TaskManager> tasks = await TaskManager.getNotCompletedTasks();
-    setState(() {
-      _notCompletedTasks = tasks;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    List<TaskManager> filteredTasks = _notCompletedTasks.where((task) {
+    List<TaskManager> filteredTasks = widget.notCompletedTasks.where((task) {
       String identifier = '${task.formId}-${task.taskId}'.toLowerCase();
       return widget.searchQuery.isEmpty ||
           identifier.contains(widget.searchQuery.toLowerCase());
     }).toList();
-
-    // if (filteredTasks.isEmpty) {
-    //   return const Center(
-    //     child: Text('No tasks were recently added.'),
-    //   );
-    // }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -72,7 +50,6 @@ class RecentTaskContainerState extends State<RecentTaskContainer> {
                       _hoveredIndex == index ? Colors.grey[200] : Colors.white,
                   borderRadius: BorderRadius.circular(16.0),
                   boxShadow: [
-                    // BoxShadow(color: Color(0xFF0F7D40), offset: Offset(-5, 5))
                     BoxShadow(
                       color: const Color(0xFF0F7D40).withOpacity(0.8),
                       blurRadius: 1,
