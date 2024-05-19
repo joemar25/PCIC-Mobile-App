@@ -1,4 +1,3 @@
-// file: home/_home.dart
 import '_home_header.dart';
 import '../tasks/_task.dart';
 import '_search_button.dart';
@@ -10,6 +9,7 @@ import '_recent_task_container.dart';
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+// file: home/_home.dart
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -111,6 +111,7 @@ class HomeScreenState extends State<HomeScreen> {
   String? _token;
   List<TaskManager> _tasks = [];
   String _searchQuery = '';
+  bool _isLoadingRecentTasks = true;
 
   @override
   void initState() {
@@ -173,11 +174,13 @@ class HomeScreenState extends State<HomeScreen> {
       if (mounted) {
         setState(() {
           _tasks = tasks;
+          _isLoadingRecentTasks = false;
         });
       }
     } catch (error) {
       if (mounted) {
         debugPrint('Error fetching tasks: $error');
+        setState(() => _isLoadingRecentTasks = false);
       }
     }
   }
@@ -249,10 +252,15 @@ class HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 16.0),
-                RecentTaskContainer(
-                  notCompletedTasks: _tasks,
-                  searchQuery: _searchQuery,
-                ),
+                _isLoadingRecentTasks
+                    ? const Padding(
+                        padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    : RecentTaskContainer(
+                        notCompletedTasks: _tasks,
+                        searchQuery: _searchQuery,
+                      ),
                 const SizedBox(height: 8.0),
               ],
             ),
