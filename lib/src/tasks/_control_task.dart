@@ -35,17 +35,12 @@ class TaskManager {
       debugPrint('Tasks fetched: ${querySnapshot.docs.length}');
 
       for (final documentSnapshot in querySnapshot.docs) {
-        debugPrint(
-            'Task Document ID: ${documentSnapshot.id}'); // Debugging statement
         final taskId = documentSnapshot.id;
         final taskData = documentSnapshot.data() as Map<String, dynamic>?;
-        debugPrint('Task Data: $taskData'); // Debugging statement
 
         if (taskData != null) {
           final formDetailsIdRef =
               taskData['formDetailsId'] as DocumentReference?;
-          debugPrint(
-              'Form Details ID Ref: $formDetailsIdRef'); // Debugging statement
 
           if (formDetailsIdRef != null) {
             final formDetailsSnapshot = await formDetailsIdRef.get();
@@ -53,26 +48,20 @@ class TaskManager {
             if (formDetailsSnapshot.exists) {
               final formDetailsData =
                   formDetailsSnapshot.data() as Map<String, dynamic>?;
-              debugPrint(
-                  'Form Details Data: $formDetailsData'); // Debugging statement
 
               if (formDetailsData != null) {
                 final formIdRef =
                     formDetailsData['formId'] as DocumentReference?;
-                debugPrint('Form ID Ref: $formIdRef'); // Debugging statement
+                final formId = formIdRef?.id ?? '';
+                final type = formDetailsData['type'] ?? '';
 
-                if (formIdRef != null) {
-                  final formId = formIdRef.id;
-                  final type = formDetailsData['type'];
+                final task = TaskManager.fromMap({
+                  'formId': formId,
+                  'taskId': taskId,
+                  'type': type,
+                });
 
-                  final task = TaskManager.fromMap({
-                    'formId': formId,
-                    'taskId': taskId,
-                    'type': type,
-                  });
-
-                  tasks.add(task);
-                }
+                tasks.add(task);
               }
             }
           }
@@ -82,7 +71,6 @@ class TaskManager {
       debugPrint('Error retrieving tasks: $error');
     }
 
-    debugPrint('Total tasks processed: ${tasks.length}'); // Debugging statement
     return tasks;
   }
 
@@ -96,6 +84,11 @@ class TaskManager {
   static Future<List<TaskManager>> getAllTasks() async {
     final query = FirebaseFirestore.instance.collection('tasks');
     return await getTasksByQuery(query);
+  }
+
+  Future<void> updateTaskData(Map<String, dynamic> data) async {
+    final taskRef = FirebaseFirestore.instance.collection('tasks').doc(taskId);
+    await taskRef.update(data);
   }
 
   static Future<List<String>> _getCSVFilePaths() async {

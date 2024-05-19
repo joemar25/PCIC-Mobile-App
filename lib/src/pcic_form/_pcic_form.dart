@@ -1,20 +1,18 @@
-// file: pcic_form.dart
-import 'dart:io';
-
-import 'package:archive/archive_io.dart';
-import 'package:external_path/external_path.dart';
+// file: ppir_form/_pcic_form.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:pcic_mobile_app/utils/app/_show_flash_message.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import '../../utils/seeds/_dropdown.dart';
-import '../geotag/_map_service.dart';
-import '../signature/_signature_section.dart';
-import '../tasks/_control_task.dart';
-import './_form_field.dart' as form_field;
-import './_form_section.dart' as form_section;
 import '_success.dart';
+import '_gpx_file_buttons.dart';
+import '../tasks/_control_task.dart';
+import '../geotag/_map_service.dart';
+import './_form_field.dart' as form_field;
+import '../../utils/seeds/_dropdown.dart';
+import './_form_section.dart' as form_section;
+import '../signature/_signature_section.dart';
+import '../../utils/app/_show_flash_message.dart';
 
 class PCICFormPage extends StatefulWidget {
   final String imageFile;
@@ -58,19 +56,6 @@ class PCICFormPageState extends State<PCICFormPage> {
   }
 
   void _initializeFormData() {
-    // _formData['ppirDopdsAct'] = widget.task.csvData?['ppirDopdsAct'] ?? '';
-    // _formData['ppirDoptpAct'] = widget.task.csvData?['ppirDoptpAct'] ?? '';
-
-    // String? ppirVarietyValue = widget.task.csvData?['ppirVariety'] ?? '';
-    // if (ppirVarietyValue!.isNotEmpty &&
-    //     uniqueTitles.contains(ppirVarietyValue)) {
-    //   _formData['ppirVariety'] = ppirVarietyValue;
-    // } else {
-    //   _formData['ppirVariety'] = null;
-    // }
-
-    // _formData['ppirRemarks'] = widget.task.csvData?['ppirRemarks'] ?? '';
-
     String lastCoordinateDateTime =
         DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
 
@@ -118,7 +103,6 @@ class PCICFormPageState extends State<PCICFormPage> {
     }
 
     setState(() {
-      // _areaPlantedController.text = area > 0 ? _formatNumber(area, 'm²') : '';
       _areaInHectaresController.text =
           areaInHectares > 0 ? _formatNumber(areaInHectares, 'ha') : '';
       _totalDistanceController.text = _formatNumber(distance, 'm');
@@ -135,8 +119,6 @@ class PCICFormPageState extends State<PCICFormPage> {
     final formatter = NumberFormat('#,##0.############', 'en_US');
 
     switch (unit) {
-      case 'm²':
-        return '${formatter.format(value)} m²';
       case 'ha':
         return '${formatter.format(value)} ha';
       case 'm':
@@ -147,193 +129,10 @@ class PCICFormPageState extends State<PCICFormPage> {
   }
 
   Future<void> _createTaskFile(BuildContext context) async {
-    // try {
-    //   final filePath = await ExternalPath.getExternalStoragePublicDirectory(
-    //     ExternalPath.DIRECTORY_DOWNLOADS,
-    //   );
-
-    //   final downloadsDirectory = Directory(filePath);
-
-    // final serviceType = widget.task.csvData?['serviceType'] ?? 'Service Type';
-    // final idMapping = {serviceType: widget.task.ppirInsuranceId};
-
-    // Provide a default if no mapping exists
-    // final mappedId = idMapping[serviceType] ?? '000000';
-
-    // final baseFilename =
-    //     '${serviceType.replaceAll(' ', ' - ')}_${serviceType.replaceAll(' ', '_')}_$mappedId';
-
-    // final directory = Directory('${downloadsDirectory.path}/$baseFilename');
-
-    // // Create the insurance directory if it doesn't exist
-    // if (!await directory.exists()) {
-    //   await directory.create(recursive: true);
-    // }
-
-    // // Create the Attachments directory if it doesn't exist
-    // final attachmentsDirectory = Directory('${directory.path}/Attachments');
-    // if (!await attachmentsDirectory.exists()) {
-    //   await attachmentsDirectory.create(recursive: true);
-    // }
-
-    // final zipFilePath = '${downloadsDirectory.path}/$baseFilename.task';
-    //   final zipFile = File(zipFilePath);
-
-    //   // Delete the existing TASK file if it already exists
-    //   if (await zipFile.exists()) {
-    //     await zipFile.delete();
-    //   }
-
-    //   final zipFileStream = zipFile.openWrite();
-    //   final archive = Archive();
-
-    //   // Get the list of ArchiveFile objects
-    //   final archiveFiles = await addFilesToArchive(directory, directory.path);
-
-    //   // Add the files to the archive
-    //   for (final archiveFile in archiveFiles) {
-    //     archive.addFile(archiveFile);
-    //   }
-
-    //   // Write the ZIP archive data
-    //   final zipData = ZipEncoder().encode(archive);
-    //   zipFileStream.add(zipData!);
-    //   await zipFileStream.close();
-
-    //   // Verify the TASK file
-    //   if (await zipFile.exists()) {
-    //     final zipSize = await zipFile.length();
-    //     debugPrint('TASK file created successfully. Size: $zipSize bytes');
-
-    //     // Show a loading indicator while deleting the directory
-    //     if (context.mounted) {
-    //       showDialog(
-    //         context: context,
-    //         barrierDismissible: false,
-    //         builder: (context) => const Center(
-    //           child: CircularProgressIndicator(),
-    //         ),
-    //       );
-    //     }
-    //     // Add a delay before deleting the directory
-    //     await Future.delayed(const Duration(seconds: 2));
-
-    //     // Delete the directory after the delay
-    //     await _deleteDirectory(directory);
-
-    //     if (context.mounted) {
-    //       // Hide the loading indicator
-    //       Navigator.pop(context);
-
-    //       // Navigate to the next page
-    //       Navigator.pushReplacement(
-    //         context,
-    //         MaterialPageRoute(
-    //           builder: (context) => const FormSuccessPage(
-    //             isSaveSuccessful: true,
-    //           ),
-    //         ),
-    //       );
-    //     }
-    //   } else {
-    //     debugPrint('Failed to create TASK file');
-    //     SchedulerBinding.instance.addPostFrameCallback((_) {
-    //       showFlashMessage(context, 'Error', 'Error Saving File',
-    //           'Error saving form data as TASK');
-    //     });
-    //   }
-    // } catch (e, stackTrace) {
-    //   SchedulerBinding.instance.addPostFrameCallback((_) {
-    //     showFlashMessage(context, 'Error', 'Error Saving File',
-    //         'Error saving form data as TASK');
-    //   });
-    //   debugPrint('Error saving form data as TASK: $e');
-    //   debugPrint('Stack trace: $stackTrace');
-    // }
-  }
-
-  Future<void> _deleteDirectory(Directory directory) async {
-    try {
-      if (await directory.exists()) {
-        await directory.delete(recursive: true);
-        debugPrint('Directory deleted: ${directory.path}');
-      } else {
-        debugPrint('Directory does not exist: ${directory.path}');
-      }
-    } catch (e) {
-      debugPrint('Error deleting directory: ${directory.path}');
-      debugPrint('Error details: $e');
-    }
-  }
-
-  Future<List<ArchiveFile>> addFilesToArchive(
-      Directory dir, String rootPath) async {
-    final archiveFiles = <ArchiveFile>[];
-    final files = dir.listSync();
-
-    for (var file in files) {
-      if (file is File) {
-        try {
-          final fileContent = await file.readAsBytes();
-          if (fileContent.isNotEmpty) {
-            final archiveFile = ArchiveFile(
-              file.path.replaceAll('$rootPath/', ''),
-              fileContent.length,
-              fileContent,
-            );
-            archiveFiles.add(archiveFile);
-          } else {
-            debugPrint('Skipping empty file: ${file.path}');
-          }
-        } catch (e) {
-          debugPrint('Error adding file to archive: ${file.path}');
-          debugPrint('Error details: $e');
-        }
-      } else if (file is Directory) {
-        final attachmentsDirectory = Directory('${file.path}/Attachments');
-        if (await attachmentsDirectory.exists()) {
-          final signatureFiles = [
-            File('${attachmentsDirectory.path}/insured_signature.png'),
-            File('${attachmentsDirectory.path}/iuia_signature.png'),
-          ];
-
-          for (final signatureFile in signatureFiles) {
-            if (await signatureFile.exists()) {
-              final fileContent = await signatureFile.readAsBytes();
-              final archiveFile = ArchiveFile(
-                signatureFile.path.replaceAll('$rootPath/', ''),
-                fileContent.length,
-                fileContent,
-              );
-              archiveFiles.add(archiveFile);
-            } else {
-              debugPrint('Signature file not found: ${signatureFile.path}');
-            }
-          }
-        }
-
-        final xmlFile = File('${file.path}/Task.xml');
-        if (await xmlFile.exists()) {
-          final fileContent = await xmlFile.readAsBytes();
-          final archiveFile = ArchiveFile(
-            xmlFile.path.replaceAll('$rootPath/', ''),
-            fileContent.length,
-            fileContent,
-          );
-          archiveFiles.add(archiveFile);
-        } else {
-          debugPrint('XML file not found: ${xmlFile.path}');
-        }
-
-        archiveFiles.addAll(await addFilesToArchive(file, rootPath));
-      }
-    }
-
-    return archiveFiles;
+    // Implementation for creating the task file
   }
 
   void _submitForm(BuildContext context) async {
-    // Get a list of keys for the enabled fields
     final enabledFieldKeys = _formData.keys.where((key) {
       return key != 'lastCoordinates' &&
           key != 'trackTotalarea' &&
@@ -343,22 +142,18 @@ class PCICFormPageState extends State<PCICFormPage> {
           key != 'ppirRemarks';
     }).toList();
 
-    // Check if any of the enabled fields are empty
     bool hasEmptyEnabledFields = enabledFieldKeys.any((key) =>
         _formData[key] == null || _formData[key].toString().trim().isEmpty);
 
-    // Get the signature data from the SignatureSection
     final signatureData =
         await _signatureSectionKey.currentState?.getSignatureData() ?? {};
 
-    // Check if any of the signature fields are empty
     bool hasEmptySignatureFields = signatureData['ppirSigInsured'] == null ||
         signatureData['ppirNameInsured']?.trim().isEmpty == true ||
         signatureData['ppirSigIuia'] == null ||
         signatureData['ppirNameIuia']?.trim().isEmpty == true;
 
     if (hasEmptyEnabledFields || hasEmptySignatureFields) {
-      // Show an error message or handle the incomplete form data
       if (context.mounted) {
         showFlashMessage(context, 'Info', 'Form Fields',
             'Please fill in all required fields');
@@ -367,7 +162,6 @@ class PCICFormPageState extends State<PCICFormPage> {
       }
     }
 
-    // Show the confirmation dialog
     if (context.mounted) {
       showDialog(
         context: context,
@@ -388,7 +182,7 @@ class PCICFormPageState extends State<PCICFormPage> {
                   isSaving = true;
                 });
                 _saveFormData();
-                _createTaskFile(context);
+                await _createTaskFile(context);
                 setState(() {
                   isSaving = false;
                 });
@@ -402,17 +196,14 @@ class PCICFormPageState extends State<PCICFormPage> {
   }
 
   void _saveFormData() async {
-    // Get the signature data from the SignatureSection
     final signatureData =
         await _signatureSectionKey.currentState?.getSignatureData() ?? {};
 
-    // Update the additional columns
     _formData['trackTotalarea'] = _areaInHectaresController.text;
     _formData['trackDatetime'] = _areaPlantedController.text;
     _formData['trackLastcoord'] = _formData['lastCoordinates'];
     _formData['trackTotaldistance'] = _totalDistanceController.text;
 
-    // Update the remarks and signature fields with default values if null
     _formData['ppirRemarks'] = _formData['ppirRemarks'] ?? 'no value';
     _formData['ppirSigInsured'] = signatureData['ppirSigInsured'] ?? 'no value';
     _formData['ppirNameInsured'] =
@@ -420,24 +211,7 @@ class PCICFormPageState extends State<PCICFormPage> {
     _formData['ppirSigIuia'] = signatureData['ppirSigIuia'] ?? 'no value';
     _formData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
 
-    // widget.task.updateTaskData(_getChangedData());
-    // widget.task.isCompleted = true;
-
-    // // Save the signature files
-    // await _saveSignatureFiles(signatureData,
-    //     widget.task.csvData?['serviceType'], widget.task.ppirInsuranceId);
-
-    // // Save the XML file
-    // await widget.task.saveXmlData(
-    //     widget.task.csvData?['serviceType'], widget.task.ppirInsuranceId);
-
-    // Create the .task file
-    if (mounted) {
-      await _createTaskFile(context);
-    }
-
-    // Update the task in Firebase after saving the files
-    await _updateTaskInFirebase();
+    await widget.task.updateTaskData(_formData);
 
     if (mounted) {
       Navigator.pushReplacement(
@@ -449,37 +223,6 @@ class PCICFormPageState extends State<PCICFormPage> {
         ),
       );
     }
-  }
-
-  Map<String, dynamic> _getChangedData() {
-    Map<String, dynamic> changedData = {};
-
-    // _formData.forEach((key, value) {
-    //   if (value != widget.task.csvData?[key]) {
-    //     changedData[key] = value;
-    //   }
-    // });
-
-    return changedData;
-  }
-
-  Future<void> _updateTaskInFirebase() async {
-    // final databaseReference = FirebaseDatabase.instance.ref();
-    // final taskId = widget.task.ppirInsuranceId.toString();
-    // final taskPath = 'tasks/task-$taskId';
-
-    // debugPrint('Updating task: $taskPath');
-
-    // final updatedTask = <String, dynamic>{
-    //   'isCompleted': true,
-    // };
-
-    // try {
-    //   await databaseReference.child(taskPath).update(updatedTask);
-    //   debugPrint('Task updated successfully');
-    // } catch (error) {
-    //   debugPrint('Error updating task: $error');
-    // }
   }
 
   void _cancelForm() {
@@ -505,37 +248,15 @@ class PCICFormPageState extends State<PCICFormPage> {
     );
   }
 
-  void _viewScreenshot(String screenshotPath) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Screenshot'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.6,
-                ),
-                child: Image.file(
-                  File(screenshotPath),
-                  fit: BoxFit.contain,
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Text('This is the screenshot captured during the task.'),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
+  Future<void> _viewGeotag(String gpxFile) async {
+    final Uri uri = Uri.file(gpxFile);
+
+    if (await canLaunch(uri.toString())) {
+      await launch(uri.toString());
+    } else {
+      showFlashMessage(context, 'Error', 'Failed to open Geotag',
+          'Could not launch geotag file.');
+    }
   }
 
   @override
@@ -604,18 +325,13 @@ class PCICFormPageState extends State<PCICFormPage> {
                 ),
                 const SizedBox(height: 24),
                 const Text(
-                  'Map Screenshot',
+                  'Map Geotag',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => _viewScreenshot(widget.imageFile),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12, horizontal: 24),
-                    textStyle: const TextStyle(fontSize: 16),
-                  ),
-                  child: const Text('View Screenshot'),
+                GPXFileButtons(
+                  // Reusing the GPX button
+                  openGpxFile: () => _viewGeotag(widget.gpxFile),
                 ),
               ],
             ),
@@ -653,55 +369,4 @@ class PCICFormPageState extends State<PCICFormPage> {
       ],
     );
   }
-
-  Future<void> _saveSignatureFiles(
-    Map<String, dynamic> signatureData,
-    String? serviceType,
-    int ppirInsuranceId,
-  ) async {
-    try {
-      final filePath = await ExternalPath.getExternalStoragePublicDirectory(
-        ExternalPath.DIRECTORY_DOWNLOADS,
-      );
-
-      final downloadsDirectory = Directory(filePath);
-
-      if (serviceType == null || serviceType.isEmpty) {
-        serviceType = 'Service Type';
-      }
-
-      final baseFilename =
-          '${serviceType.replaceAll(' ', ' - ')}_${serviceType.replaceAll(' ', '_')}_$ppirInsuranceId';
-
-      final insuranceDirectory =
-          Directory('${downloadsDirectory.path}/$baseFilename');
-
-      // Create the insurance directory if it doesn't exist
-      if (!await insuranceDirectory.exists()) {
-        await insuranceDirectory.create(recursive: true);
-      }
-
-      // Save the confirmed by signature file
-      if (signatureData['ppirSigInsured'] != null) {
-        final confirmedByFile = File(
-            '${insuranceDirectory.path}/Attachments/insured_signature.png');
-        await confirmedByFile.writeAsBytes(signatureData['ppirSigInsured']);
-        debugPrint('Confirmed by signature saved: ${confirmedByFile.path}');
-      }
-
-      // Save the prepared by signature file
-      if (signatureData['ppirSigIuia'] != null) {
-        final preparedByFile =
-            File('${insuranceDirectory.path}/Attachments/iuia_signature.png');
-        await preparedByFile.writeAsBytes(signatureData['ppirSigIuia']);
-        debugPrint('Prepared by signature saved: ${preparedByFile.path}');
-      }
-    } catch (e, stackTrace) {
-      debugPrint('Error saving signature files: $e');
-      debugPrint('Stack trace: $stackTrace');
-    }
-  }
 }
-
-
-// MAR Note: base on the gpx file, not the file being passed to get the hectares

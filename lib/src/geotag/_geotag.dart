@@ -1,4 +1,3 @@
-// geotag.dart
 import 'dart:async';
 import 'dart:typed_data';
 
@@ -431,7 +430,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
+            onPressed: () => Navigator.pop(context, false),
             child: const Text(
               'No',
               style:
@@ -439,7 +438,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
             ),
           ),
           TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () => Navigator.pop(context, true),
             child: const Text('Yes',
                 style: TextStyle(
                     color: Colors.black, fontWeight: FontWeight.w500)),
@@ -562,7 +561,6 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                             'assets/storage/images/position.svg',
                             colorFilter: const ColorFilter.mode(
                                 Colors.white, BlendMode.srcIn),
-                            // size: 20.0,
                           ),
                         ),
                       )),
