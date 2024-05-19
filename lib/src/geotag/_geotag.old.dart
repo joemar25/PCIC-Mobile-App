@@ -32,6 +32,7 @@ class GeotagPage extends StatefulWidget {
   GeotagPageState createState() => GeotagPageState();
 }
 
+
 class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   final LocationService _locationService = LocationService();
   final MapService _mapService = MapService();
