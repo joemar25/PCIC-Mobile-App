@@ -42,16 +42,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _saveProfile() async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.documentId)
-        .update({
-      'name': _nameController.text,
-      'email': _emailController.text,
-      'profilePicUrl': _profilePicUrlController.text,
-    });
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.documentId)
+          .update({
+        'name': _nameController.text,
+        'email': _emailController.text,
+        'profilePicUrl': _profilePicUrlController.text,
+      });
 
-    Navigator.pop(context, true);
+      Navigator.pop(context, true); // Pass true to indicate success
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to update profile: $e'),
+        ),
+      );
+    }
   }
 
   @override

@@ -56,6 +56,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
     if (result == true) {
       fetchUserData(); // Refresh data after returning from edit page
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile updated successfully!')),
+      );
+    } else if (result == false) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to update profile.')),
+      );
     }
   }
 
