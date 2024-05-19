@@ -1,4 +1,4 @@
-// file: control_task.dart
+// file: tasks/_control_task.dart
 import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -83,6 +83,7 @@ class TaskManager {
 
   static Future<List<TaskManager>> getAllTasks() async {
     final query = FirebaseFirestore.instance.collection('tasks');
+    await syncDataFromCSV();
     return await getTasksByQuery(query);
   }
 
