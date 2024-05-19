@@ -34,16 +34,24 @@ class _SearchButtonState extends State<SearchButton> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Theme.of(context).extension<CustomThemeExtension>();
     return SizedBox(
       height: 50,
       child: Row(
         children: [
-          Flexible(
-            fit: FlexFit.loose,
+          Expanded(
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(32.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 2,
+                    spreadRadius: 2,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(32.0),
@@ -52,28 +60,29 @@ class _SearchButtonState extends State<SearchButton> {
                   onChanged: widget.onUpdateValue,
                   textAlign: TextAlign.left,
                   decoration: InputDecoration(
-                    hintText: 'Search Task...',
-                    hintStyle: const TextStyle(color: mainColor),
+                    hintText: 'Search Task',
+                    hintStyle:
+                        TextStyle(color: Colors.grey, fontSize: t?.caption),
                     isDense: true,
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 12, horizontal: 16),
                     focusedBorder: OutlineInputBorder(
                       borderSide:
-                          const BorderSide(color: mainColor, width: 1.0),
+                          const BorderSide(color: Colors.white, width: 0.2),
                       borderRadius: BorderRadius.circular(32.0),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide:
-                          const BorderSide(color: mainColor, width: 1.0),
+                          const BorderSide(color: Colors.white, width: 0.2),
                       borderRadius: BorderRadius.circular(32.0),
                     ),
                     suffixIconConstraints:
-                        const BoxConstraints(minWidth: 50, minHeight: 50),
+                        const BoxConstraints(minWidth: 45, minHeight: 50),
                     suffixIcon: const Padding(
                       padding: EdgeInsetsDirectional.only(end: 12.0),
                       child: Icon(
                         Icons.search,
-                        color: mainColor,
+                        color: Colors.black38,
                         size: 30,
                       ),
                     ),

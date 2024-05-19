@@ -45,15 +45,16 @@ class RecentTaskContainerState extends State<RecentTaskContainer> {
               child: Container(
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
+                  border: Border.all(width: 0.2, color: Colors.grey),
                   color:
                       _hoveredIndex == index ? Colors.grey[200] : Colors.white,
                   borderRadius: BorderRadius.circular(16.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Color(0xFF0F7D40).withOpacity(0.8),
-                      spreadRadius: 2,
-                      blurRadius: 2,
-                      offset: const Offset(0, 3),
+                      color: const Color(0xFF0F7D40).withOpacity(0.8),
+                      blurRadius: 1,
+                      spreadRadius: 1,
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
