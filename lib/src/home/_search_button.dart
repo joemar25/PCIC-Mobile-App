@@ -18,7 +18,8 @@ class _SearchButtonState extends State<SearchButton> {
       height: 50,
       child: Row(
         children: [
-          Expanded(
+          Flexible(
+            fit: FlexFit.loose,
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
