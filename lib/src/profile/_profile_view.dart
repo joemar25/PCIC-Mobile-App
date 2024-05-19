@@ -105,7 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ? NetworkImage(profilePicUrl)
                         : null,
                     child: profilePicUrl.isEmpty
-                        ? Icon(
+                        ? const Icon(
                             Icons.person,
                             size: 50,
                             color: Colors.grey,

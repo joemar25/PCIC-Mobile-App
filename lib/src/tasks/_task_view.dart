@@ -3,11 +3,8 @@ import '_task_details.dart';
 import '_task_filter_button.dart';
 import '_task_filter_footer.dart';
 import '../home/_search_button.dart';
-import '../home/_search_button.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import '../home/_recent_task_data.dart';
 import '../home/_recent_task_data.dart';
 // filename: _task_view.dart
 

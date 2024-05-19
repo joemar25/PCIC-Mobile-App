@@ -212,6 +212,8 @@ class PCICFormPageState extends State<PCICFormPage> {
         signatureData['ppirNameInsured'] ?? 'no value';
     _formData['ppirSigIuia'] = signatureData['ppirSigIuia'] ?? 'no value';
     _formData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
+    _formData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
+    _formData['status'] = 'Completed';
 
     // Prepare task data to update the status to 'Completed'
     Map<String, dynamic> taskData = {'status': 'Completed'};
