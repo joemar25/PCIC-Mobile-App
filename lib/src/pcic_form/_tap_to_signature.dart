@@ -14,10 +14,10 @@ class TapToSignature extends StatefulWidget {
   });
 
   @override
-  _TapToSignatureState createState() => _TapToSignatureState();
+  TapToSignatureState createState() => TapToSignatureState();
 }
 
-class _TapToSignatureState extends State<TapToSignature> {
+class TapToSignatureState extends State<TapToSignature> {
   bool _isConfirmed = false;
 
   @override
@@ -29,20 +29,20 @@ class _TapToSignatureState extends State<TapToSignature> {
           height: widget.height,
           child: !_isConfirmed
               ? Center(
-            child: ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _isConfirmed = true;
-                });
-              },
-              child: const Text('Tap to Sign'),
-            ),
-          )
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _isConfirmed = true;
+                      });
+                    },
+                    child: const Text('Tap to Sign'),
+                  ),
+                )
               : Signature(
-            controller: widget.controller,
-            height: widget.height,
-            backgroundColor: widget.backgroundColor,
-          ),
+                  controller: widget.controller,
+                  height: widget.height,
+                  backgroundColor: widget.backgroundColor,
+                ),
         ),
       ],
     );

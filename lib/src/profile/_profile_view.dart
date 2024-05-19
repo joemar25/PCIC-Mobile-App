@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
-
 import '_profile_body.dart';
 import '_profile_body_item.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pcic_mobile_app/src/theme/_theme.dart';
+import 'package:pcic_mobile_app/src/profile/_profile_edit.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -12,6 +13,59 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  String name = '';
+  String email = '';
+  String profilePicUrl = '';
+  final String documentId =
+      '8rpFSBLQRgCGCFyVrW96'; // Move documentId to a class variable
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  void fetchUserData() async {
+    // Fetch user data from Firestore
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(documentId)
+        .get();
+
+    if (userDoc.exists) {
+      setState(() {
+        name = userDoc['name'];
+        email = userDoc['email'];
+        profilePicUrl = userDoc['profilePicUrl'];
+      });
+    }
+  }
+
+  void navigateToEditProfile() async {
+    bool? result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditProfilePage(
+          documentId: documentId,
+          name: name,
+          email: email,
+          profilePicUrl: profilePicUrl,
+        ),
+      ),
+    );
+
+    if (result == true) {
+      fetchUserData(); // Refresh data after returning from edit page
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile updated successfully!')),
+      );
+    } else if (result == false) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to update profile.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).extension<CustomThemeExtension>();
@@ -47,37 +101,36 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.white,
-                    child: Image.asset(
-                      'assets/storage/images/cool.png',
-                      fit: BoxFit.cover,
-                      height: 50,
-                    ),
+                    backgroundImage: profilePicUrl.isNotEmpty
+                        ? NetworkImage(profilePicUrl)
+                        : null,
+                    child: profilePicUrl.isEmpty
+                        ? Icon(
+                            Icons.person,
+                            size: 50,
+                            color: Colors.grey,
+                          )
+                        : null,
                   )),
               const SizedBox(
                 height: 8,
               ),
               Text(
-                'Tat Admin',
+                name,
                 style: TextStyle(
                     fontSize: t?.headline, fontWeight: FontWeight.w600),
               ),
               const SizedBox(
                 height: 8,
               ),
-              Text('tatadmin@lorem.com',
+              Text(email,
                   style: TextStyle(
                       fontSize: t?.body, fontWeight: FontWeight.w500)),
               const SizedBox(
                 height: 8,
               ),
               ElevatedButton(
-                onPressed: () {
-                  // Navigate to a Profile Edit
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => ProfilEdit()),
-                  // );
-                },
+                onPressed: navigateToEditProfile,
                 style: ElevatedButton.styleFrom(
                   splashFactory: NoSplash.splashFactory, // Remove splash effect
                   elevation: 0.0,

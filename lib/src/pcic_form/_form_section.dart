@@ -64,8 +64,19 @@ class FormSection extends StatelessWidget {
             labelText: 'Actual Area',
             border: OutlineInputBorder(),
           ),
+          keyboardType: TextInputType.number,
           onChanged: (value) {
             formData['ppirAreaAct'] = value;
+          },
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter a valid number';
+            }
+            final number = num.tryParse(value);
+            if (number == null) {
+              return 'Please enter a valid number';
+            }
+            return null;
           },
         ),
         const SizedBox(height: 24),
