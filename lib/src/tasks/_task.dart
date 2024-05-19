@@ -13,6 +13,7 @@ class TaskPage extends StatefulWidget {
 
 class TaskPageState extends State<TaskPage> {
   List<TaskManager> _tasks = [];
+  String _initialFilter = 'Ongoing';
 
   @override
   void initState() {
@@ -22,10 +23,30 @@ class TaskPageState extends State<TaskPage> {
 
   Future<void> _fetchTasks() async {
     try {
-      List<TaskManager> tasks = await TaskManager.getAllTasks();
-      setState(() {
-        _tasks = tasks;
-      });
+      List<TaskManager> ongoingTasks =
+          await TaskManager.getTasksByStatus('Ongoing');
+      if (ongoingTasks.isNotEmpty) {
+        setState(() {
+          _tasks = ongoingTasks;
+          _initialFilter = 'Ongoing';
+        });
+      } else {
+        List<TaskManager> forDispatchTasks =
+            await TaskManager.getTasksByStatus('For Dispatch');
+        if (forDispatchTasks.isNotEmpty) {
+          setState(() {
+            _tasks = forDispatchTasks;
+            _initialFilter = 'For Dispatch';
+          });
+        } else {
+          List<TaskManager> completedTasks =
+              await TaskManager.getTasksByStatus('Completed');
+          setState(() {
+            _tasks = completedTasks;
+            _initialFilter = 'Completed';
+          });
+        }
+      }
     } catch (error) {
       debugPrint('Error fetching tasks: $error');
     }
@@ -45,9 +66,7 @@ class TaskPageState extends State<TaskPage> {
       ),
       body: _tasks.isEmpty
           ? const Center(child: CircularProgressIndicator())
-          : _tasks.isEmpty
-              ? const Center(child: Text('No tasks'))
-              : TaskView(tasks: _tasks, initialFilter: widget.initialFilter),
+          : TaskView(tasks: _tasks, initialFilter: _initialFilter),
     );
   }
 }

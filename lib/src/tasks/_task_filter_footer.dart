@@ -54,7 +54,7 @@ class _FilterFooterState extends State<FilterFooter> {
               widget.filter,
               style: TextStyle(
                 color: _filterTextColors[widget.filter],
-                fontSize: t?.overline,
+                fontSize: 11.24,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -75,7 +75,7 @@ class _FilterFooterState extends State<FilterFooter> {
             ),
             child: Text(
               widget.orderBy,
-              style: TextStyle(fontSize: t?.overline),
+              style: const TextStyle(fontSize: 11.24),
             ),
           ),
         ],

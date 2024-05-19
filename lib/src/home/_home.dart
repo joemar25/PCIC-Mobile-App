@@ -7,11 +7,8 @@ import '_task_count_container.dart';
 import '../tasks/_control_task.dart';
 import '_recent_task_container.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// file: _home.dart
-// import 'package:pcic_mobile_app/src/home/_flash.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -20,7 +17,8 @@ class DashboardPage extends StatefulWidget {
   DashboardPageState createState() => DashboardPageState();
 }
 
-class DashboardPageState extends State<DashboardPage> {
+class DashboardPageState extends State<DashboardPage>
+    with WidgetsBindingObserver {
   int _selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[
@@ -29,56 +27,65 @@ class DashboardPageState extends State<DashboardPage> {
     TaskPage(),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  Future<bool> _onWillPop() async {
+  @override
+  Future<bool> didPopRoute() async {
     return await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Confirm Exit'),
-            content: const Text('Are you sure you want to exit the app?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('No'),
-              ),
-              TextButton(
-                onPressed: () => SystemNavigator.pop(),
-                child: const Text('Yes'),
-              ),
-            ],
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm Exit'),
+        content: const Text('Are you sure you want to exit the app?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
           ),
-        ) ??
-        false;
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Exit'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final CustomThemeExtension? t =
         Theme.of(context).extension<CustomThemeExtension>();
-    return PopScope(
-      // onWillPop: _onWillPop,
-      child: Scaffold(
-        body: _widgetOptions.elementAt(_selectedIndex),
-        bottomNavigationBar: BottomNavigationBar(
-          items: [
-            _buildNavigationBarItem(Icons.home, 'Home'),
-            _buildNavigationBarItem(Icons.chat_rounded, 'Messages'),
-            _buildNavigationBarItem(Icons.calendar_today_outlined, 'Tasks'),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: mainColor,
-          unselectedItemColor: Colors.black.withOpacity(0.7),
-          onTap: _onItemTapped,
-          backgroundColor: Colors.white,
-          selectedLabelStyle: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: t?.overline ?? 14.0,
-          ),
+    return Scaffold(
+      body: _widgetOptions.elementAt(_selectedIndex),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          _buildNavigationBarItem(Icons.home, 'Home'),
+          _buildNavigationBarItem(Icons.chat_rounded, 'Messages'),
+          _buildNavigationBarItem(Icons.calendar_today_outlined, 'Tasks'),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: mainColor,
+        unselectedItemColor: Colors.black.withOpacity(0.7),
+        onTap: _onItemTapped,
+        backgroundColor: Colors.white,
+        selectedLabelStyle: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: t?.overline ?? 14.0,
         ),
       ),
     );
@@ -103,6 +110,7 @@ class HomeScreenState extends State<HomeScreen> {
   String? _token;
   List<TaskManager> _tasks = [];
   String _searchQuery = '';
+  bool _isLoadingRecentTasks = true;
 
   @override
   void initState() {
@@ -111,29 +119,35 @@ class HomeScreenState extends State<HomeScreen> {
     _fetchTasks();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void _navigateToTaskPage(bool isCompleted) {
-    // mar latest
-    // Navigator.of(context).push(
-    //   MaterialPageRoute(
-    //     builder: (context) => TaskPage(initialFilter: isCompleted),
-    //   ),
-    // );
+    String val = isCompleted ? "Completed" : "Ongoing";
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => TaskPage(initialFilter: val),
+      ),
+    );
   }
 
   Future<void> _checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     if (token == null) {
-      // Redirect to the splash screen if token is null
       if (mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const SplashScreen()),
         );
       }
     } else {
-      setState(() {
-        _token = token;
-      });
+      if (mounted) {
+        setState(() {
+          _token = token;
+        });
+      }
     }
   }
 
@@ -141,7 +155,6 @@ class HomeScreenState extends State<HomeScreen> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
 
-    // Redirect to the splash screen
     if (mounted) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const SplashScreen()),
@@ -152,11 +165,17 @@ class HomeScreenState extends State<HomeScreen> {
   Future<void> _fetchTasks() async {
     try {
       List<TaskManager> tasks = await TaskManager.getAllTasks();
-      setState(() {
-        _tasks = tasks;
-      });
+      if (mounted) {
+        setState(() {
+          _tasks = tasks;
+          _isLoadingRecentTasks = false;
+        });
+      }
     } catch (error) {
-      debugPrint('Error fetching tasks: $error');
+      if (mounted) {
+        debugPrint('Error fetching tasks: $error');
+        setState(() => _isLoadingRecentTasks = false);
+      }
     }
   }
 
@@ -164,18 +183,19 @@ class HomeScreenState extends State<HomeScreen> {
     await _fetchTasks();
   }
 
-  void _updateSearchQuery(String newValue) {
-    setState(() {
-      _searchQuery = newValue;
-    });
-  }
+  // void _updateSearchQuery(String newValue) {
+  //   setState(() {
+  //     _searchQuery = newValue;                            _searchQuery = value;
+
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
     final CustomThemeExtension? t =
         Theme.of(context).extension<CustomThemeExtension>();
-    // If there's no token, show a loading indicator while waiting for the redirection to complete.
+
     if (_token == null) {
       return const Scaffold(
         body: Center(
@@ -187,13 +207,14 @@ class HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       key: key,
       appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 1.0,
-          automaticallyImplyLeading: false,
-          title: Padding(
-            padding: const EdgeInsets.only(left: 6.0),
-            child: HomeHeader(onLogout: _handleLogout),
-          )),
+        backgroundColor: Colors.white,
+        elevation: 1.0,
+        automaticallyImplyLeading: false,
+        title: Padding(
+          padding: const EdgeInsets.only(left: 6.0),
+          child: HomeHeader(onLogout: _handleLogout),
+        ),
+      ),
       body: RefreshIndicator(
         backgroundColor: Colors.white,
         onRefresh: _onRefresh,
@@ -211,24 +232,43 @@ class HomeScreenState extends State<HomeScreen> {
                   child: Text(
                     'Recent Tasks',
                     style: TextStyle(
-                      fontSize: t?.headline ?? 24.0,
-                      fontWeight: FontWeight.bold,
+                      fontSize: t?.headline ?? 20.0,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
                 const SizedBox(height: 8.0),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: SearchButton(
-                    onUpdateValue: _updateSearchQuery,
+                  child: StatefulBuilder(
+                    builder: (context, setState) {
+                      return Column(
+                        children: [
+                          SearchButton(
+                            searchQuery: _searchQuery,
+                            onUpdateValue: (value) {
+                              setState(() {
+                                _searchQuery = value;
+                              });
+                            },
+                          ),
+                          const SizedBox(height: 16.0),
+                          _isLoadingRecentTasks
+                              ? const Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
+                                )
+                              : RecentTaskContainer(
+                                  notCompletedTasks: _tasks,
+                                  searchQuery: _searchQuery,
+                                ),
+                          const SizedBox(height: 8.0),
+                        ],
+                      );
+                    },
                   ),
                 ),
-                const SizedBox(height: 16.0),
-                RecentTaskContainer(
-                  notCompletedTasks: _tasks,
-                  searchQuery: _searchQuery,
-                ),
-                const SizedBox(height: 8.0),
               ],
             ),
           ),

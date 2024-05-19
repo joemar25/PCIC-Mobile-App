@@ -1,6 +1,7 @@
+// ppir_forms/_form_section.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import './_form_field.dart' as form_field;
+
 import '../../utils/controls/_date_control.dart';
 
 class FormSection extends StatelessWidget {
@@ -58,9 +59,10 @@ class FormSection extends StatelessWidget {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         TextFormField(
-          initialValue: formData['ppirAreaAct'],
+          initialValue: formData['ppirAreaAct'] ?? '',
           decoration: const InputDecoration(
             labelText: 'Actual Area',
+            border: OutlineInputBorder(),
           ),
           onChanged: (value) {
             formData['ppirAreaAct'] = value;
@@ -72,25 +74,41 @@ class FormSection extends StatelessWidget {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
-        DropdownButtonFormField<String>(
-          value: formData['ppirVariety'],
-          decoration: const InputDecoration(
-            labelText: 'Select the Actual Seed Variety*',
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: DropdownButtonFormField<String>(
+            value: formData['ppirVariety'],
+            decoration: const InputDecoration(
+              labelText: 'Select the Actual Seed Variety*',
+              border: OutlineInputBorder(),
+            ),
+            items: uniqueSeedsItems,
+            isExpanded: true,
+            onChanged: (value) {
+              if (value != null) {
+                formData['ppirVariety'] = value;
+              } else {
+                formData['ppirVariety'] = null;
+              }
+            },
           ),
-          items: uniqueSeedsItems,
-          onChanged: (value) {
-            if (value != null) {
-              formData['ppirVariety'] = value;
-            } else {
-              formData['ppirVariety'] = null;
-            }
-          },
         ),
         const SizedBox(height: 16),
-        form_field.FormField(
-          labelText: 'Remarks',
-          initialValue: formData['ppirRemarks'],
-          maxLines: 3,
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: TextFormField(
+            initialValue: formData['ppirRemarks'] ?? '',
+            decoration: const InputDecoration(
+              labelText: 'Remarks',
+              border: OutlineInputBorder(),
+            ),
+            maxLines: 3,
+            onChanged: (value) {
+              formData['ppirRemarks'] = value;
+            },
+          ),
         ),
       ],
     );

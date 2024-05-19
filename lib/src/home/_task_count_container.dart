@@ -1,11 +1,10 @@
+// filename: home/_task_count_container.dart
 import 'package:flutter/material.dart';
-
 import '../tasks/_control_task.dart';
 import '_task_box_container.dart';
 
 class TaskCountContainer extends StatefulWidget {
   final Function(bool) onTasksPressed;
-
   const TaskCountContainer({super.key, required this.onTasksPressed});
 
   @override
@@ -27,7 +26,6 @@ class _TaskCountContainerState extends State<TaskCountContainer> {
       List<TaskManager> tasks = await TaskManager.getAllTasks();
       int completedCount = 0;
       int remainingCount = 0;
-
       for (var task in tasks) {
         String? status = await task.status;
         if (status != null && status.toLowerCase() == 'completed') {
@@ -36,13 +34,16 @@ class _TaskCountContainerState extends State<TaskCountContainer> {
           remainingCount++;
         }
       }
-
-      setState(() {
-        completedTaskCount = completedCount;
-        remainingTaskCount = remainingCount;
-      });
+      if (mounted) {
+        setState(() {
+          completedTaskCount = completedCount;
+          remainingTaskCount = remainingCount;
+        });
+      }
     } catch (error) {
-      debugPrint('Error fetching task counts: $error');
+      if (mounted) {
+        debugPrint('Error fetching task counts: $error');
+      }
     }
   }
 
@@ -55,19 +56,45 @@ class _TaskCountContainerState extends State<TaskCountContainer> {
           Expanded(
             child: GestureDetector(
               onTap: () => widget.onTasksPressed(true),
-              child: TaskCountBox(
-                label: 'Completed',
-                count: completedTaskCount,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 2,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: TaskCountBox(
+                  label: 'Completed',
+                  count: completedTaskCount,
+                ),
               ),
             ),
           ),
-          const SizedBox(width: 10.0),
+          const SizedBox(width: 16.0),
           Expanded(
             child: GestureDetector(
               onTap: () => widget.onTasksPressed(false),
-              child: TaskCountBox(
-                label: 'Remaining',
-                count: remainingTaskCount,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 2,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: TaskCountBox(
+                  label: 'Remaining',
+                  count: remainingTaskCount,
+                ),
               ),
             ),
           ),
