@@ -9,7 +9,6 @@ import '_recent_task_container.dart';
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// file: home/_home.dart
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -126,12 +125,7 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   void _navigateToTaskPage(bool isCompleted) {
-    String val = "";
-    if (isCompleted) {
-      val = "Completed";
-    } else {
-      val = "Ongoing";
-    }
+    String val = isCompleted ? "Completed" : "Ongoing";
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => TaskPage(initialFilter: val),
@@ -189,13 +183,12 @@ class HomeScreenState extends State<HomeScreen> {
     await _fetchTasks();
   }
 
-  void _updateSearchQuery(String newValue) {
-    if (mounted) {
-      setState(() {
-        _searchQuery = newValue;
-      });
-    }
-  }
+  // void _updateSearchQuery(String newValue) {
+  //   setState(() {
+  //     _searchQuery = newValue;                            _searchQuery = value;
+
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -247,21 +240,35 @@ class HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 8.0),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: SearchButton(
-                    onUpdateValue: _updateSearchQuery,
+                  child: StatefulBuilder(
+                    builder: (context, setState) {
+                      return Column(
+                        children: [
+                          SearchButton(
+                            searchQuery: _searchQuery,
+                            onUpdateValue: (value) {
+                              setState(() {
+                                _searchQuery = value;
+                              });
+                            },
+                          ),
+                          const SizedBox(height: 16.0),
+                          _isLoadingRecentTasks
+                              ? const Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
+                                )
+                              : RecentTaskContainer(
+                                  notCompletedTasks: _tasks,
+                                  searchQuery: _searchQuery,
+                                ),
+                          const SizedBox(height: 8.0),
+                        ],
+                      );
+                    },
                   ),
                 ),
-                const SizedBox(height: 16.0),
-                _isLoadingRecentTasks
-                    ? const Padding(
-                        padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
-                        child: Center(child: CircularProgressIndicator()),
-                      )
-                    : RecentTaskContainer(
-                        notCompletedTasks: _tasks,
-                        searchQuery: _searchQuery,
-                      ),
-                const SizedBox(height: 8.0),
               ],
             ),
           ),
@@ -270,5 +277,3 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-// dipa working si on-pop-up
