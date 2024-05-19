@@ -1,18 +1,21 @@
+// filename: geotag/_geotag.dart
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:geocoding/geocoding.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gpx/gpx.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
-import 'package:pcic_mobile_app/utils/app/_show_flash_message.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tuple/tuple.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../utils/app/_gpx.dart';
+import '../../utils/app/_show_flash_message.dart';
 import '../pcic_form/_pcic_form.dart';
 import '../tasks/_control_task.dart';
 import '_geotag_bottomsheet.dart';
@@ -88,7 +91,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
 
   Future<void> _requestPermissions() async {
     final locationStatus = await Permission.location.request();
-    final storageStatus = await Permission.manageExternalStorage.request();
+    final storageStatus = await Permission.storage.request();
 
     if (mounted) {
       if (locationStatus.isGranted && storageStatus.isGranted) {
@@ -98,11 +101,10 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
           debugPrint('Location permission denied');
         }
         if (!storageStatus.isGranted) {
-          debugPrint('MANAGE_EXTERNAL_STORAGE permission denied');
+          debugPrint('Storage permission denied');
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content:
-                  Text('External storage permission is required to save files'),
+              content: Text('Storage permission is required to save files'),
             ),
           );
         }
@@ -115,20 +117,11 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
     if (position != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         if (mounted) {
-          final placemarks = await placemarkFromCoordinates(
-            position.latitude,
-            position.longitude,
-          );
-          final placemark = placemarks.first;
-
           setState(() {
             latitude = '${position.latitude}';
             longitude = '${position.longitude}';
             currentLocation =
                 'Lat: ${position.latitude}, Long: ${position.longitude}';
-            address =
-                '${placemark.street ?? ''}, ${placemark.locality ?? ''}, ${placemark.postalCode ?? ''}, ${placemark.country ?? ''}';
-            _mapService.moveMap(position);
           });
           if (addMarker) {
             _mapService.addMarker(position);
@@ -157,12 +150,6 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   void _trackRoutePoints() {
     _locationSubscription ??=
         _locationService.getLocationStream().listen((position) async {
-      final placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
-      );
-      final placemark = placemarks.first;
-
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           setState(() {
@@ -170,8 +157,6 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
             longitude = '${position.longitude}';
             currentLocation =
                 'Lat: ${position.latitude}, Long: ${position.longitude}';
-            address =
-                '${placemark.street ?? ''}, ${placemark.locality ?? ''}, ${placemark.postalCode ?? ''}, ${placemark.country ?? ''}';
             _mapService
                 .addRoutePoint(LatLng(position.latitude, position.longitude));
           });
@@ -291,58 +276,46 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
 
   Future<Tuple2<String, String>> _saveFilesAndScreenshot(
       String gpxString, Uint8List screenshotBytes) async {
-    // final filePath = await ExternalPath.getExternalStoragePublicDirectory(
-    //   ExternalPath.DIRECTORY_DOWNLOADS,
-    // );
+    final directory = await getExternalStorageDirectory();
+    final dataDirectory = directory?.path ?? '/storage/emulated/0/Android/data';
 
-    // final downloadsDirectory = Directory(filePath);
+    // Access the relevant task data directly from the TaskManager
+    final baseFilename = widget.task.formId;
+    final insuranceDirectory = Directory('$dataDirectory/$baseFilename');
 
-    // final serviceType = widget.task.csvData?['serviceType'] ?? 'Service Type';
-    // final idMapping = {serviceType: widget.task.ppirInsuranceId};
+    // Delete the insurance directory if it already exists
+    if (await insuranceDirectory.exists()) {
+      await insuranceDirectory.delete(recursive: true);
+    }
 
-    // // Provide a default if no mapping exists
-    // final mappedId = idMapping[serviceType] ?? '000000';
+    // Create the insurance directory
+    await insuranceDirectory.create(recursive: true);
 
-    // final baseFilename =
-    //     '${serviceType.replaceAll(' ', ' - ')}_${serviceType.replaceAll(' ', '_')}_$mappedId';
+    // Define the Attachments directory inside the insurance directory
+    final attachmentsDirectory =
+        Directory('${insuranceDirectory.path}/Attachments');
 
-    // final insuranceDirectory =
-    //     Directory('${downloadsDirectory.path}/$baseFilename');
+    // Create the Attachments directory if it doesn't exist
+    if (!await attachmentsDirectory.exists()) {
+      await attachmentsDirectory.create(recursive: true);
+    }
 
-    // // Delete the insurance directory if it already exists
-    // if (await insuranceDirectory.exists()) {
-    //   await insuranceDirectory.delete(recursive: true);
-    // }
+    // Generate a unique ID for the files
+    var uuid = const Uuid();
+    String gpxFilename = '${uuid.v4()}.gpx';
+    String screenshotFilename = '${uuid.v4()}.png';
 
-    // // Create the insurance directory
-    // await insuranceDirectory.create(recursive: true);
+    final gpxFile = File('${attachmentsDirectory.path}/$gpxFilename');
+    final screenshotFile =
+        File('${attachmentsDirectory.path}/$screenshotFilename');
 
-    // // Define the Attachments directory inside the insurance directory
-    // final attachmentsDirectory =
-    //     Directory('${insuranceDirectory.path}/Attachments');
+    await gpxFile.writeAsString(gpxString);
+    await screenshotFile.writeAsBytes(screenshotBytes);
 
-    // // Create the Attachments directory if it doesn't exist
-    // if (!await attachmentsDirectory.exists()) {
-    //   await attachmentsDirectory.create(recursive: true);
-    // }
+    debugPrint('GPX file saved: ${gpxFile.path}');
+    debugPrint('Map screenshot saved: ${screenshotFile.path}');
 
-    // // Generate a unique ID for the files
-    // var uuid = const Uuid();
-    // String gpxFilename = '${uuid.v4()}.gpx';
-    // String screenshotFilename = '${uuid.v4()}.png';
-
-    // final gpxFile = File('${attachmentsDirectory.path}/$gpxFilename');
-    // final screenshotFile =
-    //     File('${attachmentsDirectory.path}/$screenshotFilename');
-
-    // await gpxFile.writeAsString(gpxString);
-    // await screenshotFile.writeAsBytes(screenshotBytes);
-
-    // debugPrint('GPX file saved: ${gpxFile.path}');
-    // debugPrint('Map screenshot saved: ${screenshotFile.path}');
-
-    // return Tuple2(gpxFile.path, screenshotFile.path);
-    return const Tuple2('', '');
+    return Tuple2(gpxFile.path, screenshotFile.path);
   }
 
   Future<void> _addMarkerAtCurrentLocation() async {

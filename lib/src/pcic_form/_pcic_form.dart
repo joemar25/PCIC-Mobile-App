@@ -1,8 +1,11 @@
 // file: ppir_form/_pcic_form.dart
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:open_file/open_file.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '_success.dart';
 import '_gpx_file_buttons.dart';
@@ -248,14 +251,55 @@ class PCICFormPageState extends State<PCICFormPage> {
     );
   }
 
-  Future<void> _viewGeotag(String gpxFile) async {
-    final Uri uri = Uri.file(gpxFile);
+  void _openGpxFile(String gpxFilePath) async {
+    try {
+      final filePath = gpxFilePath;
+      final downloadsDirectory = Directory(filePath);
+      final gpxFile = File(downloadsDirectory.path);
+      debugPrint("path = $gpxFile");
 
-    if (await canLaunch(uri.toString())) {
-      await launch(uri.toString());
-    } else {
-      showFlashMessage(context, 'Error', 'Failed to open Geotag',
-          'Could not launch geotag file.');
+      if (await gpxFile.exists()) {
+        final status = await Permission.manageExternalStorage.status;
+        if (status.isGranted) {
+          final result = await OpenFile.open(gpxFile.path);
+          if (result.type == ResultType.done) {
+            // File opened successfully
+            debugPrint('GPX file opened successfully');
+          } else {
+            // Error opening the file
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Error opening GPX file')),
+              );
+            }
+            debugPrint('Error opening GPX file: ${result.message}');
+          }
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                    'External storage permission is required to open GPX files'),
+              ),
+            );
+          }
+          debugPrint('MANAGE_EXTERNAL_STORAGE permission denied');
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('GPX file not found')),
+          );
+        }
+        debugPrint('GPX file not found: ${gpxFile.path}');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error opening GPX file')),
+        );
+      }
+      debugPrint('Error opening GPX file: $e');
     }
   }
 
@@ -331,7 +375,7 @@ class PCICFormPageState extends State<PCICFormPage> {
                 const SizedBox(height: 16),
                 GPXFileButtons(
                   // Reusing the GPX button
-                  openGpxFile: () => _viewGeotag(widget.gpxFile),
+                  openGpxFile: () => _openGpxFile(widget.gpxFile),
                 ),
               ],
             ),

@@ -1,4 +1,4 @@
-// filename: home/_home_header.dart
+// file: home/_home_header.dart
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
@@ -44,9 +44,11 @@ class _HomeHeaderState extends State<HomeHeader> {
               userDocSnapshot.data() as Map<String, dynamic>?;
 
           if (userData != null && userData.containsKey('name')) {
-            setState(() {
-              userName = userData['name'] as String?;
-            });
+            if (mounted) {
+              setState(() {
+                userName = userData['name'] as String?;
+              });
+            }
           }
         } else {
           debugPrint('User document not found');
