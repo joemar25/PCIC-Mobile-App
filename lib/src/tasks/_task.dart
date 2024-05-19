@@ -14,6 +14,7 @@ class TaskPage extends StatefulWidget {
 class TaskPageState extends State<TaskPage> {
   List<TaskManager> _tasks = [];
   String _initialFilter = 'Ongoing';
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -23,50 +24,67 @@ class TaskPageState extends State<TaskPage> {
 
   Future<void> _fetchTasks() async {
     try {
-      List<TaskManager> ongoingTasks =
-          await TaskManager.getTasksByStatus('Ongoing');
-      if (ongoingTasks.isNotEmpty) {
+      List<TaskManager> tasks;
+
+      if (widget.initialFilter == 'Completed') {
+        tasks = await TaskManager.getTasksByStatus('Completed');
         setState(() {
-          _tasks = ongoingTasks;
-          _initialFilter = 'Ongoing';
+          _tasks = tasks;
+          _initialFilter = 'Completed';
         });
       } else {
-        List<TaskManager> forDispatchTasks =
-            await TaskManager.getTasksByStatus('For Dispatch');
-        if (forDispatchTasks.isNotEmpty) {
+        tasks = await TaskManager.getTasksByStatus('Ongoing');
+        if (tasks.isNotEmpty) {
           setState(() {
-            _tasks = forDispatchTasks;
-            _initialFilter = 'For Dispatch';
+            _tasks = tasks;
+            _initialFilter = 'Ongoing';
           });
         } else {
-          List<TaskManager> completedTasks =
-              await TaskManager.getTasksByStatus('Completed');
+          tasks = await TaskManager.getTasksByStatus('For Dispatch');
           setState(() {
-            _tasks = completedTasks;
-            _initialFilter = 'Completed';
+            _tasks = tasks;
+            _initialFilter = tasks.isNotEmpty ? 'For Dispatch' : 'Ongoing';
           });
         }
       }
     } catch (error) {
       debugPrint('Error fetching tasks: $error');
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    String title = _initialFilter == 'Completed' ? 'Completed Tasks' : 'Tasks';
+
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        title: const Text(
-          'Tasks',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 19.2, fontWeight: FontWeight.w600),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
+        title: Text(
+          title,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 19.2, fontWeight: FontWeight.w600),
+        ),
+        centerTitle: true,
       ),
-      body: _tasks.isEmpty
+      body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : TaskView(tasks: _tasks, initialFilter: _initialFilter),
+          : _tasks.isEmpty
+              ? Center(
+                  child: Text(
+                    'No ${_initialFilter.toLowerCase()} tasks available.',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                )
+              : TaskView(tasks: _tasks, initialFilter: _initialFilter),
     );
   }
 }

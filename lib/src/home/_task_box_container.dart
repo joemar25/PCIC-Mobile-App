@@ -1,7 +1,9 @@
 import '../tasks/_task.dart';
+import '../tasks/_control_task.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
+
 // filename: _task_count_box.dart
 
 class TaskCountBox extends StatefulWidget {
@@ -14,14 +16,27 @@ class TaskCountBox extends StatefulWidget {
 }
 
 class _TaskCountBoxState extends State<TaskCountBox> {
-  void _navigateToTaskPage() {
+  Future<void> _navigateToTaskPage() async {
     String initialFilter;
-    if (widget.label == 'Completed') {
-      initialFilter = 'Completed';
-    } else {
-      initialFilter = 'Ongoing';
+    switch (widget.label) {
+      case 'Ongoing':
+        List<TaskManager> ongoingTasks =
+            await TaskManager.getTasksByStatus('Ongoing');
+        if (ongoingTasks.isNotEmpty) {
+          initialFilter = 'Ongoing';
+        } else {
+          initialFilter = 'For Dispatch';
+        }
+        break;
+      case 'For Dispatch':
+        initialFilter = 'For Dispatch';
+        break;
+      case 'Completed':
+        initialFilter = 'Completed';
+        break;
+      default:
+        initialFilter = 'Ongoing';
     }
-
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -48,7 +63,7 @@ class _TaskCountBoxState extends State<TaskCountBox> {
     }
 
     return GestureDetector(
-      onTap: _navigateToTaskPage,
+      onTap: () => _navigateToTaskPage(),
       child: Container(
         height: 100,
         decoration: BoxDecoration(
