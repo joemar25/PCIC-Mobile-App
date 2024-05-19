@@ -99,7 +99,7 @@ class TaskManager {
   }
 
   static Future<void> syncDataFromCSV() async {
-    debugPrint("syncing data started...");
+    // debugPrint("syncing data started...");
     try {
       final csvFilePaths = await _getCSVFilePaths();
       // debugPrint("csvFilePaths = $csvFilePaths");
@@ -246,18 +246,18 @@ class TaskManager {
 
           if (formDetailsIdRef != null) {
             final formDetailsSnapshot = await formDetailsIdRef.get();
-            debugPrint("formDetailsSnapshot = $formDetailsSnapshot");
+            // debugPrint("formDetailsSnapshot = $formDetailsSnapshot");
 
             if (formDetailsSnapshot.exists) {
               final formDetailsData =
                   formDetailsSnapshot.data() as Map<String, dynamic>?;
-              debugPrint("formDetailsData = $formDetailsData");
+              // debugPrint("formDetailsData = $formDetailsData");
 
               if (formDetailsData != null) {
                 final formIdRef =
                     formDetailsData['formId'] as DocumentReference?;
 
-                debugPrint("formIdRef= $formIdRef");
+                // debugPrint("formIdRef= $formIdRef");
 
                 if (formIdRef != null) {
                   final formId = formIdRef.id;

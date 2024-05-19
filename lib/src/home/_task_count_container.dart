@@ -1,3 +1,4 @@
+// filename: home/_task_count_container.dart
 import 'package:flutter/material.dart';
 import '../tasks/_control_task.dart';
 import '_task_box_container.dart';
@@ -33,12 +34,16 @@ class _TaskCountContainerState extends State<TaskCountContainer> {
           remainingCount++;
         }
       }
-      setState(() {
-        completedTaskCount = completedCount;
-        remainingTaskCount = remainingCount;
-      });
+      if (mounted) {
+        setState(() {
+          completedTaskCount = completedCount;
+          remainingTaskCount = remainingCount;
+        });
+      }
     } catch (error) {
-      debugPrint('Error fetching task counts: $error');
+      if (mounted) {
+        debugPrint('Error fetching task counts: $error');
+      }
     }
   }
 
