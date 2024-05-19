@@ -58,13 +58,24 @@ class TaskDetailsPage extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 16.0),
               decoration: BoxDecoration(
                 color: Colors.white,
-                border: Border.all(width: 0.5, color: Colors.black38),
-                boxShadow: const [
+                border: Border.all(width: 0.2, color: Colors.grey),
+                boxShadow: [
+                  // BoxShadow(color: Color(0xFF0F7D40), offset: Offset(-5, 5))
                   BoxShadow(
-                    color: Color(0xFF0F7D40),
-                    offset: Offset(-5, 5),
-                  )
+                    color: const Color(0xFF0F7D40).withOpacity(0.8),
+                    blurRadius: 1,
+                    spreadRadius: 1,
+                    offset: const Offset(0, 3),
+                  ),
                 ],
+                // boxShadow: [
+                //   BoxShadow(
+                //     color: Colors.black.withOpacity(0.2),
+                //     spreadRadius: 2,
+                //     blurRadius: 2,
+                //     offset: const Offset(0, 5),
+                //   )
+                // ],
                 borderRadius: BorderRadius.circular(15.0),
               ),
               child: Padding(
