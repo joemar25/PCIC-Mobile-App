@@ -1,9 +1,14 @@
-import '_profile_body.dart';
-import '_profile_body_item.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
-import 'package:pcic_mobile_app/src/profile/_profile_edit.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
+import '../theme/_theme.dart';
+import '_profile_body.dart';
+import '_profile_body_item.dart';
+import '_profile_edit.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -16,8 +21,11 @@ class _ProfilePageState extends State<ProfilePage> {
   String name = '';
   String email = '';
   String profilePicUrl = '';
-  final String documentId =
-      '8rpFSBLQRgCGCFyVrW96'; // Move documentId to a class variable
+  String documentId = '';
+  final ImagePicker _picker = ImagePicker();
+  File? _imageFile;
+  bool _isPickerActive = false;
+  bool _isUploading = false;
 
   @override
   void initState() {
@@ -26,18 +34,28 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void fetchUserData() async {
-    // Fetch user data from Firestore
-    DocumentSnapshot userDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(documentId)
-        .get();
+    debugPrint("fetching user data...");
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      String authUid = currentUser.uid;
 
-    if (userDoc.exists) {
-      setState(() {
-        name = userDoc['name'];
-        email = userDoc['email'];
-        profilePicUrl = userDoc['profilePicUrl'];
-      });
+      // Fetch user data from Firestore
+      QuerySnapshot userQuery = await FirebaseFirestore.instance
+          .collection('users')
+          .where('authUid', isEqualTo: authUid)
+          .get();
+
+      debugPrint("userQuery $userQuery");
+
+      if (userQuery.docs.isNotEmpty) {
+        DocumentSnapshot userDoc = userQuery.docs.first;
+        setState(() {
+          name = userDoc['name'];
+          email = userDoc['email'];
+          profilePicUrl = userDoc['profilePicUrl'];
+          documentId = userDoc.id; // Store the document ID
+        });
+      }
     }
   }
 
@@ -49,21 +67,72 @@ class _ProfilePageState extends State<ProfilePage> {
           documentId: documentId,
           name: name,
           email: email,
-          profilePicUrl: profilePicUrl,
         ),
       ),
     );
 
     if (result == true) {
       fetchUserData(); // Refresh data after returning from edit page
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated successfully!')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile updated successfully!')),
+        );
+      }
     } else if (result == false) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to update profile.')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to update profile.')),
+        );
+      }
     }
+  }
+
+  Future<void> _pickImage() async {
+    if (_isPickerActive) return; // Prevent multiple instances of image picker
+    _isPickerActive = true;
+
+    final XFile? pickedFile =
+        await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+        _isUploading = true; // Start uploading
+      });
+
+      // Upload to Firebase Storage and update Firestore
+      if (_imageFile != null) {
+        String fileName =
+            'profile_pics/${DateTime.now().millisecondsSinceEpoch}.png';
+        UploadTask uploadTask =
+            FirebaseStorage.instance.ref().child(fileName).putFile(_imageFile!);
+
+        try {
+          TaskSnapshot taskSnapshot = await uploadTask;
+          String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(documentId)
+              .update({'profilePicUrl': downloadUrl});
+
+          setState(() {
+            profilePicUrl = downloadUrl;
+          });
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Failed to upload profile picture: $e')),
+            );
+          }
+        } finally {
+          setState(() {
+            _isUploading = false;
+          });
+        }
+      }
+    }
+
+    _isPickerActive = false;
   }
 
   @override
@@ -92,72 +161,97 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                  decoration: BoxDecoration(
-                    border:
-                        Border.all(width: 2.0, color: const Color(0xFF0F7D40)),
-                    borderRadius: BorderRadius.circular(100),
+              Stack(
+                children: [
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            width: 2.0, color: const Color(0xFF0F7D40)),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.white,
+                        backgroundImage: profilePicUrl.isNotEmpty
+                            ? NetworkImage(profilePicUrl)
+                            : null,
+                        child: profilePicUrl.isEmpty
+                            ? const Icon(
+                                Icons.person,
+                                size: 50,
+                                color: Colors.grey,
+                              )
+                            : null,
+                      ),
+                    ),
                   ),
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.white,
-                    backgroundImage: profilePicUrl.isNotEmpty
-                        ? NetworkImage(profilePicUrl)
-                        : null,
-                    child: profilePicUrl.isEmpty
-                        ? const Icon(
-                            Icons.person,
-                            size: 50,
-                            color: Colors.grey,
-                          )
-                        : null,
-                  )),
-              const SizedBox(
-                height: 8,
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: const Icon(
+                        Icons.edit,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  if (_isUploading)
+                    Positioned(
+                      top: 0,
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        color: Colors.black45,
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    ),
+                ],
               ),
+              const SizedBox(height: 8),
               Text(
                 name,
                 style: TextStyle(
                     fontSize: t?.headline, fontWeight: FontWeight.w600),
               ),
-              const SizedBox(
-                height: 8,
+              const SizedBox(height: 8),
+              Text(
+                email,
+                style:
+                    TextStyle(fontSize: t?.body, fontWeight: FontWeight.w500),
               ),
-              Text(email,
-                  style: TextStyle(
-                      fontSize: t?.body, fontWeight: FontWeight.w500)),
-              const SizedBox(
-                height: 8,
-              ),
+              const SizedBox(height: 8),
               ElevatedButton(
                 onPressed: navigateToEditProfile,
                 style: ElevatedButton.styleFrom(
-                  splashFactory: NoSplash.splashFactory, // Remove splash effect
+                  splashFactory: NoSplash.splashFactory,
                   elevation: 0.0,
                   backgroundColor: const Color(0xFF0F7D40),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0), // Border radius
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
                 child: Text(
                   'Edit Profile',
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: t?.caption ?? 14.0,
-                  ),
+                      color: Colors.white, fontSize: t?.caption ?? 14.0),
                 ),
               ),
-              const SizedBox(
-                height: 32.0,
-              ),
+              const SizedBox(height: 32.0),
               const Divider(),
               const ProfileBody(),
               const Divider(),
-              const SizedBox(
-                height: 8,
-              ),
+              const SizedBox(height: 8),
               const ProfileBodyItem(
-                  label: 'Logout', svgPath: 'assets/storage/images/logout.svg')
+                  label: 'Logout', svgPath: 'assets/storage/images/logout.svg'),
             ],
           ),
         ),

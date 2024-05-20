@@ -2,7 +2,7 @@ import '_profile_body_item.dart';
 import 'package:flutter/material.dart';
 import '../settings/_view.dart';
 import '../settings/_controller.dart';
-import '../settings/_service.dart';  // Import the service
+import '../settings/_service.dart';
 
 class ProfileBody extends StatefulWidget {
   const ProfileBody({super.key});
@@ -18,7 +18,8 @@ class _ProfileBodyState extends State<ProfileBody> {
   void initState() {
     super.initState();
     final settingsService = SettingsService(); // Instantiate the service
-    _settingsController = SettingsController(settingsService); // Pass the service to the controller
+    _settingsController = SettingsController(
+        settingsService); // Pass the service to the controller
   }
 
   @override
@@ -33,7 +34,8 @@ class _ProfileBodyState extends State<ProfileBody> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SettingsView(controller: _settingsController),
+                  builder: (context) =>
+                      SettingsView(controller: _settingsController),
                 ),
               );
             },
@@ -46,7 +48,6 @@ class _ProfileBodyState extends State<ProfileBody> {
           GestureDetector(
             onTap: () {
               // Handle "Change Password" tap
-
             },
             child: const ProfileBodyItem(
               label: 'Change Password',
