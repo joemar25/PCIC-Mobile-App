@@ -126,7 +126,7 @@ class _ProfilePageState extends State<ProfilePage> {
           }
         } finally {
           setState(() {
-            _isUploading = false; // End uploading
+            _isUploading = false;
           });
         }
       }
