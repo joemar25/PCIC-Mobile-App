@@ -135,6 +135,28 @@ class _ProfilePageState extends State<ProfilePage> {
     _isPickerActive = false;
   }
 
+  Future<String> _getProfilePicUrl() async {
+    try {
+      if (profilePicUrl.isNotEmpty) {
+        // Attempt to access the specified profile picture URL
+        await FirebaseStorage.instance
+            .refFromURL(profilePicUrl)
+            .getDownloadURL();
+        return profilePicUrl;
+      } else {
+        // Fetch the default profile picture URL from Firebase Storage
+        return await FirebaseStorage.instance
+            .ref('profile_pics/default.png')
+            .getDownloadURL();
+      }
+    } catch (e) {
+      // If there's an error, fetch the default profile picture URL from Firebase Storage
+      return await FirebaseStorage.instance
+          .ref('profile_pics/default.png')
+          .getDownloadURL();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).extension<CustomThemeExtension>();
@@ -171,19 +193,31 @@ class _ProfilePageState extends State<ProfilePage> {
                             width: 2.0, color: const Color(0xFF0F7D40)),
                         borderRadius: BorderRadius.circular(100),
                       ),
-                      child: CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.white,
-                        backgroundImage: profilePicUrl.isNotEmpty
-                            ? NetworkImage(profilePicUrl)
-                            : null,
-                        child: profilePicUrl.isEmpty
-                            ? const Icon(
-                                Icons.person,
-                                size: 50,
-                                color: Colors.grey,
-                              )
-                            : null,
+                      child: FutureBuilder<String>(
+                        future: _getProfilePicUrl(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircleAvatar(
+                              radius: 50,
+                              backgroundColor: Colors.white,
+                              child: CircularProgressIndicator(),
+                            );
+                          } else if (snapshot.hasError || !snapshot.hasData) {
+                            return const CircleAvatar(
+                              radius: 50,
+                              backgroundColor: Colors.white,
+                              backgroundImage:
+                                  NetworkImage('URL_OF_DEFAULT_IMAGE'),
+                            );
+                          } else {
+                            return CircleAvatar(
+                              radius: 50,
+                              backgroundColor: Colors.white,
+                              backgroundImage: NetworkImage(snapshot.data!),
+                            );
+                          }
+                        },
                       ),
                     ),
                   ),
