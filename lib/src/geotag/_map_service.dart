@@ -133,7 +133,7 @@ class MapService {
         children: [
           TileLayer(
             urlTemplate:
-                'https://api.mapbox.com/styles/v1/quanbysolutions/clvt7is5c00xx01rd3dnthwfr/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicXVhbmJ5c29sdXRpb25zIiwiYSI6ImNsdWhrejRwdDJyYnAya3A2NHFqbXlsbHEifQ.WJ5Ng-AO-dTrlkUHD_ebMw',
+                'https://api.mapbox.com/styles/v1/quanbysolutions/cluhoxol502q801oi8od2cmvz/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicXVhbmJ5c29sdXRpb25zIiwiYSI6ImNsdWhrejRwdDJyYnAya3A2NHFqbXlsbHEifQ.WJ5Ng-AO-dTrlkUHD_ebMw',
             tileProvider: CancellableNetworkTileProvider(),
           ),
           PolylineLayer(

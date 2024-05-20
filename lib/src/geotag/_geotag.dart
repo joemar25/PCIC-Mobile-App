@@ -2,23 +2,24 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:uuid/uuid.dart';
 import 'package:gpx/gpx.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:uuid/uuid.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
-import '../../utils/app/_gpx.dart';
-import '../../utils/app/_show_flash_message.dart';
-import '../pcic_form/_pcic_form.dart';
-import '../tasks/_control_task.dart';
-import '../theme/_theme.dart';
-import '_geotag_bottomsheet.dart';
-import '_location_service.dart';
 import '_map_service.dart';
+import '../theme/_theme.dart';
+import '_location_service.dart';
+import '_geotag_bottomsheet.dart';
+import '../../utils/app/_gpx.dart';
+import '../tasks/_control_task.dart';
+import '../pcic_form/_pcic_form.dart';
+import '../../utils/app/_show_flash_message.dart';
 
 class GeotagPage extends StatefulWidget {
   final TaskManager task;
@@ -51,6 +52,9 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   bool isColumnVisible = true;
   bool isRoutingStarted = false;
   bool showConfirmationDialog = true;
+
+  // joemar is here
+  bool saveOnline = false;
 
   StreamSubscription<LatLng>? _locationSubscription;
 
@@ -268,41 +272,47 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   }
 
   Future<String> _saveGpxFile(String gpxString) async {
-    final directory = await getExternalStorageDirectory();
-    final dataDirectory = directory?.path ?? '/storage/emulated/0/Android/data';
+    if (saveOnline) {
+      final storage = FirebaseStorage.instance;
+      return "";
+    } else {
+      final directory = await getExternalStorageDirectory();
+      final dataDirectory =
+          directory?.path ?? '/storage/emulated/0/Android/data';
 
-    // Access the relevant task data directly from the TaskManager
-    final baseFilename = widget.task.formId;
-    final insuranceDirectory = Directory('$dataDirectory/$baseFilename');
+      // Access the relevant task data directly from the TaskManager
+      final baseFilename = widget.task.formId;
+      final insuranceDirectory = Directory('$dataDirectory/$baseFilename');
 
-    // Delete the insurance directory if it already exists
-    if (await insuranceDirectory.exists()) {
-      await insuranceDirectory.delete(recursive: true);
+      // Delete the insurance directory if it already exists
+      if (await insuranceDirectory.exists()) {
+        await insuranceDirectory.delete(recursive: true);
+      }
+
+      // Create the insurance directory
+      await insuranceDirectory.create(recursive: true);
+
+      // Define the Attachments directory inside the insurance directory
+      final attachmentsDirectory =
+          Directory('${insuranceDirectory.path}/Attachments');
+
+      // Create the Attachments directory if it doesn't exist
+      if (!await attachmentsDirectory.exists()) {
+        await attachmentsDirectory.create(recursive: true);
+      }
+
+      // Generate a unique ID for the files
+      var uuid = const Uuid();
+      String gpxFilename = '${uuid.v4()}.gpx';
+
+      final gpxFile = File('${attachmentsDirectory.path}/$gpxFilename');
+
+      await gpxFile.writeAsString(gpxString);
+
+      debugPrint('GPX file saved: ${gpxFile.path}');
+
+      return gpxFile.path;
     }
-
-    // Create the insurance directory
-    await insuranceDirectory.create(recursive: true);
-
-    // Define the Attachments directory inside the insurance directory
-    final attachmentsDirectory =
-        Directory('${insuranceDirectory.path}/Attachments');
-
-    // Create the Attachments directory if it doesn't exist
-    if (!await attachmentsDirectory.exists()) {
-      await attachmentsDirectory.create(recursive: true);
-    }
-
-    // Generate a unique ID for the files
-    var uuid = const Uuid();
-    String gpxFilename = '${uuid.v4()}.gpx';
-
-    final gpxFile = File('${attachmentsDirectory.path}/$gpxFilename');
-
-    await gpxFile.writeAsString(gpxString);
-
-    debugPrint('GPX file saved: ${gpxFile.path}');
-
-    return gpxFile.path;
   }
 
   Future<void> _addMarkerAtCurrentLocation() async {
