@@ -61,7 +61,7 @@ class _HomeHeaderState extends State<HomeHeader> {
             profilePicUrl = defaultPicUrl;
           });
         } catch (e) {
-          print('Error fetching default profile picture: $e');
+          debugPrint('Error fetching default profile picture: $e');
           setState(() {
             profilePicUrl =
                 'assets/storage/images/default.png'; // Local fallback image if everything else fails

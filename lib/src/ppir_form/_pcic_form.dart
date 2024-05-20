@@ -10,9 +10,9 @@ import '_success.dart';
 import '_gpx_file_buttons.dart';
 import '../tasks/_control_task.dart';
 import '../geotag/_map_service.dart';
-import './_form_field.dart' as form_field;
+import '_form_field.dart' as form_field;
 import '../../utils/seeds/_dropdown.dart';
-import './_form_section.dart' as form_section;
+import '_form_section.dart' as form_section;
 import '../signature/_signature_section.dart';
 import '../../utils/app/_show_flash_message.dart';
 
