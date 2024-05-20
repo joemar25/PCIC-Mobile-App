@@ -34,7 +34,7 @@ class _FilterFooterState extends State<FilterFooter> {
     final t = Theme.of(context).extension<CustomThemeExtension>();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      padding: const EdgeInsets.symmetric(vertical: 20.0),
       child: Row(
         children: [
           Text(

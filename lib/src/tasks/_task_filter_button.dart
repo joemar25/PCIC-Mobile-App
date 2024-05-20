@@ -235,6 +235,8 @@ class _FilterButtonState extends State<FilterButton> {
             width: 0.5,
           ),
         ),
+        elevation: 3,
+        shadowColor: Colors.black,
       ),
       child: SvgPicture.asset(
         'assets/storage/images/filter.svg',
