@@ -279,7 +279,8 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
         final storageRef = FirebaseStorage.instance.ref();
 
         // Create a reference to the folder named after widget.task.formId
-        final folderRef = storageRef.child('PPIR_SAVES/${widget.task.formId}');
+        final folderRef =
+            storageRef.child('PPIR_SAVES/${widget.task.formId}/Attachments');
 
         // List all items in the folder
         final ListResult result = await folderRef.listAll();
