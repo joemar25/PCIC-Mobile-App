@@ -1,13 +1,10 @@
 // filename: home/_home_header.dart
 import '../theme/_theme.dart';
-// import '../settings/_view.dart';
-// import '../settings/_service.dart';
-// import 'package:flutter_svg/svg.dart';
-// import '../settings/_controller.dart';
 import 'package:flutter/material.dart';
 import '../profile/_profile_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class HomeHeader extends StatefulWidget {
   final VoidCallback onLogout;
@@ -32,28 +29,51 @@ class _HomeHeaderState extends State<HomeHeader> {
   Future<void> _getUserProfilePic() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      print('User ID: ${user.uid}');
-
       try {
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
             .collection('users')
-            .doc('8rpFSBLQRgCGCFyVrW96')
+            .doc(user.uid)
             .get();
 
         if (userDoc.exists) {
-          print('User document data: ${userDoc.data()}');
+          String fetchedProfilePicUrl = userDoc['profilePicUrl'] ?? '';
           setState(() {
-            profilePicUrl = userDoc['profilePicUrl'] ?? '';
+            profilePicUrl =
+                fetchedProfilePicUrl.isNotEmpty ? fetchedProfilePicUrl : '';
           });
-          print('Profile Pic URL: $profilePicUrl');
         } else {
-          print('User document does not exist.');
+          debugPrint('User document does not exist.');
         }
       } catch (e) {
-        print('Error fetching user document: $e');
+        debugPrint('Error fetching user document: $e');
+        setState(() {
+          profilePicUrl = '';
+        });
+      }
+
+      if (profilePicUrl.isEmpty) {
+        try {
+          // Fetch the default profile picture URL from Firebase Storage
+          String defaultPicUrl = await FirebaseStorage.instance
+              .ref('profile_pics/default.png')
+              .getDownloadURL();
+          setState(() {
+            profilePicUrl = defaultPicUrl;
+          });
+        } catch (e) {
+          print('Error fetching default profile picture: $e');
+          setState(() {
+            profilePicUrl =
+                'assets/storage/images/default.png'; // Local fallback image if everything else fails
+          });
+        }
       }
     } else {
-      print('No user is logged in.');
+      debugPrint('No user is logged in.');
+      setState(() {
+        profilePicUrl =
+            'assets/storage/images/default.png'; // Local fallback image
+      });
     }
   }
 
@@ -141,7 +161,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                         height: 48,
                       )
                     : Image.asset(
-                        'assets/storage/images/cool.png',
+                        'assets/storage/images/default.png',
                         fit: BoxFit.cover,
                         width: 48,
                         height: 48,

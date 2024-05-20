@@ -273,8 +273,34 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
 
   Future<String> _saveGpxFile(String gpxString) async {
     if (saveOnline) {
-      final storage = FirebaseStorage.instance;
-      return "";
+      try {
+        // Create a reference to Firebase Storage
+        final storageRef = FirebaseStorage.instance.ref();
+
+        // Create a reference to the folder named after widget.task.formId
+        final folderRef = storageRef
+            .child('PPIR_SAVES/${widget.task.taskId}/${widget.task.formId}');
+
+        // Generate a unique filename using Uuid
+        var uuid = const Uuid();
+        String gpxFilename = '${uuid.v4()}.gpx';
+
+        // Create a reference to the file location inside the folder
+        final gpxFileRef = folderRef.child(gpxFilename);
+
+        // Upload the GPX file as a string
+        await gpxFileRef.putString(gpxString, format: PutStringFormat.raw);
+
+        // Get the download URL of the uploaded file
+        final downloadUrl = await gpxFileRef.getDownloadURL();
+
+        debugPrint('GPX file uploaded to Firebase: $downloadUrl');
+
+        return downloadUrl;
+      } catch (e) {
+        debugPrint('Error uploading GPX file to Firebase: $e');
+        throw Exception('Error uploading GPX file to Firebase');
+      }
     } else {
       final directory = await getExternalStorageDirectory();
       final dataDirectory =
