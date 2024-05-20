@@ -1,15 +1,11 @@
-// android/app/build.gradle
-//file:noinspection Annotator
+// filename: android/app/build.gradle
 plugins {
     id "com.android.application"
-    // START: FlutterFire Configuration
-    id 'com.google.gms.google-services'
-    // END: FlutterFire Configuration
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+    id 'com.google.gms.google-services'
 }
 
-//noinspection Annotator
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
@@ -38,12 +34,12 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    // configurations.all {
-    //     resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib:1.7.10'
-    // }
-
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+
+    configurations.all {
+        resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib:1.7.10'
     }
 
     sourceSets {
@@ -52,23 +48,14 @@ android {
 
     defaultConfig {
         applicationId "com.quanby.pcic_mobile_app"
-
-        multiDexEnabled true
-
-        // MAR: this is the original = minSdkVersion flutter.minSdkVersion
         minSdkVersion 23
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-
-        // get the env file from the project root 
-        resValue "string", "MAPBOX_ACCESS_TOKEN", "\"${System.getenv("MAPBOX_ACCESS_TOKEN")}\""
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
         }
     }
@@ -78,9 +65,4 @@ flutter {
     source '../..'
 }
 
-dependencies {
-    // implementation platform('com.google.firebase:firebase-bom:33.0.0')
-    // implementation 'com.google.firebase:firebase-analytics'
-
-    implementation 'androidx.multidex:multidex:2.0.1'
-}
+dependencies {}
