@@ -1,6 +1,10 @@
 // file: signature/_signature_section.dart
+import 'dart:typed_data';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
+import 'package:uuid/uuid.dart';
 
 import '../ppir_form/_tap_to_signature.dart';
 import '../tasks/_control_task.dart';
@@ -29,6 +33,9 @@ class SignatureSectionState extends State<SignatureSection> {
     exportBackgroundColor: Colors.white,
   );
 
+  String? _confirmedByUrl;
+  String? _preparedByUrl;
+
   @override
   void initState() {
     super.initState();
@@ -43,9 +50,7 @@ class SignatureSectionState extends State<SignatureSection> {
   }
 
   void _initializeSignatureNames() {
-    // _confirmedByNameController.text =
-    //     widget.task.csvData?['ppirNameInsured'] ?? '';
-    // _preparedByNameController.text = widget.task.csvData?['ppirNameIuia'] ?? '';
+    // Initialize signature names if needed
   }
 
   @override
@@ -124,15 +129,52 @@ class SignatureSectionState extends State<SignatureSection> {
   Future<Map<String, dynamic>> getSignatureData() async {
     Map<String, dynamic> signatureData = {};
 
-    final confirmedByBytes = await _confirmedBySignatureController.toPngBytes();
-    final preparedByBytes = await _preparedBySignatureController.toPngBytes();
+    if (_confirmedByUrl == null) {
+      final confirmedByBytes =
+          await _confirmedBySignatureController.toPngBytes();
+      if (confirmedByBytes != null) {
+        _confirmedByUrl = await _saveSignatureToFirebase(
+          confirmedByBytes,
+          'ppirSigInsured',
+        );
+      }
+    }
 
-    signatureData['ppirSigInsured'] = confirmedByBytes;
-    signatureData['ppirSigIuia'] = preparedByBytes;
+    if (_preparedByUrl == null) {
+      final preparedByBytes = await _preparedBySignatureController.toPngBytes();
+      if (preparedByBytes != null) {
+        _preparedByUrl = await _saveSignatureToFirebase(
+          preparedByBytes,
+          'ppirSigIuia',
+        );
+      }
+    }
+
+    signatureData['ppirSigInsured'] = _confirmedByUrl;
+    signatureData['ppirSigIuia'] = _preparedByUrl;
     signatureData['ppirNameInsured'] = _confirmedByNameController.text;
     signatureData['ppirNameIuia'] = _preparedByNameController.text;
 
     return signatureData;
+  }
+
+  Future<String> _saveSignatureToFirebase(
+    Uint8List signatureBytes,
+    String signatureName,
+  ) async {
+    final storageRef = FirebaseStorage.instance.ref();
+    final folderRef =
+        storageRef.child('PPIR_SAVES/${widget.task.formId}/Attachments');
+    const uuid = Uuid();
+    final signatureFilename = '${uuid.v4()}_$signatureName.png';
+    final signatureFileRef = folderRef.child(signatureFilename);
+
+    await signatureFileRef.putData(signatureBytes);
+
+    final downloadUrl = await signatureFileRef.getDownloadURL();
+    debugPrint('Signature uploaded to Firebase: $downloadUrl');
+
+    return downloadUrl;
   }
 
   SignatureController get confirmedBySignatureController =>
