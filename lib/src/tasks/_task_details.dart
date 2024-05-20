@@ -273,8 +273,13 @@ class TaskDetailsPage extends StatelessWidget {
                       _buildFormSection(context, 'Tracking Results', [
                         _buildFormField(context, 'Last Coordinates',
                             formData['trackLastcoord']),
-                        _buildFormField(context, 'Date and Time',
-                            formData['trackDatetime']?.toDate().toString()),
+                        _buildFormField(
+                            context,
+                            'Date and Time',
+                            formData['trackDatetime'] != null
+                                ? DateTime.parse(formData['trackDatetime'])
+                                    .toString()
+                                : ''),
                         _buildFormField(context, 'Total Area (Hectares)',
                             formData['trackTotalarea']),
                         _buildFormField(context, 'Total Distance',
