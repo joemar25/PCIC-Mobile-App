@@ -385,6 +385,46 @@ class TaskManager {
     }
   }
 
+  Future<String?> get north async {
+    try {
+      final formData = await getFormData(type);
+      return formData['ppirNorth'] as String?;
+    } catch (error) {
+      debugPrint('Error retrieving north coordinate: $error');
+      return null;
+    }
+  }
+
+  Future<String?> get south async {
+    try {
+      final formData = await getFormData(type);
+      return formData['ppirSouth'] as String?;
+    } catch (error) {
+      debugPrint('Error retrieving south coordinate: $error');
+      return null;
+    }
+  }
+
+  Future<String?> get east async {
+    try {
+      final formData = await getFormData(type);
+      return formData['ppirEast'] as String?;
+    } catch (error) {
+      debugPrint('Error retrieving east coordinate: $error');
+      return null;
+    }
+  }
+
+  Future<String?> get west async {
+    try {
+      final formData = await getFormData(type);
+      return formData['ppirWest'] as String?;
+    } catch (error) {
+      debugPrint('Error retrieving west coordinate: $error');
+      return null;
+    }
+  }
+
   Future<Map<String, dynamic>> getFormData(String formType) async {
     final db = FirebaseFirestore.instance;
     final document = await db.collection('ppirForms').doc(formId).get();
@@ -477,6 +517,16 @@ class TaskManager {
       }
     } catch (error) {
       debugPrint('Error saving Task XML: $error');
+    }
+  }
+
+  Future<String?> get farmerName async {
+    try {
+      final formData = await getFormData(type);
+      return formData['ppirFarmerName'] as String?;
+    } catch (error) {
+      debugPrint('Error retrieving farmer name: $error');
+      return null;
     }
   }
 
