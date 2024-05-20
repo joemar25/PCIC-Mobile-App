@@ -12,13 +12,13 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
+import '../ppir_form/_pcic_form.dart';
 import '_map_service.dart';
 import '../theme/_theme.dart';
 import '_location_service.dart';
 import '_geotag_bottomsheet.dart';
 import '../../utils/app/_gpx.dart';
 import '../tasks/_control_task.dart';
-import '../pcic_form/_pcic_form.dart';
 import '../../utils/app/_show_flash_message.dart';
 
 class GeotagPage extends StatefulWidget {
@@ -54,7 +54,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   bool showConfirmationDialog = true;
 
   // joemar is here
-  bool saveOnline = false;
+  bool saveOnline = true;
 
   StreamSubscription<LatLng>? _locationSubscription;
 
@@ -241,8 +241,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => PCICFormPage(
-                  imageFile: '',
+                builder: (context) => PPIRFormPage(
                   gpxFile: gpxFilePath,
                   task: widget.task,
                   routePoints: _mapService.routePoints,
@@ -271,6 +270,8 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
     }
   }
 
+  /// tiga save so GPX file either online to Firebase Storage or locally
+  /// tiga delete so existing GPX files in the Firebase Storage folder if `saveOnline` is true
   Future<String> _saveGpxFile(String gpxString) async {
     if (saveOnline) {
       try {
@@ -278,8 +279,17 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
         final storageRef = FirebaseStorage.instance.ref();
 
         // Create a reference to the folder named after widget.task.formId
-        final folderRef = storageRef
-            .child('PPIR_SAVES/${widget.task.taskId}/${widget.task.formId}');
+        final folderRef = storageRef.child('PPIR_SAVES/${widget.task.formId}');
+
+        // List all items in the folder
+        final ListResult result = await folderRef.listAll();
+
+        // Delete all existing GPX files in the folder
+        for (Reference fileRef in result.items) {
+          if (fileRef.name.endsWith('.gpx')) {
+            await fileRef.delete();
+          }
+        }
 
         // Generate a unique filename using Uuid
         var uuid = const Uuid();
@@ -288,7 +298,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
         // Create a reference to the file location inside the folder
         final gpxFileRef = folderRef.child(gpxFilename);
 
-        // Upload the GPX file as a string
+        // Upload the GPX file as a string (blob)
         await gpxFileRef.putString(gpxString, format: PutStringFormat.raw);
 
         // Get the download URL of the uploaded file
