@@ -69,6 +69,7 @@ dependencies:
   firebase_auth: ^4.18.0
   firebase_database: ^10.4.11
   firebase_storage: ^11.7.5
+  http: ^1.2.1
 
   # surely not used
   # screenshot: ^2.3.0

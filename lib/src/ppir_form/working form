@@ -16,14 +16,14 @@ import '_form_field.dart' as form_field;
 import '_form_section.dart' as form_section;
 import '_success.dart';
 
-class PCICFormPage extends StatefulWidget {
+class PPIRFormPage extends StatefulWidget {
   final String imageFile;
   final String gpxFile;
   final TaskManager task;
   final List<LatLng> routePoints;
   final LatLng lastCoordinates;
 
-  const PCICFormPage({
+  const PPIRFormPage({
     super.key,
     required this.imageFile,
     required this.gpxFile,
@@ -33,10 +33,10 @@ class PCICFormPage extends StatefulWidget {
   });
 
   @override
-  PCICFormPageState createState() => PCICFormPageState();
+  PPIRFormPageState createState() => PPIRFormPageState();
 }
 
-class PCICFormPageState extends State<PCICFormPage> {
+class PPIRFormPageState extends State<PPIRFormPage> {
   List<Seeds> seedsList = Seeds.getAllTasks();
   Set<String> uniqueTitles = {};
   List<DropdownMenuItem<String>> uniqueSeedsItems = [];

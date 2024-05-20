@@ -241,8 +241,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => PCICFormPage(
-                  imageFile: '',
+                builder: (context) => PPIRFormPage(
                   gpxFile: gpxFilePath,
                   task: widget.task,
                   routePoints: _mapService.routePoints,
@@ -299,7 +298,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
         // Create a reference to the file location inside the folder
         final gpxFileRef = folderRef.child(gpxFilename);
 
-        // Upload the GPX file as a string
+        // Upload the GPX file as a string (blob)
         await gpxFileRef.putString(gpxString, format: PutStringFormat.raw);
 
         // Get the download URL of the uploaded file

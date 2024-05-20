@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
 
 import '_success.dart';
 import '_gpx_file_buttons.dart';
@@ -16,16 +18,14 @@ import '_form_section.dart' as form_section;
 import '../signature/_signature_section.dart';
 import '../../utils/app/_show_flash_message.dart';
 
-class PCICFormPage extends StatefulWidget {
-  final String imageFile;
+class PPIRFormPage extends StatefulWidget {
   final String gpxFile;
   final TaskManager task;
   final List<LatLng> routePoints;
   final LatLng lastCoordinates;
 
-  const PCICFormPage({
+  const PPIRFormPage({
     super.key,
-    required this.imageFile,
     required this.gpxFile,
     required this.task,
     required this.routePoints,
@@ -33,10 +33,10 @@ class PCICFormPage extends StatefulWidget {
   });
 
   @override
-  PCICFormPageState createState() => PCICFormPageState();
+  PPIRFormPageState createState() => PPIRFormPageState();
 }
 
-class PCICFormPageState extends State<PCICFormPage> {
+class PPIRFormPageState extends State<PPIRFormPage> {
   List<Seeds> seedsList = Seeds.getAllTasks();
   Set<String> uniqueTitles = {};
   List<DropdownMenuItem<String>> uniqueSeedsItems = [];
@@ -48,6 +48,7 @@ class PCICFormPageState extends State<PCICFormPage> {
   final _signatureSectionKey = GlobalKey<SignatureSectionState>();
 
   bool isSaving = false;
+  bool openOnline = true;
 
   @override
   void initState() {
@@ -130,10 +131,6 @@ class PCICFormPageState extends State<PCICFormPage> {
     }
   }
 
-  Future<void> _createTaskFile(BuildContext context) async {
-    // Implementation for creating the task file
-  }
-
   void _submitForm(BuildContext context) async {
     final enabledFieldKeys = _formData.keys.where((key) {
       return key != 'lastCoordinates' &&
@@ -184,7 +181,6 @@ class PCICFormPageState extends State<PCICFormPage> {
                   isSaving = true;
                 });
                 _saveFormData();
-                await _createTaskFile(context);
                 setState(() {
                   isSaving = false;
                 });
@@ -256,11 +252,38 @@ class PCICFormPageState extends State<PCICFormPage> {
   }
 
   void _openGpxFile(String gpxFilePath) async {
+    if (openOnline) {
+      try {
+        // If the file path is a URL, download the file first
+        final response = await http.get(Uri.parse(gpxFilePath));
+        if (response.statusCode == 200) {
+          final directory = await getTemporaryDirectory();
+          final file = File('${directory.path}/downloaded.gpx');
+          await file.writeAsBytes(response.bodyBytes);
+          _openLocalFile(file.path);
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Error downloading GPX file')),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Error downloading GPX file')),
+          );
+        }
+        debugPrint('Error downloading GPX file: $e');
+      }
+    } else {
+      _openLocalFile(gpxFilePath);
+    }
+  }
+
+  void _openLocalFile(String filePath) async {
     try {
-      final filePath = gpxFilePath;
-      final downloadsDirectory = Directory(filePath);
-      final gpxFile = File(downloadsDirectory.path);
-      debugPrint("path = $gpxFile");
+      final gpxFile = File(filePath);
 
       if (await gpxFile.exists()) {
         final status = await Permission.manageExternalStorage.status;
