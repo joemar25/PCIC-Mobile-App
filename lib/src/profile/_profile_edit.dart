@@ -85,8 +85,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
                 TextField(
                   controller: _profilePicUrlController,
-                  decoration:
-                      const InputDecoration(labelText: 'Profile Picture URL'),
+                  decoration: const InputDecoration(labelText: 'Password'),
                 ),
               ],
             ),
