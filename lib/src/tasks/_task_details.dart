@@ -1,9 +1,10 @@
-// filename: _task_details
+// filename: tasks/_task_details.dart (latest)
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 import '../geotag/_geotag.dart';
+import '../ppir_form/_pcic_form.dart';
 import '_control_task.dart';
 
 class TaskDetailsPage extends StatelessWidget {
@@ -75,17 +76,26 @@ class TaskDetailsPage extends StatelessWidget {
     );
   }
 
+  void _navigateToFormPage(BuildContext context) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PPIRFormPage(
+          task: task,
+        ),
+      ),
+    );
+  }
+
   void _navigateToGeotagPage(BuildContext context) async {
     String? status = await task.status;
     if (context.mounted) {
-      if (status != 'Completed') {
+      if (status == 'Ongoing') {
+        _navigateToFormPage(context);
+      } else {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => GeotagPage(task: task)),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Task is already completed.')),
         );
       }
     }
@@ -159,7 +169,9 @@ class TaskDetailsPage extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 8.0),
                                 Text(
-                                  'Go to Geotag',
+                                  status == 'Ongoing'
+                                      ? 'Continue the Form'
+                                      : 'Go to Geotag',
                                   style: TextStyle(
                                     fontSize: t?.body,
                                     fontWeight: FontWeight.w600,

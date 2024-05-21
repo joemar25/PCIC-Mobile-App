@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -20,17 +19,11 @@ import '../signature/_signature_section.dart';
 import '../../utils/app/_show_flash_message.dart';
 
 class PPIRFormPage extends StatefulWidget {
-  final String gpxFile;
   final TaskManager task;
-  final List<LatLng> routePoints;
-  final LatLng lastCoordinates;
 
   const PPIRFormPage({
     super.key,
-    required this.gpxFile,
     required this.task,
-    required this.routePoints,
-    required this.lastCoordinates,
   });
 
   @override
@@ -49,26 +42,63 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   final _signatureSectionKey = GlobalKey<SignatureSectionState>();
 
   bool isSaving = false;
-
-  // joemar is also here
   bool openOnline = true;
+  String? gpxFile;
+  List<LatLng>? routePoints;
+  LatLng? lastCoordinates;
 
   @override
   void initState() {
     super.initState();
-    _initializeFormData();
-    _initializeSeeds();
-    _calculateAreaAndDistance();
+    _initializeData();
   }
 
-  void _initializeFormData() {
+  Future<void> _initializeData() async {
+    try {
+      final formData = await widget.task.getFormData(widget.task.type);
+
+      if (formData.isNotEmpty) {
+        _initializeFormData(formData);
+      }
+
+      final mapService = MapService();
+
+      // Get GPX file path
+      gpxFile = await widget.task.getGpxFilePath();
+
+      if (gpxFile != null) {
+        // Read and parse the GPX file
+        final gpxData = await mapService.readGpxFile(gpxFile!);
+        routePoints = await mapService.parseGpxData(gpxData);
+
+        // Calculate area and distance
+        await _calculateAreaAndDistance();
+      }
+
+      _initializeSeeds();
+    } catch (e) {
+      debugPrint('Error initializing data: $e');
+    }
+  }
+
+  void _initializeFormData(Map<String, dynamic> formData) {
     String lastCoordinateDateTime =
         DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
 
-    _areaPlantedController.text = lastCoordinateDateTime;
+    _areaPlantedController.text =
+        formData['trackDatetime'] ?? lastCoordinateDateTime;
+
+    _areaInHectaresController.text = formData['trackTotalarea'] ?? '';
+    _totalDistanceController.text = formData['trackTotaldistance'] ?? '';
 
     _formData['lastCoordinates'] =
-        '${widget.lastCoordinates.latitude}, ${widget.lastCoordinates.longitude}';
+        formData['trackLastcoord'] ?? 'No coordinates available';
+    _formData['ppirDopdsAct'] = formData['ppirDopdsAct'] ?? '';
+    _formData['ppirDoptpAct'] = formData['ppirDoptpAct'] ?? '';
+    _formData['ppirSvpAci'] = formData['ppirSvpAci'] ?? '';
+    _formData['ppirRemarks'] = formData['ppirRemarks'] ?? '';
+    _formData['ppirNameInsured'] = formData['ppirNameInsured'] ?? '';
+    _formData['ppirNameIuia'] = formData['ppirNameIuia'] ?? '';
   }
 
   void _initializeSeeds() {
@@ -91,28 +121,28 @@ class PPIRFormPageState extends State<PPIRFormPage> {
     }
   }
 
-  void _calculateAreaAndDistance() {
-    final mapService = MapService();
-    final distance = mapService.calculateTotalDistance(widget.routePoints);
+  Future<void> _calculateAreaAndDistance() async {
+    if (routePoints != null && routePoints!.isNotEmpty) {
+      final mapService = MapService();
+      final distance = mapService.calculateTotalDistance(routePoints!);
 
-    double area = 0.0;
-    double areaInHectares = 0.0;
+      double area = 0.0;
+      double areaInHectares = 0.0;
 
-    if (widget.routePoints.isNotEmpty) {
-      final initialPoint = widget.routePoints.first;
-      final closingPoint = widget.routePoints.last;
+      final initialPoint = routePoints!.first;
+      final closingPoint = routePoints!.last;
 
       if (_isCloseEnough(initialPoint, closingPoint)) {
-        area = mapService.calculateAreaOfPolygon(widget.routePoints);
+        area = mapService.calculateAreaOfPolygon(routePoints!);
         areaInHectares = area / 10000;
       }
-    }
 
-    setState(() {
-      _areaInHectaresController.text =
-          areaInHectares > 0 ? _formatNumber(areaInHectares, 'ha') : '';
-      _totalDistanceController.text = _formatNumber(distance, 'm');
-    });
+      setState(() {
+        _areaInHectaresController.text =
+            areaInHectares > 0 ? _formatNumber(areaInHectares, 'ha') : '';
+        _totalDistanceController.text = _formatNumber(distance, 'm');
+      });
+    }
   }
 
   bool _isCloseEnough(LatLng point1, LatLng point2) {
@@ -211,7 +241,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
         signatureData['ppirNameInsured'] ?? 'no value';
     _formData['ppirSigIuia'] = signatureData['ppirSigIuia'] ?? 'no value';
     _formData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
-    _formData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
     _formData['status'] = 'Completed';
 
     // Prepare task data to update the status to 'Completed'
@@ -300,7 +329,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   void _openGpxFile(String gpxFilePath) async {
     if (openOnline) {
       try {
-        // If the file path is a URL, download the file first
         final response = await http.get(Uri.parse(gpxFilePath));
         if (response.statusCode == 200) {
           final directory = await getTemporaryDirectory();
@@ -393,7 +421,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
               children: [
                 form_field.FormField(
                   labelText: 'Last Coordinates',
-                  initialValue: _formData['lastCoordinates'],
+                  initialValue: _formData['lastCoordinates'] ?? '',
                   enabled: false,
                 ),
                 const SizedBox(height: 16),
@@ -444,7 +472,14 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                 ),
                 const SizedBox(height: 16),
                 GPXFileButtons(
-                  openGpxFile: () => _openGpxFile(widget.gpxFile),
+                  openGpxFile: () {
+                    if (gpxFile != null) {
+                      _openGpxFile(gpxFile!);
+                    } else {
+                      showFlashMessage(context, 'Error', 'GPX File',
+                          'No GPX file available to open.');
+                    }
+                  },
                 ),
               ],
             ),
@@ -458,7 +493,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                   onPressed: _cancelForm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
-                    foregroundColor: Colors.white, // Set text color to white
+                    foregroundColor: Colors.white,
                   ),
                   child: const Text('Cancel'),
                 ),
@@ -466,7 +501,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                   onPressed: () => _submitForm(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
-                    foregroundColor: Colors.white, // Set text color to white
+                    foregroundColor: Colors.white,
                   ),
                   child: const Text('Submit'),
                 ),

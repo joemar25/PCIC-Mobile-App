@@ -1,8 +1,8 @@
-// ppir_forms/_form_section.dart
+// file: ppir_forms/_form_section.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import '../../utils/controls/_date_control.dart';
+import '_form_field.dart' as form_field;
 
 class FormSection extends StatelessWidget {
   final Map<String, dynamic> formData;
@@ -16,6 +16,14 @@ class FormSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Ensure that the value exists in the uniqueSeedsItems
+    String? initialSeedValue;
+    if (uniqueSeedsItems.any((item) => item.value == formData['ppirSvpAci'])) {
+      initialSeedValue = formData['ppirSvpAci'];
+    } else {
+      initialSeedValue = null;
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -88,7 +96,7 @@ class FormSection extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: DropdownButtonFormField<String>(
-            value: formData['ppirVariety'],
+            value: initialSeedValue,
             decoration: const InputDecoration(
               labelText: 'Select the Actual Seed Variety*',
               border: OutlineInputBorder(),
@@ -97,9 +105,9 @@ class FormSection extends StatelessWidget {
             isExpanded: true,
             onChanged: (value) {
               if (value != null) {
-                formData['ppirVariety'] = value;
+                formData['ppirSvpAci'] = value;
               } else {
-                formData['ppirVariety'] = null;
+                formData['ppirSvpAci'] = null;
               }
             },
           ),
