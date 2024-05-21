@@ -85,9 +85,8 @@ class FormSection extends StatelessWidget {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
-        Container(
+        SizedBox(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: DropdownButtonFormField<String>(
             value: formData['ppirVariety'],
             decoration: const InputDecoration(
@@ -106,9 +105,8 @@ class FormSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        Container(
+        SizedBox(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: TextFormField(
             initialValue: formData['ppirRemarks'] ?? '',
             decoration: const InputDecoration(
