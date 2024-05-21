@@ -3,6 +3,7 @@ import 'package:lottie/lottie.dart';
 import '../../utils/agent/_session.dart';
 import '../_starting.dart';
 import '../home/_home.dart';
+import '../../utils/agent/_login.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -55,7 +56,7 @@ class SplashScreenState extends State<SplashScreen>
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const StartingPage()),
+        MaterialPageRoute(builder: (context) => const LoginPage()),
       );
     }
   }
