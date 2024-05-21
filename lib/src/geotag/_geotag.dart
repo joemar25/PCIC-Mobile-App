@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:geocoding/geocoding.dart';
 
 import '../ppir_form/_pcic_form.dart';
 import '_map_service.dart';
@@ -19,7 +20,6 @@ import '_geotag_bottomsheet.dart';
 import '../../utils/app/_gpx.dart';
 import '../tasks/_control_task.dart';
 import '../../utils/app/_show_flash_message.dart';
-import 'package:geocoding/geocoding.dart';
 
 class GeotagPage extends StatefulWidget {
   final TaskManager task;

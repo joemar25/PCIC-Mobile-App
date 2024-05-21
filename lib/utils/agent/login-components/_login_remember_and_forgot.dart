@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
+// Import the ForgetPasswordPage
+import '../../agent/_forgetPassword.dart';
+
 class RememberAndForgot extends StatefulWidget {
-  // final Function(String) onTextChanged;
   const RememberAndForgot({super.key});
 
   @override
@@ -20,39 +22,12 @@ class _RememberAndForgotState extends State<RememberAndForgot> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Checkbox(
-                      value: isChecked,
-                      onChanged: (newValue) {
-                        setState(() {
-                          isChecked = newValue!;
-                        });
-                      },
-                      activeColor: const Color(0xFF0F7D40),
-                      checkColor: Colors.white,
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      visualDensity: VisualDensity.compact,
-                      splashRadius: 16,
-                      side: const BorderSide(width: 1.0, color: Colors.black),
-                    ),
-                    Text(
-                      'Remember Me',
-                      style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: t?.overline,
-                          fontWeight: FontWeight.w500),
-                    )
-                  ],
-                )
-              ],
-            ),
             GestureDetector(
               onTap: () {
-                // Handle Forgot Password action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ForgetPasswordPage()),
+                );
               },
               child: Text(
                 "Forgot Password",
