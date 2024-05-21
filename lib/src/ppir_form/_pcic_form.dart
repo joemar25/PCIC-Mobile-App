@@ -382,12 +382,9 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       children: [
         Scaffold(
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             title: const Text('PCIC Form'),
             centerTitle: true,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => _cancelForm(),
-            ),
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
@@ -461,6 +458,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                   onPressed: _cancelForm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
+                    foregroundColor: Colors.white, // Set text color to white
                   ),
                   child: const Text('Cancel'),
                 ),
@@ -468,6 +466,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                   onPressed: () => _submitForm(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
+                    foregroundColor: Colors.white, // Set text color to white
                   ),
                   child: const Text('Submit'),
                 ),
