@@ -47,6 +47,7 @@ android {
     }
 
     defaultConfig {
+        multiDexEnabled true
         applicationId "com.quanby.pcic_mobile_app"
         minSdkVersion 23
         targetSdkVersion flutter.targetSdkVersion
@@ -65,4 +66,6 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    implementation 'androidx.multidex:multidex:2.0.1'
+}
