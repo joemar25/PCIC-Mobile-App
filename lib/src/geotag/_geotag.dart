@@ -321,6 +321,9 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
 
         debugPrint('GPX file uploaded to Firebase: $downloadUrl');
 
+        // Update the task status to Ongoing in Firestore
+        await widget.task.updateTaskStatus('Ongoing');
+
         return downloadUrl;
       } catch (e) {
         debugPrint('Error uploading GPX file to Firebase: $e');
@@ -361,6 +364,9 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
       await gpxFile.writeAsString(gpxString);
 
       debugPrint('GPX file saved: ${gpxFile.path}');
+
+      // Update the task status to Ongoing in Firestore
+      await widget.task.updateTaskStatus('Ongoing');
 
       return gpxFile.path;
     }
@@ -555,7 +561,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                   panelController: panelController,
                   latitude: latitude,
                   longitude: longitude,
-                  address: address, // Pass the address here
+                  address: address,
                   isRoutingStarted: isRoutingStarted,
                   onStartRoutingRequest: _handleStartRoutingRequest,
                   onStopRoutingRequest: _handleStopRoutingRequest,

@@ -558,6 +558,18 @@ class TaskManager {
   //   }
   // }
 
+  Future<void> updateTaskStatus(String status) async {
+    try {
+      final taskRef =
+          FirebaseFirestore.instance.collection('tasks').doc(taskId);
+      await taskRef.update({'status': status});
+      debugPrint('Task status updated to $status');
+    } catch (e) {
+      debugPrint('Error updating task status: $e');
+      throw Exception('Error updating task status');
+    }
+  }
+
   Future<String?> get farmerName async {
     try {
       final formData = await getFormData(type);
