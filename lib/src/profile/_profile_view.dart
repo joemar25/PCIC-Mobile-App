@@ -4,11 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-
+import '../../utils/agent/_logout_view.dart';
 import '../theme/_theme.dart';
 import '_profile_body.dart';
 import '_profile_body_item.dart';
 import '_profile_edit.dart';
+import '../../utils/agent/_session.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -284,12 +285,35 @@ class _ProfilePageState extends State<ProfilePage> {
               const ProfileBody(),
               const Divider(),
               const SizedBox(height: 8),
-              const ProfileBodyItem(
-                  label: 'Logout', svgPath: 'assets/storage/images/logout.svg'),
+              GestureDetector(
+                onTap: () {
+                  _logout(context);
+                },
+                child: const ProfileBodyItem(
+                  label: 'Logout',
+                  svgPath: 'assets/storage/images/logout.svg',
+                ),
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+Future<void> _logout(BuildContext context) async {
+  try {
+    await FirebaseAuth.instance.signOut();
+    await Session().stop();
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => LogoutSuccessPage()),
+    );
+  } catch (e) {
+    // Handle errors
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error logging out: $e')),
     );
   }
 }
