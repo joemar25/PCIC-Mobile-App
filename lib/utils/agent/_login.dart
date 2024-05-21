@@ -287,26 +287,6 @@ class LoginPageState extends State<LoginPage> {
                         ),
                       );
                     },
-                    child: RichText(
-                      text: const TextSpan(
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: "Don't have an account? ",
-                          ),
-                          TextSpan(
-                            text: "Sign up here",
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF0F7D40),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ),
                 ],
               ),

@@ -1,4 +1,3 @@
-// filename: geotag/_geotag.dart
 import 'dart:async';
 import 'dart:io';
 
@@ -54,8 +53,10 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   bool isRoutingStarted = false;
   bool showConfirmationDialog = true;
 
-  // joemar is here
   bool saveOnline = true;
+
+  int countdown = 0;
+  Timer? _countdownTimer;
 
   StreamSubscription<LatLng>? _locationSubscription;
 
@@ -72,6 +73,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _countdownTimer?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     _locationSubscription?.cancel();
     _mapService.dispose();
@@ -145,6 +147,23 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
         }
       });
     }
+  }
+
+  void _startCountdown() {
+    setState(() {
+      countdown = 3;
+    });
+    _countdownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (countdown > 1) {
+          countdown--;
+        } else {
+          timer.cancel();
+          countdown = 0; // Reset countdown to 0 to hide it
+          _startRouting();
+        }
+      });
+    });
   }
 
   void _startRouting() async {
@@ -517,7 +536,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   }
 
   void _handleStartRoutingRequest() {
-    _startRouting();
+    _startCountdown();
   }
 
   void _handleAddMarkerCurrentLocation() {
@@ -572,47 +591,49 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
               floatingActionButton: Stack(
                 children: [
                   Positioned(
-                      right: 0,
-                      bottom: fabHeight,
-                      child: SizedBox(
-                        height: 40,
-                        width: 40,
-                        child: FloatingActionButton(
-                          onPressed: () =>
-                              _getCurrentLocation(addMarker: false),
+                    right: 0,
+                    bottom: fabHeight,
+                    child: SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: FloatingActionButton(
+                        onPressed: () =>
+                            _getCurrentLocation(addMarker: false),
+                        shape: const CircleBorder(),
+                        backgroundColor: const Color(0xFF0F7D40),
+                        elevation: 4.0,
+                        child: SvgPicture.asset(
+                          'assets/storage/images/position.svg',
+                          colorFilter: const ColorFilter.mode(
+                              Colors.white, BlendMode.srcIn),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 80.0,
+                    left: 40.0,
+                    child: SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: FloatingActionButton(
+                          onPressed: isRoutingStarted
+                              ? () {
+                                  _showAlert(context);
+                                }
+                              : () {
+                                  Navigator.pop(context);
+                                },
                           shape: const CircleBorder(),
                           backgroundColor: const Color(0xFF0F7D40),
                           elevation: 4.0,
                           child: SvgPicture.asset(
-                            'assets/storage/images/position.svg',
+                            'assets/storage/images/arrow-left.svg',
                             colorFilter: const ColorFilter.mode(
                                 Colors.white, BlendMode.srcIn),
-                          ),
-                        ),
-                      )),
-                  Positioned(
-                      top: 80.0,
-                      left: 40.0,
-                      child: SizedBox(
-                        height: 40,
-                        width: 40,
-                        child: FloatingActionButton(
-                            onPressed: isRoutingStarted
-                                ? () {
-                                    _showAlert(context);
-                                  }
-                                : () {
-                                    Navigator.pop(context);
-                                  },
-                            shape: const CircleBorder(),
-                            backgroundColor: const Color(0xFF0F7D40),
-                            elevation: 4.0,
-                            child: SvgPicture.asset(
-                              'assets/storage/images/arrow-left.svg',
-                              colorFilter: const ColorFilter.mode(
-                                  Colors.white, BlendMode.srcIn),
-                            )),
-                      )),
+                          )),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -622,6 +643,21 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                 color: Colors.black54,
                 child: const Center(
                   child: CircularProgressIndicator(),
+                ),
+              ),
+            ),
+          if (countdown > 0)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black54,
+                child: Center(
+                  child: Text(
+                    '$countdown',
+                    style: TextStyle(
+                      fontSize: 48.0,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
             ),
