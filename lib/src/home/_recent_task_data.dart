@@ -52,12 +52,23 @@ class TaskData extends StatelessWidget {
                   final east = data[3] ?? 'N/A';
                   final west = data[4] ?? 'N/A';
 
-                  return Text(
-                    '$farmerName (N: $north, S: $south, E: $east, W: $west)',
-                    style: TextStyle(
-                      fontSize: t?.title ?? 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        farmerName,
+                        style: TextStyle(
+                          fontSize: t?.title ?? 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        '(N: $north, S: $south, E: $east, W: $west)',
+                        style: TextStyle(
+                          fontSize: t?.caption ?? 12.0,
+                        ),
+                      ),
+                    ],
                   );
                 }
 
@@ -70,52 +81,39 @@ class TaskData extends StatelessWidget {
                 );
               },
             ),
-            FutureBuilder<String?>(
-              future: task.status,
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data != 'Completed') {
-                  return Text(
-                    snapshot.data!,
-                    style: TextStyle(
-                      fontSize: t?.caption ?? 12.0,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF0F7D40),
-                    ),
-                  );
-                }
-                return const SizedBox();
-              },
-            ),
-            FutureBuilder<DateTime?>(
-              future: task.dateAccess,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Text(
-                    'Last Access: ${formatDate(snapshot.data)}',
-                    style: TextStyle(
-                      fontSize: t?.overline ?? 10.0,
-                    ),
-                  );
-                }
-                return const SizedBox();
-              },
-            ),
           ]),
           Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              SvgPicture.asset(
-                'assets/storage/images/fileopen.svg',
-                colorFilter:
-                    const ColorFilter.mode(Color(0xFF0F7D40), BlendMode.srcIn),
-                height: 35,
-                width: 35,
+              FutureBuilder<String?>(
+                future: task.status,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && snapshot.data != 'Completed') {
+                    return Text(
+                      snapshot.data!,
+                      style: TextStyle(
+                        fontSize: t?.caption ?? 12.0,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF0F7D40),
+                      ),
+                    );
+                  }
+                  return const SizedBox();
+                },
               ),
-              Text(
-                'View Task',
-                style: TextStyle(
-                  fontSize: t?.overline ?? 10.0,
-                ),
+              FutureBuilder<DateTime?>(
+                future: task.dateAccess,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Text(
+                      'Last Access: ${formatDate(snapshot.data)}',
+                      style: TextStyle(
+                        fontSize: t?.overline ?? 10.0,
+                      ),
+                    );
+                  }
+                  return const SizedBox();
+                },
               ),
             ],
           ),

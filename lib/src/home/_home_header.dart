@@ -30,12 +30,13 @@ class _HomeHeaderState extends State<HomeHeader> {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        QuerySnapshot userQuery = await FirebaseFirestore.instance
             .collection('users')
-            .doc(user.uid)
+            .where('authUid', isEqualTo: user.uid)
             .get();
 
-        if (userDoc.exists) {
+        if (userQuery.docs.isNotEmpty) {
+          DocumentSnapshot userDoc = userQuery.docs.first;
           String fetchedProfilePicUrl = userDoc['profilePicUrl'] ?? '';
           setState(() {
             profilePicUrl =
