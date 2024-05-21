@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
@@ -115,7 +116,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   }
 
   bool _isCloseEnough(LatLng point1, LatLng point2) {
-    const double threshold = 10.0; // Adjust the threshold as needed
+    const double threshold = 10.0;
     final distance = const Distance().as(LengthUnit.Meter, point1, point2);
     return distance <= threshold;
   }
@@ -218,6 +219,9 @@ class PPIRFormPageState extends State<PPIRFormPage> {
 
     await widget.task.updatePpirFormData(_formData, taskData);
 
+    // Save task XML to Firebase Storage
+    await _saveTaskToFirebaseStorage(widget.task, _formData);
+
     if (mounted) {
       Navigator.pushReplacement(
         context,
@@ -227,6 +231,46 @@ class PPIRFormPageState extends State<PPIRFormPage> {
           ),
         ),
       );
+    }
+  }
+
+  Future<void> _saveTaskToFirebaseStorage(
+      TaskManager task, Map<String, dynamic> formData) async {
+    try {
+      // Generate XML content
+      final xmlContent =
+          await TaskManager.generateTaskXmlContent(task.taskId, formData);
+
+      // Create a reference to Firebase Storage
+      final storageRef = FirebaseStorage.instance.ref();
+
+      // Create a reference to the folder named after widget.task.formId
+      final folderRef = storageRef.child('PPIR_SAVES/${task.formId}');
+
+      // List all items in the folder
+      final ListResult result = await folderRef.listAll();
+
+      // Delete all existing XML files in the folder
+      for (Reference fileRef in result.items) {
+        if (fileRef.name.endsWith('.xml')) {
+          await fileRef.delete();
+        }
+      }
+
+      // Generate a unique filename for the task XML file
+      final taskXmlFilename = '${task.taskId}.xml';
+
+      // Create a reference to the file location inside the folder
+      final taskXmlFileRef = folderRef.child(taskXmlFilename);
+
+      // Upload the XML file content as a string
+      await taskXmlFileRef.putString(xmlContent, format: PutStringFormat.raw);
+
+      final downloadUrl = await taskXmlFileRef.getDownloadURL();
+
+      debugPrint('Task XML file uploaded to Firebase: $downloadUrl');
+    } catch (e) {
+      debugPrint('Error uploading Task XML file to Firebase: $e');
     }
   }
 

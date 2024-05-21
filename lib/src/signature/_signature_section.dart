@@ -165,6 +165,17 @@ class SignatureSectionState extends State<SignatureSection> {
     final storageRef = FirebaseStorage.instance.ref();
     final folderRef =
         storageRef.child('PPIR_SAVES/${widget.task.formId}/Attachments');
+
+    // List all items in the folder
+    final ListResult result = await folderRef.listAll();
+
+    // Delete all existing signature files in the folder
+    for (Reference fileRef in result.items) {
+      if (fileRef.name.contains(signatureName)) {
+        await fileRef.delete();
+      }
+    }
+
     const uuid = Uuid();
     final signatureFilename = '${uuid.v4()}_$signatureName.png';
     final signatureFileRef = folderRef.child(signatureFilename);

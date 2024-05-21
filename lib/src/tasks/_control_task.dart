@@ -1,11 +1,11 @@
 // file: tasks/_control_task.dart
 import 'dart:convert';
-import 'dart:io';
+// import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 import 'package:xml/xml.dart';
 import 'package:flutter/foundation.dart';
 
@@ -445,80 +445,118 @@ class TaskManager {
     });
   }
 
-  static Future<void> saveTaskToXML(
-      Map<String, dynamic> taskData, Map<String, dynamic> formData) async {
-    try {
-      final directory = await getExternalStorageDirectory();
-      final dataDirectory =
-          directory?.path ?? '/storage/emulated/0/Android/data';
-
-      final baseFilename = formData['formId'] ?? 'unknown_form';
-      final insuranceDirectory = Directory('$dataDirectory/$baseFilename');
-
-      // Create the insurance directory if it doesn't exist
-      if (!await insuranceDirectory.exists()) {
-        await insuranceDirectory.create(recursive: true);
-      }
-
-      // Define the Attachments directory inside the insurance directory
-      final attachmentsDirectory =
-          Directory('${insuranceDirectory.path}/Attachments');
-
-      // Create the Attachments directory if it doesn't exist
-      if (!await attachmentsDirectory.exists()) {
-        await attachmentsDirectory.create(recursive: true);
-      }
-
-      final String fileName = 'task_${taskData['taskId']}.xml';
-      final File xmlFile = File('${attachmentsDirectory.path}/$fileName');
-
-      if (taskData.isNotEmpty && formData.isNotEmpty) {
-        final builder = XmlBuilder();
-        builder.processing('xml', 'version="1.0" encoding="UTF-8"');
-        builder.element('Task', nest: () {
-          builder.element('TaskId', nest: taskData['taskId']);
-          builder.element('TaskNumber',
-              nest: taskData['taskManagerNumber'] ?? '');
-          builder.element('FormType', nest: formData['serviceType'] ?? '');
-          builder.element('Audit', nest: () {
-            builder.element('TaskAuditLogZipModel', nest: () {
-              builder.element('AuditLevel', nest: 'Task');
-              builder.element('Label', nest: 'Task Owner');
-              builder.element('Message', nest: taskData['assigneeId'] ?? '');
-              builder.element('SnapshotValue', nest: 'Office Clerk');
-              builder.element('Source', nest: taskData['assigneeId'] ?? '');
-              builder.element('TaskId', nest: taskData['taskId']);
-              builder.element('Timestamp',
-                  nest: taskData['dateAccess']?.toString() ?? '');
-              builder.element('UpdatedValue',
-                  nest: taskData['assigneeEmail'] ?? '');
-              builder.element('FieldLabel', nest: 'Task Owner');
-              builder.element('IPAddress', nest: '');
-            });
-          });
-
-          builder.element('Details', nest: () {
-            builder.element('TaskDetailZipModel', nest: () {
-              builder.element('ServiceType',
-                  nest: formData['serviceType'] ?? '');
-              builder.element('TaskStatus', nest: taskData['status'] ?? '');
-              builder.element('TaskOwner',
-                  nest: taskData['assigneeEmail'] ?? '');
-            });
-          });
+  static Future<String> generateTaskXmlContent(
+      String taskId, Map<String, dynamic> formData) async {
+    final builder = XmlBuilder();
+    builder.processing('xml', 'version="1.0" encoding="UTF-8"');
+    builder.element('Task', nest: () {
+      builder.element('TaskId', nest: taskId);
+      builder.element('TaskNumber', nest: formData['taskManagerNumber'] ?? '');
+      builder.element('FormType', nest: formData['serviceType'] ?? '');
+      builder.element('Audit', nest: () {
+        builder.element('TaskAuditLogZipModel', nest: () {
+          builder.element('AuditLevel', nest: 'Task');
+          builder.element('Label', nest: 'Task Owner');
+          builder.element('Message', nest: formData['assigneeId'] ?? '');
+          builder.element('SnapshotValue', nest: 'Office Clerk');
+          builder.element('Source', nest: formData['assigneeId'] ?? '');
+          builder.element('TaskId', nest: taskId);
+          builder.element('Timestamp',
+              nest: formData['trackDatetime']?.toString() ?? '');
+          builder.element('UpdatedValue',
+              nest: formData['assigneeEmail'] ?? '');
+          builder.element('FieldLabel', nest: 'Task Owner');
+          builder.element('IPAddress', nest: '');
         });
+      });
 
-        final xmlDocument = builder.buildDocument();
-        await xmlFile
-            .writeAsString(xmlDocument.toXmlString(pretty: true, indent: '\t'));
-        debugPrint('Task XML saved successfully.');
-      } else {
-        debugPrint('No task data or form data available to save.');
-      }
-    } catch (error) {
-      debugPrint('Error saving Task XML: $error');
-    }
+      builder.element('Details', nest: () {
+        builder.element('TaskDetailZipModel', nest: () {
+          builder.element('ServiceType', nest: formData['serviceType'] ?? '');
+          builder.element('TaskStatus', nest: formData['status'] ?? '');
+          builder.element('TaskOwner', nest: formData['assigneeEmail'] ?? '');
+        });
+      });
+    });
+
+    final xmlDocument = builder.buildDocument();
+    return xmlDocument.toXmlString(pretty: true, indent: '\t');
   }
+
+  // static Future<void> saveTaskToXML(
+  //     Map<String, dynamic> taskData, Map<String, dynamic> formData) async {
+  //   try {
+  //     final directory = await getExternalStorageDirectory();
+  //     final dataDirectory =
+  //         directory?.path ?? '/storage/emulated/0/Android/data';
+
+  //     final baseFilename = formData['formId'] ?? 'unknown_form';
+  //     final insuranceDirectory = Directory('$dataDirectory/$baseFilename');
+
+  //     // Create the insurance directory if it doesn't exist
+  //     if (!await insuranceDirectory.exists()) {
+  //       await insuranceDirectory.create(recursive: true);
+  //     }
+
+  //     // Define the Attachments directory inside the insurance directory
+  //     final attachmentsDirectory =
+  //         Directory('${insuranceDirectory.path}/Attachments');
+
+  //     // Create the Attachments directory if it doesn't exist
+  //     if (!await attachmentsDirectory.exists()) {
+  //       await attachmentsDirectory.create(recursive: true);
+  //     }
+
+  //     final String fileName = 'task_${taskData['taskId']}.xml';
+  //     final File xmlFile = File('${attachmentsDirectory.path}/$fileName');
+
+  //     if (taskData.isNotEmpty && formData.isNotEmpty) {
+  //       final builder = XmlBuilder();
+  //       builder.processing('xml', 'version="1.0" encoding="UTF-8"');
+  //       builder.element('Task', nest: () {
+  //         builder.element('TaskId', nest: taskData['taskId']);
+  //         builder.element('TaskNumber',
+  //             nest: taskData['taskManagerNumber'] ?? '');
+  //         builder.element('FormType', nest: formData['serviceType'] ?? '');
+  //         builder.element('Audit', nest: () {
+  //           builder.element('TaskAuditLogZipModel', nest: () {
+  //             builder.element('AuditLevel', nest: 'Task');
+  //             builder.element('Label', nest: 'Task Owner');
+  //             builder.element('Message', nest: taskData['assigneeId'] ?? '');
+  //             builder.element('SnapshotValue', nest: 'Office Clerk');
+  //             builder.element('Source', nest: taskData['assigneeId'] ?? '');
+  //             builder.element('TaskId', nest: taskData['taskId']);
+  //             builder.element('Timestamp',
+  //                 nest: taskData['dateAccess']?.toString() ?? '');
+  //             builder.element('UpdatedValue',
+  //                 nest: taskData['assigneeEmail'] ?? '');
+  //             builder.element('FieldLabel', nest: 'Task Owner');
+  //             builder.element('IPAddress', nest: '');
+  //           });
+  //         });
+
+  //         builder.element('Details', nest: () {
+  //           builder.element('TaskDetailZipModel', nest: () {
+  //             builder.element('ServiceType',
+  //                 nest: formData['serviceType'] ?? '');
+  //             builder.element('TaskStatus', nest: taskData['status'] ?? '');
+  //             builder.element('TaskOwner',
+  //                 nest: taskData['assigneeEmail'] ?? '');
+  //           });
+  //         });
+  //       });
+
+  //       final xmlDocument = builder.buildDocument();
+  //       await xmlFile
+  //           .writeAsString(xmlDocument.toXmlString(pretty: true, indent: '\t'));
+  //       debugPrint('Task XML saved successfully.');
+  //     } else {
+  //       debugPrint('No task data or form data available to save.');
+  //     }
+  //   } catch (error) {
+  //     debugPrint('Error saving Task XML: $error');
+  //   }
+  // }
 
   Future<String?> get farmerName async {
     try {
