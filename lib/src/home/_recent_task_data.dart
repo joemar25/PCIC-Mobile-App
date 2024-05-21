@@ -25,24 +25,44 @@ class TaskData extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            FutureBuilder<String?>(
-              future: task.taskManagerNumber,
+            FutureBuilder<List<String?>>(
+              future: Future.wait([
+                task.farmerName,
+                task.north,
+                task.south,
+                task.east,
+                task.west
+              ]),
               builder: (context, snapshot) {
-                String taskType = task.type;
-                String formattedTaskType = taskType.length > 4
-                    ? taskType.substring(taskType.length - 4)
-                    : taskType;
-                if (snapshot.hasData) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return Text(
-                    '$formattedTaskType-${snapshot.data}', // this gets the task number
+                    'Loading...',
                     style: TextStyle(
                       fontSize: t?.title ?? 16.0,
                       fontWeight: FontWeight.bold,
                     ),
                   );
                 }
+
+                if (snapshot.hasData) {
+                  final data = snapshot.data!;
+                  final farmerName = data[0] ?? 'Unknown Farmer';
+                  final north = data[1] ?? 'N/A';
+                  final south = data[2] ?? 'N/A';
+                  final east = data[3] ?? 'N/A';
+                  final west = data[4] ?? 'N/A';
+
+                  return Text(
+                    '$farmerName (N: $north, S: $south, E: $east, W: $west)',
+                    style: TextStyle(
+                      fontSize: t?.title ?? 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                }
+
                 return Text(
-                  '$formattedTaskType-Task Number',
+                  'Error loading data',
                   style: TextStyle(
                     fontSize: t?.title ?? 16.0,
                     fontWeight: FontWeight.bold,

@@ -20,6 +20,7 @@ import '_geotag_bottomsheet.dart';
 import '../../utils/app/_gpx.dart';
 import '../tasks/_control_task.dart';
 import '../../utils/app/_show_flash_message.dart';
+import 'package:geocoding/geocoding.dart';
 
 class GeotagPage extends StatefulWidget {
   final TaskManager task;
@@ -125,6 +126,19 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
             currentLocation =
                 'Lat: ${position.latitude}, Long: ${position.longitude}';
           });
+
+          // Perform reverse geocoding to get the address
+          List<Placemark> placemarks = await placemarkFromCoordinates(
+              position.latitude, position.longitude);
+          if (placemarks.isNotEmpty) {
+            Placemark place = placemarks[0];
+            setState(() {
+              address =
+                  '${place.street}, ${place.locality}, ${place.administrativeArea}, ${place.country}';
+              debugPrint('Address: $address'); // Log the address for debugging
+            });
+          }
+
           if (addMarker) {
             _mapService.addMarker(position);
           }
@@ -541,7 +555,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                   panelController: panelController,
                   latitude: latitude,
                   longitude: longitude,
-                  address: address,
+                  address: address, // Pass the address here
                   isRoutingStarted: isRoutingStarted,
                   onStartRoutingRequest: _handleStartRoutingRequest,
                   onStopRoutingRequest: _handleStopRoutingRequest,

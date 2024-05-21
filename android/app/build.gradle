@@ -50,6 +50,7 @@ android {
         multiDexEnabled true
         applicationId "com.quanby.pcic_mobile_app"
         minSdkVersion 23
+        multiDexEnabled true
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
