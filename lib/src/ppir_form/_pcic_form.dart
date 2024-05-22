@@ -14,6 +14,7 @@ import '_success.dart';
 import '_gpx_file_buttons.dart';
 import '../tasks/_control_task.dart';
 import '../geotag/_map_service.dart';
+import '../geotag/_geotag.dart';
 import '_form_field.dart' as form_field;
 import '../../utils/seeds/_dropdown.dart';
 import '../signature/_signature_section.dart';
@@ -44,6 +45,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   bool isSaving = false;
   bool isLoading = true;
   bool openOnline = true;
+  bool geotagSuccess = true;
   String? gpxFile;
   List<LatLng>? routePoints;
   LatLng? lastCoordinates;
@@ -116,10 +118,10 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       ));
       seedTitleToIdMap[seed.title] = seed.id;
     }
-    debugPrint("Available dropdown items:");
-    for (var item in uniqueSeedsItems) {
-      debugPrint('${item.value}: ${item.child}');
-    }
+    // debugPrint("Available dropdown items:");
+    // for (var item in uniqueSeedsItems) {
+    //   debugPrint('${item.value}: ${item.child}');
+    // }
   }
 
   Future<void> _calculateAreaAndDistance() async {
@@ -135,7 +137,11 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       if (_isCloseEnough(initialPoint, closingPoint)) {
         area = mapService.calculateAreaOfPolygon(routePoints!);
         areaInHectares = area / 10000;
+      } else {
+        geotagSuccess = false;
       }
+
+      debugPrint('geotagSuccess: $geotagSuccess');
 
       setState(() {
         _areaInHectaresController.text =
@@ -157,12 +163,12 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   }
 
   void _submitForm(BuildContext context) async {
-    debugPrint('Submitting form...');
-    debugPrint('Form Data: $_formData');
+    // debugPrint('Submitting form...');
+    // debugPrint('Form Data: $_formData');
 
     final signatureData =
         await _signatureSectionKey.currentState?.getSignatureData() ?? {};
-    debugPrint('Signature Data: $signatureData');
+    // debugPrint('Signature Data: $signatureData');
 
     // Ensure _formData is updated with the latest values from the form
     _formData['ppirNameInsured'] = signatureData['ppirNameInsured'];
@@ -202,6 +208,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
         await _signatureSectionKey.currentState?.getSignatureData() ?? {};
 
     _formData['trackTotalarea'] = _areaInHectaresController.text;
+    debugPrint("Area in Hectares: ${_areaInHectaresController.text}");
     _formData['trackDatetime'] = _areaPlantedController.text;
     _formData['trackLastcoord'] = _formData['trackLastcoord'];
     _formData['trackTotaldistance'] = _totalDistanceController.text;
@@ -284,6 +291,15 @@ class PPIRFormPageState extends State<PPIRFormPage> {
             child: const Text('Yes'),
           ),
         ],
+      ),
+    );
+  }
+
+  void _navigateToGeotagPage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GeotagPage(task: widget.task),
       ),
     );
   }
@@ -436,16 +452,35 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  GPXFileButtons(
-                    openGpxFile: () {
-                      if (gpxFile != null) {
-                        _openGpxFile(gpxFile!);
-                      } else {
-                        showFlashMessage(context, 'Error', 'GPX File',
-                            'No GPX file available to open.');
-                      }
-                    },
-                  ),
+                  if (geotagSuccess)
+                    GPXFileButtons(
+                      openGpxFile: () {
+                        if (gpxFile != null) {
+                          _openGpxFile(gpxFile!);
+                        } else {
+                          showFlashMessage(context, 'Error', 'GPX File',
+                              'No GPX file available to open.');
+                        }
+                      },
+                    )
+                  else
+                    Column(
+                      children: [
+                        const Text(
+                          'Geotag failed because the initial point and end point did not match to close the land for calculation. Please repeat the geotagging.',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => _navigateToGeotagPage(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const Text('Repeat Geotag'),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),
