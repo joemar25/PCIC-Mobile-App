@@ -178,7 +178,7 @@ class TaskManager {
 
   static Future<List<TaskManager>> getNotCompletedTasks() async {
     // Joemar is here
-    await syncDataFromCSV();
+    // await syncDataFromCSV();
 
     final query = FirebaseFirestore.instance
         .collection('tasks')
