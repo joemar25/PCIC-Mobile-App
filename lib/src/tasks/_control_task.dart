@@ -287,55 +287,55 @@ class TaskManager {
   static Map<String, dynamic> _createPPIRFormData(
       List<dynamic> row, String ppirFormId, DocumentReference taskRef) {
     return {
-      'taskId': taskRef,
-      'generatedFilename': '',
-      'taskManagerNumber': row[7]?.toString().trim() ?? '',
-      'serviceGroup': row[1]?.toString().trim() ?? '',
-      'serviceType': row[2]?.toString().trim() ?? '',
-      'priority': row[3]?.toString().trim() ?? '',
-      'status': row[4]?.toString().trim() ?? '',
-      'assigneeId': row[5]?.toString().trim() ?? '',
-      'ppirAssignmentId': row[6]?.toString().trim() ?? '',
-      'ppirInsuranceId': row[7]?.toString().trim() ?? '',
-      'ppirFarmerName': row[8]?.toString().trim() ?? '',
-      'ppirAddress': row[9]?.toString().trim() ?? '',
-      'ppirFarmerType': row[10]?.toString().trim() ?? '',
-      'ppirMobileNo': row[11]?.toString().trim() ?? '',
-      'ppirGroupName': row[12]?.toString().trim() ?? '',
-      'ppirGroupAddress': row[13]?.toString().trim() ?? '',
-      'ppirLenderName': row[14]?.toString().trim() ?? '',
-      'ppirLenderAddress': row[15]?.toString().trim() ?? '',
-      'ppirCicNo': row[16]?.toString().trim() ?? '',
-      'ppirFarmLoc': row[17]?.toString().trim() ?? '',
-      'ppirNorth': row[18]?.toString().trim() ?? '',
-      'ppirSouth': row[19]?.toString().trim() ?? '',
-      'ppirEast': row[20]?.toString().trim() ?? '',
-      'ppirWest': row[21]?.toString().trim() ?? '',
-      'ppirAtt1': row[22]?.toString().trim() ?? '',
-      'ppirAtt2': row[23]?.toString().trim() ?? '',
-      'ppirAtt3': row[24]?.toString().trim() ?? '',
-      'ppirAtt4': row[25]?.toString().trim() ?? '',
-      'ppirAreaAci': row[26]?.toString().trim() ?? '',
-      'ppirAreaAct': row[27]?.toString().trim() ?? '',
-      'ppirDopdsAci': row[28]?.toString().trim() ?? '',
-      'ppirDopdsAct': row[29]?.toString().trim() ?? '',
-      'ppirDoptpAci': row[30]?.toString().trim() ?? '',
-      'ppirDoptpAct': row[31]?.toString().trim() ?? '',
-      'ppirSvpAci': row[32]?.toString().trim() ?? '',
-      'ppirSvpAct': row[33]?.toString().trim() ?? '',
-      'ppirVariety': row[34]?.toString().trim() ?? '',
-      'ppirStagecrop': row[35]?.toString().trim() ?? '',
-      'ppirRemarks': row[36]?.toString().trim() ?? '',
-      'ppirNameInsured': row[37]?.toString().trim() ?? '',
-      'ppirNameIuia': row[38]?.toString().trim() ?? '',
-      'ppirSigInsured': row[39]?.toString().trim() ?? '',
-      'ppirSigIuia': row[40]?.toString().trim() ?? '',
-      'trackTotalarea': '',
-      'trackDatetime': FieldValue.serverTimestamp(),
-      'trackLastcoord': '',
-      'trackTotaldistance': '',
-    };
-  }
+    'taskId': taskRef,
+    'generatedFilename': '',
+    'taskManagerNumber': row[7]?.toString().trim() ?? '',
+    'serviceGroup': row[1]?.toString().trim() ?? '',
+    'serviceType': row[2]?.toString().trim() ?? '',
+    'priority': row[3]?.toString().trim() ?? '',
+    'status': row[4]?.toString().trim() ?? '',
+    'assigneeId': row[5]?.toString().trim() ?? '',
+    'ppirAssignmentId': row[6]?.toString().trim() ?? '',
+    'ppirInsuranceId': row[7]?.toString().trim() ?? '',
+    'ppirFarmerName': row[8]?.toString().trim() ?? '',
+    'ppirAddress': row[9]?.toString().trim() ?? '',
+    'ppirFarmerType': row[10]?.toString().trim() ?? '',
+    'ppirMobileNo': row[11]?.toString().trim() ?? '',
+    'ppirGroupName': row[12]?.toString().trim() ?? '',
+    'ppirGroupAddress': row[13]?.toString().trim() ?? '',
+    'ppirLenderName': row[14]?.toString().trim() ?? '',
+    'ppirLenderAddress': row[15]?.toString().trim() ?? '',
+    'ppirCicNo': row[16]?.toString().trim() ?? '',
+    'ppirFarmLoc': row[17]?.toString().trim() ?? '',
+    'ppirNorth': row[18]?.toString().trim() ?? '',
+    'ppirSouth': row[19]?.toString().trim() ?? '',
+    'ppirEast': row[20]?.toString().trim() ?? '',
+    'ppirWest': row[21]?.toString().trim() ?? '',
+    'ppirAtt1': row[22]?.toString().trim() ?? '',
+    'ppirAtt2': row[23]?.toString().trim() ?? '',
+    'ppirAtt3': row[24]?.toString().trim() ?? '',
+    'ppirAtt4': row[25]?.toString().trim() ?? '',
+    'ppirAreaAci': row[26]?.toString().trim() ?? '',
+    'ppirAreaAct': row[27]?.toString().trim() ?? '',
+    'ppirDopdsAci': row[28]?.toString().trim() ?? '',
+    'ppirDopdsAct': row[29]?.toString().trim() ?? '',
+    'ppirDoptpAci': row[30]?.toString().trim() ?? '',
+    'ppirDoptpAct': row[31]?.toString().trim() ?? '',
+    'ppirSvpAci': row[32]?.toString().trim() ?? '',
+    'ppirSvpAct': row[33]?.toString().trim() ?? '',
+    'ppirVariety': row[34]?.toString().trim() ?? '',
+    'ppirStagecrop': row[35]?.toString().trim() ?? '',
+    'ppirRemarks': row[36]?.toString().trim() ?? '',
+    'ppirNameInsured': row[37]?.toString().trim() ?? '',
+    'ppirNameIuia': row[38]?.toString().trim() ?? '',
+    'ppirSigInsured': row[39]?.toString().trim() ?? '',
+    'ppirSigIuia': row[40]?.toString().trim() ?? '',
+    'trackTotalarea': '',
+    'trackDatetime': FieldValue.serverTimestamp(),
+    'trackLastcoord': '',
+    'trackTotaldistance': '',
+  };
+}
 
   static Future<void> _createNewTaskAndRelatedDocuments(
       List<dynamic> row) async {
@@ -447,13 +447,138 @@ class TaskManager {
 
   static Future<String> generateTaskXmlContent(
       String taskId, Map<String, dynamic> formData) async {
+
+// load ppir form
+//     Future<String> generateXml() async {
+//   // Load task data from Firestore
+//   final taskSnapshot = await FirebaseFirestore.instance.collection('tasks').doc('taskId').get();
+//   final taskData = taskSnapshot.data()!;
+
+//   // Load form details data from Firestore
+//   final formDetailsSnapshot = await FirebaseFirestore.instance.collection('formDetails').doc('formDetailsId').get();
+//   final formDetailsData = formDetailsSnapshot.data()!;
+
+//   // Load ppir form data from Firestore
+//   final ppirFormSnapshot = await FirebaseFirestore.instance.collection('ppirForms').doc('ppirFormId').get();
+//   final ppirFormData = ppirFormSnapshot.data()!;
+
+//   final builder = xml.XmlBuilder();
+
+//   builder.processing('xml', 'version="1.0" encoding="utf-8"');
+//   builder.element('TaskArchiveZipModel', nest: () {
+//     builder.namespace('http://www.w3.org/2001/XMLSchema-instance', 'xsi');
+//     builder.namespace('http://www.w3.org/2001/XMLSchema', 'xsd');
+//     builder.element('AgentId', attributes: {'xsi:nil': 'true'});
+//     builder.element('AssignedDate', nest: taskData['dateAccess'].toDate().toIso8601String());
+//     builder.element('Attachments');
+
+//     builder.element('AuditLogs', nest: () {
+//       builder.element('TaskAuditLogZipModel', nest: () {
+//         builder.element('AuditLevel', nest: 'Task');
+//         builder.element('Label', nest: 'Task Status');
+//         builder.element('Message', nest: 'Task status is changed to \'In Progress\'.');
+//         builder.element('SnapshotValue', nest: 'For Dispatch');
+//         builder.element('Source', nest: 'Suarez, Christian');
+//         builder.element('TaskId', nest: '138152');
+//         builder.element('Timestamp', nest: '2024-04-08T05:26:32.092Z');
+//         builder.element('UpdatedValue', nest: 'In Progress');
+//         builder.element('FieldLabel', nest: 'Task Status');
+//         builder.element('IPAddress', nest: '172.31.6.165');
+//       });
+//       // Add more TaskAuditLogZipModel elements here...
+//     });
+
+//     builder.element('CreatedBy', nest: 'System');
+//     builder.element('DateCreated', nest: taskData['dateCreated'].toDate().toIso8601String());
+//     builder.element('DispatchAcknowledged', nest: 'false');
+//     builder.element('DueDate', attributes: {'xsi:nil': 'true'});
+
+//     builder.element('Forms', nest: () {
+//       builder.element('FormZipModel', nest: () {
+//         builder.element('ContentId', nest: '___C313c757e');
+//         builder.element('Fields', nest: () {
+//           builder.element('FormFieldZipModel', nest: () {
+//             builder.element('ContentId', nest: '___C8af47c47');
+//             builder.element('Indicator', attributes: {'xsi:nil': 'true'});
+//             builder.element('Label', nest: 'Farmer');
+//             builder.element('LockFieldType', attributes: {'xsi:nil': 'true'});
+//             builder.element('ObjectId', nest: 'fb036b78-a523-428c-9099-5cd30e0cfd48');
+//             builder.element('ParentObjectId', nest: '00000000-0000-0000-0000-000000000000');
+//             builder.element('RefDataParentRowId', attributes: {'xsi:nil': 'true'});
+//             builder.element('Options');
+//             builder.element('Sequence', nest: '1');
+//             builder.element('Type', nest: 'TabHeader');
+//           });
+//           // Add more FormFieldZipModel elements here...
+
+//           // Load ppir form data
+//           builder.element('FormFieldZipModel', nest: () {
+//             builder.element('FieldId', nest: 'ppir_insuranceid');
+//             builder.element('ContentId', nest: 'ppir_insuranceid');
+//             builder.element('Indicator', attributes: {'xsi:nil': 'true'});
+//             builder.element('Label', nest: 'Insurance ID:');
+//             builder.element('LockFieldType', attributes: {'xsi:nil': 'true'});
+//             builder.element('ObjectId', nest: '7fd346a8-7ca4-4095-a4f0-7ad59594620b');
+//             builder.element('ParentObjectId', nest: '00000000-0000-0000-0000-000000000000');
+//             builder.element('RefDataParentRowId', attributes: {'xsi:nil': 'true'});
+//             builder.element('Options');
+//             builder.element('Sequence', nest: '3');
+//             builder.element('Type', nest: 'Number');
+//             builder.element('Value', nest: ppirFormData['ppirInsuranceId']);
+//           });
+
+//           builder.element('FormFieldZipModel', nest: () {
+//             builder.element('FieldId', nest: 'ppir_farmername');
+//             builder.element('ContentId', nest: 'ppir_farmername');
+//             builder.element('Indicator', attributes: {'xsi:nil': 'true'});
+//             builder.element('Label', nest: 'Name of Farmer:');
+//             builder.element('LockFieldType', attributes: {'xsi:nil': 'true'});
+//             builder.element('ObjectId', nest: 'edda9582-34f4-4e5d-8fcb-fb4e7cf38e12');
+//             builder.element('ParentObjectId', nest: '00000000-0000-0000-0000-000000000000');
+//             builder.element('RefDataParentRowId', attributes: {'xsi:nil': 'true'});
+//             builder.element('Options');
+//             builder.element('Sequence', nest: '4');
+//             builder.element('Type', nest: 'Text');
+//             builder.element('Value', nest: ppirFormData['ppirFarmerName']);
+//           });
+
+//           builder.element('FormFieldZipModel', nest: () {
+//             builder.element('FieldId', nest: 'ppir_address');
+//             builder.element('ContentId', nest: 'ppir_address');
+//             builder.element('Indicator', attributes: {'xsi:nil': 'true'});
+//             builder.element('Label', nest: 'Address:');
+//             builder.element('LockFieldType', attributes: {'xsi:nil': 'true'});
+//             builder.element('ObjectId', nest: 'b7fa21e1-5275-4880-bd93-b4e3e9ed5298');
+//             builder.element('ParentObjectId', nest: '00000000-0000-0000-0000-000000000000');
+//             builder.element('RefDataParentRowId', attributes: {'xsi:nil': 'true'});
+//             builder.element('Options');
+//             builder.element('Sequence', nest: '5');
+//             builder.element('Type', nest: 'Paragraph');
+//             builder.element('Value', nest: ppirFormData['ppirAddress']);
+//           });
+
+//           // Continue adding other fields from ppirForms as needed...
+//         });
+//       });
+//       // Add more FormZipModel elements here...
+//     });
+//   });
+
+//   return builder.buildDocument().toString();
+// }
+
+// // void main() async {
+// //   String xmlContent = await generateXml();
+// //   print(xmlContent);
+// // }
+
     final builder = XmlBuilder();
     builder.processing('xml', 'version="1.0" encoding="UTF-8"');
-    builder.element('Task', nest: () {
+    builder.element('Task', nest: () {  
       builder.element('TaskId', nest: taskId);
       builder.element('TaskNumber', nest: formData['taskManagerNumber'] ?? '');
       builder.element('FormType', nest: formData['serviceType'] ?? '');
-      builder.element('Audit', nest: () {
+      builder.element('Audit', nest: () { 
         builder.element('TaskAuditLogZipModel', nest: () {
           builder.element('AuditLevel', nest: 'Task');
           builder.element('Label', nest: 'Task Owner');
@@ -482,81 +607,6 @@ class TaskManager {
     final xmlDocument = builder.buildDocument();
     return xmlDocument.toXmlString(pretty: true, indent: '\t');
   }
-
-  // static Future<void> saveTaskToXML(
-  //     Map<String, dynamic> taskData, Map<String, dynamic> formData) async {
-  //   try {
-  //     final directory = await getExternalStorageDirectory();
-  //     final dataDirectory =
-  //         directory?.path ?? '/storage/emulated/0/Android/data';
-
-  //     final baseFilename = formData['formId'] ?? 'unknown_form';
-  //     final insuranceDirectory = Directory('$dataDirectory/$baseFilename');
-
-  //     // Create the insurance directory if it doesn't exist
-  //     if (!await insuranceDirectory.exists()) {
-  //       await insuranceDirectory.create(recursive: true);
-  //     }
-
-  //     // Define the Attachments directory inside the insurance directory
-  //     final attachmentsDirectory =
-  //         Directory('${insuranceDirectory.path}/Attachments');
-
-  //     // Create the Attachments directory if it doesn't exist
-  //     if (!await attachmentsDirectory.exists()) {
-  //       await attachmentsDirectory.create(recursive: true);
-  //     }
-
-  //     final String fileName = 'task_${taskData['taskId']}.xml';
-  //     final File xmlFile = File('${attachmentsDirectory.path}/$fileName');
-
-  //     if (taskData.isNotEmpty && formData.isNotEmpty) {
-  //       final builder = XmlBuilder();
-  //       builder.processing('xml', 'version="1.0" encoding="UTF-8"');
-  //       builder.element('Task', nest: () {
-  //         builder.element('TaskId', nest: taskData['taskId']);
-  //         builder.element('TaskNumber',
-  //             nest: taskData['taskManagerNumber'] ?? '');
-  //         builder.element('FormType', nest: formData['serviceType'] ?? '');
-  //         builder.element('Audit', nest: () {
-  //           builder.element('TaskAuditLogZipModel', nest: () {
-  //             builder.element('AuditLevel', nest: 'Task');
-  //             builder.element('Label', nest: 'Task Owner');
-  //             builder.element('Message', nest: taskData['assigneeId'] ?? '');
-  //             builder.element('SnapshotValue', nest: 'Office Clerk');
-  //             builder.element('Source', nest: taskData['assigneeId'] ?? '');
-  //             builder.element('TaskId', nest: taskData['taskId']);
-  //             builder.element('Timestamp',
-  //                 nest: taskData['dateAccess']?.toString() ?? '');
-  //             builder.element('UpdatedValue',
-  //                 nest: taskData['assigneeEmail'] ?? '');
-  //             builder.element('FieldLabel', nest: 'Task Owner');
-  //             builder.element('IPAddress', nest: '');
-  //           });
-  //         });
-
-  //         builder.element('Details', nest: () {
-  //           builder.element('TaskDetailZipModel', nest: () {
-  //             builder.element('ServiceType',
-  //                 nest: formData['serviceType'] ?? '');
-  //             builder.element('TaskStatus', nest: taskData['status'] ?? '');
-  //             builder.element('TaskOwner',
-  //                 nest: taskData['assigneeEmail'] ?? '');
-  //           });
-  //         });
-  //       });
-
-  //       final xmlDocument = builder.buildDocument();
-  //       await xmlFile
-  //           .writeAsString(xmlDocument.toXmlString(pretty: true, indent: '\t'));
-  //       debugPrint('Task XML saved successfully.');
-  //     } else {
-  //       debugPrint('No task data or form data available to save.');
-  //     }
-  //   } catch (error) {
-  //     debugPrint('Error saving Task XML: $error');
-  //   }
-  // }
 
   Future<String?> get farmerName async {
     try {
