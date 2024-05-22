@@ -118,7 +118,8 @@ class LoginPageState extends State<LoginPage> {
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      // debugPrint('Current location: ${position.latitude}, ${position.longitude}');
+      debugPrint(
+          'Current location: ${position.latitude}, ${position.longitude}');
     } catch (e) {
       // debugPrint('Error getting current location: $e');
       if (mounted) {

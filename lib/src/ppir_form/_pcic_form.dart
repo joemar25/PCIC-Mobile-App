@@ -40,6 +40,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   final _areaInHectaresController = TextEditingController();
   final _totalDistanceController = TextEditingController();
   final _signatureSectionKey = GlobalKey<SignatureSectionState>();
+  final _formSectionKey = GlobalKey<FormSectionState>();
 
   bool isSaving = false;
   bool isLoading = true;
@@ -62,8 +63,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
         _initializeFormData(formData);
       }
 
-      // debugPrint("Form Data: ${_formData['trackLastcoord']}");
-
       final mapService = MapService();
       gpxFile = await widget.task.getGpxFilePath();
       if (gpxFile != null) {
@@ -78,7 +77,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
         isLoading = false;
       });
     } catch (e) {
-      debugPrint('Error initializing data: $e');
       setState(() {
         isLoading = false;
       });
@@ -119,10 +117,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       ));
       seedTitleToIdMap[seed.title] = seed.id;
     }
-    // debugPrint("Available dropdown items:");
-    for (var item in uniqueSeedsItems) {
-      debugPrint('${item.value}: ${item.child}');
-    }
   }
 
   Future<void> _calculateAreaAndDistance() async {
@@ -161,37 +155,11 @@ class PPIRFormPageState extends State<PPIRFormPage> {
     return '${formatter.format(value)} $unit';
   }
 
-  void _submitForm(BuildContext context) async {
-    debugPrint('Submitting form...');
-    debugPrint('Form Data: $_formData');
-
-    final signatureData =
-        await _signatureSectionKey.currentState?.getSignatureData() ?? {};
-    debugPrint('Signature Data: $signatureData');
-
-    // Ensure _formData is updated with the latest values from the form
-    _formData['ppirNameInsured'] = signatureData['ppirNameInsured'];
-    _formData['ppirNameIuia'] = signatureData['ppirNameIuia'];
-
-    final enabledFieldKeys = _formData.keys.where((key) {
-      return key != 'trackLastcoord' &&
-          key != 'trackTotalarea' &&
-          key != 'trackDatetime' &&
-          key != 'trackTotaldistance' &&
-          key != 'ppirRemarks';
-    }).toList();
-
-    bool hasEmptyEnabledFields = enabledFieldKeys.any((key) =>
-        _formData[key] == null || _formData[key].toString().trim().isEmpty);
-
-    bool hasEmptySignatureFields = signatureData['ppirSigInsured'] == null ||
-        signatureData['ppirNameInsured']?.trim().isEmpty == true ||
-        signatureData['ppirSigIuia'] == null ||
-        signatureData['ppirNameIuia']?.trim().isEmpty == true;
-
-    if (hasEmptyEnabledFields || hasEmptySignatureFields) {
-      showFlashMessage(
-          context, 'Info', 'Form Fields', 'Please fill in all required fields');
+  Future<void> _submitForm(BuildContext context) async {
+    if (!_formSectionKey.currentState!.validate() ||
+        !_signatureSectionKey.currentState!.validate()) {
+      showFlashMessage(context, 'Info', 'Validation Failed',
+          'Please fill in all required fields.');
       return;
     }
 
@@ -199,38 +167,61 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       isSaving = true;
     });
 
-    await _submitFormData();
-  }
-
-  Future<void> _submitFormData() async {
-    final signatureData =
-        await _signatureSectionKey.currentState?.getSignatureData() ?? {};
-
-    _formData['trackTotalarea'] = _areaInHectaresController.text;
-    _formData['trackDatetime'] = _areaPlantedController.text;
-    _formData['trackLastcoord'] = _formData['trackLastcoord'];
-    _formData['trackTotaldistance'] = _totalDistanceController.text;
-
-    _formData['ppirRemarks'] = _formData['ppirRemarks'] ?? 'no value';
-    _formData['ppirSigInsured'] = signatureData['ppirSigInsured'] ?? 'no value';
-    _formData['ppirNameInsured'] =
-        signatureData['ppirNameInsured'] ?? 'no value';
-    _formData['ppirSigIuia'] = signatureData['ppirSigIuia'] ?? 'no value';
-    _formData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
-    _formData['status'] = 'Completed';
-
-    Map<String, dynamic> taskData = {'status': 'Completed'};
-
     try {
+      final signatureData =
+          await _signatureSectionKey.currentState?.getSignatureData() ?? {};
+
+      _formData['ppirNameInsured'] = signatureData['ppirNameInsured'];
+      _formData['ppirNameIuia'] = signatureData['ppirNameIuia'];
+
+      final enabledFieldKeys = _formData.keys.where((key) {
+        return key != 'trackLastcoord' &&
+            key != 'trackTotalarea' &&
+            key != 'trackDatetime' &&
+            key != 'trackTotaldistance' &&
+            key != 'ppirRemarks';
+      }).toList();
+
+      bool hasEmptyEnabledFields = enabledFieldKeys.any((key) =>
+          _formData[key] == null || _formData[key].toString().trim().isEmpty);
+
+      bool hasEmptySignatureFields = signatureData['ppirSigInsured'] == null ||
+          signatureData['ppirNameInsured']?.trim().isEmpty == true ||
+          signatureData['ppirSigIuia'] == null ||
+          signatureData['ppirNameIuia']?.trim().isEmpty == true;
+
+      if (hasEmptyEnabledFields || hasEmptySignatureFields) {
+        showFlashMessage(context, 'Info', 'Form Fields',
+            'Please fill in all required fields');
+        setState(() {
+          isSaving = false;
+        });
+        return;
+      }
+
+      _formData['trackTotalarea'] = _areaInHectaresController.text;
+      _formData['trackDatetime'] = _areaPlantedController.text;
+      _formData['trackLastcoord'] = _formData['trackLastcoord'];
+      _formData['trackTotaldistance'] = _totalDistanceController.text;
+
+      _formData['ppirRemarks'] = _formData['ppirRemarks'] ?? 'no value';
+      _formData['ppirSigInsured'] =
+          signatureData['ppirSigInsured'] ?? 'no value';
+      _formData['ppirNameInsured'] =
+          signatureData['ppirNameInsured'] ?? 'no value';
+      _formData['ppirSigIuia'] = signatureData['ppirSigIuia'] ?? 'no value';
+      _formData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
+      _formData['status'] = 'Completed';
+
+      Map<String, dynamic> taskData = {'status': 'Completed'};
+
       await widget.task.updatePpirFormData(_formData, taskData);
 
-      // Generate XML content and save to Firebase Storage
       final xmlContent = await TaskManager.generateTaskXmlContent(
           widget.task.taskId, _formData);
       await TaskManager.saveTaskFileToFirebaseStorage(
           widget.task.formId, xmlContent);
 
-      // Compress and upload task files
       await TaskManager.compressAndUploadTaskFiles(
           widget.task.formId, widget.task.taskId);
 
@@ -243,13 +234,56 @@ class PPIRFormPageState extends State<PPIRFormPage> {
         );
       }
     } catch (e) {
-      debugPrint('Error saving form data: $e');
       showFlashMessage(
           context, 'Error', 'Save Failed', 'Failed to save form data.');
     } finally {
-      setState(() {
-        isSaving = false;
-      });
+      if (mounted) {
+        setState(() {
+          isSaving = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _saveForm() async {
+    setState(() {
+      isSaving = true;
+    });
+
+    try {
+      final signatureData =
+          await _signatureSectionKey.currentState?.getSignatureData() ?? {};
+
+      _formData['trackTotalarea'] = _areaInHectaresController.text;
+      _formData['trackDatetime'] = _areaPlantedController.text;
+      _formData['trackLastcoord'] = _formData['trackLastcoord'];
+      _formData['trackTotaldistance'] = _totalDistanceController.text;
+
+      _formData['ppirRemarks'] = _formData['ppirRemarks'] ?? 'no value';
+      _formData['ppirSigInsured'] =
+          signatureData['ppirSigInsured'] ?? 'no value';
+      _formData['ppirNameInsured'] =
+          signatureData['ppirNameInsured'] ?? 'no value';
+      _formData['ppirSigIuia'] = signatureData['ppirSigIuia'] ?? 'no value';
+      _formData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
+
+      await widget.task.updatePpirFormData(_formData, {'status': 'Ongoing'});
+
+      if (mounted) {
+        showFlashMessage(
+            context, 'Info', 'Form Saved', 'Form data saved successfully.');
+        // Navigate to dashboard
+        Navigator.of(context).pushReplacementNamed('/dashboard');
+      }
+    } catch (e) {
+      showFlashMessage(
+          context, 'Error', 'Save Failed', 'Failed to save form data.');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isSaving = false;
+        });
+      }
     }
   }
 
@@ -307,7 +341,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
             const SnackBar(content: Text('Error downloading GPX file')),
           );
         }
-        debugPrint('Error downloading GPX file: $e');
       }
     } else {
       _openLocalFile(gpxFilePath);
@@ -322,14 +355,13 @@ class PPIRFormPageState extends State<PPIRFormPage> {
         if (status.isGranted) {
           final result = await OpenFile.open(gpxFile.path);
           if (result.type == ResultType.done) {
-            debugPrint('GPX file opened successfully');
+            // debugPrint('GPX file opened successfully');
           } else {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Error opening GPX file')),
               );
             }
-            debugPrint('Error opening GPX file: ${result.message}');
           }
         } else {
           if (mounted) {
@@ -340,7 +372,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
               ),
             );
           }
-          debugPrint('MANAGE_EXTERNAL_STORAGE permission denied');
         }
       } else {
         if (mounted) {
@@ -348,7 +379,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
             const SnackBar(content: Text('GPX file not found')),
           );
         }
-        debugPrint('GPX file not found: ${gpxFile.path}');
       }
     } catch (e) {
       if (mounted) {
@@ -356,7 +386,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
           const SnackBar(content: Text('Error opening GPX file')),
         );
       }
-      debugPrint('Error opening GPX file: $e');
     }
   }
 
@@ -414,6 +443,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                   ),
                   const SizedBox(height: 24),
                   FormSection(
+                    key: _formSectionKey,
                     formData: _formData,
                     uniqueSeedsItems: uniqueSeedsItems,
                     seedTitleToIdMap: seedTitleToIdMap,
@@ -471,6 +501,14 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                       foregroundColor: Colors.white,
                     ),
                     child: const Text('Cancel'),
+                  ),
+                  ElevatedButton(
+                    onPressed: _saveForm,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('Save'),
                   ),
                   ElevatedButton(
                     onPressed: () => _submitForm(context),
