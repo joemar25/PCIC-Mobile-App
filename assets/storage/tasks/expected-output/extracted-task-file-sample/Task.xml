@@ -6,7 +6,7 @@
   <AuditLogs>
     <TaskAuditLogZipModel>
       <AuditLevel>Task</AuditLevel>
-      <Label>Task Status</Label>
+      <Label>Task Status</Label>                                            
       <Message>Task status is changed to 'In Progress'.</Message>
       <SnapshotValue>For Dispatch</SnapshotValue>
       <Source>Suarez, Christian</Source>
