@@ -28,6 +28,26 @@ class TaskManager {
     );
   }
 
+  Future<String?> get confirmedByName async {
+    try {
+      final formData = await getFormData(type);
+      return formData['ppirNameInsured'] as String?;
+    } catch (error) {
+      debugPrint('Error retrieving Task Number: $error');
+      return null;
+    }
+  }
+
+  Future<String?> get preparedByName async {
+    try {
+      final formData = await getFormData(type);
+      return formData['ppirNameIuia'] as String?;
+    } catch (error) {
+      debugPrint('Error retrieving Task Number: $error');
+      return null;
+    }
+  }
+
   static Future<List<TaskManager>> getTasksByQuery(Query query) async {
     List<TaskManager> tasks = [];
 
@@ -115,7 +135,7 @@ class TaskManager {
       debugPrint(
           "ppirFormRef = ${coordinates.latitude},${coordinates.longitude}");
       await ppirFormRef.update({
-        'lastCoordinates': '${coordinates.latitude},${coordinates.longitude}',
+        'trackLastcoord': '${coordinates.latitude},${coordinates.longitude}',
       });
       debugPrint(
           'Last coordinates updated to (${coordinates.latitude}, ${coordinates.longitude})');
@@ -157,6 +177,9 @@ class TaskManager {
   }
 
   static Future<List<TaskManager>> getNotCompletedTasks() async {
+    // Joemar is here
+    await syncDataFromCSV();
+
     final query = FirebaseFirestore.instance
         .collection('tasks')
         .where('status', isNotEqualTo: 'Completed');
@@ -326,7 +349,6 @@ class TaskManager {
       List<dynamic> row, String ppirFormId, DocumentReference taskRef) {
     return {
       'taskId': taskRef,
-      'generatedFilename': '',
       'taskManagerNumber': row[7]?.toString().trim() ?? '',
       'serviceGroup': row[1]?.toString().trim() ?? '',
       'serviceType': row[2]?.toString().trim() ?? '',
@@ -610,8 +632,8 @@ class TaskManager {
   Future<LatLng?> get lastCoordinates async {
     try {
       final formData = await getFormData(type);
-      if (formData['lastCoordinates'] != null) {
-        List<String> lastCoord = formData['lastCoordinates'].split(',');
+      if (formData['trackLastcoord'] != null) {
+        List<String> lastCoord = formData['trackLastcoord'].split(',');
         return LatLng(double.parse(lastCoord[0]), double.parse(lastCoord[1]));
       }
       return null;

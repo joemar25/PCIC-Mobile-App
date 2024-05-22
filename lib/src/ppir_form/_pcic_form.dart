@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -8,13 +9,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 
+import '_form_section.dart';
 import '_success.dart';
 import '_gpx_file_buttons.dart';
 import '../tasks/_control_task.dart';
 import '../geotag/_map_service.dart';
 import '_form_field.dart' as form_field;
 import '../../utils/seeds/_dropdown.dart';
-import '_form_section.dart' as form_section;
 import '../signature/_signature_section.dart';
 import '../../utils/app/_show_flash_message.dart';
 
@@ -31,10 +32,9 @@ class PPIRFormPage extends StatefulWidget {
 }
 
 class PPIRFormPageState extends State<PPIRFormPage> {
-  List<Seeds> seedsList = Seeds.getAllTasks();
-  Set<String> uniqueTitles = {};
-  List<DropdownMenuItem<String>> uniqueSeedsItems = [];
-
+  List<Seeds> seedsList = Seeds.getAllSeeds();
+  Map<String, int> seedTitleToIdMap = {};
+  List<DropdownMenuItem<int>> uniqueSeedsItems = [];
   final _formData = <String, dynamic>{};
   final _areaPlantedController = TextEditingController();
   final _areaInHectaresController = TextEditingController();
@@ -42,6 +42,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   final _signatureSectionKey = GlobalKey<SignatureSectionState>();
 
   bool isSaving = false;
+  bool isLoading = true;
   bool openOnline = true;
   String? gpxFile;
   List<LatLng>? routePoints;
@@ -56,68 +57,68 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   Future<void> _initializeData() async {
     try {
       final formData = await widget.task.getFormData(widget.task.type);
-
       if (formData.isNotEmpty) {
         _initializeFormData(formData);
       }
 
       final mapService = MapService();
-
-      // Get GPX file path
       gpxFile = await widget.task.getGpxFilePath();
-
       if (gpxFile != null) {
-        // Read and parse the GPX file
         final gpxData = await mapService.readGpxFile(gpxFile!);
         routePoints = await mapService.parseGpxData(gpxData);
-
-        // Calculate area and distance
         await _calculateAreaAndDistance();
       }
 
       _initializeSeeds();
+
+      setState(() {
+        isLoading = false;
+      });
     } catch (e) {
       debugPrint('Error initializing data: $e');
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
   void _initializeFormData(Map<String, dynamic> formData) {
-    String lastCoordinateDateTime =
-        DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
-
-    _areaPlantedController.text =
-        formData['trackDatetime'] ?? lastCoordinateDateTime;
-
+    _areaPlantedController.text = formData['trackDatetime'] is Timestamp
+        ? (formData['trackDatetime'] as Timestamp).toDate().toString()
+        : formData['trackDatetime'] ??
+            DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
     _areaInHectaresController.text = formData['trackTotalarea'] ?? '';
     _totalDistanceController.text = formData['trackTotaldistance'] ?? '';
 
-    _formData['lastCoordinates'] =
+    _formData['trackLastcoord'] =
         formData['trackLastcoord'] ?? 'No coordinates available';
     _formData['ppirDopdsAct'] = formData['ppirDopdsAct'] ?? '';
     _formData['ppirDoptpAct'] = formData['ppirDoptpAct'] ?? '';
-    _formData['ppirSvpAci'] = formData['ppirSvpAci'] ?? '';
+    _formData['ppirSvpAct'] = formData['ppirSvpAct'] ?? '';
+    _formData['ppirAreaAct'] = formData['ppirAreaAct'] ?? '';
     _formData['ppirRemarks'] = formData['ppirRemarks'] ?? '';
     _formData['ppirNameInsured'] = formData['ppirNameInsured'] ?? '';
     _formData['ppirNameIuia'] = formData['ppirNameIuia'] ?? '';
   }
 
   void _initializeSeeds() {
-    final uniqueSeedTitles = <String>{};
-
-    uniqueSeedsItems.add(const DropdownMenuItem<String>(
+    uniqueSeedsItems.add(const DropdownMenuItem<int>(
       value: null,
-      child: Text('Select a seed variety'),
+      child: Text(
+        'Select a Seed Variety',
+        style: TextStyle(color: Colors.grey),
+      ),
     ));
-
     for (var seed in seedsList) {
-      final seedTitle = seed.title;
-      if (!uniqueSeedTitles.contains(seedTitle)) {
-        uniqueSeedTitles.add(seedTitle);
-        uniqueSeedsItems.add(DropdownMenuItem<String>(
-          value: seedTitle,
-          child: Text(seedTitle),
-        ));
-      }
+      uniqueSeedsItems.add(DropdownMenuItem<int>(
+        value: seed.id,
+        child: Text(seed.title),
+      ));
+      seedTitleToIdMap[seed.title] = seed.id;
+    }
+    debugPrint("Available dropdown items:");
+    for (var item in uniqueSeedsItems) {
+      debugPrint('${item.value}: ${item.child}');
     }
   }
 
@@ -128,7 +129,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
 
       double area = 0.0;
       double areaInHectares = 0.0;
-
       final initialPoint = routePoints!.first;
       final closingPoint = routePoints!.last;
 
@@ -153,23 +153,25 @@ class PPIRFormPageState extends State<PPIRFormPage> {
 
   String _formatNumber(double value, String unit) {
     final formatter = NumberFormat('#,##0.############', 'en_US');
-
-    switch (unit) {
-      case 'ha':
-        return '${formatter.format(value)} ha';
-      case 'm':
-        return '${formatter.format(value)} m';
-      default:
-        return formatter.format(value);
-    }
+    return '${formatter.format(value)} $unit';
   }
 
   void _submitForm(BuildContext context) async {
+    debugPrint('Submitting form...');
+    debugPrint('Form Data: $_formData');
+
+    final signatureData =
+        await _signatureSectionKey.currentState?.getSignatureData() ?? {};
+    debugPrint('Signature Data: $signatureData');
+
+    // Ensure _formData is updated with the latest values from the form
+    _formData['ppirNameInsured'] = signatureData['ppirNameInsured'];
+    _formData['ppirNameIuia'] = signatureData['ppirNameIuia'];
+
     final enabledFieldKeys = _formData.keys.where((key) {
-      return key != 'lastCoordinates' &&
+      return key != 'trackLastcoord' &&
           key != 'trackTotalarea' &&
           key != 'trackDatetime' &&
-          key != 'trackLastcoord' &&
           key != 'trackTotaldistance' &&
           key != 'ppirRemarks';
     }).toList();
@@ -177,62 +179,31 @@ class PPIRFormPageState extends State<PPIRFormPage> {
     bool hasEmptyEnabledFields = enabledFieldKeys.any((key) =>
         _formData[key] == null || _formData[key].toString().trim().isEmpty);
 
-    final signatureData =
-        await _signatureSectionKey.currentState?.getSignatureData() ?? {};
-
     bool hasEmptySignatureFields = signatureData['ppirSigInsured'] == null ||
         signatureData['ppirNameInsured']?.trim().isEmpty == true ||
         signatureData['ppirSigIuia'] == null ||
         signatureData['ppirNameIuia']?.trim().isEmpty == true;
 
     if (hasEmptyEnabledFields || hasEmptySignatureFields) {
-      if (context.mounted) {
-        showFlashMessage(context, 'Info', 'Form Fields',
-            'Please fill in all required fields');
-
-        return;
-      }
+      showFlashMessage(
+          context, 'Info', 'Form Fields', 'Please fill in all required fields');
+      return;
     }
 
-    if (context.mounted) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Confirmation'),
-          content: const Text('Are you sure the data above is correct?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('No'),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.pop(context);
-                setState(() {
-                  isSaving = true;
-                });
-                _saveFormData();
-                setState(() {
-                  isSaving = false;
-                });
-              },
-              child: const Text('Yes'),
-            ),
-          ],
-        ),
-      );
-    }
+    setState(() {
+      isSaving = true;
+    });
+
+    await _saveFormData();
   }
 
-  void _saveFormData() async {
+  Future<void> _saveFormData() async {
     final signatureData =
         await _signatureSectionKey.currentState?.getSignatureData() ?? {};
 
     _formData['trackTotalarea'] = _areaInHectaresController.text;
     _formData['trackDatetime'] = _areaPlantedController.text;
-    _formData['trackLastcoord'] = _formData['lastCoordinates'];
+    _formData['trackLastcoord'] = _formData['trackLastcoord'];
     _formData['trackTotaldistance'] = _totalDistanceController.text;
 
     _formData['ppirRemarks'] = _formData['ppirRemarks'] ?? 'no value';
@@ -243,58 +214,49 @@ class PPIRFormPageState extends State<PPIRFormPage> {
     _formData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
     _formData['status'] = 'Completed';
 
-    // Prepare task data to update the status to 'Completed'
     Map<String, dynamic> taskData = {'status': 'Completed'};
 
-    await widget.task.updatePpirFormData(_formData, taskData);
+    try {
+      await widget.task.updatePpirFormData(_formData, taskData);
+      await _saveTaskToFirebaseStorage(widget.task, _formData);
 
-    // Save task XML to Firebase Storage
-    await _saveTaskToFirebaseStorage(widget.task, _formData);
-
-    if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const FormSuccessPage(
-            isSaveSuccessful: true,
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const FormSuccessPage(isSaveSuccessful: true),
           ),
-        ),
-      );
+        );
+      }
+    } catch (e) {
+      debugPrint('Error saving form data: $e');
+      showFlashMessage(
+          context, 'Error', 'Save Failed', 'Failed to save form data.');
+    } finally {
+      setState(() {
+        isSaving = false;
+      });
     }
   }
 
   Future<void> _saveTaskToFirebaseStorage(
       TaskManager task, Map<String, dynamic> formData) async {
     try {
-      // Generate XML content
       final xmlContent =
           await TaskManager.generateTaskXmlContent(task.taskId, formData);
-
-      // Create a reference to Firebase Storage
       final storageRef = FirebaseStorage.instance.ref();
-
-      // Create a reference to the folder named after widget.task.formId
       final folderRef = storageRef.child('PPIR_SAVES/${task.formId}');
-
-      // List all items in the folder
       final ListResult result = await folderRef.listAll();
 
-      // Delete all existing XML files in the folder
       for (Reference fileRef in result.items) {
         if (fileRef.name.endsWith('.xml')) {
           await fileRef.delete();
         }
       }
 
-      // Generate a unique filename for the task XML file
       final taskXmlFilename = '${task.taskId}.xml';
-
-      // Create a reference to the file location inside the folder
       final taskXmlFileRef = folderRef.child(taskXmlFilename);
-
-      // Upload the XML file content as a string
       await taskXmlFileRef.putString(xmlContent, format: PutStringFormat.raw);
-
       final downloadUrl = await taskXmlFileRef.getDownloadURL();
 
       debugPrint('Task XML file uploaded to Firebase: $downloadUrl');
@@ -358,16 +320,13 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   void _openLocalFile(String filePath) async {
     try {
       final gpxFile = File(filePath);
-
       if (await gpxFile.exists()) {
         final status = await Permission.manageExternalStorage.status;
         if (status.isGranted) {
           final result = await OpenFile.open(gpxFile.path);
           if (result.type == ResultType.done) {
-            // File opened successfully
             debugPrint('GPX file opened successfully');
           } else {
-            // Error opening the file
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Error opening GPX file')),
@@ -408,113 +367,117 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: const Text('PCIC Form'),
-            centerTitle: true,
-          ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                form_field.FormField(
-                  labelText: 'Last Coordinates',
-                  initialValue: _formData['lastCoordinates'] ?? '',
-                  enabled: false,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _areaPlantedController,
-                  decoration: const InputDecoration(
-                    labelText: 'Date and Time',
-                    border: OutlineInputBorder(),
+        if (isLoading)
+          const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          )
+        else
+          Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              title: const Text('PCIC Form'),
+              centerTitle: true,
+            ),
+            body: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  form_field.FormField(
+                    labelText: 'Last Coordinates',
+                    initialValue: _formData['trackLastcoord'] ?? '',
+                    enabled: false,
                   ),
-                  enabled: false,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _areaInHectaresController,
-                  decoration: const InputDecoration(
-                    labelText: 'Total Area (Hectares)',
-                    border: OutlineInputBorder(),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _areaPlantedController,
+                    decoration: const InputDecoration(
+                      labelText: 'Date and Time',
+                      border: OutlineInputBorder(),
+                    ),
+                    enabled: false,
                   ),
-                  enabled: false,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _totalDistanceController,
-                  decoration: const InputDecoration(
-                    labelText: 'Total Distance',
-                    border: OutlineInputBorder(),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _areaInHectaresController,
+                    decoration: const InputDecoration(
+                      labelText: 'Total Area (Hectares)',
+                      border: OutlineInputBorder(),
+                    ),
+                    enabled: false,
                   ),
-                  enabled: false,
-                ),
-                const SizedBox(height: 24),
-                form_section.FormSection(
-                  formData: _formData,
-                  uniqueSeedsItems: uniqueSeedsItems,
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  'Signatures',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                SignatureSection(
-                  key: _signatureSectionKey,
-                  task: widget.task,
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  'Map Geotag',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-                GPXFileButtons(
-                  openGpxFile: () {
-                    if (gpxFile != null) {
-                      _openGpxFile(gpxFile!);
-                    } else {
-                      showFlashMessage(context, 'Error', 'GPX File',
-                          'No GPX file available to open.');
-                    }
-                  },
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _totalDistanceController,
+                    decoration: const InputDecoration(
+                      labelText: 'Total Distance',
+                      border: OutlineInputBorder(),
+                    ),
+                    enabled: false,
+                  ),
+                  const SizedBox(height: 24),
+                  FormSection(
+                    formData: _formData,
+                    uniqueSeedsItems: uniqueSeedsItems,
+                    seedTitleToIdMap: seedTitleToIdMap,
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Signatures',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SignatureSection(
+                    key: _signatureSectionKey,
+                    task: widget.task,
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Map Geotag',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  GPXFileButtons(
+                    openGpxFile: () {
+                      if (gpxFile != null) {
+                        _openGpxFile(gpxFile!);
+                      } else {
+                        showFlashMessage(context, 'Error', 'GPX File',
+                            'No GPX file available to open.');
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+            bottomNavigationBar: BottomAppBar(
+              elevation: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: _cancelForm,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('Cancel'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => _submitForm(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('Submit'),
+                  ),
+                ],
+              ),
             ),
           ),
-          bottomNavigationBar: BottomAppBar(
-            elevation: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: _cancelForm,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                  ),
-                  child: const Text('Cancel'),
-                ),
-                ElevatedButton(
-                  onPressed: () => _submitForm(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                  ),
-                  child: const Text('Submit'),
-                ),
-              ],
-            ),
-          ),
-        ),
         if (isSaving)
           Container(
             color: Colors.black54,
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
+            child: const Center(child: CircularProgressIndicator()),
           ),
       ],
     );
