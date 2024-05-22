@@ -98,10 +98,10 @@ class LoginPageState extends State<LoginPage> {
         await _getCurrentLocation();
       } else {
         if (!locationStatus.isGranted) {
-          debugPrint('Location permission denied');
+          // debugPrint('Location permission denied');
         }
         if (!storageStatus.isGranted) {
-          debugPrint('MANAGE_EXTERNAL_STORAGE permission denied');
+          // debugPrint('MANAGE_EXTERNAL_STORAGE permission denied');
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text(
@@ -118,10 +118,9 @@ class LoginPageState extends State<LoginPage> {
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      debugPrint(
-          'Current location: ${position.latitude}, ${position.longitude}');
+      // debugPrint('Current location: ${position.latitude}, ${position.longitude}');
     } catch (e) {
-      debugPrint('Error getting current location: $e');
+      // debugPrint('Error getting current location: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -224,10 +223,10 @@ class LoginPageState extends State<LoginPage> {
                                 // Navigate to the next screen
                                 _navigateToVerifyLogin();
 
-                                debugPrint('Token: $token');
+                                // debugPrint('Token: $token');
                               } catch (e) {
                                 // Handle login error
-                                debugPrint('Login error: $e');
+                                // debugPrint('Login error: $e');
                                 // Show an error message to the user
                                 _showLoginFailedSnackBar();
                               } finally {

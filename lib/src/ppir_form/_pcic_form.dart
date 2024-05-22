@@ -199,10 +199,10 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       isSaving = true;
     });
 
-    await _saveFormData();
+    await _submitFormData();
   }
 
-  Future<void> _saveFormData() async {
+  Future<void> _submitFormData() async {
     final signatureData =
         await _signatureSectionKey.currentState?.getSignatureData() ?? {};
 
@@ -223,6 +223,16 @@ class PPIRFormPageState extends State<PPIRFormPage> {
 
     try {
       await widget.task.updatePpirFormData(_formData, taskData);
+
+      // Generate XML content and save to Firebase Storage
+      final xmlContent = await TaskManager.generateTaskXmlContent(
+          widget.task.taskId, _formData);
+      await TaskManager.saveTaskFileToFirebaseStorage(
+          widget.task.formId, xmlContent);
+
+      // Compress and upload task files
+      await TaskManager.compressAndUploadTaskFiles(
+          widget.task.formId, widget.task.taskId);
 
       if (mounted) {
         Navigator.pushReplacement(

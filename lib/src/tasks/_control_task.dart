@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:archive/archive.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -8,6 +9,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:xml/xml.dart';
+import 'package:path/path.dart' as path;
 
 class TaskManager {
   final String taskId;
@@ -33,7 +35,7 @@ class TaskManager {
       final formData = await getFormData(type);
       return formData['ppirNameInsured'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving Task Number: $error');
+      // debugPrint('Error retrieving Task Number: $error');
       return null;
     }
   }
@@ -43,7 +45,7 @@ class TaskManager {
       final formData = await getFormData(type);
       return formData['ppirNameIuia'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving Task Number: $error');
+      // debugPrint('Error retrieving Task Number: $error');
       return null;
     }
   }
@@ -53,7 +55,7 @@ class TaskManager {
 
     try {
       final querySnapshot = await query.get();
-      debugPrint('Tasks fetched: ${querySnapshot.docs.length}');
+      // debugPrint('Tasks fetched: ${querySnapshot.docs.length}');
 
       for (final documentSnapshot in querySnapshot.docs) {
         final taskId = documentSnapshot.id;
@@ -89,7 +91,7 @@ class TaskManager {
         }
       }
     } catch (error) {
-      debugPrint('Error retrieving tasks: $error');
+      // debugPrint('Error retrieving tasks: $error');
     }
 
     return tasks;
@@ -117,36 +119,34 @@ class TaskManager {
     batch.update(formRef, formData);
     batch.update(taskRef, taskData);
 
-    debugPrint("formData = $formData");
-    debugPrint("taskData = $taskData");
+    // debugPrint("formData = $formData");
+    // debugPrint("taskData = $taskData");
 
     await batch.commit();
   }
 
   Future<void> updateLastCoordinates(LatLng coordinates) async {
     try {
-      debugPrint('Updating last coordinates and dateAccess...');
+      // debugPrint('Updating last coordinates and dateAccess...');
 
       final ppirFormRef =
           FirebaseFirestore.instance.collection('ppirForms').doc(formId);
       final taskRef =
           FirebaseFirestore.instance.collection('tasks').doc(taskId);
 
-      debugPrint(
-          "ppirFormRef = ${coordinates.latitude},${coordinates.longitude}");
+      // debugPrint("ppirFormRef = ${coordinates.latitude},${coordinates.longitude}")
       await ppirFormRef.update({
         'trackLastcoord': '${coordinates.latitude},${coordinates.longitude}',
       });
-      debugPrint(
-          'Last coordinates updated to (${coordinates.latitude}, ${coordinates.longitude})');
+      // debugPrint('Last coordinates updated to (${coordinates.latitude}, ${coordinates.longitude})')
 
-      debugPrint("Updating dateAccess for taskRef = $taskId");
+      // debugPrint("Updating dateAccess for taskRef = $taskId");
       await taskRef.update({
         'dateAccess': FieldValue.serverTimestamp(),
       });
-      debugPrint('dateAccess updated for task $taskId');
+      // debugPrint('dateAccess updated for task $taskId');
     } catch (e) {
-      debugPrint('Error updating last coordinates or dateAccess: $e');
+      // debugPrint('Error updating last coordinates or dateAccess: $e');
       throw Exception('Error updating last coordinates or dateAccess');
     }
   }
@@ -178,7 +178,7 @@ class TaskManager {
 
   static Future<List<TaskManager>> getNotCompletedTasks() async {
     // Joemar is here
-    // await syncDataFromCSV();
+    await syncDataFromCSV();
 
     final query = FirebaseFirestore.instance
         .collection('tasks')
@@ -216,8 +216,7 @@ class TaskManager {
             if (ppirFormQuerySnapshot.docs.isEmpty) {
               await _createNewTaskAndRelatedDocuments(row);
             } else {
-              debugPrint(
-                  'Duplicate PPIR form detected with ppirInsuranceId: $ppirInsuranceId');
+              // debugPrint('Duplicate PPIR form detected with ppirInsuranceId: $ppirInsuranceId')
             }
           }
         }
@@ -225,7 +224,7 @@ class TaskManager {
 
       await _deleteDuplicateForms();
     } catch (error) {
-      debugPrint('Error syncing data from CSV: $error');
+      // debugPrint('Error syncing data from CSV: $error');
     }
   }
 
@@ -259,12 +258,12 @@ class TaskManager {
           final taskRef = data?['taskId'] as DocumentReference?;
 
           // Delete the ppirForm
-          debugPrint('Deleting ppirForm: ${duplicateForm.id}');
+          // debugPrint('Deleting ppirForm: ${duplicateForm.id}');
           deletionFutures.add(duplicateForm.reference.delete());
 
           // Delete the formDetails
           if (formDetailsRef != null) {
-            debugPrint('Deleting formDetailsRef: ${formDetailsRef.id}');
+            // debugPrint('Deleting formDetailsRef: ${formDetailsRef.id}');
             try {
               final formDetailsSnapshot = await formDetailsRef.get();
               if (formDetailsSnapshot.exists) {
@@ -275,8 +274,7 @@ class TaskManager {
 
                 // Delete the related task
                 if (relatedTaskRef != null) {
-                  debugPrint(
-                      'Deleting related taskRef from formDetails: ${relatedTaskRef.id}');
+                  // debugPrint('Deleting related taskRef from formDetails: ${relatedTaskRef.id}')
                   deletionFutures.add(relatedTaskRef.delete());
                 }
 
@@ -284,14 +282,13 @@ class TaskManager {
                 deletionFutures.add(formDetailsRef.delete());
               }
             } catch (e) {
-              debugPrint(
-                  'Error deleting formDetailsRef: ${formDetailsRef.id}, error: $e');
+              // debugPrint('Error deleting formDetailsRef: ${formDetailsRef.id}, error: $e')
             }
           }
 
           // Delete the task
           if (taskRef != null) {
-            debugPrint('Deleting taskRef: ${taskRef.id}');
+            // debugPrint('Deleting taskRef: ${taskRef.id}');
             try {
               final taskSnapshot = await taskRef.get();
               if (taskSnapshot.exists) {
@@ -301,8 +298,7 @@ class TaskManager {
 
                 // Delete the related formDetails
                 if (relatedFormDetailsRef != null) {
-                  debugPrint(
-                      'Deleting related formDetailsRef from task: ${relatedFormDetailsRef.id}');
+                  // debugPrint('Deleting related formDetailsRef from task: ${relatedFormDetailsRef.id}')
                   deletionFutures.add(relatedFormDetailsRef.delete());
                 }
 
@@ -310,7 +306,7 @@ class TaskManager {
                 deletionFutures.add(taskRef.delete());
               }
             } catch (e) {
-              debugPrint('Error deleting taskRef: ${taskRef.id}, error: $e');
+              // debugPrint('Error deleting taskRef: ${taskRef.id}, error: $e');
             }
           }
         }
@@ -318,7 +314,7 @@ class TaskManager {
     }
 
     await Future.wait(deletionFutures);
-    debugPrint('Deletion of duplicate forms completed.');
+    // debugPrint('Deletion of duplicate forms completed.');
   }
 
   static Map<String, dynamic> _createTaskData(
@@ -430,8 +426,7 @@ class TaskManager {
         batch.set(ppirFormRef, ppirFormData);
         await batch.commit();
       } else {
-        debugPrint(
-            'Duplicate PPIR form detected with ppirInsuranceId: $ppirInsuranceId');
+        // debugPrint('Duplicate PPIR form detected with ppirInsuranceId: $ppirInsuranceId')
       }
     }
   }
@@ -441,7 +436,7 @@ class TaskManager {
       final formData = await getFormData(type);
       return formData['ppirInsuranceId'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving Task Number: $error');
+      // debugPrint('Error retrieving Task Number: $error');
       return null;
     }
   }
@@ -546,7 +541,7 @@ class TaskManager {
       final formData = await getFormData(type);
       return formData['ppirFarmerName'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving farmer name: $error');
+      // debugPrint('Error retrieving farmer name: $error');
       return null;
     }
   }
@@ -563,9 +558,85 @@ class TaskManager {
         return taskData?['status'] as String?;
       }
     } catch (error) {
-      debugPrint('Error retrieving task status: $error');
+      // debugPrint('Error retrieving task status: $error');
     }
     return null;
+  }
+
+  static Future<void> saveTaskFileToFirebaseStorage(
+      String formId, String xmlContent) async {
+    try {
+      final storageRef =
+          FirebaseStorage.instance.ref().child('PPIR_SAVES/$formId/Task.xml');
+      await storageRef.putString(xmlContent);
+      // debugPrint('Task file saved to Firebase Storage successfully.');
+    } catch (e) {
+      // debugPrint('Error saving task file to Firebase Storage: $e');
+      throw Exception('Error saving task file to Firebase Storage');
+    }
+  }
+
+  static Future<void> compressAndUploadTaskFiles(
+      String formId, String taskId) async {
+    try {
+      final storageRef =
+          FirebaseStorage.instance.ref().child('PPIR_SAVES/$formId');
+      final List<Reference> allFiles = await _getAllFiles(storageRef);
+
+      // Directory to store downloaded files temporarily
+      final tempDir = await getTemporaryDirectory();
+      final tempDirPath = tempDir.path;
+
+      // Archive creation
+      final archive = Archive();
+
+      // Download each file and add it to the archive
+      for (final fileRef in allFiles) {
+        final String fileName =
+            fileRef.fullPath.replaceFirst('PPIR_SAVES/$formId/', '');
+        final File tempFile = File('$tempDirPath/$fileName');
+        await tempFile.parent.create(recursive: true);
+        final DownloadTask downloadTask = fileRef.writeToFile(tempFile);
+        await downloadTask.whenComplete(() async {
+          final List<int> fileBytes = await tempFile.readAsBytes();
+          archive.addFile(ArchiveFile(fileName, fileBytes.length, fileBytes));
+        });
+      }
+
+      // Encode the archive to a zip file
+      final ZipEncoder encoder = ZipEncoder();
+      final List<int>? zipData = encoder.encode(archive);
+
+      // Save the zip file temporarily
+      final zipFile = File('$tempDirPath/$taskId.task');
+      await zipFile.writeAsBytes(zipData!);
+
+      // Upload the zip file to Firebase Storage
+      final compressedRef = FirebaseStorage.instance
+          .ref()
+          .child('PPIR_SAVES/tasks_saves/$taskId.task');
+      await compressedRef.putFile(zipFile);
+
+      // debugPrint('Task files compressed and uploaded successfully.');
+    } catch (e) {
+      // debugPrint('Error compressing and uploading task files: $e');
+      throw Exception('Error compressing and uploading task files');
+    }
+  }
+
+  static Future<List<Reference>> _getAllFiles(Reference storageRef) async {
+    List<Reference> allFiles = [];
+    final ListResult result = await storageRef.listAll();
+
+    for (final ref in result.items) {
+      allFiles.add(ref);
+    }
+
+    for (final prefix in result.prefixes) {
+      allFiles.addAll(await _getAllFiles(prefix));
+    }
+
+    return allFiles;
   }
 
   Future<DateTime?> get dateAccess async {
@@ -581,7 +652,7 @@ class TaskManager {
         return timestamp?.toDate();
       }
     } catch (error) {
-      debugPrint('Error retrieving task date access: $error');
+      // debugPrint('Error retrieving task date access: $error');
     }
     return null;
   }
@@ -591,7 +662,7 @@ class TaskManager {
       final formData = await getFormData(type);
       return formData['ppirNorth'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving north coordinate: $error');
+      // debugPrint('Error retrieving north coordinate: $error');
       return null;
     }
   }
@@ -601,7 +672,7 @@ class TaskManager {
       final formData = await getFormData(type);
       return formData['ppirSouth'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving south coordinate: $error');
+      // debugPrint('Error retrieving south coordinate: $error');
       return null;
     }
   }
@@ -611,7 +682,7 @@ class TaskManager {
       final formData = await getFormData(type);
       return formData['ppirEast'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving east coordinate: $error');
+      // debugPrint('Error retrieving east coordinate: $error');
       return null;
     }
   }
@@ -621,7 +692,7 @@ class TaskManager {
       final formData = await getFormData(type);
       return formData['ppirWest'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving west coordinate: $error');
+      // debugPrint('Error retrieving west coordinate: $error');
       return null;
     }
   }
@@ -631,7 +702,7 @@ class TaskManager {
       final formData = await getFormData(type);
       return formData['gpxFile'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving gpxFile: $error');
+      // debugPrint('Error retrieving gpxFile: $error');
       return null;
     }
   }
@@ -650,7 +721,7 @@ class TaskManager {
       }
       return null;
     } catch (error) {
-      debugPrint('Error retrieving routePoints: $error');
+      // debugPrint('Error retrieving routePoints: $error');
       return null;
     }
   }
@@ -664,7 +735,7 @@ class TaskManager {
       }
       return null;
     } catch (error) {
-      debugPrint('Error retrieving lastCoordinates: $error');
+      // debugPrint('Error retrieving lastCoordinates: $error');
       return null;
     }
   }
@@ -735,12 +806,12 @@ class TaskManager {
         final xmlDocument = builder.buildDocument();
         await xmlFile
             .writeAsString(xmlDocument.toXmlString(pretty: true, indent: '\t'));
-        debugPrint('Task XML saved successfully.');
+        // debugPrint('Task XML saved successfully.');
       } else {
-        debugPrint('No task data or form data available to save.');
+        // debugPrint('No task data or form data available to save.');
       }
     } catch (error) {
-      debugPrint('Error saving Task XML: $error');
+      // debugPrint('Error saving Task XML: $error');
     }
   }
 
@@ -749,9 +820,9 @@ class TaskManager {
       final taskRef =
           FirebaseFirestore.instance.collection('tasks').doc(taskId);
       await taskRef.update({'status': status});
-      debugPrint('Task status updated to $status');
+      // debugPrint('Task status updated to $status');
     } catch (e) {
-      debugPrint('Error updating task status: $e');
+      // debugPrint('Error updating task status: $e');
       throw Exception('Error updating task status');
     }
   }
