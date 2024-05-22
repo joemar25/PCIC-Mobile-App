@@ -44,11 +44,12 @@ class SignatureSectionState extends State<SignatureSection> {
   void dispose() {
     _confirmedByNameController.dispose();
     _preparedByNameController.dispose();
+    _confirmedBySignatureController.dispose();
+    _preparedBySignatureController.dispose();
     super.dispose();
   }
 
   Future<void> _initializeSignatureNames() async {
-    // Initialize signature names if needed
     final confirmedByName = await widget.task.confirmedByName;
     final preparedByName = await widget.task.preparedByName;
 
@@ -56,6 +57,25 @@ class SignatureSectionState extends State<SignatureSection> {
       _confirmedByNameController.text = confirmedByName ?? '';
       _preparedByNameController.text = preparedByName ?? '';
     });
+  }
+
+  bool validate() {
+    bool isValid = true;
+    setState(() {
+      if (_confirmedByNameController.text.trim().isEmpty) {
+        isValid = false;
+      }
+      if (_preparedByNameController.text.trim().isEmpty) {
+        isValid = false;
+      }
+      if (_confirmedBySignatureController.isEmpty) {
+        isValid = false;
+      }
+      if (_preparedBySignatureController.isEmpty) {
+        isValid = false;
+      }
+    });
+    return isValid;
   }
 
   @override
@@ -70,12 +90,16 @@ class SignatureSectionState extends State<SignatureSection> {
         ),
         TextFormField(
           controller: _confirmedByNameController,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'Name',
+            errorText: _confirmedByNameController.text.trim().isEmpty
+                ? 'This field is required'
+                : null,
           ),
         ),
         const SizedBox(height: 10),
         GestureDetector(
+          onTap: () => setState(() {}),
           child: Container(
             height: 200,
             color: Colors.grey,
@@ -86,6 +110,11 @@ class SignatureSectionState extends State<SignatureSection> {
             ),
           ),
         ),
+        if (_confirmedBySignatureController.isEmpty)
+          const Text(
+            'This field is required',
+            style: TextStyle(color: Colors.red),
+          ),
         const SizedBox(height: 20),
         const Text(
           'Prepared by:',
@@ -94,12 +123,16 @@ class SignatureSectionState extends State<SignatureSection> {
         ),
         TextFormField(
           controller: _preparedByNameController,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'Name',
+            errorText: _preparedByNameController.text.trim().isEmpty
+                ? 'This field is required'
+                : null,
           ),
         ),
         const SizedBox(height: 10),
         GestureDetector(
+          onTap: () => setState(() {}),
           child: Container(
             height: 200,
             color: Colors.grey,
@@ -110,6 +143,11 @@ class SignatureSectionState extends State<SignatureSection> {
             ),
           ),
         ),
+        if (_preparedBySignatureController.isEmpty)
+          const Text(
+            'This field is required',
+            style: TextStyle(color: Colors.red),
+          ),
         const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -173,10 +211,8 @@ class SignatureSectionState extends State<SignatureSection> {
     final folderRef =
         storageRef.child('PPIR_SAVES/${widget.task.formId}/Attachments');
 
-    // List all items in the folder
     final ListResult result = await folderRef.listAll();
 
-    // Delete all existing signature files in the folder
     for (Reference fileRef in result.items) {
       if (fileRef.name.contains(signatureName)) {
         await fileRef.delete();
