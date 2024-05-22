@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/utils/agent/_login.dart';
 import 'package:pcic_mobile_app/utils/agent/_session.dart';
-import 'package:pcic_mobile_app/utils/agent/_signup.dart';
 
 import 'home/_home.dart';
 
@@ -76,41 +75,11 @@ class StartingPage extends StatelessWidget {
                             ),
                           ),
                           child: const Text(
-                            "Sign in",
+                            "Sign inxxxxxxxxxxx",
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 25),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SignupPage(),
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(300, 50),
-                            backgroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 40,
-                              vertical: 15,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                          ),
-                          child: const Text(
-                            "Sign Up",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Color(0xFF0F7D40),
                             ),
                           ),
                         ),

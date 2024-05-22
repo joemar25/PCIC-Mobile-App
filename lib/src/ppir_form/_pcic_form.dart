@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
@@ -9,12 +8,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 
+import '../geotag/_geotag.dart';
 import '_form_section.dart';
 import '_success.dart';
 import '_gpx_file_buttons.dart';
 import '../tasks/_control_task.dart';
 import '../geotag/_map_service.dart';
-import '../geotag/_geotag.dart';
 import '_form_field.dart' as form_field;
 import '../../utils/seeds/_dropdown.dart';
 import '../signature/_signature_section.dart';
@@ -62,6 +61,8 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       if (formData.isNotEmpty) {
         _initializeFormData(formData);
       }
+
+      // debugPrint("Form Data: ${_formData['trackLastcoord']}");
 
       final mapService = MapService();
       gpxFile = await widget.task.getGpxFilePath();
@@ -119,9 +120,9 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       seedTitleToIdMap[seed.title] = seed.id;
     }
     // debugPrint("Available dropdown items:");
-    // for (var item in uniqueSeedsItems) {
-    //   debugPrint('${item.value}: ${item.child}');
-    // }
+    for (var item in uniqueSeedsItems) {
+      debugPrint('${item.value}: ${item.child}');
+    }
   }
 
   Future<void> _calculateAreaAndDistance() async {
@@ -140,8 +141,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       } else {
         geotagSuccess = false;
       }
-
-      debugPrint('geotagSuccess: $geotagSuccess');
 
       setState(() {
         _areaInHectaresController.text =
@@ -163,12 +162,12 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   }
 
   void _submitForm(BuildContext context) async {
-    // debugPrint('Submitting form...');
-    // debugPrint('Form Data: $_formData');
+    debugPrint('Submitting form...');
+    debugPrint('Form Data: $_formData');
 
     final signatureData =
         await _signatureSectionKey.currentState?.getSignatureData() ?? {};
-    // debugPrint('Signature Data: $signatureData');
+    debugPrint('Signature Data: $signatureData');
 
     // Ensure _formData is updated with the latest values from the form
     _formData['ppirNameInsured'] = signatureData['ppirNameInsured'];
@@ -208,7 +207,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
         await _signatureSectionKey.currentState?.getSignatureData() ?? {};
 
     _formData['trackTotalarea'] = _areaInHectaresController.text;
-    debugPrint("Area in Hectares: ${_areaInHectaresController.text}");
     _formData['trackDatetime'] = _areaPlantedController.text;
     _formData['trackLastcoord'] = _formData['trackLastcoord'];
     _formData['trackTotaldistance'] = _totalDistanceController.text;
@@ -225,7 +223,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
 
     try {
       await widget.task.updatePpirFormData(_formData, taskData);
-      await _saveTaskToFirebaseStorage(widget.task, _formData);
 
       if (mounted) {
         Navigator.pushReplacement(
@@ -243,32 +240,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       setState(() {
         isSaving = false;
       });
-    }
-  }
-
-  Future<void> _saveTaskToFirebaseStorage(
-      TaskManager task, Map<String, dynamic> formData) async {
-    try {
-      final xmlContent =
-          await TaskManager.generateTaskXmlContent(task.taskId, formData);
-      final storageRef = FirebaseStorage.instance.ref();
-      final folderRef = storageRef.child('PPIR_SAVES/${task.formId}');
-      final ListResult result = await folderRef.listAll();
-
-      for (Reference fileRef in result.items) {
-        if (fileRef.name.endsWith('.xml')) {
-          await fileRef.delete();
-        }
-      }
-
-      final taskXmlFilename = '${task.taskId}.xml';
-      final taskXmlFileRef = folderRef.child(taskXmlFilename);
-      await taskXmlFileRef.putString(xmlContent, format: PutStringFormat.raw);
-      final downloadUrl = await taskXmlFileRef.getDownloadURL();
-
-      debugPrint('Task XML file uploaded to Firebase: $downloadUrl');
-    } catch (e) {
-      debugPrint('Error uploading Task XML file to Firebase: $e');
     }
   }
 
@@ -452,25 +423,19 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  if (geotagSuccess)
+                  if (gpxFile != null)
                     GPXFileButtons(
                       openGpxFile: () {
-                        if (gpxFile != null) {
-                          _openGpxFile(gpxFile!);
-                        } else {
-                          showFlashMessage(context, 'Error', 'GPX File',
-                              'No GPX file available to open.');
-                        }
+                        _openGpxFile(gpxFile!);
                       },
                     )
                   else
                     Column(
                       children: [
                         const Text(
-                          'Geotag failed because the initial point and end point did not match to close the land for calculation. Please repeat the geotagging.',
+                          'Geotag failed: Initial and end points did not match to close the land for calculation.',
                           style: TextStyle(color: Colors.red),
                         ),
-                        const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: () => _navigateToGeotagPage(context),
                           style: ElevatedButton.styleFrom(
