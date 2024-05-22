@@ -1,123 +1,155 @@
-// ppir_forms/_form_section.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../utils/controls/_date_control.dart';
-
-class FormSection extends StatelessWidget {
+class FormSection extends StatefulWidget {
   final Map<String, dynamic> formData;
-  final List<DropdownMenuItem<String>> uniqueSeedsItems;
+  final List<DropdownMenuItem<int>> uniqueSeedsItems;
+  final Map<String, int> seedTitleToIdMap;
 
   const FormSection({
     super.key,
     required this.formData,
     required this.uniqueSeedsItems,
+    required this.seedTitleToIdMap,
   });
+
+  @override
+  FormSectionState createState() => FormSectionState();
+}
+
+class FormSectionState extends State<FormSection> {
+  int? dropdownValue;
+  final TextEditingController _ppirNameInsuredController =
+      TextEditingController();
+  final TextEditingController _ppirNameIuiaController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeDropdownValue();
+    _initializeTextControllers();
+  }
+
+  void _initializeDropdownValue() {
+    String? seedTitle = widget.formData['ppirSvpAct']?.trim();
+    debugPrint("dropdownValue from form data: $seedTitle");
+
+    if (seedTitle != null && widget.seedTitleToIdMap.containsKey(seedTitle)) {
+      dropdownValue = widget.seedTitleToIdMap[seedTitle];
+      debugPrint("Dropdown value found in items: $dropdownValue");
+    } else {
+      dropdownValue = null; // Set to null to show the placeholder
+      debugPrint("Dropdown value set to first item: $dropdownValue");
+    }
+
+    setState(() {
+      widget.formData['ppirSvpAct'] = seedTitle;
+    });
+  }
+
+  void _initializeTextControllers() {
+    _ppirNameInsuredController.text = widget.formData['ppirNameInsured'] ?? '';
+    _ppirNameIuiaController.text = widget.formData['ppirNameIuia'] ?? '';
+  }
+
+  Future<void> _pickDate(BuildContext context, String key) async {
+    DateTime initialDate = DateTime.now();
+    if (widget.formData[key] != null && widget.formData[key].isNotEmpty) {
+      initialDate = DateTime.parse(widget.formData[key]);
+    }
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null && picked != initialDate) {
+      setState(() {
+        widget.formData[key] = DateFormat('yyyy-MM-dd').format(picked);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 16),
-        const Text(
-          'Actual Date of Planting',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        DateInputField(
-          labelText: 'DS*',
-          initialDate: formData['ppirDopdsAct'] != null &&
-                  formData['ppirDopdsAct'].isNotEmpty
-              ? DateFormat('yyyy-MM-dd').parse(formData['ppirDopdsAct'])
-              : null,
-          onDateChanged: (DateTime? date) {
-            if (date != null) {
-              formData['ppirDopdsAct'] = DateFormat('yyyy-MM-dd').format(date);
-            } else {
-              formData['ppirDopdsAct'] = null;
-            }
-          },
-        ),
-        const SizedBox(height: 16),
-        DateInputField(
-          labelText: 'TP*',
-          initialDate: formData['ppirDoptpAct'] != null &&
-                  formData['ppirDoptpAct'].isNotEmpty
-              ? DateFormat('yyyy-MM-dd').parse(formData['ppirDoptpAct'])
-              : null,
-          onDateChanged: (DateTime? date) {
-            if (date != null) {
-              formData['ppirDoptpAct'] = DateFormat('yyyy-MM-dd').format(date);
-            } else {
-              formData['ppirDoptpAct'] = null;
-            }
-          },
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          'Actual Area Planted',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        TextFormField(
-          initialValue: formData['ppirAreaAct'] ?? '',
+        DropdownButtonFormField<int>(
           decoration: const InputDecoration(
-            labelText: 'Actual Area',
+            labelText: 'Seed Variety',
             border: OutlineInputBorder(),
           ),
-          keyboardType: TextInputType.number,
+          value: dropdownValue,
+          items: widget.uniqueSeedsItems,
           onChanged: (value) {
-            formData['ppirAreaAct'] = value;
+            setState(() {
+              dropdownValue = value;
+              widget.formData['ppirSvpAct'] = widget.seedTitleToIdMap.entries
+                  .firstWhere((entry) => entry.value == value)
+                  .key;
+            });
           },
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter a valid number';
-            }
-            final number = num.tryParse(value);
-            if (number == null) {
-              return 'Please enter a valid number';
-            }
-            return null;
-          },
-        ),
-        const SizedBox(height: 24),
-        const Text(
-          'Seed Varieties Planted and Remarks',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
-        SizedBox(
-          width: double.infinity,
-          child: DropdownButtonFormField<String>(
-            value: formData['ppirVariety'],
-            decoration: const InputDecoration(
-              labelText: 'Select the Actual Seed Variety*',
-              border: OutlineInputBorder(),
+        TextFormField(
+          initialValue: widget.formData['ppirAreaAct'],
+          decoration: const InputDecoration(
+            labelText: 'Actual Area Planted',
+            border: OutlineInputBorder(),
+          ),
+          onChanged: (value) {
+            widget.formData['ppirAreaAct'] = value;
+          },
+        ),
+        const SizedBox(height: 16),
+        GestureDetector(
+          onTap: () => _pickDate(context, 'ppirDopdsAct'),
+          child: AbsorbPointer(
+            child: TextFormField(
+              decoration: const InputDecoration(
+                labelText: 'Actual Date of Planting (DS)',
+                border: OutlineInputBorder(),
+              ),
+              controller: TextEditingController(
+                text: widget.formData['ppirDopdsAct'],
+              ),
+              onChanged: (value) {
+                widget.formData['ppirDopdsAct'] = value;
+              },
             ),
-            items: uniqueSeedsItems,
-            isExpanded: true,
-            onChanged: (value) {
-              if (value != null) {
-                formData['ppirVariety'] = value;
-              } else {
-                formData['ppirVariety'] = null;
-              }
-            },
           ),
         ),
         const SizedBox(height: 16),
-        SizedBox(
-          width: double.infinity,
-          child: TextFormField(
-            initialValue: formData['ppirRemarks'] ?? '',
-            decoration: const InputDecoration(
-              labelText: 'Remarks',
-              border: OutlineInputBorder(),
+        GestureDetector(
+          onTap: () => _pickDate(context, 'ppirDoptpAct'),
+          child: AbsorbPointer(
+            child: TextFormField(
+              decoration: const InputDecoration(
+                labelText: 'Actual Date of Planting (TP)',
+                border: OutlineInputBorder(),
+              ),
+              controller: TextEditingController(
+                text: widget.formData['ppirDoptpAct'],
+              ),
+              onChanged: (value) {
+                widget.formData['ppirDoptpAct'] = value;
+              },
             ),
-            maxLines: 3,
-            onChanged: (value) {
-              formData['ppirRemarks'] = value;
-            },
           ),
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          initialValue: widget.formData['ppirRemarks'],
+          decoration: const InputDecoration(
+            labelText: 'Remarks',
+            border: OutlineInputBorder(),
+          ),
+          onChanged: (value) {
+            widget.formData['ppirRemarks'] = value;
+          },
         ),
       ],
     );

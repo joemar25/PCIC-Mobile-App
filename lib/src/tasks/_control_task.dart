@@ -1,13 +1,13 @@
-// file: tasks/_control_task.dart
 import 'dart:convert';
-// import 'dart:io';
-
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
-// import 'package:path_provider/path_provider.dart';
-import 'package:xml/xml.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:flutter/foundation.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:xml/xml.dart';
 
 class TaskManager {
   final String taskId;
@@ -26,6 +26,26 @@ class TaskManager {
       taskId: data['taskId'] ?? '',
       type: data['type'] ?? '',
     );
+  }
+
+  Future<String?> get confirmedByName async {
+    try {
+      final formData = await getFormData(type);
+      return formData['ppirNameInsured'] as String?;
+    } catch (error) {
+      debugPrint('Error retrieving Task Number: $error');
+      return null;
+    }
+  }
+
+  Future<String?> get preparedByName async {
+    try {
+      final formData = await getFormData(type);
+      return formData['ppirNameIuia'] as String?;
+    } catch (error) {
+      debugPrint('Error retrieving Task Number: $error');
+      return null;
+    }
   }
 
   static Future<List<TaskManager>> getTasksByQuery(Query query) async {
@@ -56,11 +76,11 @@ class TaskManager {
                 final formId = formIdRef?.id ?? '';
                 final type = formDetailsData['type'] ?? '';
 
-                final task = TaskManager.fromMap({
-                  'formId': formId,
-                  'taskId': taskId,
-                  'type': type,
-                });
+                final task = TaskManager(
+                  formId: formId,
+                  taskId: taskId,
+                  type: type,
+                );
 
                 tasks.add(task);
               }
@@ -103,6 +123,46 @@ class TaskManager {
     await batch.commit();
   }
 
+  Future<void> updateLastCoordinates(LatLng coordinates) async {
+    try {
+      debugPrint('Updating last coordinates and dateAccess...');
+
+      final ppirFormRef =
+          FirebaseFirestore.instance.collection('ppirForms').doc(formId);
+      final taskRef =
+          FirebaseFirestore.instance.collection('tasks').doc(taskId);
+
+      debugPrint(
+          "ppirFormRef = ${coordinates.latitude},${coordinates.longitude}");
+      await ppirFormRef.update({
+        'trackLastcoord': '${coordinates.latitude},${coordinates.longitude}',
+      });
+      debugPrint(
+          'Last coordinates updated to (${coordinates.latitude}, ${coordinates.longitude})');
+
+      debugPrint("Updating dateAccess for taskRef = $taskId");
+      await taskRef.update({
+        'dateAccess': FieldValue.serverTimestamp(),
+      });
+      debugPrint('dateAccess updated for task $taskId');
+    } catch (e) {
+      debugPrint('Error updating last coordinates or dateAccess: $e');
+      throw Exception('Error updating last coordinates or dateAccess');
+    }
+  }
+
+  Future<String> getGpxFilePath() async {
+    final storageRef =
+        FirebaseStorage.instance.ref().child('PPIR_SAVES/$formId/Attachments');
+    final ListResult result = await storageRef.listAll();
+    for (Reference fileRef in result.items) {
+      if (fileRef.name.endsWith('.gpx')) {
+        return await fileRef.getDownloadURL();
+      }
+    }
+    throw Exception('GPX file not found in Firebase Storage');
+  }
+
   static Future<List<String>> _getCSVFilePaths() async {
     final manifestContent = await rootBundle.loadString('AssetManifest.json');
     final manifestMap = json.decode(manifestContent) as Map<String, dynamic>;
@@ -117,12 +177,13 @@ class TaskManager {
   }
 
   static Future<List<TaskManager>> getNotCompletedTasks() async {
+    // Joemar is here
+    // await syncDataFromCSV();
+
     final query = FirebaseFirestore.instance
         .collection('tasks')
         .where('status', isNotEqualTo: 'Completed');
 
-    // Joemar Note: Only use this sync when initializing data for testing
-    // await syncDataFromCSV();
     return await getTasksByQuery(query);
   }
 
@@ -288,7 +349,6 @@ class TaskManager {
       List<dynamic> row, String ppirFormId, DocumentReference taskRef) {
     return {
       'taskId': taskRef,
-      'generatedFilename': '',
       'taskManagerNumber': row[7]?.toString().trim() ?? '',
       'serviceGroup': row[1]?.toString().trim() ?? '',
       'serviceType': row[2]?.toString().trim() ?? '',
@@ -385,46 +445,6 @@ class TaskManager {
     }
   }
 
-  Future<String?> get north async {
-    try {
-      final formData = await getFormData(type);
-      return formData['ppirNorth'] as String?;
-    } catch (error) {
-      debugPrint('Error retrieving north coordinate: $error');
-      return null;
-    }
-  }
-
-  Future<String?> get south async {
-    try {
-      final formData = await getFormData(type);
-      return formData['ppirSouth'] as String?;
-    } catch (error) {
-      debugPrint('Error retrieving south coordinate: $error');
-      return null;
-    }
-  }
-
-  Future<String?> get east async {
-    try {
-      final formData = await getFormData(type);
-      return formData['ppirEast'] as String?;
-    } catch (error) {
-      debugPrint('Error retrieving east coordinate: $error');
-      return null;
-    }
-  }
-
-  Future<String?> get west async {
-    try {
-      final formData = await getFormData(type);
-      return formData['ppirWest'] as String?;
-    } catch (error) {
-      debugPrint('Error retrieving west coordinate: $error');
-      return null;
-    }
-  }
-
   Future<Map<String, dynamic>> getFormData(String formType) async {
     final db = FirebaseFirestore.instance;
     final document = await db.collection('ppirForms').doc(formId).get();
@@ -483,81 +503,6 @@ class TaskManager {
     return xmlDocument.toXmlString(pretty: true, indent: '\t');
   }
 
-  // static Future<void> saveTaskToXML(
-  //     Map<String, dynamic> taskData, Map<String, dynamic> formData) async {
-  //   try {
-  //     final directory = await getExternalStorageDirectory();
-  //     final dataDirectory =
-  //         directory?.path ?? '/storage/emulated/0/Android/data';
-
-  //     final baseFilename = formData['formId'] ?? 'unknown_form';
-  //     final insuranceDirectory = Directory('$dataDirectory/$baseFilename');
-
-  //     // Create the insurance directory if it doesn't exist
-  //     if (!await insuranceDirectory.exists()) {
-  //       await insuranceDirectory.create(recursive: true);
-  //     }
-
-  //     // Define the Attachments directory inside the insurance directory
-  //     final attachmentsDirectory =
-  //         Directory('${insuranceDirectory.path}/Attachments');
-
-  //     // Create the Attachments directory if it doesn't exist
-  //     if (!await attachmentsDirectory.exists()) {
-  //       await attachmentsDirectory.create(recursive: true);
-  //     }
-
-  //     final String fileName = 'task_${taskData['taskId']}.xml';
-  //     final File xmlFile = File('${attachmentsDirectory.path}/$fileName');
-
-  //     if (taskData.isNotEmpty && formData.isNotEmpty) {
-  //       final builder = XmlBuilder();
-  //       builder.processing('xml', 'version="1.0" encoding="UTF-8"');
-  //       builder.element('Task', nest: () {
-  //         builder.element('TaskId', nest: taskData['taskId']);
-  //         builder.element('TaskNumber',
-  //             nest: taskData['taskManagerNumber'] ?? '');
-  //         builder.element('FormType', nest: formData['serviceType'] ?? '');
-  //         builder.element('Audit', nest: () {
-  //           builder.element('TaskAuditLogZipModel', nest: () {
-  //             builder.element('AuditLevel', nest: 'Task');
-  //             builder.element('Label', nest: 'Task Owner');
-  //             builder.element('Message', nest: taskData['assigneeId'] ?? '');
-  //             builder.element('SnapshotValue', nest: 'Office Clerk');
-  //             builder.element('Source', nest: taskData['assigneeId'] ?? '');
-  //             builder.element('TaskId', nest: taskData['taskId']);
-  //             builder.element('Timestamp',
-  //                 nest: taskData['dateAccess']?.toString() ?? '');
-  //             builder.element('UpdatedValue',
-  //                 nest: taskData['assigneeEmail'] ?? '');
-  //             builder.element('FieldLabel', nest: 'Task Owner');
-  //             builder.element('IPAddress', nest: '');
-  //           });
-  //         });
-
-  //         builder.element('Details', nest: () {
-  //           builder.element('TaskDetailZipModel', nest: () {
-  //             builder.element('ServiceType',
-  //                 nest: formData['serviceType'] ?? '');
-  //             builder.element('TaskStatus', nest: taskData['status'] ?? '');
-  //             builder.element('TaskOwner',
-  //                 nest: taskData['assigneeEmail'] ?? '');
-  //           });
-  //         });
-  //       });
-
-  //       final xmlDocument = builder.buildDocument();
-  //       await xmlFile
-  //           .writeAsString(xmlDocument.toXmlString(pretty: true, indent: '\t'));
-  //       debugPrint('Task XML saved successfully.');
-  //     } else {
-  //       debugPrint('No task data or form data available to save.');
-  //     }
-  //   } catch (error) {
-  //     debugPrint('Error saving Task XML: $error');
-  //   }
-  // }
-
   Future<void> updateTaskStatus(String status) async {
     try {
       final taskRef =
@@ -613,5 +558,163 @@ class TaskManager {
       debugPrint('Error retrieving task date access: $error');
     }
     return null;
+  }
+
+  Future<String?> get north async {
+    try {
+      final formData = await getFormData(type);
+      return formData['ppirNorth'] as String?;
+    } catch (error) {
+      debugPrint('Error retrieving north coordinate: $error');
+      return null;
+    }
+  }
+
+  Future<String?> get south async {
+    try {
+      final formData = await getFormData(type);
+      return formData['ppirSouth'] as String?;
+    } catch (error) {
+      debugPrint('Error retrieving south coordinate: $error');
+      return null;
+    }
+  }
+
+  Future<String?> get east async {
+    try {
+      final formData = await getFormData(type);
+      return formData['ppirEast'] as String?;
+    } catch (error) {
+      debugPrint('Error retrieving east coordinate: $error');
+      return null;
+    }
+  }
+
+  Future<String?> get west async {
+    try {
+      final formData = await getFormData(type);
+      return formData['ppirWest'] as String?;
+    } catch (error) {
+      debugPrint('Error retrieving west coordinate: $error');
+      return null;
+    }
+  }
+
+  Future<String?> get gpxFile async {
+    try {
+      final formData = await getFormData(type);
+      return formData['gpxFile'] as String?;
+    } catch (error) {
+      debugPrint('Error retrieving gpxFile: $error');
+      return null;
+    }
+  }
+
+  Future<List<LatLng>?> get routePoints async {
+    try {
+      final formData = await getFormData(type);
+      if (formData['routePoints'] != null) {
+        List<dynamic> points = formData['routePoints'];
+        return points
+            .map((point) => LatLng(
+                  double.parse(point.split(',')[0]),
+                  double.parse(point.split(',')[1]),
+                ))
+            .toList();
+      }
+      return null;
+    } catch (error) {
+      debugPrint('Error retrieving routePoints: $error');
+      return null;
+    }
+  }
+
+  Future<LatLng?> get lastCoordinates async {
+    try {
+      final formData = await getFormData(type);
+      if (formData['trackLastcoord'] != null) {
+        List<String> lastCoord = formData['trackLastcoord'].split(',');
+        return LatLng(double.parse(lastCoord[0]), double.parse(lastCoord[1]));
+      }
+      return null;
+    } catch (error) {
+      debugPrint('Error retrieving lastCoordinates: $error');
+      return null;
+    }
+  }
+
+  static Future<void> saveTaskToXML(
+      Map<String, dynamic> taskData, Map<String, dynamic> formData) async {
+    try {
+      final directory = await getExternalStorageDirectory();
+      final dataDirectory =
+          directory?.path ?? '/storage/emulated/0/Android/data';
+
+      final baseFilename = formData['formId'] ?? 'unknown_form';
+      final insuranceDirectory = Directory('$dataDirectory/$baseFilename');
+
+      // Create the insurance directory if it doesn't exist
+      if (!await insuranceDirectory.exists()) {
+        await insuranceDirectory.create(recursive: true);
+      }
+
+      // Define the Attachments directory inside the insurance directory
+      final attachmentsDirectory =
+          Directory('${insuranceDirectory.path}/Attachments');
+
+      // Create the Attachments directory if it doesn't exist
+      if (!await attachmentsDirectory.exists()) {
+        await attachmentsDirectory.create(recursive: true);
+      }
+
+      final String fileName = 'task_${taskData['taskId']}.xml';
+      final File xmlFile = File('${attachmentsDirectory.path}/$fileName');
+
+      if (taskData.isNotEmpty && formData.isNotEmpty) {
+        final builder = XmlBuilder();
+        builder.processing('xml', 'version="1.0" encoding="UTF-8"');
+        builder.element('Task', nest: () {
+          builder.element('TaskId', nest: taskData['taskId']);
+          builder.element('TaskNumber',
+              nest: taskData['taskManagerNumber'] ?? '');
+          builder.element('FormType', nest: formData['serviceType'] ?? '');
+          builder.element('Audit', nest: () {
+            builder.element('TaskAuditLogZipModel', nest: () {
+              builder.element('AuditLevel', nest: 'Task');
+              builder.element('Label', nest: 'Task Owner');
+              builder.element('Message', nest: taskData['assigneeId'] ?? '');
+              builder.element('SnapshotValue', nest: 'Office Clerk');
+              builder.element('Source', nest: taskData['assigneeId'] ?? '');
+              builder.element('TaskId', nest: taskData['taskId']);
+              builder.element('Timestamp',
+                  nest: taskData['dateAccess']?.toString() ?? '');
+              builder.element('UpdatedValue',
+                  nest: taskData['assigneeEmail'] ?? '');
+              builder.element('FieldLabel', nest: 'Task Owner');
+              builder.element('IPAddress', nest: '');
+            });
+          });
+
+          builder.element('Details', nest: () {
+            builder.element('TaskDetailZipModel', nest: () {
+              builder.element('ServiceType',
+                  nest: formData['serviceType'] ?? '');
+              builder.element('TaskStatus', nest: taskData['status'] ?? '');
+              builder.element('TaskOwner',
+                  nest: taskData['assigneeEmail'] ?? '');
+            });
+          });
+        });
+
+        final xmlDocument = builder.buildDocument();
+        await xmlFile
+            .writeAsString(xmlDocument.toXmlString(pretty: true, indent: '\t'));
+        debugPrint('Task XML saved successfully.');
+      } else {
+        debugPrint('No task data or form data available to save.');
+      }
+    } catch (error) {
+      debugPrint('Error saving Task XML: $error');
+    }
   }
 }

@@ -1,4 +1,3 @@
-// map_service.dart
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -6,6 +5,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:gpx/gpx.dart';
+import 'package:http/http.dart' as http;
 
 import '_location_service.dart';
 
@@ -212,5 +213,31 @@ class MapService {
       );
     }
     return totalDistance;
+  }
+
+  Future<String> readGpxFile(String url) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        throw Exception('Error reading GPX file from URL');
+      }
+    } catch (e) {
+      throw Exception('Error reading GPX file: $e');
+    }
+  }
+
+  Future<List<LatLng>> parseGpxData(String gpxData) async {
+    final gpx = GpxReader().fromString(gpxData);
+    if (gpx.trks.isEmpty) {
+      throw Exception('Invalid GPX data');
+    }
+
+    final track = gpx.trks.first;
+    final segment = track.trksegs.first;
+    final points = segment.trkpts;
+
+    return points.map((pt) => LatLng(pt.lat!, pt.lon!)).toList();
   }
 }

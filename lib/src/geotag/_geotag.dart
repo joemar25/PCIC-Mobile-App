@@ -153,13 +153,13 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
     setState(() {
       countdown = 3;
     });
-    _countdownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (countdown > 1) {
           countdown--;
         } else {
           timer.cancel();
-          countdown = 0; // Reset countdown to 0 to hide it
+          countdown = 0;
           _startRouting();
         }
       });
@@ -256,7 +256,13 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
         var gpx = GpxUtil.createGpx(routePoints);
         var gpxString = GpxWriter().asString(gpx);
 
-        final gpxFilePath = await _saveGpxFile(gpxString);
+        await _saveGpxFile(gpxString);
+
+        // Update last coordinates in Firestore after saving the GPX file
+        if (routePoints.isNotEmpty) {
+          await widget.task.updateLastCoordinates(
+              LatLng(routePoints.last.lat!, routePoints.last.lon!));
+        }
 
         // Wait for the current frame to complete before navigating
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -275,10 +281,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
               context,
               MaterialPageRoute(
                 builder: (context) => PPIRFormPage(
-                  gpxFile: gpxFilePath,
                   task: widget.task,
-                  routePoints: _mapService.routePoints,
-                  lastCoordinates: _mapService.routePoints.last,
                 ),
               ),
             );
@@ -303,9 +306,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
     }
   }
 
-  /// tiga save so GPX file either online to Firebase Storage or locally
-  /// tiga delete so existing GPX files in the Firebase Storage folder if `saveOnline` is true
-  Future<String> _saveGpxFile(String gpxString) async {
+  Future<void> _saveGpxFile(String gpxString) async {
     if (saveOnline) {
       try {
         // Create a reference to Firebase Storage
@@ -342,8 +343,6 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
 
         // Update the task status to Ongoing in Firestore
         await widget.task.updateTaskStatus('Ongoing');
-
-        return downloadUrl;
       } catch (e) {
         debugPrint('Error uploading GPX file to Firebase: $e');
         throw Exception('Error uploading GPX file to Firebase');
@@ -386,8 +385,6 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
 
       // Update the task status to Ongoing in Firestore
       await widget.task.updateTaskStatus('Ongoing');
-
-      return gpxFile.path;
     }
   }
 
@@ -597,8 +594,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                       height: 40,
                       width: 40,
                       child: FloatingActionButton(
-                        onPressed: () =>
-                            _getCurrentLocation(addMarker: false),
+                        onPressed: () => _getCurrentLocation(addMarker: false),
                         shape: const CircleBorder(),
                         backgroundColor: const Color(0xFF0F7D40),
                         elevation: 4.0,
@@ -653,7 +649,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                 child: Center(
                   child: Text(
                     '$countdown',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 48.0,
                       color: Colors.white,
                     ),
