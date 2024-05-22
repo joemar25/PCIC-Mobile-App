@@ -1,18 +1,20 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:io';
+
 import '../geotag/_geotag.dart';
 import '../ppir_form/_pcic_form.dart';
 import '_control_task.dart';
-import 'dart:io';
-import 'package:http/http.dart' as http;
+import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class TaskDetailsPage extends StatelessWidget {
   final TaskManager task;
+
   const TaskDetailsPage({super.key, required this.task});
 
   String _convertServiceGroupToRoman(String? serviceCode) {
@@ -80,15 +82,10 @@ class TaskDetailsPage extends StatelessWidget {
     );
   }
 
-  Future<void> _openGpxFile(BuildContext context, String? gpxFilePath) async {
-    if (gpxFilePath == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No GPX file available to open.')),
-      );
-      return;
-    }
-
+  Future<void> _openGpxFile(BuildContext context) async {
     try {
+      final gpxFilePath = await task.getGpxFilePath();
+
       final response = await http.get(Uri.parse(gpxFilePath));
       if (response.statusCode == 200) {
         final directory = await getTemporaryDirectory();
@@ -352,8 +349,7 @@ class TaskDetailsPage extends StatelessWidget {
                         const SizedBox(height: 24.0),
                         if (status == 'Completed') ...[
                           ElevatedButton(
-                            onPressed: () =>
-                                _openGpxFile(context, formData['gpxFilePath']),
+                            onPressed: () => _openGpxFile(context),
                             style: ElevatedButton.styleFrom(
                               minimumSize: const Size(200, 50),
                               shape: RoundedRectangleBorder(
@@ -466,6 +462,14 @@ class TaskDetailsPage extends StatelessWidget {
                                 ),
                               ],
                             ),
+                          Container(
+                            padding: const EdgeInsets.all(16.0),
+                            color: Colors.green.withOpacity(0.1),
+                            child: const Text(
+                              'Task has been completed and the task file is ready for review.',
+                              style: TextStyle(color: Colors.green),
+                            ),
+                          ),
                         ],
                       ],
                     ),

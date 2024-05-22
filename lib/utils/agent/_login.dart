@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pcic_mobile_app/utils/agent/_session.dart';
-import 'package:pcic_mobile_app/utils/agent/_signup.dart';
 import 'package:pcic_mobile_app/utils/agent/_verify_login.dart';
 import 'package:pcic_mobile_app/utils/agent/login-components/_login_remember_and_forgot.dart';
 import 'package:pcic_mobile_app/utils/agent/login-components/_login_text_field.dart';
@@ -136,29 +135,30 @@ class LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        padding: EdgeInsets.only(
-          top: MediaQuery.of(context).size.height * 0.13,
-        ),
-        height: MediaQuery.of(context).size.height * 0.4,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Center(
-                child: Image.asset(
-              "assets/storage/images/icon.png",
-              height: MediaQuery.of(context).size.height * 0.14,
-              fit: BoxFit.cover,
-            )),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.07,
-            ),
-            const Text(
-              'Sign in to your account',
-              style: TextStyle(fontSize: 27.65, fontWeight: FontWeight.w600),
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).size.height * 0.13,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Center(
+                  child: Image.asset(
+                "assets/storage/images/icon.png",
+                height: MediaQuery.of(context).size.height * 0.14,
+                fit: BoxFit.cover,
+              )),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.07,
+              ),
+              const Text(
+                'Sign in to your account',
+                style: TextStyle(fontSize: 27.65, fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
         ),
       ),
       backgroundColor: const Color(0xFFD2FFCB),
@@ -183,7 +183,6 @@ class LoginPageState extends State<LoginPage> {
                 horizontal: 40.0,
               ),
               child: SingleChildScrollView(
-                // Add SingleChildScrollView here
                 child: Column(
                   children: [
                     LoginTextField(
@@ -271,16 +270,6 @@ class LoginPageState extends State<LoginPage> {
                       ],
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.06),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SignupPage(),
-                          ),
-                        );
-                      },
-                    ),
                   ],
                 ),
               ),

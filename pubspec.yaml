@@ -45,7 +45,7 @@ dependencies:
   flutter_map_cancellable_tile_provider: ^2.0.0
   path_provider: ^2.1.2
   fluttertoast: ^8.2.4
-  flutter_downloader: ^1.11.6
+  flutter_downloader: ^1.11.7
   url_launcher: ^6.2.6
   open_file: ^3.3.2
   signature: ^5.4.1
@@ -70,6 +70,7 @@ dependencies:
   firebase_database: ^10.4.11
   firebase_storage: ^11.7.5
   http: ^1.2.1
+  firebase_app_check: ^0.2.2+6
 
   # surely not used
   # screenshot: ^2.3.0
