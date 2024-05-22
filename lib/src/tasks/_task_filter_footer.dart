@@ -5,7 +5,6 @@ import 'package:pcic_mobile_app/src/theme/_theme.dart';
 class FilterFooter extends StatefulWidget {
   final String filter;
   final String orderBy;
-
   const FilterFooter({
     super.key,
     required this.filter,
@@ -18,13 +17,13 @@ class FilterFooter extends StatefulWidget {
 
 class _FilterFooterState extends State<FilterFooter> {
   final Map<String, Color> _filterColors = {
-    'Ongoing': const Color(0xFFD9F7FA),
-    'For Dispatch': const Color(0xFF0F7D40),
-    'Completed': const Color(0xFF0F7D40),
+    'Ongoing': const Color(0xFF87CEFA), // Light green
+    'For Dispatch': const Color(0xFFFF4500), // Amber
+    'Completed': const Color(0xFF006400), // Green
   };
 
   final Map<String, Color> _filterTextColors = {
-    'Ongoing': Colors.black,
+    'Ongoing': Colors.white,
     'For Dispatch': Colors.white,
     'Completed': Colors.white,
   };

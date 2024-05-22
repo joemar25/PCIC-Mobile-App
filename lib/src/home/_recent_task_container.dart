@@ -2,7 +2,7 @@ import '../tasks/_control_task.dart';
 import '../tasks/_task_details.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/src/home/_recent_task_data.dart';
+import '_recent_task_data.dart';
 
 class RecentTaskContainer extends StatefulWidget {
   final String searchQuery;
@@ -20,6 +20,19 @@ class RecentTaskContainer extends StatefulWidget {
 
 class RecentTaskContainerState extends State<RecentTaskContainer> {
   int _hoveredIndex = -1;
+
+  Color getStatusColor(String? status) {
+    switch (status) {
+      case 'For Dispatch':
+        return const Color(0xFFFF4500); // Red
+      case 'Ongoing':
+        return const Color(0xFF87CEFA); // Light Blue
+      case 'Completed':
+        return const Color(0xFF006400); // Dark Green
+      default:
+        return Colors.grey;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,110 +53,97 @@ class RecentTaskContainerState extends State<RecentTaskContainer> {
           onExit: (_) => setState(() => _hoveredIndex = -1),
           child: GestureDetector(
             onTap: () => _navigateToTaskDetails(context, task),
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              decoration: BoxDecoration(
-                border: Border.all(width: 0.2, color: Colors.grey),
-                color: _hoveredIndex == index ? Colors.grey[200] : Colors.white,
-                borderRadius: BorderRadius.circular(16.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF0F7D40).withOpacity(0.8),
-                    blurRadius: 1,
-                    spreadRadius: 1,
-                    offset: const Offset(0, 2),
+            child: FutureBuilder<String?>(
+              future: task.status,
+              builder: (context, snapshot) {
+                final statusColor = getStatusColor(snapshot.data);
+                return Container(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 0.2, color: Colors.grey),
+                    color: _hoveredIndex == index
+                        ? Colors.grey[200]
+                        : Colors.white,
+                    borderRadius: BorderRadius.circular(16.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: statusColor.withOpacity(0.8),
+                        blurRadius: 1,
+                        spreadRadius: 1,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  FutureBuilder(
-                      future: Future.delayed(const Duration(seconds: 1)),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          return TaskData(task: task);
-                        } else {
-                          return Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 16.0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Shimmer.fromColors(
-                              baseColor: Colors.grey[300]!,
-                              highlightColor: Colors.grey[100]!,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        height: 16,
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(4.0),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Container(
-                                        height: 12,
-                                        width: 80,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(4.0),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Container(
-                                        height: 10,
-                                        width: 120,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(4.0),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        height: 35,
-                                        width: 35,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(4.0),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Container(
-                                        height: 10,
-                                        width: 60,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(4.0),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FutureBuilder(
+                        future: Future.delayed(const Duration(seconds: 1)),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            return TaskData(task: task);
+                          } else {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 16.0,
                               ),
-                            ),
-                          );
-                        }
-                      })
-                ],
-              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 16,
+                                          width: 150,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Container(
+                                          height: 12,
+                                          width: 120,
+                                          color: Colors.white,
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Container(
+                                          height: 16,
+                                          width: 80,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Container(
+                                          height: 12,
+                                          width: 100,
+                                          color: Colors.white,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         );

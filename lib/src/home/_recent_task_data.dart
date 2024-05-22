@@ -16,9 +16,32 @@ class TaskData extends StatelessWidget {
     return '';
   }
 
+  Color getStatusColor(String status) {
+    switch (status) {
+      case 'For Dispatch':
+        return const Color(0xFFFF4500); // Red
+      case 'Ongoing':
+        return const Color(0xFF87CEFA); // Light Blue
+      case 'Completed':
+        return const Color(0xFF006400); // Dark Green
+      default:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).extension<CustomThemeExtension>();
+    final isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+
+    final titleFontSize = isPortrait ? 12.0 : t?.title ?? 18.0;
+    final captionFontSize = isPortrait ? 6.0 : t?.caption ?? 14.0;
+    final overlineFontSize = isPortrait ? 6.0 : t?.overline ?? 12.0;
+
+    // Updated statusFontSize
+    final statusFontSize = isPortrait ? 9.0 : t?.caption ?? 14.0;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
       child: Row(
@@ -38,7 +61,7 @@ class TaskData extends StatelessWidget {
                   return Text(
                     'Loading...',
                     style: TextStyle(
-                      fontSize: t?.title ?? 16.0,
+                      fontSize: titleFontSize,
                       fontWeight: FontWeight.bold,
                     ),
                   );
@@ -58,14 +81,14 @@ class TaskData extends StatelessWidget {
                       Text(
                         farmerName,
                         style: TextStyle(
-                          fontSize: t?.title ?? 16.0,
+                          fontSize: titleFontSize,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         '(N: $north, S: $south, E: $east, W: $west)',
                         style: TextStyle(
-                          fontSize: t?.caption ?? 12.0,
+                          fontSize: captionFontSize,
                         ),
                       ),
                     ],
@@ -75,7 +98,7 @@ class TaskData extends StatelessWidget {
                 return Text(
                   'Error loading data',
                   style: TextStyle(
-                    fontSize: t?.title ?? 16.0,
+                    fontSize: titleFontSize,
                     fontWeight: FontWeight.bold,
                   ),
                 );
@@ -88,13 +111,16 @@ class TaskData extends StatelessWidget {
               FutureBuilder<String?>(
                 future: task.status,
                 builder: (context, snapshot) {
-                  if (snapshot.hasData && snapshot.data != 'Completed') {
+                  if (snapshot.hasData) {
+                    final status = snapshot.data!;
+                    final statusColor = getStatusColor(status);
                     return Text(
-                      snapshot.data!,
+                      status,
                       style: TextStyle(
-                        fontSize: t?.caption ?? 12.0,
+                        fontSize:
+                            statusFontSize, // Updated font size for status
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF0F7D40),
+                        color: statusColor,
                       ),
                     );
                   }
@@ -108,7 +134,7 @@ class TaskData extends StatelessWidget {
                     return Text(
                       'Last Access: ${formatDate(snapshot.data)}',
                       style: TextStyle(
-                        fontSize: t?.overline ?? 10.0,
+                        fontSize: overlineFontSize,
                       ),
                     );
                   }
