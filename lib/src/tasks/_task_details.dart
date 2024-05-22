@@ -350,22 +350,22 @@ class TaskDetailsPage extends StatelessWidget {
                         _buildFormField(context, 'Seed Variety Planted',
                             formData['ppirSvpAct']),
                         const SizedBox(height: 24.0),
-                        ElevatedButton(
-                          onPressed: () =>
-                              _openGpxFile(context, formData['gpxFilePath']),
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(200, 50),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25.0),
-                            ),
-                            backgroundColor: const Color(0xFF0F7D40),
-                          ),
-                          child: const Text(
-                            'Open GPX File',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
                         if (status == 'Completed') ...[
+                          ElevatedButton(
+                            onPressed: () =>
+                                _openGpxFile(context, formData['gpxFilePath']),
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(200, 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25.0),
+                              ),
+                              backgroundColor: const Color(0xFF0F7D40),
+                            ),
+                            child: const Text(
+                              'Open GPX File',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
                           const SizedBox(height: 24.0),
                           Text(
                             'Tracking Results',
