@@ -105,18 +105,29 @@ class TaskManager {
 
   Future<void> updateLastCoordinates(LatLng coordinates) async {
     try {
+      debugPrint('Updating last coordinates and dateAccess...');
+
+      final ppirFormRef =
+          FirebaseFirestore.instance.collection('ppirForms').doc(formId);
       final taskRef =
           FirebaseFirestore.instance.collection('tasks').doc(taskId);
 
-      debugPrint("taskRef = ${coordinates.latitude},${coordinates.longitude}");
-      await taskRef.update({
+      debugPrint(
+          "ppirFormRef = ${coordinates.latitude},${coordinates.longitude}");
+      await ppirFormRef.update({
         'lastCoordinates': '${coordinates.latitude},${coordinates.longitude}',
       });
       debugPrint(
           'Last coordinates updated to (${coordinates.latitude}, ${coordinates.longitude})');
+
+      debugPrint("Updating dateAccess for taskRef = $taskId");
+      await taskRef.update({
+        'dateAccess': FieldValue.serverTimestamp(),
+      });
+      debugPrint('dateAccess updated for task $taskId');
     } catch (e) {
-      debugPrint('Error updating last coordinates: $e');
-      throw Exception('Error updating last coordinates');
+      debugPrint('Error updating last coordinates or dateAccess: $e');
+      throw Exception('Error updating last coordinates or dateAccess');
     }
   }
 
