@@ -13,25 +13,25 @@ class MessagesPage extends StatefulWidget {
 
 class MessagesPageState extends State<MessagesPage> {
   final List<Map<String, dynamic>> messages = [
-    {
-      'profilepic': 'assets/image/mar.png',
-      'name': 'Joemar Cardiño',
-      'message': 'Hey, how are you?',
-      'time': DateTime(2023, 6, 5, 10, 30),
-      'color': Colors.blue,
-    },
-    {
-      'profilepic': 'assets/image/sean.jpg',
-      'name': 'Sean Palacay',
-      'message': 'I have a question for you.',
-      'time': DateTime(24, 6, 3, 11, 15),
-    },
-    {
-      'profilepic': 'assets/image/tonnn.jpg',
-      'name': 'Anton Cabais',
-      'message': 'Hello?',
-      'time': DateTime(24, 6, 3, 11, 13),
-    },
+    // {
+    //   'profilepic': 'assets/image/mar.png',
+    //   'name': 'Joemar Cardiño',
+    //   'message': 'Hey, how are you?',
+    //   'time': DateTime(2023, 6, 5, 10, 30),
+    //   'color': Colors.blue,
+    // },
+    // {
+    //   'profilepic': 'assets/image/sean.jpg',
+    //   'name': 'Sean Palacay',
+    //   'message': 'I have a question for you.',
+    //   'time': DateTime(24, 6, 3, 11, 15),
+    // },
+    // {
+    //   'profilepic': 'assets/image/tonnn.jpg',
+    //   'name': 'Anton Cabais',
+    //   'message': 'Hello?',
+    //   'time': DateTime(24, 6, 3, 11, 13),
+    // },
   ];
 
   List<Map<String, dynamic>> filteredMessages = [];
