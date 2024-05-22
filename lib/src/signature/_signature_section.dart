@@ -1,16 +1,14 @@
-// file: signature/_signature_section.dart
 import 'dart:typed_data';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
 import 'package:uuid/uuid.dart';
-
-import '../ppir_form/_tap_to_signature.dart';
 import '../tasks/_control_task.dart';
+import '../ppir_form/_tap_to_signature.dart';
 
 class SignatureSection extends StatefulWidget {
   final TaskManager task;
+
   const SignatureSection({super.key, required this.task});
 
   @override
@@ -49,8 +47,15 @@ class SignatureSectionState extends State<SignatureSection> {
     super.dispose();
   }
 
-  void _initializeSignatureNames() {
+  Future<void> _initializeSignatureNames() async {
     // Initialize signature names if needed
+    final confirmedByName = await widget.task.confirmedByName;
+    final preparedByName = await widget.task.preparedByName;
+
+    setState(() {
+      _confirmedByNameController.text = confirmedByName ?? '';
+      _preparedByNameController.text = preparedByName ?? '';
+    });
   }
 
   @override
@@ -154,6 +159,8 @@ class SignatureSectionState extends State<SignatureSection> {
     signatureData['ppirSigIuia'] = _preparedByUrl;
     signatureData['ppirNameInsured'] = _confirmedByNameController.text;
     signatureData['ppirNameIuia'] = _preparedByNameController.text;
+
+    debugPrint('Signature Data: $signatureData');
 
     return signatureData;
   }

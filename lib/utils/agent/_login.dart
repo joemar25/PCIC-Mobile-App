@@ -142,18 +142,9 @@ class LoginPageState extends State<LoginPage> {
           top: MediaQuery.of(context).size.height * 0.13,
         ),
         height: MediaQuery.of(context).size.height * 0.4,
-        // color: Colors.red,
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // SizedBox(
-            //   width: 100,
-            //   height: 100,
-            //   child: Image.asset(
-            //     'assets/storage/images/icon.png',
-            //   ),
-            // ),
             Center(
                 child: Image.asset(
               "assets/storage/images/icon.png",
@@ -191,124 +182,107 @@ class LoginPageState extends State<LoginPage> {
                 vertical: 70.0,
                 horizontal: 40.0,
               ),
-              child: Column(
-                children: [
-                  LoginTextField(
-                    inputType: 'Email',
-                    svgPath: 'assets/storage/images/mail.svg',
-                    onTextChanged: updateParentEmail,
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-                  LoginTextField(
-                    inputType: 'Password',
-                    svgPath: 'assets/storage/images/lock.svg',
-                    onTextChanged: updateParentPassword,
-                  ),
-                  const SizedBox(height: 15),
-                  const RememberAndForgot(),
-                  const SizedBox(height: 40),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            setState(() {
-                              _isLoading = true;
-                            });
-
-                            try {
-                              UserCredential userCredential = await FirebaseAuth
-                                  .instance
-                                  .signInWithEmailAndPassword(
-                                email: parentEmail,
-                                password: parentPassword,
-                              );
-                              // Login successful, initialize the session with the user token
-                              String? token =
-                                  await userCredential.user?.getIdToken();
-                              _session.init(token!);
-                              // Request location permission
-                              await _requestPermissions();
-                              // Navigate to the next screen
-                              _navigateToVerifyLogin();
-
-                              debugPrint('Token: $token');
-                            } catch (e) {
-                              // Handle login error
-                              debugPrint('Login error: $e');
-                              // Show an error message to the user
-                              _showLoginFailedSnackBar();
-                            } finally {
-                              setState(() {
-                                _isLoading = false;
-                              });
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            backgroundColor: const Color(0xFF0F7D40),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 13.0,
-                              horizontal: 8.0,
-                            ),
-                            child: _isLoading
-                                ? const SizedBox(
-                                    height: 23.0,
-                                    width: 23.0,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 4,
-                                    ),
-                                  )
-                                : const Text(
-                                    'Sign in',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.06),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignupPage(),
-                        ),
-                      );
-                    },
-                    child: RichText(
-                      text: const TextSpan(
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: "Don't have an account? ",
-                          ),
-                          TextSpan(
-                            text: "Sign up here",
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF0F7D40),
-                            ),
-                          ),
-                        ],
-                      ),
+              child: SingleChildScrollView(
+                // Add SingleChildScrollView here
+                child: Column(
+                  children: [
+                    LoginTextField(
+                      inputType: 'Email',
+                      svgPath: 'assets/storage/images/mail.svg',
+                      onTextChanged: updateParentEmail,
                     ),
-                  ),
-                ],
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                    LoginTextField(
+                      inputType: 'Password',
+                      svgPath: 'assets/storage/images/lock.svg',
+                      onTextChanged: updateParentPassword,
+                    ),
+                    const SizedBox(height: 15),
+                    const RememberAndForgot(),
+                    const SizedBox(height: 40),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              setState(() {
+                                _isLoading = true;
+                              });
+
+                              try {
+                                UserCredential userCredential =
+                                    await FirebaseAuth.instance
+                                        .signInWithEmailAndPassword(
+                                  email: parentEmail,
+                                  password: parentPassword,
+                                );
+                                // Login successful, initialize the session with the user token
+                                String? token =
+                                    await userCredential.user?.getIdToken();
+                                _session.init(token!);
+                                // Request location permission
+                                await _requestPermissions();
+                                // Navigate to the next screen
+                                _navigateToVerifyLogin();
+
+                                debugPrint('Token: $token');
+                              } catch (e) {
+                                // Handle login error
+                                debugPrint('Login error: $e');
+                                // Show an error message to the user
+                                _showLoginFailedSnackBar();
+                              } finally {
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              backgroundColor: const Color(0xFF0F7D40),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 13.0,
+                                horizontal: 8.0,
+                              ),
+                              child: _isLoading
+                                  ? const SizedBox(
+                                      height: 23.0,
+                                      width: 23.0,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 4,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Sign in',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.06),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SignupPage(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           );
