@@ -106,11 +106,16 @@ class SignatureSectionState extends State<SignatureSection> {
             height: 200,
             color: Colors.grey,
             child: TapToSignature(
+              task: widget.task,
               controller: _confirmedBySignatureController,
               height: 200,
               backgroundColor: Colors.white70,
               isError: validate(),
               isEmpty: _confirmedBySignatureController.isEmpty,
+              onSaveSignature: (Uint8List signatureBytes) async {
+                return await _saveSignatureToFirebase(
+                    signatureBytes, 'ppirSigInsured');
+              },
             ),
           ),
         ),
@@ -141,11 +146,16 @@ class SignatureSectionState extends State<SignatureSection> {
             height: 200,
             color: Colors.grey,
             child: TapToSignature(
+              task: widget.task,
               controller: _preparedBySignatureController,
               height: 200,
               backgroundColor: Colors.white70,
               isError: validate(),
               isEmpty: _preparedBySignatureController.isEmpty,
+              onSaveSignature: (Uint8List signatureBytes) async {
+                return await _saveSignatureToFirebase(
+                    signatureBytes, 'ppirSigIuia');
+              },
             ),
           ),
         ),
@@ -155,15 +165,15 @@ class SignatureSectionState extends State<SignatureSection> {
             style: TextStyle(color: Colors.red),
           ),
         const SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            ElevatedButton(
-              onPressed: _clearSignatures,
-              child: const Text('Clear Signatures'),
-            ),
-          ],
-        ),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.end,
+        //   children: [
+        //     ElevatedButton(
+        //       onPressed: _clearSignatures,
+        //       child: const Text('Clear Signatures'),
+        //     ),
+        //   ],
+        // ),
       ],
     );
   }
@@ -204,7 +214,7 @@ class SignatureSectionState extends State<SignatureSection> {
     signatureData['ppirNameInsured'] = _confirmedByNameController.text;
     signatureData['ppirNameIuia'] = _preparedByNameController.text;
 
-    debugPrint('Signature Data: $signatureData');
+    // debugPrint(signatureData['ppirSigInsured']);
 
     return signatureData;
   }
@@ -232,7 +242,7 @@ class SignatureSectionState extends State<SignatureSection> {
     await signatureFileRef.putData(signatureBytes);
 
     final downloadUrl = await signatureFileRef.getDownloadURL();
-    debugPrint('Signature uploaded to Firebase: $downloadUrl');
+    // debugPrint('Signature uploaded to Firebase: $downloadUrl');
 
     return downloadUrl;
   }
