@@ -1,10 +1,12 @@
 import 'dart:typed_data';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
 import 'package:uuid/uuid.dart';
-import '../tasks/_control_task.dart';
+
 import '../ppir_form/_tap_to_signature.dart';
+import '../tasks/_control_task.dart';
 
 class SignatureSection extends StatefulWidget {
   final TaskManager task;
@@ -107,6 +109,8 @@ class SignatureSectionState extends State<SignatureSection> {
               controller: _confirmedBySignatureController,
               height: 200,
               backgroundColor: Colors.white70,
+              isError: validate(),
+              isEmpty: _confirmedBySignatureController.isEmpty,
             ),
           ),
         ),
@@ -140,6 +144,8 @@ class SignatureSectionState extends State<SignatureSection> {
               controller: _preparedBySignatureController,
               height: 200,
               backgroundColor: Colors.white70,
+              isError: validate(),
+              isEmpty: _preparedBySignatureController.isEmpty,
             ),
           ),
         ),

@@ -8,13 +8,15 @@ class TapToSignature extends StatefulWidget {
   final double height;
   final Color backgroundColor;
   final bool isError;
+  final bool isEmpty;
 
   const TapToSignature(
       {super.key,
       required this.controller,
       required this.height,
       this.backgroundColor = Colors.grey,
-      required this.isError});
+      required this.isError,
+      required this.isEmpty});
 
   @override
   TapToSignatureState createState() => TapToSignatureState();
@@ -33,6 +35,12 @@ class TapToSignatureState extends State<TapToSignature> {
 
   void _cancelSignature(BuildContext context, FlashController controller) {
     controller.dismiss(); // Close the modal
+  }
+
+  void _clearSignature() {
+    setState(() {
+      widget.controller.clear();
+    });
   }
 
   @override
@@ -81,9 +89,17 @@ class TapToSignatureState extends State<TapToSignature> {
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
                                     ElevatedButton(
-                                      onPressed: () =>
-                                          _cancelSignature(context, controller),
+                                      onPressed: () {
+                                        _clearSignature();
+                                        _cancelSignature(context, controller);
+                                      },
                                       child: const Text('Cancel'),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        _clearSignature();
+                                      },
+                                      child: const Text('Clear Signature'),
                                     ),
                                     ElevatedButton(
                                       onPressed: () =>
@@ -100,32 +116,12 @@ class TapToSignatureState extends State<TapToSignature> {
             ),
             child: Text(
                 style: TextStyle(
-                    color: widget.isError ? Colors.red : Colors.black),
-                'Tap to Sign'),
+                    color: widget.isError && widget.isEmpty
+                        ? Colors.red
+                        : Colors.black),
+                _isConfirmed ? 'Show Signature' : 'Tap to Sign'),
           ),
         )
-
-        // child: !_isConfirmed
-        //     ? Center(
-        //         child: ElevatedButton(
-        //           onPressed: () {
-        //             setState(() {
-        //               _isConfirmed = true;
-        //             });
-        //           },
-        //           child: Text(
-        //               style: TextStyle(
-        //                   color: widget.isError && !_isConfirmed
-        //                       ? Colors.red
-        //                       : Colors.black),
-        //               'Tap to Sign'),
-        //         ),
-        //       )
-        //     : Signature(
-        //         controller: widget.controller,
-        //         height: widget.height,
-        //         backgroundColor: widget.backgroundColor,
-        //       ),
       ],
     );
   }
@@ -185,6 +181,29 @@ class TapToSignatureState extends State<TapToSignature> {
                           ),
                         ),
                       )
+
+
+                      // child: !_isConfirmed
+        //     ? Center(
+        //         child: ElevatedButton(
+        //           onPressed: () {
+        //             setState(() {
+        //               _isConfirmed = true;
+        //             });
+        //           },
+        //           child: Text(
+        //               style: TextStyle(
+        //                   color: widget.isError && !_isConfirmed
+        //                       ? Colors.red
+        //                       : Colors.black),
+        //               'Tap to Sign'),
+        //         ),
+        //       )
+        //     : Signature(
+        //         controller: widget.controller,
+        //         height: widget.height,
+        //         backgroundColor: widget.backgroundColor,
+        //       ),
  * 
  * 
  * 
