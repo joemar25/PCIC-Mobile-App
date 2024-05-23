@@ -1,23 +1,24 @@
 import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:http/http.dart' as http;
 
-import '../geotag/_geotag.dart';
-import '_form_section.dart';
-import '_success.dart';
-import '_gpx_file_buttons.dart';
-import '../tasks/_control_task.dart';
-import '../geotag/_map_service.dart';
-import '_form_field.dart' as form_field;
-import '../../utils/seeds/_dropdown.dart';
-import '../signature/_signature_section.dart';
 import '../../utils/app/_show_flash_message.dart';
+import '../../utils/seeds/_dropdown.dart';
+import '../geotag/_geotag.dart';
+import '../geotag/_map_service.dart';
+import '../signature/_signature_section.dart';
+import '../tasks/_control_task.dart';
+import '_form_field.dart' as form_field;
+import '_form_section.dart';
+import '_gpx_file_buttons.dart';
+import '_success.dart';
 
 class PPIRFormPage extends StatefulWidget {
   final TaskManager task;
@@ -291,19 +292,22 @@ class PPIRFormPageState extends State<PPIRFormPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirmation'),
-        content: const Text('Are you sure you want to cancel?'),
+        title: const Text('Unsaved Changes'),
+        content: const Text(
+            'You have unsaved changes. If you go back, your data will not be saved.'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('No'),
-          ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               Navigator.pop(context);
             },
-            child: const Text('Yes'),
+            child: const Text('Leave', style: TextStyle(color: Colors.red)),
+          ),
+          TextButton(
+            onPressed: () {
+              _saveForm();
+            },
+            child: const Text('Save', style: TextStyle(color: Colors.blue)),
           ),
         ],
       ),

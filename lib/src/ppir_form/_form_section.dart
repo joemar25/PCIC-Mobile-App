@@ -93,6 +93,7 @@ class FormSectionState extends State<FormSection> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -163,6 +164,7 @@ class FormSectionState extends State<FormSection> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
+                      suffixIcon: const Icon(Icons.calendar_today),
                     ),
                     controller: TextEditingController(
                       text: widget.formData['ppirDopdsAct'],
@@ -189,6 +191,7 @@ class FormSectionState extends State<FormSection> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
+                      suffixIcon: const Icon(Icons.calendar_today),
                     ),
                     controller: TextEditingController(
                       text: widget.formData['ppirDoptpAct'],
@@ -217,6 +220,12 @@ class FormSectionState extends State<FormSection> {
                 maxLines: 5,
                 onChanged: (value) {
                   widget.formData['ppirRemarks'] = value;
+                },
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'This field is required';
+                  }
+                  return null;
                 },
               ),
             ],
