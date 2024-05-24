@@ -1,9 +1,11 @@
 import 'dart:typed_data';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+
 import '../tasks/_control_task.dart';
 
 class TapToSignature extends StatefulWidget {
@@ -14,16 +16,19 @@ class TapToSignature extends StatefulWidget {
   final bool isError;
   final bool isEmpty;
   final Future<String> Function(Uint8List) onSaveSignature;
+  final String signatureType; // 'ppirSigInsured' or 'ppirSigIuia'
 
-  const TapToSignature(
-      {super.key,
-      required this.task,
-      required this.controller,
-      required this.height,
-      this.backgroundColor = Colors.grey,
-      required this.isError,
-      required this.isEmpty,
-      required this.onSaveSignature});
+  const TapToSignature({
+    super.key,
+    required this.task,
+    required this.controller,
+    required this.height,
+    this.backgroundColor = Colors.grey,
+    required this.isError,
+    required this.isEmpty,
+    required this.onSaveSignature,
+    required this.signatureType,
+  });
 
   @override
   TapToSignatureState createState() => TapToSignatureState();
@@ -31,13 +36,34 @@ class TapToSignature extends StatefulWidget {
 
 class TapToSignatureState extends State<TapToSignature> {
   bool _isConfirmed = false;
-  final _formData = <String, dynamic>{};
   String? _downloadUrl;
+  final ValueNotifier<bool> _isSignatureEmpty = ValueNotifier<bool>(true);
 
   @override
   void initState() {
     super.initState();
     _loadSignature();
+    widget.controller.addListener(_onSignatureChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_onSignatureChanged);
+    super.dispose();
+  }
+
+  void _onSignatureChanged() {
+    _isSignatureEmpty.value = widget.controller.isEmpty;
+  }
+
+  Future<void> _loadSignature() async {
+    final signatures = await _fetchSignatures();
+    if (mounted) {
+      setState(() {
+        _downloadUrl = signatures[widget.signatureType];
+        _isConfirmed = _downloadUrl != null;
+      });
+    }
   }
 
   Future<Map<String, String>> _fetchSignatures() async {
@@ -49,23 +75,15 @@ class TapToSignatureState extends State<TapToSignature> {
     Map<String, String> signatures = {};
 
     for (Reference fileRef in result.items) {
+      final downloadUrl = await fileRef.getDownloadURL();
       if (fileRef.name.contains('ppirSigInsured')) {
-        signatures['ppirSigInsured'] = await fileRef.getDownloadURL();
-      }
-      if (fileRef.name.contains('ppirSigIuia')) {
-        signatures['ppirSigIuia'] = await fileRef.getDownloadURL();
+        signatures['ppirSigInsured'] = downloadUrl;
+      } else if (fileRef.name.contains('ppirSigIuia')) {
+        signatures['ppirSigIuia'] = downloadUrl;
       }
     }
 
     return signatures;
-  }
-
-  Future<void> _loadSignature() async {
-    final signatures = await _fetchSignatures();
-    setState(() {
-      _downloadUrl = signatures['ppirSigInsured'] ?? signatures['ppirSigIuia'];
-      _isConfirmed = _downloadUrl != null;
-    });
   }
 
   Future<void> _saveSignature(
@@ -74,18 +92,19 @@ class TapToSignatureState extends State<TapToSignature> {
     if (signatureBytes != null) {
       final downloadUrl = await widget.onSaveSignature(signatureBytes);
 
-      setState(() {
-        _isConfirmed = true;
-        _downloadUrl = downloadUrl;
-      });
-
-      if (downloadUrl.contains('ppirSigInsured')) {
-        _formData['ppirSigInsured'] = downloadUrl;
-      } else if (downloadUrl.contains('ppirSigIuia')) {
-        _formData['ppirSigIuia'] = downloadUrl;
+      if (mounted) {
+        setState(() {
+          _isConfirmed = true;
+          _downloadUrl = downloadUrl;
+        });
       }
 
-      await widget.task.updatePpirFormData(_formData, {'status': 'Ongoing'});
+      await widget.task.updatePpirFormData(
+        {
+          widget.signatureType: downloadUrl,
+        },
+        {'status': 'Ongoing'},
+      );
     }
 
     controller.dismiss(); // Close the modal
@@ -94,17 +113,13 @@ class TapToSignatureState extends State<TapToSignature> {
   void _clearSignature() {
     setState(() {
       widget.controller.clear();
-      _isConfirmed = false;
-      _downloadUrl = null;
     });
+    _isSignatureEmpty.value = true;
   }
 
   void _changeSignature(BuildContext context, FlashController controller) {
-    setState(() {
-      _downloadUrl = null;
-    });
-
     context.showModalFlash(
+      barrierDismissible: false,
       builder: (context, controller) {
         return Center(
           child: FadeTransition(
@@ -141,14 +156,19 @@ class TapToSignatureState extends State<TapToSignature> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         ElevatedButton(
-                          onPressed: () {
-                            _clearSignature();
-                          },
+                          onPressed: _clearSignature,
                           child: const Text('Clear Signature'),
                         ),
-                        ElevatedButton(
-                          onPressed: () => _saveSignature(context, controller),
-                          child: const Text('Save'),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: _isSignatureEmpty,
+                          builder: (context, isSignatureEmpty, child) {
+                            return ElevatedButton(
+                              onPressed: isSignatureEmpty
+                                  ? null
+                                  : () => _saveSignature(context, controller),
+                              child: const Text('Save'),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -226,15 +246,21 @@ class TapToSignatureState extends State<TapToSignature> {
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
                                       ElevatedButton(
-                                        onPressed: () {
-                                          _clearSignature();
-                                        },
+                                        onPressed: _clearSignature,
                                         child: const Text('Clear Signature'),
                                       ),
-                                      ElevatedButton(
-                                        onPressed: () =>
-                                            _saveSignature(context, controller),
-                                        child: const Text('Save'),
+                                      ValueListenableBuilder<bool>(
+                                        valueListenable: _isSignatureEmpty,
+                                        builder:
+                                            (context, isSignatureEmpty, child) {
+                                          return ElevatedButton(
+                                            onPressed: isSignatureEmpty
+                                                ? null
+                                                : () => _saveSignature(
+                                                    context, controller),
+                                            child: const Text('Save'),
+                                          );
+                                        },
                                       ),
                                     ],
                                   ),

@@ -87,10 +87,10 @@ class _FilterButtonState extends State<FilterButton> {
                             _setFilter('Ongoing');
                           },
                           style: TextButton.styleFrom(
-                            backgroundColor: const Color(0xFFD9F7FA),
+                            backgroundColor: const Color(0xFF87CEFA),
                             shape: RoundedRectangleBorder(
                               side: const BorderSide(
-                                color: Colors.black38,
+                                color: Colors.black,
                                 width: 0.5,
                                 style: BorderStyle.solid,
                               ),
@@ -100,7 +100,7 @@ class _FilterButtonState extends State<FilterButton> {
                           child: Text(
                             'Ongoing',
                             style: TextStyle(
-                              color: Colors.black,
+                              color: Colors.white,
                               fontSize: t?.overline,
                               fontWeight: FontWeight.w500,
                             ),
@@ -112,10 +112,10 @@ class _FilterButtonState extends State<FilterButton> {
                             _setFilter('For Dispatch');
                           },
                           style: TextButton.styleFrom(
-                            backgroundColor: const Color(0xFFD9F7FA),
+                            backgroundColor: const Color(0xFFFF4500),
                             shape: RoundedRectangleBorder(
                               side: const BorderSide(
-                                color: Colors.black38,
+                                color: Colors.black,
                                 width: 0.5,
                                 style: BorderStyle.solid,
                               ),
@@ -125,7 +125,7 @@ class _FilterButtonState extends State<FilterButton> {
                           child: Text(
                             'For Dispatch',
                             style: TextStyle(
-                              color: Colors.black,
+                              color: Colors.white,
                               fontSize: t?.overline,
                               fontWeight: FontWeight.w500,
                             ),
@@ -137,10 +137,10 @@ class _FilterButtonState extends State<FilterButton> {
                             _setFilter('Completed');
                           },
                           style: TextButton.styleFrom(
-                            backgroundColor: const Color(0xFFD9F7FA),
+                            backgroundColor: const Color(0xFF006400),
                             shape: RoundedRectangleBorder(
                               side: const BorderSide(
-                                color: Colors.black38,
+                                color: Colors.black,
                                 width: 0.5,
                                 style: BorderStyle.solid,
                               ),
@@ -150,7 +150,7 @@ class _FilterButtonState extends State<FilterButton> {
                           child: Text(
                             'Completed',
                             style: TextStyle(
-                              color: Colors.black,
+                              color: Colors.white,
                               fontSize: t?.overline,
                               fontWeight: FontWeight.w500,
                             ),
@@ -174,7 +174,7 @@ class _FilterButtonState extends State<FilterButton> {
                             backgroundColor: const Color(0xFFD9F7FA),
                             shape: RoundedRectangleBorder(
                               side: const BorderSide(
-                                color: Colors.black38,
+                                color: Colors.black,
                                 width: 0.5,
                                 style: BorderStyle.solid,
                               ),
@@ -199,7 +199,7 @@ class _FilterButtonState extends State<FilterButton> {
                             backgroundColor: const Color(0xFFD9F7FA),
                             shape: RoundedRectangleBorder(
                               side: const BorderSide(
-                                color: Colors.black38,
+                                color: Colors.black,
                                 width: 0.5,
                                 style: BorderStyle.solid,
                               ),
