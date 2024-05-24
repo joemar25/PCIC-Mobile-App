@@ -116,6 +116,7 @@ class SignatureSectionState extends State<SignatureSection> {
                 return await _saveSignatureToFirebase(
                     signatureBytes, 'ppirSigInsured');
               },
+              signatureType: 'ppirSigInsured',
             ),
           ),
         ),
@@ -156,6 +157,7 @@ class SignatureSectionState extends State<SignatureSection> {
                 return await _saveSignatureToFirebase(
                     signatureBytes, 'ppirSigIuia');
               },
+              signatureType: 'ppirSigIuia',
             ),
           ),
         ),
@@ -178,12 +180,12 @@ class SignatureSectionState extends State<SignatureSection> {
     );
   }
 
-  void _clearSignatures() {
-    setState(() {
-      _confirmedBySignatureController.clear();
-      _preparedBySignatureController.clear();
-    });
-  }
+  // void _clearSignatures() {
+  //   setState(() {
+  //     _confirmedBySignatureController.clear();
+  //     _preparedBySignatureController.clear();
+  //   });
+  // }
 
   Future<Map<String, dynamic>> getSignatureData() async {
     Map<String, dynamic> signatureData = {};
