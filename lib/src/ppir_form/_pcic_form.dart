@@ -314,6 +314,37 @@ class PPIRFormPageState extends State<PPIRFormPage> {
     );
   }
 
+  Future<bool> _onWillPop() async {
+    if (!isSaving) {
+      bool? shouldLeave = await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Unsaved Changes'),
+          content: const Text(
+              'You have unsaved changes. If you go back, your data will not be saved.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true); // Close dialog and pop screen
+              },
+              child: const Text('Leave', style: TextStyle(color: Colors.red)),
+            ),
+            TextButton(
+              onPressed: () {
+                _saveForm();
+                Navigator.pop(
+                    context, false); // Close dialog and stay on screen
+              },
+              child: const Text('Save', style: TextStyle(color: Colors.blue)),
+            ),
+          ],
+        ),
+      );
+      return shouldLeave ?? false;
+    }
+    return true;
+  }
+
   void _navigateToGeotagPage(BuildContext context) {
     Navigator.push(
       context,
@@ -395,143 +426,148 @@ class PPIRFormPageState extends State<PPIRFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        if (isLoading)
-          const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          )
-        else
-          Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              title: const Text('PCIC Form'),
-              centerTitle: true,
-            ),
-            body: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  form_field.FormField(
-                    labelText: 'Last Coordinates',
-                    initialValue: _formData['trackLastcoord'] ?? '',
-                    enabled: false,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _areaPlantedController,
-                    decoration: const InputDecoration(
-                      labelText: 'Date and Time',
-                      border: OutlineInputBorder(),
-                    ),
-                    enabled: false,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _areaInHectaresController,
-                    decoration: const InputDecoration(
-                      labelText: 'Total Area (Hectares)',
-                      border: OutlineInputBorder(),
-                    ),
-                    enabled: false,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _totalDistanceController,
-                    decoration: const InputDecoration(
-                      labelText: 'Total Distance',
-                      border: OutlineInputBorder(),
-                    ),
-                    enabled: false,
-                  ),
-                  const SizedBox(height: 24),
-                  FormSection(
-                    key: _formSectionKey,
-                    formData: _formData,
-                    uniqueSeedsItems: uniqueSeedsItems,
-                    seedTitleToIdMap: seedTitleToIdMap,
-                  ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    'Signatures',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  SignatureSection(
-                    key: _signatureSectionKey,
-                    task: widget.task,
-                  ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    'Map Geotag',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  if (gpxFile != null)
-                    GPXFileButtons(
-                      openGpxFile: () {
-                        _openGpxFile(gpxFile!);
-                      },
-                    )
-                  else
-                    Column(
-                      children: [
-                        const Text(
-                          'Geotag failed: Initial and end points did not match to close the land for calculation.',
-                          style: TextStyle(color: Colors.red),
+    // ignore: deprecated_member_use
+    return WillPopScope(
+        onWillPop: _onWillPop,
+        child: Stack(
+          children: [
+            if (isLoading)
+              const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              )
+            else
+              Scaffold(
+                appBar: AppBar(
+                  automaticallyImplyLeading: false,
+                  title: const Text('PCIC Form'),
+                  centerTitle: true,
+                ),
+                body: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      form_field.FormField(
+                        labelText: 'Last Coordinates',
+                        initialValue: _formData['trackLastcoord'] ?? '',
+                        enabled: false,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _areaPlantedController,
+                        decoration: const InputDecoration(
+                          labelText: 'Date and Time',
+                          border: OutlineInputBorder(),
                         ),
-                        ElevatedButton(
-                          onPressed: () => _navigateToGeotagPage(context),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                          ),
-                          child: const Text('Repeat Geotag'),
+                        enabled: false,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _areaInHectaresController,
+                        decoration: const InputDecoration(
+                          labelText: 'Total Area (Hectares)',
+                          border: OutlineInputBorder(),
                         ),
-                      ],
-                    ),
-                ],
+                        enabled: false,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _totalDistanceController,
+                        decoration: const InputDecoration(
+                          labelText: 'Total Distance',
+                          border: OutlineInputBorder(),
+                        ),
+                        enabled: false,
+                      ),
+                      const SizedBox(height: 24),
+                      FormSection(
+                        key: _formSectionKey,
+                        formData: _formData,
+                        uniqueSeedsItems: uniqueSeedsItems,
+                        seedTitleToIdMap: seedTitleToIdMap,
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Signatures',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      SignatureSection(
+                        key: _signatureSectionKey,
+                        task: widget.task,
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Map Geotag',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 16),
+                      if (gpxFile != null)
+                        GPXFileButtons(
+                          openGpxFile: () {
+                            _openGpxFile(gpxFile!);
+                          },
+                        )
+                      else
+                        Column(
+                          children: [
+                            const Text(
+                              'Geotag failed: Initial and end points did not match to close the land for calculation.',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => _navigateToGeotagPage(context),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text('Repeat Geotag'),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+                bottomNavigationBar: BottomAppBar(
+                  elevation: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _cancelForm,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('Cancel'),
+                      ),
+                      ElevatedButton(
+                        onPressed: _saveForm,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('Save'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => _submitForm(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('Submit'),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            bottomNavigationBar: BottomAppBar(
-              elevation: 0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: _cancelForm,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: const Text('Cancel'),
-                  ),
-                  ElevatedButton(
-                    onPressed: _saveForm,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: const Text('Save'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => _submitForm(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: const Text('Submit'),
-                  ),
-                ],
+            if (isSaving)
+              Container(
+                color: Colors.black54,
+                child: const Center(child: CircularProgressIndicator()),
               ),
-            ),
-          ),
-        if (isSaving)
-          Container(
-            color: Colors.black54,
-            child: const Center(child: CircularProgressIndicator()),
-          ),
-      ],
-    );
+          ],
+        ));
   }
 }
