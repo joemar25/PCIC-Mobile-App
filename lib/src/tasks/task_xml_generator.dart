@@ -1113,7 +1113,7 @@ Future<String> generateTaskXmlContent(
 
     builder.element('CreatedBy', nest: 'System');
     builder.element('DateCreated', nest: '2024-04-08T02:31:03.8278713Z');
-    builder.element('', nest: 'false');
+    builder.element('DispatchAcknowledged', nest: 'false');
     builder.element('DueDate', nest: () {
       builder.attribute('xsi:nil', 'true');
     });
