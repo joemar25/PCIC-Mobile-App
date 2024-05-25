@@ -5,13 +5,14 @@ class FormSection extends StatefulWidget {
   final Map<String, dynamic> formData;
   final List<DropdownMenuItem<int>> uniqueSeedsItems;
   final Map<String, int> seedTitleToIdMap;
+  final bool isSubmitting;
 
-  const FormSection({
-    super.key,
-    required this.formData,
-    required this.uniqueSeedsItems,
-    required this.seedTitleToIdMap,
-  });
+  const FormSection(
+      {super.key,
+      required this.formData,
+      required this.uniqueSeedsItems,
+      required this.seedTitleToIdMap,
+      required this.isSubmitting});
 
   @override
   FormSectionState createState() => FormSectionState();
@@ -24,9 +25,9 @@ class FormSectionState extends State<FormSection> {
   final TextEditingController _ppirNameIuiaController = TextEditingController();
   final TextEditingController _ppirAreaController = TextEditingController();
   final TextEditingController _remarksController = TextEditingController();
+  final TextEditingController _ppirDopdsActController = TextEditingController();
+  final TextEditingController _ppirDoptpActController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-
-  bool _autoValidate = false;
 
   @override
   void initState() {
@@ -54,6 +55,8 @@ class FormSectionState extends State<FormSection> {
     _ppirNameIuiaController.text = widget.formData['ppirNameIuia'] ?? '';
     _ppirAreaController.text = widget.formData['ppirAreaAct'] ?? '';
     _remarksController.text = widget.formData['ppirRemarks'] ?? '';
+    _ppirDopdsActController.text = widget.formData['ppirDopdsAct'] ?? '';
+    _ppirDoptpActController.text = widget.formData['ppirDoptpAct'] ?? '';
   }
 
   void _setupListeners() {
@@ -64,6 +67,15 @@ class FormSectionState extends State<FormSection> {
       setState(() {}); // Update the UI to remove the error message
     });
     _ppirAreaController.addListener(() {
+      setState(() {}); // Update the UI to remove the error message
+    });
+    _remarksController.addListener(() {
+      setState(() {}); // Update the UI to remove the error message
+    });
+    _ppirDopdsActController.addListener(() {
+      setState(() {}); // Update the UI to remove the error message
+    });
+    _ppirDoptpActController.addListener(() {
       setState(() {}); // Update the UI to remove the error message
     });
   }
@@ -84,6 +96,14 @@ class FormSectionState extends State<FormSection> {
     if (picked != null && picked != initialDate) {
       setState(() {
         widget.formData[key] = DateFormat('yyyy-MM-dd').format(picked);
+        if (key == 'ppirDopdsAct') {
+          _ppirDopdsActController.text =
+              DateFormat('yyyy-MM-dd').format(picked);
+        }
+        if (key == 'ppirDoptpAct') {
+          _ppirDoptpActController.text =
+              DateFormat('yyyy-MM-dd').format(picked);
+        }
       });
     }
   }
@@ -95,7 +115,6 @@ class FormSectionState extends State<FormSection> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          autovalidateMode: _autoValidate ? AutovalidateMode.always : AutovalidateMode.disabled,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -125,6 +144,7 @@ class FormSectionState extends State<FormSection> {
                           .key;
                     });
                   },
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) {
                     if (value == null) {
                       return 'Please select a seed variety';
@@ -144,14 +164,14 @@ class FormSectionState extends State<FormSection> {
                 ),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
-                  widget.formData['ppirAreaAct'] = value;
+                  setState(() {
+                    widget.formData['ppirAreaAct'] = value;
+                  });
                 },
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'This field is required';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Please enter a valid number';
                   }
                   return null;
                 },
@@ -168,12 +188,9 @@ class FormSectionState extends State<FormSection> {
                       ),
                       suffixIcon: const Icon(Icons.calendar_today),
                     ),
-                    controller: TextEditingController(
-                      text: widget.formData['ppirDopdsAct'],
-                    ),
-                    onChanged: (value) {
-                      widget.formData['ppirDopdsAct'] = value;
-                    },
+                    controller: _ppirDopdsActController,
+                    readOnly: true,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'This field is required';
@@ -189,18 +206,15 @@ class FormSectionState extends State<FormSection> {
                 child: AbsorbPointer(
                   child: TextFormField(
                     decoration: InputDecoration(
-                      labelText: 'Actual Date of Planting (TP)',
+                      labelText: 'Actual Date of Planting (TS)',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                       suffixIcon: const Icon(Icons.calendar_today),
                     ),
-                    controller: TextEditingController(
-                      text: widget.formData['ppirDoptpAct'],
-                    ),
-                    onChanged: (value) {
-                      widget.formData['ppirDoptpAct'] = value;
-                    },
+                    controller: _ppirDoptpActController,
+                    readOnly: true,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'This field is required';
@@ -210,6 +224,39 @@ class FormSectionState extends State<FormSection> {
                   ),
                 ),
               ),
+              // GestureDetector(
+              //   onTap: () => _pickDate(context, 'ppirDoptpAct'),
+              //   child: AbsorbPointer(
+              //     child: TextFormField(
+              //       decoration: InputDecoration(
+              //         errorText: widget.isSubmitting &&
+              //                 widget.formData['ppirDoptpAct'].isEmpty
+              //             ? 'This field is required'
+              //             : null,
+              //         labelText: 'Actual Date of Planting (TP)',
+              //         border: OutlineInputBorder(
+              //           borderRadius: BorderRadius.circular(8),
+              //         ),
+              //         suffixIcon: const Icon(Icons.calendar_today),
+              //       ),
+              //       controller: TextEditingController(
+              //         text: widget.formData['ppirDoptpAct'],
+              //       ),
+              //       onChanged: (value) {
+              //         widget.formData['ppirDoptpAct'] = value;
+              //       },
+              //       autovalidateMode: AutovalidateMode.onUserInteraction,
+              //       validator: (value) {
+              //         if (value == null ||
+              //             widget.formData['ppirDoptpAct'].isEmpty) {
+              //           return 'This field is required';
+              //         }
+              //         return null;
+              //       },
+              //     ),
+              //   ),
+              // ),
+
               const SizedBox(height: 16),
               TextFormField(
                 controller: _remarksController,
@@ -223,28 +270,15 @@ class FormSectionState extends State<FormSection> {
                 onChanged: (value) {
                   widget.formData['ppirRemarks'] = value;
                 },
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
+                  if (value == null || _remarksController.text.trim().isEmpty) {
                     return 'This field is required';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _autoValidate = true; // Enable auto-validation
-                  });
-                  if (validate()) {
-                    // Form is valid, proceed with saving the data
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Processing Data')),
-                    );
-                  }
-                },
-                child: Text('Save'),
-              ),
             ],
           ),
         ),

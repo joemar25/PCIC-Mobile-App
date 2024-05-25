@@ -47,6 +47,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   bool isLoading = true;
   bool openOnline = true;
   bool geotagSuccess = true;
+  bool isSubmitting = false;
   String? gpxFile;
   List<LatLng>? routePoints;
   LatLng? lastCoordinates;
@@ -157,6 +158,10 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   }
 
   Future<void> _submitForm(BuildContext context) async {
+    setState(() {
+      isSubmitting = true;
+    });
+
     if (!_formSectionKey.currentState!.validate() ||
         !_signatureSectionKey.currentState!.validate()) {
       showFlashMessage(context, 'Info', 'Validation Failed',
@@ -483,6 +488,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                         formData: _formData,
                         uniqueSeedsItems: uniqueSeedsItems,
                         seedTitleToIdMap: seedTitleToIdMap,
+                        isSubmitting: isSubmitting,
                       ),
                       const SizedBox(height: 24),
                       const Text(
@@ -491,9 +497,9 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       SignatureSection(
-                        key: _signatureSectionKey,
-                        task: widget.task,
-                      ),
+                          key: _signatureSectionKey,
+                          task: widget.task,
+                          isSubmitting: isSubmitting),
                       const SizedBox(height: 24),
                       const Text(
                         'Map Geotag',
