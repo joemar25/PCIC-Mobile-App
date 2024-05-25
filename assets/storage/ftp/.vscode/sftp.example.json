@@ -1,10 +1,10 @@
 {
-  "name": "PCIC Server",
+  "name": "Mar Server",
   "host": "",
   "protocol": "ftp",
   "port": 21,
-  "username": "k2c_User1",
-  "password": "",
+  "username": "usermo",
+  "password": "passwordko",
   "remotePath": "/",
   "uploadOnSave": false,
   "useTempFile": false,
