@@ -1,14 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:archive/archive_io.dart';
+import 'package:archive/archive.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:xml/xml.dart';
+// import 'package:flutter/foundation.dart';
+// import 'package:path/path.dart' as path;
 
 class TaskManager {
   final String taskId;
@@ -34,7 +35,7 @@ class TaskManager {
       final formData = await getFormData(type);
       return formData['ppirNameInsured'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving Task Number: $error');
+      // debugPrint('Error retrieving Task Number: $error');
       return null;
     }
   }
@@ -44,7 +45,7 @@ class TaskManager {
       final formData = await getFormData(type);
       return formData['ppirNameIuia'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving Task Number: $error');
+      // debugPrint('Error retrieving Task Number: $error');
       return null;
     }
   }
@@ -54,7 +55,7 @@ class TaskManager {
 
     try {
       final querySnapshot = await query.get();
-      debugPrint('Tasks fetched: ${querySnapshot.docs.length}');
+      // debugPrint('Tasks fetched: ${querySnapshot.docs.length}');
 
       for (final documentSnapshot in querySnapshot.docs) {
         final taskId = documentSnapshot.id;
@@ -90,7 +91,7 @@ class TaskManager {
         }
       }
     } catch (error) {
-      debugPrint('Error retrieving tasks: $error');
+      // debugPrint('Error retrieving tasks: $error');
     }
 
     return tasks;
@@ -118,36 +119,34 @@ class TaskManager {
     batch.update(formRef, formData);
     batch.update(taskRef, taskData);
 
-    debugPrint("formData = $formData");
-    debugPrint("taskData = $taskData");
+    // debugPrint("formData = $formData");
+    // debugPrint("taskData = $taskData");
 
     await batch.commit();
   }
 
   Future<void> updateLastCoordinates(LatLng coordinates) async {
     try {
-      debugPrint('Updating last coordinates and dateAccess...');
+      // debugPrint('Updating last coordinates and dateAccess...');
 
       final ppirFormRef =
           FirebaseFirestore.instance.collection('ppirForms').doc(formId);
       final taskRef =
           FirebaseFirestore.instance.collection('tasks').doc(taskId);
 
-      debugPrint(
-          "ppirFormRef = ${coordinates.latitude},${coordinates.longitude}");
+      // debugPrint("ppirFormRef = ${coordinates.latitude},${coordinates.longitude}")
       await ppirFormRef.update({
         'trackLastcoord': '${coordinates.latitude},${coordinates.longitude}',
       });
-      debugPrint(
-          'Last coordinates updated to (${coordinates.latitude}, ${coordinates.longitude})');
+      // debugPrint('Last coordinates updated to (${coordinates.latitude}, ${coordinates.longitude})')
 
-      debugPrint("Updating dateAccess for taskRef = $taskId");
+      // debugPrint("Updating dateAccess for taskRef = $taskId");
       await taskRef.update({
         'dateAccess': FieldValue.serverTimestamp(),
       });
-      debugPrint('dateAccess updated for task $taskId');
+      // debugPrint('dateAccess updated for task $taskId');
     } catch (e) {
-      debugPrint('Error updating last coordinates or dateAccess: $e');
+      // debugPrint('Error updating last coordinates or dateAccess: $e');
       throw Exception('Error updating last coordinates or dateAccess');
     }
   }
@@ -217,8 +216,7 @@ class TaskManager {
             if (ppirFormQuerySnapshot.docs.isEmpty) {
               await _createNewTaskAndRelatedDocuments(row);
             } else {
-              debugPrint(
-                  'Duplicate PPIR form detected with ppirInsuranceId: $ppirInsuranceId');
+              // debugPrint('Duplicate PPIR form detected with ppirInsuranceId: $ppirInsuranceId')
             }
           }
         }
@@ -226,7 +224,7 @@ class TaskManager {
 
       await _deleteDuplicateForms();
     } catch (error) {
-      debugPrint('Error syncing data from CSV: $error');
+      // debugPrint('Error syncing data from CSV: $error');
     }
   }
 
@@ -260,12 +258,12 @@ class TaskManager {
           final taskRef = data?['taskId'] as DocumentReference?;
 
           // Delete the ppirForm
-          debugPrint('Deleting ppirForm: ${duplicateForm.id}');
+          // debugPrint('Deleting ppirForm: ${duplicateForm.id}');
           deletionFutures.add(duplicateForm.reference.delete());
 
           // Delete the formDetails
           if (formDetailsRef != null) {
-            debugPrint('Deleting formDetailsRef: ${formDetailsRef.id}');
+            // debugPrint('Deleting formDetailsRef: ${formDetailsRef.id}');
             try {
               final formDetailsSnapshot = await formDetailsRef.get();
               if (formDetailsSnapshot.exists) {
@@ -276,8 +274,7 @@ class TaskManager {
 
                 // Delete the related task
                 if (relatedTaskRef != null) {
-                  debugPrint(
-                      'Deleting related taskRef from formDetails: ${relatedTaskRef.id}');
+                  // debugPrint('Deleting related taskRef from formDetails: ${relatedTaskRef.id}')
                   deletionFutures.add(relatedTaskRef.delete());
                 }
 
@@ -285,14 +282,13 @@ class TaskManager {
                 deletionFutures.add(formDetailsRef.delete());
               }
             } catch (e) {
-              debugPrint(
-                  'Error deleting formDetailsRef: ${formDetailsRef.id}, error: $e');
+              // debugPrint('Error deleting formDetailsRef: ${formDetailsRef.id}, error: $e')
             }
           }
 
           // Delete the task
           if (taskRef != null) {
-            debugPrint('Deleting taskRef: ${taskRef.id}');
+            // debugPrint('Deleting taskRef: ${taskRef.id}');
             try {
               final taskSnapshot = await taskRef.get();
               if (taskSnapshot.exists) {
@@ -302,8 +298,7 @@ class TaskManager {
 
                 // Delete the related formDetails
                 if (relatedFormDetailsRef != null) {
-                  debugPrint(
-                      'Deleting related formDetailsRef from task: ${relatedFormDetailsRef.id}');
+                  // debugPrint('Deleting related formDetailsRef from task: ${relatedFormDetailsRef.id}')
                   deletionFutures.add(relatedFormDetailsRef.delete());
                 }
 
@@ -311,7 +306,7 @@ class TaskManager {
                 deletionFutures.add(taskRef.delete());
               }
             } catch (e) {
-              debugPrint('Error deleting taskRef: ${taskRef.id}, error: $e');
+              // debugPrint('Error deleting taskRef: ${taskRef.id}, error: $e');
             }
           }
         }
@@ -319,7 +314,7 @@ class TaskManager {
     }
 
     await Future.wait(deletionFutures);
-    debugPrint('Deletion of duplicate forms completed.');
+    // debugPrint('Deletion of duplicate forms completed.');
   }
 
   static Map<String, dynamic> _createTaskData(
@@ -350,6 +345,7 @@ class TaskManager {
       List<dynamic> row, String ppirFormId, DocumentReference taskRef) {
     return {
       'taskId': taskRef,
+      'generatedFilename': '',
       'taskManagerNumber': row[7]?.toString().trim() ?? '',
       'serviceGroup': row[1]?.toString().trim() ?? '',
       'serviceType': row[2]?.toString().trim() ?? '',
@@ -430,8 +426,7 @@ class TaskManager {
         batch.set(ppirFormRef, ppirFormData);
         await batch.commit();
       } else {
-        debugPrint(
-            'Duplicate PPIR form detected with ppirInsuranceId: $ppirInsuranceId');
+        // debugPrint('Duplicate PPIR form detected with ppirInsuranceId: $ppirInsuranceId')
       }
     }
   }
@@ -441,7 +436,7 @@ class TaskManager {
       final formData = await getFormData(type);
       return formData['ppirInsuranceId'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving Task Number: $error');
+      // debugPrint('Error retrieving Task Number: $error');
       return null;
     }
   }
@@ -470,32 +465,69 @@ class TaskManager {
       String taskId, Map<String, dynamic> formData) async {
     final builder = XmlBuilder();
     builder.processing('xml', 'version="1.0" encoding="UTF-8"');
-    builder.element('Task', nest: () {
-      builder.element('TaskId', nest: taskId);
-      builder.element('TaskNumber', nest: formData['taskManagerNumber'] ?? '');
-      builder.element('FormType', nest: formData['serviceType'] ?? '');
-      builder.element('Audit', nest: () {
+    builder.element('TaskArchiveZipModel', nest: () {
+      builder.attribute(
+          'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+      builder.attribute('xmlns:xsd', 'http://www.w3.org/2001/XMLSchema');
+      builder.element('AgentId', nest: () {
+        builder.attribute('xsi:nil', 'true');
+      });
+      builder.element('AssignedDate',
+          nest: formData['trackDatetime']?.toString() ?? '');
+      builder.element('Attachments', nest: '');
+      builder.element('AuditLogs', nest: () {
+        // Task Status Audit Log
         builder.element('TaskAuditLogZipModel', nest: () {
           builder.element('AuditLevel', nest: 'Task');
-          builder.element('Label', nest: 'Task Owner');
-          builder.element('Message', nest: formData['assigneeId'] ?? '');
-          builder.element('SnapshotValue', nest: 'Office Clerk');
+          builder.element('Label', nest: 'Task Status');
+          builder.element('Message', nest: formData['status'] ?? '');
+          builder.element('SnapshotValue', nest: formData['status'] ?? '');
+          builder.element('Source', nest: formData['assigneeId'] ?? '');
+          builder.element('TaskId', nest: taskId);
+          builder.element('Timestamp',
+              nest: formData['trackDatetime']?.toString() ?? '');
+          builder.element('UpdatedValue', nest: formData['status'] ?? '');
+          builder.element('FieldLabel', nest: 'Task Status');
+          builder.element('IPAddress', nest: '');
+        });
+
+        // Captured Mobile Location Audit Logs
+        builder.element('TaskAuditLogZipModel', nest: () {
+          builder.element('AuditLevel', nest: 'Field');
+          builder.element('Label', nest: 'Captured Mobile Location');
           builder.element('Source', nest: formData['assigneeId'] ?? '');
           builder.element('TaskId', nest: taskId);
           builder.element('Timestamp',
               nest: formData['trackDatetime']?.toString() ?? '');
           builder.element('UpdatedValue',
-              nest: formData['assigneeEmail'] ?? '');
-          builder.element('FieldLabel', nest: 'Task Owner');
+              nest: formData['trackLastcoord'] ?? '');
+          builder.element('FieldLabel', nest: 'Captured Mobile Location');
           builder.element('IPAddress', nest: '');
         });
-      });
 
-      builder.element('Details', nest: () {
-        builder.element('TaskDetailZipModel', nest: () {
-          builder.element('ServiceType', nest: formData['serviceType'] ?? '');
-          builder.element('TaskStatus', nest: formData['status'] ?? '');
-          builder.element('TaskOwner', nest: formData['assigneeEmail'] ?? '');
+        builder.element('TaskAuditLogZipModel', nest: () {
+          builder.element('AuditLevel', nest: 'Field');
+          builder.element('Label', nest: 'Captured Mobile Location');
+          builder.element('SnapshotValue',
+              nest: formData['trackLastcoord'] ?? '');
+          builder.element('Source', nest: 'System');
+          builder.element('TaskId', nest: taskId);
+          builder.element('Timestamp',
+              nest: formData['trackDatetime']?.toString() ?? '');
+          builder.element('UpdatedValue', nest: formData['ppirFarmLoc'] ?? '');
+          builder.element('FieldLabel', nest: 'Captured Mobile Location');
+          builder.element('IPAddress', nest: '');
+        });
+
+        // UpdatePostPlanting script Audit Log
+        builder.element('TaskAuditLogZipModel', nest: () {
+          builder.element('AuditLevel', nest: 'Task');
+          builder.element('Message',
+              nest: 'Executed P99 - UpdatePostPlanting script.');
+          builder.element('Source', nest: 'System');
+          builder.element('TaskId', nest: taskId);
+          builder.element('Timestamp',
+              nest: formData['trackDatetime']?.toString() ?? '');
         });
       });
     });
@@ -504,24 +536,12 @@ class TaskManager {
     return xmlDocument.toXmlString(pretty: true, indent: '\t');
   }
 
-  Future<void> updateTaskStatus(String status) async {
-    try {
-      final taskRef =
-          FirebaseFirestore.instance.collection('tasks').doc(taskId);
-      await taskRef.update({'status': status});
-      debugPrint('Task status updated to $status');
-    } catch (e) {
-      debugPrint('Error updating task status: $e');
-      throw Exception('Error updating task status');
-    }
-  }
-
   Future<String?> get farmerName async {
     try {
       final formData = await getFormData(type);
       return formData['ppirFarmerName'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving farmer name: $error');
+      // debugPrint('Error retrieving farmer name: $error');
       return null;
     }
   }
@@ -538,9 +558,85 @@ class TaskManager {
         return taskData?['status'] as String?;
       }
     } catch (error) {
-      debugPrint('Error retrieving task status: $error');
+      // debugPrint('Error retrieving task status: $error');
     }
     return null;
+  }
+
+  static Future<void> saveTaskFileToFirebaseStorage(
+      String formId, String xmlContent) async {
+    try {
+      final storageRef =
+          FirebaseStorage.instance.ref().child('PPIR_SAVES/$formId/Task.xml');
+      await storageRef.putString(xmlContent);
+      // debugPrint('Task file saved to Firebase Storage successfully.');
+    } catch (e) {
+      // debugPrint('Error saving task file to Firebase Storage: $e');
+      throw Exception('Error saving task file to Firebase Storage');
+    }
+  }
+
+  static Future<void> compressAndUploadTaskFiles(
+      String formId, String taskId) async {
+    try {
+      final storageRef =
+          FirebaseStorage.instance.ref().child('PPIR_SAVES/$formId');
+      final List<Reference> allFiles = await _getAllFiles(storageRef);
+
+      // Directory to store downloaded files temporarily
+      final tempDir = await getTemporaryDirectory();
+      final tempDirPath = tempDir.path;
+
+      // Archive creation
+      final archive = Archive();
+
+      // Download each file and add it to the archive
+      for (final fileRef in allFiles) {
+        final String fileName =
+            fileRef.fullPath.replaceFirst('PPIR_SAVES/$formId/', '');
+        final File tempFile = File('$tempDirPath/$fileName');
+        await tempFile.parent.create(recursive: true);
+        final DownloadTask downloadTask = fileRef.writeToFile(tempFile);
+        await downloadTask.whenComplete(() async {
+          final List<int> fileBytes = await tempFile.readAsBytes();
+          archive.addFile(ArchiveFile(fileName, fileBytes.length, fileBytes));
+        });
+      }
+
+      // Encode the archive to a zip file
+      final ZipEncoder encoder = ZipEncoder();
+      final List<int>? zipData = encoder.encode(archive);
+
+      // Save the zip file temporarily
+      final zipFile = File('$tempDirPath/$taskId.task');
+      await zipFile.writeAsBytes(zipData!);
+
+      // Upload the zip file to Firebase Storage
+      final compressedRef = FirebaseStorage.instance
+          .ref()
+          .child('PPIR_SAVES/tasks_saves/$taskId.task');
+      await compressedRef.putFile(zipFile);
+
+      // debugPrint('Task files compressed and uploaded successfully.');
+    } catch (e) {
+      // debugPrint('Error compressing and uploading task files: $e');
+      throw Exception('Error compressing and uploading task files');
+    }
+  }
+
+  static Future<List<Reference>> _getAllFiles(Reference storageRef) async {
+    List<Reference> allFiles = [];
+    final ListResult result = await storageRef.listAll();
+
+    for (final ref in result.items) {
+      allFiles.add(ref);
+    }
+
+    for (final prefix in result.prefixes) {
+      allFiles.addAll(await _getAllFiles(prefix));
+    }
+
+    return allFiles;
   }
 
   Future<DateTime?> get dateAccess async {
@@ -556,7 +652,7 @@ class TaskManager {
         return timestamp?.toDate();
       }
     } catch (error) {
-      debugPrint('Error retrieving task date access: $error');
+      // debugPrint('Error retrieving task date access: $error');
     }
     return null;
   }
@@ -566,7 +662,7 @@ class TaskManager {
       final formData = await getFormData(type);
       return formData['ppirNorth'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving north coordinate: $error');
+      // debugPrint('Error retrieving north coordinate: $error');
       return null;
     }
   }
@@ -576,7 +672,7 @@ class TaskManager {
       final formData = await getFormData(type);
       return formData['ppirSouth'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving south coordinate: $error');
+      // debugPrint('Error retrieving south coordinate: $error');
       return null;
     }
   }
@@ -586,7 +682,7 @@ class TaskManager {
       final formData = await getFormData(type);
       return formData['ppirEast'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving east coordinate: $error');
+      // debugPrint('Error retrieving east coordinate: $error');
       return null;
     }
   }
@@ -596,7 +692,7 @@ class TaskManager {
       final formData = await getFormData(type);
       return formData['ppirWest'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving west coordinate: $error');
+      // debugPrint('Error retrieving west coordinate: $error');
       return null;
     }
   }
@@ -606,7 +702,7 @@ class TaskManager {
       final formData = await getFormData(type);
       return formData['gpxFile'] as String?;
     } catch (error) {
-      debugPrint('Error retrieving gpxFile: $error');
+      // debugPrint('Error retrieving gpxFile: $error');
       return null;
     }
   }
@@ -625,7 +721,7 @@ class TaskManager {
       }
       return null;
     } catch (error) {
-      debugPrint('Error retrieving routePoints: $error');
+      // debugPrint('Error retrieving routePoints: $error');
       return null;
     }
   }
@@ -639,106 +735,95 @@ class TaskManager {
       }
       return null;
     } catch (error) {
-      debugPrint('Error retrieving lastCoordinates: $error');
+      // debugPrint('Error retrieving lastCoordinates: $error');
       return null;
     }
   }
 
-  Future<void> saveTaskToFirebaseStorage() async {
+  static Future<void> saveTaskToXML(
+      Map<String, dynamic> taskData, Map<String, dynamic> formData) async {
     try {
-      final formData = await getFormData(type);
-      final taskData = {
-        'taskId': taskId,
-        'taskManagerNumber': formData['ppirInsuranceId'],
-        'serviceType': formData['serviceType'],
-        'assigneeId': formData['assigneeId'],
-        'assigneeEmail': formData['assigneeEmail'],
-        'dateAccess': formData['trackDatetime'],
-        'status': formData['status'],
-      };
-
-      // Create local directories
       final directory = await getExternalStorageDirectory();
-      final baseDir = directory?.path ?? '/storage/emulated/0/Android/data';
-      final taskDir = Directory('$baseDir/$formId');
+      final dataDirectory =
+          directory?.path ?? '/storage/emulated/0/Android/data';
 
-      if (!await taskDir.exists()) {
-        await taskDir.create(recursive: true);
+      final baseFilename = formData['formId'] ?? 'unknown_form';
+      final insuranceDirectory = Directory('$dataDirectory/$baseFilename');
+
+      // Create the insurance directory if it doesn't exist
+      if (!await insuranceDirectory.exists()) {
+        await insuranceDirectory.create(recursive: true);
       }
 
-      final attachmentsDir = Directory('${taskDir.path}/Attachments');
-      if (!await attachmentsDir.exists()) {
-        await attachmentsDir.create(recursive: true);
+      // Define the Attachments directory inside the insurance directory
+      final attachmentsDirectory =
+          Directory('${insuranceDirectory.path}/Attachments');
+
+      // Create the Attachments directory if it doesn't exist
+      if (!await attachmentsDirectory.exists()) {
+        await attachmentsDirectory.create(recursive: true);
       }
 
-      // Save task data to XML
-      await saveTaskToXML(taskData, formData, taskDir);
+      final String fileName = 'task_${taskData['taskId']}.xml';
+      final File xmlFile = File('${attachmentsDirectory.path}/$fileName');
 
-      // Compress the task directory
-      final zipFile = await compressTaskDirectory(taskDir);
+      if (taskData.isNotEmpty && formData.isNotEmpty) {
+        final builder = XmlBuilder();
+        builder.processing('xml', 'version="1.0" encoding="UTF-8"');
+        builder.element('Task', nest: () {
+          builder.element('TaskId', nest: taskData['taskId']);
+          builder.element('TaskNumber',
+              nest: taskData['taskManagerNumber'] ?? '');
+          builder.element('FormType', nest: formData['serviceType'] ?? '');
+          builder.element('Audit', nest: () {
+            builder.element('TaskAuditLogZipModel', nest: () {
+              builder.element('AuditLevel', nest: 'Task');
+              builder.element('Label', nest: 'Task Owner');
+              builder.element('Message', nest: taskData['assigneeId'] ?? '');
+              builder.element('SnapshotValue', nest: 'Office Clerk');
+              builder.element('Source', nest: taskData['assigneeId'] ?? '');
+              builder.element('TaskId', nest: taskData['taskId']);
+              builder.element('Timestamp',
+                  nest: taskData['dateAccess']?.toString() ?? '');
+              builder.element('UpdatedValue',
+                  nest: taskData['assigneeEmail'] ?? '');
+              builder.element('FieldLabel', nest: 'Task Owner');
+              builder.element('IPAddress', nest: '');
+            });
+          });
 
-      // Upload to Firebase Storage
-      await uploadTaskFileToFirebase(zipFile);
+          builder.element('Details', nest: () {
+            builder.element('TaskDetailZipModel', nest: () {
+              builder.element('ServiceType',
+                  nest: formData['serviceType'] ?? '');
+              builder.element('TaskStatus', nest: taskData['status'] ?? '');
+              builder.element('TaskOwner',
+                  nest: taskData['assigneeEmail'] ?? '');
+            });
+          });
+        });
+
+        final xmlDocument = builder.buildDocument();
+        await xmlFile
+            .writeAsString(xmlDocument.toXmlString(pretty: true, indent: '\t'));
+        // debugPrint('Task XML saved successfully.');
+      } else {
+        // debugPrint('No task data or form data available to save.');
+      }
     } catch (error) {
-      debugPrint('Error creating and uploading task file: $error');
+      // debugPrint('Error saving Task XML: $error');
     }
   }
 
-  Future<void> saveTaskToXML(Map<String, dynamic> taskData,
-      Map<String, dynamic> formData, Directory taskDir) async {
-    final builder = XmlBuilder();
-    builder.processing('xml', 'version="1.0" encoding="UTF-8"');
-    builder.element('Task', nest: () {
-      builder.element('TaskId', nest: taskData['taskId']);
-      builder.element('TaskNumber', nest: taskData['taskManagerNumber'] ?? '');
-      builder.element('FormType', nest: formData['serviceType'] ?? '');
-      builder.element('Audit', nest: () {
-        builder.element('TaskAuditLogZipModel', nest: () {
-          builder.element('AuditLevel', nest: 'Task');
-          builder.element('Label', nest: 'Task Owner');
-          builder.element('Message', nest: taskData['assigneeId'] ?? '');
-          builder.element('SnapshotValue', nest: 'Office Clerk');
-          builder.element('Source', nest: taskData['assigneeId'] ?? '');
-          builder.element('TaskId', nest: taskData['taskId']);
-          builder.element('Timestamp',
-              nest: taskData['dateAccess']?.toString() ?? '');
-          builder.element('UpdatedValue',
-              nest: taskData['assigneeEmail'] ?? '');
-          builder.element('FieldLabel', nest: 'Task Owner');
-          builder.element('IPAddress', nest: '');
-        });
-      });
-
-      builder.element('Details', nest: () {
-        builder.element('TaskDetailZipModel', nest: () {
-          builder.element('ServiceType', nest: formData['serviceType'] ?? '');
-          builder.element('TaskStatus', nest: taskData['status'] ?? '');
-          builder.element('TaskOwner', nest: taskData['assigneeEmail'] ?? '');
-        });
-      });
-    });
-
-    final xmlDocument = builder.buildDocument();
-    final xmlFile = File('${taskDir.path}/task_${taskData['taskId']}.xml');
-    await xmlFile
-        .writeAsString(xmlDocument.toXmlString(pretty: true, indent: '\t'));
-    debugPrint('Task XML saved successfully.');
-  }
-
-  Future<File> compressTaskDirectory(Directory taskDir) async {
-    final encoder = ZipFileEncoder();
-    final zipFilePath = '${taskDir.path}.task';
-    encoder.create(zipFilePath);
-    encoder.addDirectory(taskDir);
-    encoder.close();
-    return File(zipFilePath);
-  }
-
-  Future<void> uploadTaskFileToFirebase(File zipFile) async {
-    final storageRef = FirebaseStorage.instance
-        .ref()
-        .child('FORMS/PPIR/${zipFile.path.split('/').last}');
-    await storageRef.putFile(zipFile);
-    debugPrint('Task file uploaded to Firebase: ${zipFile.path}');
+  Future<void> updateTaskStatus(String status) async {
+    try {
+      final taskRef =
+          FirebaseFirestore.instance.collection('tasks').doc(taskId);
+      await taskRef.update({'status': status});
+      // debugPrint('Task status updated to $status');
+    } catch (e) {
+      // debugPrint('Error updating task status: $e');
+      throw Exception('Error updating task status');
+    }
   }
 }

@@ -6,10 +6,12 @@ import 'package:csv/csv.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:xml/xml.dart';
-import 'package:path/path.dart' as path;
+
+import 'task_xml_generator.dart';
+// import 'package:flutter/foundation.dart';
+// import 'package:path/path.dart' as path;
 
 class TaskManager {
   final String taskId;
@@ -461,81 +463,6 @@ class TaskManager {
     });
   }
 
-  static Future<String> generateTaskXmlContent(
-      String taskId, Map<String, dynamic> formData) async {
-    final builder = XmlBuilder();
-    builder.processing('xml', 'version="1.0" encoding="UTF-8"');
-    builder.element('TaskArchiveZipModel', nest: () {
-      builder.attribute(
-          'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
-      builder.attribute('xmlns:xsd', 'http://www.w3.org/2001/XMLSchema');
-      builder.element('AgentId', nest: () {
-        builder.attribute('xsi:nil', 'true');
-      });
-      builder.element('AssignedDate',
-          nest: formData['trackDatetime']?.toString() ?? '');
-      builder.element('Attachments', nest: '');
-      builder.element('AuditLogs', nest: () {
-        // Task Status Audit Log
-        builder.element('TaskAuditLogZipModel', nest: () {
-          builder.element('AuditLevel', nest: 'Task');
-          builder.element('Label', nest: 'Task Status');
-          builder.element('Message', nest: formData['status'] ?? '');
-          builder.element('SnapshotValue', nest: formData['status'] ?? '');
-          builder.element('Source', nest: formData['assigneeId'] ?? '');
-          builder.element('TaskId', nest: taskId);
-          builder.element('Timestamp',
-              nest: formData['trackDatetime']?.toString() ?? '');
-          builder.element('UpdatedValue', nest: formData['status'] ?? '');
-          builder.element('FieldLabel', nest: 'Task Status');
-          builder.element('IPAddress', nest: '');
-        });
-
-        // Captured Mobile Location Audit Logs
-        builder.element('TaskAuditLogZipModel', nest: () {
-          builder.element('AuditLevel', nest: 'Field');
-          builder.element('Label', nest: 'Captured Mobile Location');
-          builder.element('Source', nest: formData['assigneeId'] ?? '');
-          builder.element('TaskId', nest: taskId);
-          builder.element('Timestamp',
-              nest: formData['trackDatetime']?.toString() ?? '');
-          builder.element('UpdatedValue',
-              nest: formData['trackLastcoord'] ?? '');
-          builder.element('FieldLabel', nest: 'Captured Mobile Location');
-          builder.element('IPAddress', nest: '');
-        });
-
-        builder.element('TaskAuditLogZipModel', nest: () {
-          builder.element('AuditLevel', nest: 'Field');
-          builder.element('Label', nest: 'Captured Mobile Location');
-          builder.element('SnapshotValue',
-              nest: formData['trackLastcoord'] ?? '');
-          builder.element('Source', nest: 'System');
-          builder.element('TaskId', nest: taskId);
-          builder.element('Timestamp',
-              nest: formData['trackDatetime']?.toString() ?? '');
-          builder.element('UpdatedValue', nest: formData['ppirFarmLoc'] ?? '');
-          builder.element('FieldLabel', nest: 'Captured Mobile Location');
-          builder.element('IPAddress', nest: '');
-        });
-
-        // UpdatePostPlanting script Audit Log
-        builder.element('TaskAuditLogZipModel', nest: () {
-          builder.element('AuditLevel', nest: 'Task');
-          builder.element('Message',
-              nest: 'Executed P99 - UpdatePostPlanting script.');
-          builder.element('Source', nest: 'System');
-          builder.element('TaskId', nest: taskId);
-          builder.element('Timestamp',
-              nest: formData['trackDatetime']?.toString() ?? '');
-        });
-      });
-    });
-
-    final xmlDocument = builder.buildDocument();
-    return xmlDocument.toXmlString(pretty: true, indent: '\t');
-  }
-
   Future<String?> get farmerName async {
     try {
       final formData = await getFormData(type);
@@ -564,8 +491,9 @@ class TaskManager {
   }
 
   static Future<void> saveTaskFileToFirebaseStorage(
-      String formId, String xmlContent) async {
+      String formId, Map<String, dynamic> formData) async {
     try {
+      final xmlContent = await generateTaskXmlContent(formId, formData);
       final storageRef =
           FirebaseStorage.instance.ref().child('PPIR_SAVES/$formId/Task.xml');
       await storageRef.putString(xmlContent);
