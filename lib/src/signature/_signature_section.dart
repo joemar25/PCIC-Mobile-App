@@ -42,6 +42,7 @@ class SignatureSectionState extends State<SignatureSection> {
   void initState() {
     super.initState();
     _initializeSignatureNames();
+    _loadSignatures();
   }
 
   @override
@@ -63,20 +64,50 @@ class SignatureSectionState extends State<SignatureSection> {
     });
   }
 
+  Future<void> _loadSignatures() async {
+    final signatures = await _fetchSignatures();
+    setState(() {
+      _confirmedByUrl = signatures['ppirSigInsured'];
+      _preparedByUrl = signatures['ppirSigIuia'];
+    });
+  }
+
+  Future<Map<String, String>> _fetchSignatures() async {
+    final storageRef = FirebaseStorage.instance
+        .ref()
+        .child('PPIR_SAVES/${widget.task.formId}/Attachments');
+
+    final ListResult result = await storageRef.listAll();
+    Map<String, String> signatures = {};
+
+    for (Reference fileRef in result.items) {
+      final downloadUrl = await fileRef.getDownloadURL();
+      if (fileRef.name.contains('ppirSigInsured')) {
+        signatures['ppirSigInsured'] = downloadUrl;
+      } else if (fileRef.name.contains('ppirSigIuia')) {
+        signatures['ppirSigIuia'] = downloadUrl;
+      }
+    }
+
+    return signatures;
+  }
+
   bool validate() {
     bool isValid = true;
+
     if (_confirmedByNameController.text.trim().isEmpty) {
       isValid = false;
     }
     if (_preparedByNameController.text.trim().isEmpty) {
       isValid = false;
     }
-    if (_confirmedBySignatureController.isEmpty) {
+    if (_confirmedBySignatureController.isEmpty && _confirmedByUrl == null) {
       isValid = false;
     }
-    if (_preparedBySignatureController.isEmpty) {
+    if (_preparedBySignatureController.isEmpty && _preparedByUrl == null) {
       isValid = false;
     }
+
     return isValid;
   }
 
@@ -110,17 +141,19 @@ class SignatureSectionState extends State<SignatureSection> {
           onTap: () => setState(() {}),
           child: Container(
             height: 200,
-            color:
-                widget.isSubmitting && _confirmedBySignatureController.isEmpty
-                    ? Colors.red[100]
-                    : Colors.grey,
+            color: widget.isSubmitting &&
+                    (_confirmedBySignatureController.isEmpty &&
+                        _confirmedByUrl == null)
+                ? Colors.red[100]
+                : Colors.grey,
             child: TapToSignature(
               task: widget.task,
               controller: _confirmedBySignatureController,
               height: 200,
               backgroundColor: Colors.white70,
               isError: widget.isSubmitting &&
-                  _confirmedBySignatureController.isEmpty,
+                  (_confirmedBySignatureController.isEmpty &&
+                      _confirmedByUrl == null),
               isSubmitting: widget.isSubmitting,
               isEmpty: _confirmedBySignatureController.isEmpty,
               onSaveSignature: (Uint8List signatureBytes) async {
@@ -131,7 +164,9 @@ class SignatureSectionState extends State<SignatureSection> {
             ),
           ),
         ),
-        if (widget.isSubmitting && _confirmedBySignatureController.isEmpty)
+        if (widget.isSubmitting &&
+            (_confirmedBySignatureController.isEmpty &&
+                _confirmedByUrl == null))
           const Text(
             'This field is required',
             style: TextStyle(color: Colors.red),
@@ -162,7 +197,9 @@ class SignatureSectionState extends State<SignatureSection> {
           onTap: () => setState(() {}),
           child: Container(
             height: 200,
-            color: widget.isSubmitting && _preparedBySignatureController.isEmpty
+            color: widget.isSubmitting &&
+                    (_preparedBySignatureController.isEmpty &&
+                        _preparedByUrl == null)
                 ? Colors.red[100]
                 : Colors.grey,
             child: TapToSignature(
@@ -170,8 +207,9 @@ class SignatureSectionState extends State<SignatureSection> {
               controller: _preparedBySignatureController,
               height: 200,
               backgroundColor: Colors.white70,
-              isError:
-                  widget.isSubmitting && _preparedBySignatureController.isEmpty,
+              isError: widget.isSubmitting &&
+                  (_preparedBySignatureController.isEmpty &&
+                      _preparedByUrl == null),
               isSubmitting: widget.isSubmitting,
               isEmpty: _preparedBySignatureController.isEmpty,
               onSaveSignature: (Uint8List signatureBytes) async {
@@ -182,7 +220,8 @@ class SignatureSectionState extends State<SignatureSection> {
             ),
           ),
         ),
-        if (widget.isSubmitting && _preparedBySignatureController.isEmpty)
+        if (widget.isSubmitting &&
+            (_preparedBySignatureController.isEmpty && _preparedByUrl == null))
           const Text(
             'This field is required',
             style: TextStyle(color: Colors.red),

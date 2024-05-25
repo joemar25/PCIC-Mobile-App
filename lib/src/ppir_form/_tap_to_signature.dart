@@ -184,11 +184,6 @@ class TapToSignatureState extends State<TapToSignature> {
     );
   }
 
-  bool validate() {
-    // No validation needed for optional signature field
-    return true;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -281,9 +276,7 @@ class TapToSignatureState extends State<TapToSignature> {
             ),
             child: Text(
               style: TextStyle(
-                color: widget.isSubmitting && widget.isEmpty
-                    ? Colors.red
-                    : Colors.black,
+                color: widget.isError ? Colors.red : Colors.black,
               ),
               _isConfirmed ? 'Show Signature' : 'Tap to Sign',
             ),

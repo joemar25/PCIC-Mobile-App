@@ -488,6 +488,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                         formData: _formData,
                         uniqueSeedsItems: uniqueSeedsItems,
                         seedTitleToIdMap: seedTitleToIdMap,
+                        isSubmitting: isSubmitting,
                       ),
                       const SizedBox(height: 24),
                       const Text(
