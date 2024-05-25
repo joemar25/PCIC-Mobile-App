@@ -16,7 +16,8 @@ class TapToSignature extends StatefulWidget {
   final bool isError;
   final bool isEmpty;
   final Future<String> Function(Uint8List) onSaveSignature;
-  final String signatureType; // 'ppirSigInsured' or 'ppirSigIuia'
+  final String signatureType;
+  final bool isSubmitting; // 'ppirSigInsured' or 'ppirSigIuia'
 
   const TapToSignature({
     super.key,
@@ -28,6 +29,7 @@ class TapToSignature extends StatefulWidget {
     required this.isEmpty,
     required this.onSaveSignature,
     required this.signatureType,
+    required this.isSubmitting,
   });
 
   @override
@@ -279,7 +281,7 @@ class TapToSignatureState extends State<TapToSignature> {
             ),
             child: Text(
               style: TextStyle(
-                color: widget.isError && widget.isEmpty
+                color: widget.isSubmitting && widget.isEmpty
                     ? Colors.red
                     : Colors.black,
               ),

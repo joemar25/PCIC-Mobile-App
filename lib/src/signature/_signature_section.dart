@@ -1,15 +1,19 @@
 import 'dart:typed_data';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
 import 'package:uuid/uuid.dart';
+
 import '../ppir_form/_tap_to_signature.dart';
 import '../tasks/_control_task.dart';
 
 class SignatureSection extends StatefulWidget {
   final TaskManager task;
+  final bool isSubmitting;
 
-  const SignatureSection({super.key, required this.task});
+  const SignatureSection(
+      {super.key, required this.task, required this.isSubmitting});
 
   @override
   SignatureSectionState createState() => SignatureSectionState();
@@ -91,23 +95,34 @@ class SignatureSectionState extends State<SignatureSection> {
           controller: _confirmedByNameController,
           decoration: InputDecoration(
             labelText: 'Name',
-            errorText: _showValidationErrors && _confirmedByNameController.text.trim().isEmpty
+            errorText: widget.isSubmitting &&
+                    _confirmedByNameController.text.trim().isEmpty
                 ? 'This field is required'
                 : null,
           ),
+          onChanged: (value) {
+            setState(() {
+              _confirmedByNameController.text = value;
+            });
+          },
         ),
         const SizedBox(height: 10),
         GestureDetector(
           onTap: () => setState(() {}),
           child: Container(
             height: 200,
-            color: _showValidationErrors && _confirmedBySignatureController.isEmpty ? Colors.red[100] : Colors.grey,
+            color:
+                _showValidationErrors && _confirmedBySignatureController.isEmpty
+                    ? Colors.red[100]
+                    : Colors.grey,
             child: TapToSignature(
               task: widget.task,
               controller: _confirmedBySignatureController,
               height: 200,
               backgroundColor: Colors.white70,
-              isError: _showValidationErrors && _confirmedBySignatureController.isEmpty,
+              isError: _showValidationErrors &&
+                  _confirmedBySignatureController.isEmpty,
+              isSubmitting: widget.isSubmitting,
               isEmpty: _confirmedBySignatureController.isEmpty,
               onSaveSignature: (Uint8List signatureBytes) async {
                 return await _saveSignatureToFirebase(
@@ -132,23 +147,34 @@ class SignatureSectionState extends State<SignatureSection> {
           controller: _preparedByNameController,
           decoration: InputDecoration(
             labelText: 'Name',
-            errorText: _showValidationErrors && _preparedByNameController.text.trim().isEmpty
+            errorText: widget.isSubmitting &&
+                    _preparedByNameController.text.trim().isEmpty
                 ? 'This field is required'
                 : null,
           ),
+          onChanged: (value) {
+            setState(() {
+              _preparedByNameController.text = value;
+            });
+          },
         ),
         const SizedBox(height: 10),
         GestureDetector(
           onTap: () => setState(() {}),
           child: Container(
             height: 200,
-            color: _showValidationErrors && _preparedBySignatureController.isEmpty ? Colors.red[100] : Colors.grey,
+            color:
+                _showValidationErrors && _preparedBySignatureController.isEmpty
+                    ? Colors.red[100]
+                    : Colors.grey,
             child: TapToSignature(
               task: widget.task,
               controller: _preparedBySignatureController,
               height: 200,
               backgroundColor: Colors.white70,
-              isError: _showValidationErrors && _preparedBySignatureController.isEmpty,
+              isError: _showValidationErrors &&
+                  _preparedBySignatureController.isEmpty,
+              isSubmitting: widget.isSubmitting,
               isEmpty: _preparedBySignatureController.isEmpty,
               onSaveSignature: (Uint8List signatureBytes) async {
                 return await _saveSignatureToFirebase(
