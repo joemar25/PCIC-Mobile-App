@@ -171,8 +171,7 @@ class TaskManager {
 
     List<String> csvPaths = manifestMap.keys
         .where((path) =>
-            path.startsWith('assets/storage/mergedtask/') &&
-            path.endsWith('.csv'))
+            path.startsWith('assets/storage/ftp/Work') && path.endsWith('.csv'))
         .toList();
 
     return csvPaths;

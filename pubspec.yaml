@@ -97,6 +97,7 @@ flutter:
     - assets/image/
     - assets/animations/
     - assets/storage/mergedtask/
+    - assets/storage/ftp/Work/
     # - assets/cache.db
     # - assets/icon/
   fonts:
