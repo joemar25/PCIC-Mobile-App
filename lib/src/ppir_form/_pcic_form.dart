@@ -218,10 +218,8 @@ class PPIRFormPageState extends State<PPIRFormPage> {
 
       await widget.task.updatePpirFormData(_formData, taskData);
 
-      final xmlContent = await TaskManager.generateTaskXmlContent(
-          widget.task.taskId, _formData);
       await TaskManager.saveTaskFileToFirebaseStorage(
-          widget.task.formId, xmlContent);
+          widget.task.formId, _formData);
 
       await TaskManager.compressAndUploadTaskFiles(
           widget.task.formId, widget.task.taskId);
