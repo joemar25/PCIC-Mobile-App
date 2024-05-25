@@ -26,6 +26,8 @@ class FormSectionState extends State<FormSection> {
   final TextEditingController _remarksController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  bool _autoValidate = false;
+
   @override
   void initState() {
     super.initState();
@@ -93,7 +95,7 @@ class FormSectionState extends State<FormSection> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          autovalidateMode: _autoValidate ? AutovalidateMode.always : AutovalidateMode.disabled,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -227,6 +229,21 @@ class FormSectionState extends State<FormSection> {
                   }
                   return null;
                 },
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _autoValidate = true; // Enable auto-validation
+                  });
+                  if (validate()) {
+                    // Form is valid, proceed with saving the data
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Processing Data')),
+                    );
+                  }
+                },
+                child: Text('Save'),
               ),
             ],
           ),

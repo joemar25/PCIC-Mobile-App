@@ -182,6 +182,11 @@ class TapToSignatureState extends State<TapToSignature> {
     );
   }
 
+  bool validate() {
+    // No validation needed for optional signature field
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(

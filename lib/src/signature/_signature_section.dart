@@ -1,10 +1,8 @@
 import 'dart:typed_data';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
 import 'package:uuid/uuid.dart';
-
 import '../ppir_form/_tap_to_signature.dart';
 import '../tasks/_control_task.dart';
 
@@ -35,6 +33,7 @@ class SignatureSectionState extends State<SignatureSection> {
 
   String? _confirmedByUrl;
   String? _preparedByUrl;
+  bool _showValidationErrors = false;
 
   @override
   void initState() {
@@ -63,20 +62,18 @@ class SignatureSectionState extends State<SignatureSection> {
 
   bool validate() {
     bool isValid = true;
-    setState(() {
-      if (_confirmedByNameController.text.trim().isEmpty) {
-        isValid = false;
-      }
-      if (_preparedByNameController.text.trim().isEmpty) {
-        isValid = false;
-      }
-      if (_confirmedBySignatureController.isEmpty) {
-        isValid = false;
-      }
-      if (_preparedBySignatureController.isEmpty) {
-        isValid = false;
-      }
-    });
+    if (_confirmedByNameController.text.trim().isEmpty) {
+      isValid = false;
+    }
+    if (_preparedByNameController.text.trim().isEmpty) {
+      isValid = false;
+    }
+    if (_confirmedBySignatureController.isEmpty) {
+      isValid = false;
+    }
+    if (_preparedBySignatureController.isEmpty) {
+      isValid = false;
+    }
     return isValid;
   }
 
@@ -94,7 +91,7 @@ class SignatureSectionState extends State<SignatureSection> {
           controller: _confirmedByNameController,
           decoration: InputDecoration(
             labelText: 'Name',
-            errorText: _confirmedByNameController.text.trim().isEmpty
+            errorText: _showValidationErrors && _confirmedByNameController.text.trim().isEmpty
                 ? 'This field is required'
                 : null,
           ),
@@ -104,13 +101,13 @@ class SignatureSectionState extends State<SignatureSection> {
           onTap: () => setState(() {}),
           child: Container(
             height: 200,
-            color: Colors.grey,
+            color: _showValidationErrors && _confirmedBySignatureController.isEmpty ? Colors.red[100] : Colors.grey,
             child: TapToSignature(
               task: widget.task,
               controller: _confirmedBySignatureController,
               height: 200,
               backgroundColor: Colors.white70,
-              isError: validate(),
+              isError: _showValidationErrors && _confirmedBySignatureController.isEmpty,
               isEmpty: _confirmedBySignatureController.isEmpty,
               onSaveSignature: (Uint8List signatureBytes) async {
                 return await _saveSignatureToFirebase(
@@ -120,7 +117,7 @@ class SignatureSectionState extends State<SignatureSection> {
             ),
           ),
         ),
-        if (_confirmedBySignatureController.isEmpty)
+        if (_showValidationErrors && _confirmedBySignatureController.isEmpty)
           const Text(
             'This field is required',
             style: TextStyle(color: Colors.red),
@@ -135,7 +132,7 @@ class SignatureSectionState extends State<SignatureSection> {
           controller: _preparedByNameController,
           decoration: InputDecoration(
             labelText: 'Name',
-            errorText: _preparedByNameController.text.trim().isEmpty
+            errorText: _showValidationErrors && _preparedByNameController.text.trim().isEmpty
                 ? 'This field is required'
                 : null,
           ),
@@ -145,13 +142,13 @@ class SignatureSectionState extends State<SignatureSection> {
           onTap: () => setState(() {}),
           child: Container(
             height: 200,
-            color: Colors.grey,
+            color: _showValidationErrors && _preparedBySignatureController.isEmpty ? Colors.red[100] : Colors.grey,
             child: TapToSignature(
               task: widget.task,
               controller: _preparedBySignatureController,
               height: 200,
               backgroundColor: Colors.white70,
-              isError: validate(),
+              isError: _showValidationErrors && _preparedBySignatureController.isEmpty,
               isEmpty: _preparedBySignatureController.isEmpty,
               onSaveSignature: (Uint8List signatureBytes) async {
                 return await _saveSignatureToFirebase(
@@ -161,31 +158,29 @@ class SignatureSectionState extends State<SignatureSection> {
             ),
           ),
         ),
-        if (_preparedBySignatureController.isEmpty)
+        if (_showValidationErrors && _preparedBySignatureController.isEmpty)
           const Text(
             'This field is required',
             style: TextStyle(color: Colors.red),
           ),
         const SizedBox(height: 20),
-        // Row(
-        //   mainAxisAlignment: MainAxisAlignment.end,
-        //   children: [
-        //     ElevatedButton(
-        //       onPressed: _clearSignatures,
-        //       child: const Text('Clear Signatures'),
-        //     ),
-        //   ],
-        // ),
+        ElevatedButton(
+          onPressed: () {
+            setState(() {
+              _showValidationErrors = true;
+            });
+            if (validate()) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Processing Data')),
+              );
+              // Proceed with saving data
+            }
+          },
+          child: Text('Save'),
+        ),
       ],
     );
   }
-
-  // void _clearSignatures() {
-  //   setState(() {
-  //     _confirmedBySignatureController.clear();
-  //     _preparedBySignatureController.clear();
-  //   });
-  // }
 
   Future<Map<String, dynamic>> getSignatureData() async {
     Map<String, dynamic> signatureData = {};
@@ -216,8 +211,6 @@ class SignatureSectionState extends State<SignatureSection> {
     signatureData['ppirNameInsured'] = _confirmedByNameController.text;
     signatureData['ppirNameIuia'] = _preparedByNameController.text;
 
-    // debugPrint(signatureData['ppirSigInsured']);
-
     return signatureData;
   }
 
@@ -244,7 +237,6 @@ class SignatureSectionState extends State<SignatureSection> {
     await signatureFileRef.putData(signatureBytes);
 
     final downloadUrl = await signatureFileRef.getDownloadURL();
-    // debugPrint('Signature uploaded to Firebase: $downloadUrl');
 
     return downloadUrl;
   }
