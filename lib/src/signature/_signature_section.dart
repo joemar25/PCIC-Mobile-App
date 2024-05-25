@@ -37,7 +37,6 @@ class SignatureSectionState extends State<SignatureSection> {
 
   String? _confirmedByUrl;
   String? _preparedByUrl;
-  bool _showValidationErrors = false;
 
   @override
   void initState() {
@@ -112,7 +111,7 @@ class SignatureSectionState extends State<SignatureSection> {
           child: Container(
             height: 200,
             color:
-                _showValidationErrors && _confirmedBySignatureController.isEmpty
+                widget.isSubmitting && _confirmedBySignatureController.isEmpty
                     ? Colors.red[100]
                     : Colors.grey,
             child: TapToSignature(
@@ -120,7 +119,7 @@ class SignatureSectionState extends State<SignatureSection> {
               controller: _confirmedBySignatureController,
               height: 200,
               backgroundColor: Colors.white70,
-              isError: _showValidationErrors &&
+              isError: widget.isSubmitting &&
                   _confirmedBySignatureController.isEmpty,
               isSubmitting: widget.isSubmitting,
               isEmpty: _confirmedBySignatureController.isEmpty,
@@ -132,7 +131,7 @@ class SignatureSectionState extends State<SignatureSection> {
             ),
           ),
         ),
-        if (_showValidationErrors && _confirmedBySignatureController.isEmpty)
+        if (widget.isSubmitting && _confirmedBySignatureController.isEmpty)
           const Text(
             'This field is required',
             style: TextStyle(color: Colors.red),
@@ -163,17 +162,16 @@ class SignatureSectionState extends State<SignatureSection> {
           onTap: () => setState(() {}),
           child: Container(
             height: 200,
-            color:
-                _showValidationErrors && _preparedBySignatureController.isEmpty
-                    ? Colors.red[100]
-                    : Colors.grey,
+            color: widget.isSubmitting && _preparedBySignatureController.isEmpty
+                ? Colors.red[100]
+                : Colors.grey,
             child: TapToSignature(
               task: widget.task,
               controller: _preparedBySignatureController,
               height: 200,
               backgroundColor: Colors.white70,
-              isError: _showValidationErrors &&
-                  _preparedBySignatureController.isEmpty,
+              isError:
+                  widget.isSubmitting && _preparedBySignatureController.isEmpty,
               isSubmitting: widget.isSubmitting,
               isEmpty: _preparedBySignatureController.isEmpty,
               onSaveSignature: (Uint8List signatureBytes) async {
@@ -184,26 +182,12 @@ class SignatureSectionState extends State<SignatureSection> {
             ),
           ),
         ),
-        if (_showValidationErrors && _preparedBySignatureController.isEmpty)
+        if (widget.isSubmitting && _preparedBySignatureController.isEmpty)
           const Text(
             'This field is required',
             style: TextStyle(color: Colors.red),
           ),
         const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _showValidationErrors = true;
-            });
-            if (validate()) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Processing Data')),
-              );
-              // Proceed with saving data
-            }
-          },
-          child: Text('Save'),
-        ),
       ],
     );
   }
