@@ -3,6 +3,7 @@ import '_detail.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
+import '../home/_search_button.dart';
 
 class MessagesPage extends StatefulWidget {
   const MessagesPage({super.key});
@@ -97,41 +98,14 @@ class MessagesPageState extends State<MessagesPage> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                child: TextField(
-                  onChanged: (value) {
+                child: SearchButton(
+                  searchQuery: _searchQuery,
+                  onUpdateValue: (value) {
                     setState(() {
                       _searchQuery = value;
                     });
                     _filterMessagesAsync();
                   },
-                  textAlign: TextAlign.left,
-                  decoration: InputDecoration(
-                    hintText: 'Search Message...',
-                    hintStyle: const TextStyle(color: mainColor),
-                    isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 12, horizontal: 16),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: mainColor, width: 1.0),
-                      borderRadius: BorderRadius.circular(32.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: mainColor, width: 1.0),
-                      borderRadius: BorderRadius.circular(32.0),
-                    ),
-                    suffixIconConstraints:
-                        const BoxConstraints(minWidth: 50, minHeight: 50),
-                    suffixIcon: const Padding(
-                      padding: EdgeInsetsDirectional.only(end: 12.0),
-                      child: Icon(
-                        Icons.search,
-                        color: mainColor,
-                        size: 30,
-                      ),
-                    ),
-                  ),
                 ),
               ),
               Expanded(

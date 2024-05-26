@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import '_control_task.dart';
 import '_task_view.dart';
+import 'package:lottie/lottie.dart';
 
 class TaskPage extends StatefulWidget {
   const TaskPage({super.key, this.initialFilter = 'Ongoing'});
@@ -59,16 +60,9 @@ class TaskPageState extends State<TaskPage> {
   @override
   Widget build(BuildContext context) {
     String title = _initialFilter == 'Completed' ? 'Completed Tasks' : 'Tasks';
-
     return Scaffold(
       appBar: AppBar(
         leading: null,
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     Navigator.pop(context);
-        //   },
-        // ),
         title: Text(
           title,
           textAlign: TextAlign.center,
@@ -80,9 +74,20 @@ class TaskPageState extends State<TaskPage> {
           ? const Center(child: CircularProgressIndicator())
           : _tasks.isEmpty
               ? Center(
-                  child: Text(
-                    'No ${_initialFilter.toLowerCase()} tasks available.',
-                    style: const TextStyle(fontSize: 16),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Lottie.asset(
+                        'assets/animations/emptybox.json',
+                        width: 500,
+                        height: 500,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No ${_initialFilter.toLowerCase()} tasks available.',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ],
                   ),
                 )
               : TaskView(tasks: _tasks, initialFilter: _initialFilter),

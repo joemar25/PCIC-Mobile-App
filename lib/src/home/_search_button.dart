@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class SearchButton extends StatefulWidget {
@@ -17,6 +18,7 @@ class SearchButton extends StatefulWidget {
 
 class _SearchButtonState extends State<SearchButton> {
   final TextEditingController _controller = TextEditingController();
+  bool _isSearching = false;
 
   @override
   void initState() {
@@ -57,7 +59,12 @@ class _SearchButtonState extends State<SearchButton> {
                 borderRadius: BorderRadius.circular(32.0),
                 child: TextField(
                   controller: _controller,
-                  onChanged: widget.onUpdateValue,
+                  onChanged: (value) {
+                    widget.onUpdateValue(value);
+                    setState(() {
+                      _isSearching = value.isNotEmpty;
+                    });
+                  },
                   textAlign: TextAlign.left,
                   decoration: InputDecoration(
                     hintText: 'Search Task',
@@ -65,7 +72,9 @@ class _SearchButtonState extends State<SearchButton> {
                         TextStyle(color: Colors.grey, fontSize: t?.caption),
                     isDense: true,
                     contentPadding: const EdgeInsets.symmetric(
-                        vertical: 12, horizontal: 16),
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
                     focusedBorder: OutlineInputBorder(
                       borderSide:
                           const BorderSide(color: Colors.white, width: 0.2),
@@ -76,15 +85,19 @@ class _SearchButtonState extends State<SearchButton> {
                           const BorderSide(color: Colors.white, width: 0.2),
                       borderRadius: BorderRadius.circular(32.0),
                     ),
-                    suffixIconConstraints:
-                        const BoxConstraints(minWidth: 45, minHeight: 50),
-                    suffixIcon: const Padding(
-                      padding: EdgeInsetsDirectional.only(end: 12.0),
-                      child: Icon(
-                        Icons.search,
-                        color: Colors.black38,
-                        size: 30,
-                      ),
+                    suffixIcon: Padding(
+                      padding: const EdgeInsetsDirectional.only(end: 12.0),
+                      child: _isSearching
+                          ? Lottie.asset(
+                              'assets/animations/search.json',
+                              width: 45,
+                              height: 45,
+                            )
+                          : const Icon(
+                              Icons.search,
+                              color: Colors.black38,
+                              size: 30,
+                            ),
                     ),
                   ),
                 ),

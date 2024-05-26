@@ -20,22 +20,37 @@ class EditProfilePage extends StatefulWidget {
 class EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _nameController;
   late TextEditingController _emailController;
+  late TextEditingController _newPasswordController;
+  late TextEditingController _confirmPasswordController;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.name);
     _emailController = TextEditingController(text: widget.email);
+    _newPasswordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
   void _saveProfile() async {
+    if (_newPasswordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('New password and confirm password do not match.'),
+        ),
+      );
+      return;
+    }
+
     try {
       await FirebaseFirestore.instance
           .collection('users')
@@ -43,6 +58,8 @@ class EditProfilePageState extends State<EditProfilePage> {
           .update({
         'name': _nameController.text,
         'email': _emailController.text,
+        if (_newPasswordController.text.isNotEmpty)
+          'password': _newPasswordController.text,
       });
 
       if (mounted) {
@@ -65,9 +82,10 @@ class EditProfilePageState extends State<EditProfilePage> {
       appBar: AppBar(
         title: const Text('Edit Profile'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
               controller: _nameController,
@@ -77,7 +95,32 @@ class EditProfilePageState extends State<EditProfilePage> {
               controller: _emailController,
               decoration: const InputDecoration(labelText: 'Email'),
             ),
-            const Spacer(),
+            const SizedBox(height: 24.0),
+            Row(
+              children: [
+                const Icon(Icons.lock),
+                const SizedBox(width: 8.0),
+                const Text(
+                  'Change Password',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16.0),
+            TextField(
+              controller: _newPasswordController,
+              decoration: const InputDecoration(labelText: 'New Password'),
+              obscureText: true,
+            ),
+            TextField(
+              controller: _confirmPasswordController,
+              decoration: const InputDecoration(labelText: 'Confirm Password'),
+              obscureText: true,
+            ),
+            const SizedBox(height: 24.0),
             SizedBox(
               width: double.infinity,
               child: TextButton(

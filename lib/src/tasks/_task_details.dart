@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
+import 'package:lottie/lottie.dart';
 
 import '../geotag/_geotag.dart';
 import '../ppir_form/_pcic_form.dart';
@@ -253,23 +254,19 @@ class TaskDetailsPage extends StatelessWidget {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    SvgPicture.asset(
-                                      'assets/storage/images/geotag.svg',
-                                      width: 24,
-                                      height: 24,
-                                      colorFilter: const ColorFilter.mode(
-                                        Colors.white,
-                                        BlendMode.srcIn,
-                                      ),
+                                    Lottie.asset(
+                                      'assets/animations/geotag.json',
+                                      width: 30,
+                                      height: 30,
                                     ),
                                     const SizedBox(width: 8.0),
                                     Text(
                                       status == 'Ongoing'
-                                          ? 'Continue the Form'
+                                          ? 'Continue to Complete'
                                           : 'Go to Geotag',
                                       style: TextStyle(
-                                        fontSize: t?.body,
-                                        fontWeight: FontWeight.w600,
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ),
                                     ),
@@ -421,9 +418,6 @@ class TaskDetailsPage extends StatelessWidget {
                           const SizedBox(height: 16.0),
                           _buildFormField(context, 'Confirmed By',
                               formData['ppirNameInsured']),
-                          _buildFormField(
-                              context, 'Prepared By', formData['ppirNameIuia']),
-                          const SizedBox(height: 24.0),
                           if (signatures['ppirSigInsured'] != null)
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -443,6 +437,8 @@ class TaskDetailsPage extends StatelessWidget {
                                 ),
                               ],
                             ),
+                          _buildFormField(
+                              context, 'Prepared By', formData['ppirNameIuia']),
                           if (signatures['ppirSigIuia'] != null)
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
