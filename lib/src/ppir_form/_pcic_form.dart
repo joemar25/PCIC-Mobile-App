@@ -157,13 +157,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   }
 
   Future<void> _submitForm(BuildContext context) async {
-    if (!_formSectionKey.currentState!.validate() ||
-        !_signatureSectionKey.currentState!.validate()) {
-      showFlashMessage(context, 'Info', 'Validation Failed',
-          'Please fill in all required fields.');
-      return;
-    }
-
     setState(() {
       isSaving = true;
     });
@@ -174,6 +167,18 @@ class PPIRFormPageState extends State<PPIRFormPage> {
 
       _formData['ppirNameInsured'] = signatureData['ppirNameInsured'];
       _formData['ppirNameIuia'] = signatureData['ppirNameIuia'];
+
+      if (!_formSectionKey.currentState!.validate() ||
+          !_signatureSectionKey.currentState!.validate() ||
+          signatureData['ppirNameInsured']?.trim().isEmpty == true ||
+          signatureData['ppirNameIuia']?.trim().isEmpty == true) {
+        showFlashMessage(context, 'Info', 'Validation Failed',
+            'Please fill in all required fields.');
+        setState(() {
+          isSaving = false;
+        });
+        return;
+      }
 
       final enabledFieldKeys = _formData.keys.where((key) {
         return key != 'trackLastcoord' &&
@@ -424,7 +429,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: deprecated_member_use
     return WillPopScope(
         onWillPop: _onWillPop,
         child: Stack(
