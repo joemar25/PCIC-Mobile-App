@@ -8,9 +8,10 @@ import 'package:flutter/services.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:xml/xml.dart';
+import 'package:ftpconnect/ftpconnect.dart';
 
 import 'task_xml_generator.dart';
-// import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart';
 // import 'package:path/path.dart' as path;
 
 class TaskManager {
@@ -171,8 +172,7 @@ class TaskManager {
 
     List<String> csvPaths = manifestMap.keys
         .where((path) =>
-            path.startsWith('assets/storage/mergedtask/') &&
-            path.endsWith('.csv'))
+            path.startsWith('assets/storage/ftp/Work') && path.endsWith('.csv'))
         .toList();
 
     return csvPaths;
@@ -224,10 +224,15 @@ class TaskManager {
         }
       }
 
+      await _createAccount();
       await _deleteDuplicateForms();
     } catch (error) {
       // debugPrint('Error syncing data from CSV: $error');
     }
+  }
+
+  static Future<void> _createAccount() async {
+    // Scott is here
   }
 
   static Future<void> _deleteDuplicateForms() async {
@@ -497,10 +502,39 @@ class TaskManager {
       final storageRef =
           FirebaseStorage.instance.ref().child('PPIR_SAVES/$formId/Task.xml');
       await storageRef.putString(xmlContent);
-      // debugPrint('Task file saved to Firebase Storage successfully.');
     } catch (e) {
-      // debugPrint('Error saving task file to Firebase Storage: $e');
-      throw Exception('Error saving task file to Firebase Storage');
+      debugPrint('Error saving task file: $e');
+      throw Exception('Error saving task file');
+    }
+  }
+
+  static Future<void> uploadFileToFTP(File file) async {
+    // Replace these with your FTP server details
+    const String ftpHost = '122.55.242.110';
+    const int ftpPort = 21;
+    const String ftpUser = 'k2c_User2';
+    const String ftpPassword = 'K2C@PC!C2024';
+
+    FTPConnect ftpConnect =
+        FTPConnect(ftpHost, port: ftpPort, user: ftpUser, pass: ftpPassword);
+
+    try {
+      await ftpConnect.connect();
+      debugPrint('Connected to FTP server');
+
+      await ftpConnect.changeDirectory('taskarchive');
+      debugPrint('Changed directory to taskarchive');
+
+      bool result = await ftpConnect.uploadFileWithRetry(file, pRetryCount: 2);
+      debugPrint('Upload result: $result');
+
+      await ftpConnect.disconnect();
+      debugPrint('Disconnected from FTP server');
+    } catch (e) {
+      debugPrint('Error uploading file to FTP server: $e');
+      throw Exception('Error uploading file to FTP server: $e');
+    } finally {
+      await ftpConnect.disconnect();
     }
   }
 
@@ -544,6 +578,12 @@ class TaskManager {
           .ref()
           .child('PPIR_SAVES/tasks_saves/$taskId.task');
       await compressedRef.putFile(zipFile);
+
+      // Upload to FTP server
+      await uploadFileToFTP(zipFile);
+
+      // Delete the temporary file
+      await zipFile.delete();
 
       // debugPrint('Task files compressed and uploaded successfully.');
     } catch (e) {
