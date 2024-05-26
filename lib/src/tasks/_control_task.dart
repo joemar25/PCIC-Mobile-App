@@ -1,17 +1,21 @@
 // import 'dart:convert';
 import 'dart:io';
+
 import 'package:archive/archive.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 // import 'package:flutter/services.dart';
+import 'package:ftpconnect/ftpconnect.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server/gmail.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:xml/xml.dart';
-import 'package:ftpconnect/ftpconnect.dart';
 
 import 'task_xml_generator.dart';
-import 'package:flutter/foundation.dart';
 // import 'package:path/path.dart' as path;
 
 class TaskManager {
@@ -186,6 +190,7 @@ class TaskManager {
   }
 
   static Future<void> syncDataFromCSV() async {
+    List<String> emails = [];
     try {
       final csvContents = await _getCSVFilePaths();
 
@@ -198,6 +203,11 @@ class TaskManager {
 
         for (final row in rowsToProcess) {
           final ppirInsuranceId = row[7]?.toString().trim() ?? '';
+
+          final email = row[5]?.toString().trim() ?? '';
+          if (email.isNotEmpty) {
+            emails.add(email);
+          }
 
           if (ppirInsuranceId.isNotEmpty) {
             final ppirFormQuerySnapshot = await FirebaseFirestore.instance
@@ -215,15 +225,60 @@ class TaskManager {
         }
       }
 
-      await _createAccount();
+      // debugPrint('Error syncing data from CSV: $emails');
+      await _createAccountsForEmails(emails);
       await _deleteDuplicateForms();
     } catch (error) {
       debugPrint('Error syncing data from CSV: $error');
     }
   }
 
-  static Future<void> _createAccount() async {
-    // Scott is here
+  static Future<void> _createAccountsForEmails(List<String> emails) async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+
+    for (final email in emails) {
+      try {
+        await auth.createUserWithEmailAndPassword(
+            email: email, password: 'admin1234');
+
+        await sendEmail(email, 'Your New Account Details',
+            'Your account has been created.\nEmail: $email\nPassword: admin1234');
+      } catch (e) {
+        if (e is FirebaseAuthException && e.code == 'email-already-in-use') {
+          // Account already exists, skip creation
+          debugPrint('Account already exists for email: $email');
+        } else {
+          debugPrint('Error creating account for email: $email - $e');
+        }
+      }
+    }
+  }
+
+  static Future<void> sendEmail(
+      // Scott is here
+      String recipientEmail,
+      String subject,
+      String body) async {
+    String username = 'quanbydevs@gmail.com'; // Your email address
+    String password = 'ghpnvhypovidmqdn'; // Your app password
+
+    final smtpServer = gmail(username, password);
+
+    final message = Message()
+      ..from = Address(username, 'Quanby Admin')
+      ..recipients.add(recipientEmail)
+      ..subject = subject
+      ..text = body;
+
+    try {
+      final sendReport = await send(message, smtpServer);
+      debugPrint('Message sent: $sendReport');
+    } on MailerException catch (e) {
+      debugPrint('Message not sent.');
+      for (var p in e.problems) {
+        debugPrint('Problem: ${p.code}: ${p.msg}');
+      }
+    }
   }
 
   static Future<void> _deleteDuplicateForms() async {
