@@ -2,12 +2,17 @@ import '_model.dart';
 import '_detail.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:pcic_mobile_app/src/messages/_searchMessage.dart';
 import '../home/_search_button.dart'; // Update this import to the correct path
+=======
+// import 'package:pcic_mobile_app/src/theme/_theme.dart';
+import '../home/_search_button.dart';
+>>>>>>> 4739e100500b97c0f54c726466c5a0b290a2a4e7
 
 class MessagesPage extends StatefulWidget {
   const MessagesPage({super.key});

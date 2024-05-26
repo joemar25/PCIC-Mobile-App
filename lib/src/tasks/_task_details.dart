@@ -1,6 +1,6 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+// import 'package:flutter_svg/svg.dart';
 import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
@@ -264,7 +264,7 @@ class TaskDetailsPage extends StatelessWidget {
                                       status == 'Ongoing'
                                           ? 'Continue to Complete'
                                           : 'Go to Geotag',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 18.0,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
