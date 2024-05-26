@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class EditProfilePage extends StatefulWidget {
   final String documentId;
@@ -22,6 +23,7 @@ class EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _emailController;
   late TextEditingController _newPasswordController;
   late TextEditingController _confirmPasswordController;
+  late TextEditingController _currentPasswordController;
 
   @override
   void initState() {
@@ -30,6 +32,7 @@ class EditProfilePageState extends State<EditProfilePage> {
     _emailController = TextEditingController(text: widget.email);
     _newPasswordController = TextEditingController();
     _confirmPasswordController = TextEditingController();
+    _currentPasswordController = TextEditingController();
   }
 
   @override
@@ -38,32 +41,51 @@ class EditProfilePageState extends State<EditProfilePage> {
     _emailController.dispose();
     _newPasswordController.dispose();
     _confirmPasswordController.dispose();
+    _currentPasswordController.dispose();
     super.dispose();
   }
 
   void _saveProfile() async {
-    if (_newPasswordController.text != _confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('New password and confirm password do not match.'),
-        ),
-      );
-      return;
+    if (_newPasswordController.text.isNotEmpty ||
+        _confirmPasswordController.text.isNotEmpty) {
+      if (_newPasswordController.text != _confirmPasswordController.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('New password and confirm password do not match.'),
+          ),
+        );
+        return;
+      }
     }
 
     try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(widget.documentId)
-          .update({
-        'name': _nameController.text,
-        'email': _emailController.text,
-        if (_newPasswordController.text.isNotEmpty)
-          'password': _newPasswordController.text,
-      });
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        // Re-authenticate the user before updating the password
+        AuthCredential credential = EmailAuthProvider.credential(
+          email: user.email!,
+          password: _currentPasswordController.text,
+        );
+        await user.reauthenticateWithCredential(credential);
 
-      if (mounted) {
-        Navigator.pop(context, true);
+        if (_newPasswordController.text.isNotEmpty &&
+            _confirmPasswordController.text.isNotEmpty) {
+          await user.updatePassword(_newPasswordController.text);
+        }
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(widget.documentId)
+            .update({
+          'name': _nameController.text,
+          'email': _emailController.text,
+        });
+
+        if (mounted) {
+          Navigator.pop(context, true);
+        }
+      } else {
+        throw Exception('User not logged in');
       }
     } catch (e) {
       if (mounted) {
@@ -110,6 +132,11 @@ class EditProfilePageState extends State<EditProfilePage> {
               ],
             ),
             const SizedBox(height: 16.0),
+            TextField(
+              controller: _currentPasswordController,
+              decoration: const InputDecoration(labelText: 'Current Password'),
+              obscureText: true,
+            ),
             TextField(
               controller: _newPasswordController,
               decoration: const InputDecoration(labelText: 'New Password'),
