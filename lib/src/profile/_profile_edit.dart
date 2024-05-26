@@ -56,20 +56,29 @@ class EditProfilePageState extends State<EditProfilePage> {
         );
         return;
       }
+
+      if (_currentPasswordController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Current password is required to update the password.'),
+          ),
+        );
+        return;
+      }
     }
 
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        // Re-authenticate the user before updating the password
-        AuthCredential credential = EmailAuthProvider.credential(
-          email: user.email!,
-          password: _currentPasswordController.text,
-        );
-        await user.reauthenticateWithCredential(credential);
-
         if (_newPasswordController.text.isNotEmpty &&
             _confirmPasswordController.text.isNotEmpty) {
+          // Re-authenticate the user before updating the password
+          AuthCredential credential = EmailAuthProvider.credential(
+            email: user.email!,
+            password: _currentPasswordController.text,
+          );
+          await user.reauthenticateWithCredential(credential);
+
           await user.updatePassword(_newPasswordController.text);
         }
 
