@@ -6,6 +6,7 @@ import '../home/_search_button.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter/material.dart';
 import '../home/_recent_task_data.dart';
+import 'package:lottie/lottie.dart';
 
 class TaskView extends StatefulWidget {
   const TaskView({super.key, required this.tasks, required this.initialFilter});
@@ -136,10 +137,21 @@ class TaskContainerState extends State<TaskView> {
             child: RefreshIndicator(
               onRefresh: _refreshTasks,
               child: tasksToDisplay.isEmpty
-                  ? const Center(
-                      child: Text(
-                        'No tasks',
-                        style: TextStyle(color: Colors.black),
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Lottie.asset(
+                            'assets/animations/emptybox.json',
+                            width: 200,
+                            height: 200,
+                          ),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'No tasks',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ],
                       ),
                     )
                   : ListView.builder(

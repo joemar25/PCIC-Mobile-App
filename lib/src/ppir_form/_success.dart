@@ -1,10 +1,11 @@
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pcic_mobile_app/utils/app/_colors.dart';
-
 import '../home/_home.dart';
 
 class FormSuccessPage extends StatelessWidget {
   final bool isSaveSuccessful;
+
   const FormSuccessPage({super.key, required this.isSaveSuccessful});
 
   @override
@@ -18,19 +19,19 @@ class FormSuccessPage extends StatelessWidget {
       });
     }
 
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: AppColors.background,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.check,
-              size: 100,
-              color: AppColors.success,
+            Lottie.asset(
+              'assets/animations/success.json',
+              width: 200,
+              height: 200,
             ),
-            SizedBox(height: 20),
-            Text(
+            const SizedBox(height: 20),
+            const Text(
               "Successful",
               style: TextStyle(
                 fontSize: 24,

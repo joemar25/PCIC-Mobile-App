@@ -1,4 +1,4 @@
-import 'dart:convert';
+// import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
@@ -7,7 +7,7 @@ import 'package:csv/csv.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 import 'package:ftpconnect/ftpconnect.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mailer/mailer.dart';
@@ -170,21 +170,9 @@ class TaskManager {
     throw Exception('GPX file not found in Firebase Storage');
   }
 
-  static Future<List<String>> _getCSVFilePaths() async {
-    final manifestContent = await rootBundle.loadString('AssetManifest.json');
-    final manifestMap = json.decode(manifestContent) as Map<String, dynamic>;
-
-    List<String> csvPaths = manifestMap.keys
-        .where((path) =>
-            path.startsWith('assets/storage/ftp/Work') && path.endsWith('.csv'))
-        .toList();
-
-    return csvPaths;
-  }
-
   static Future<List<TaskManager>> getNotCompletedTasks() async {
     // Joemar is here
-    // await syncDataFromCSV();
+    await syncDataFromCSV();
 
     final query = FirebaseFirestore.instance
         .collection('tasks')
@@ -193,18 +181,21 @@ class TaskManager {
     return await getTasksByQuery(query);
   }
 
-  static Future<List<List<dynamic>>> _loadCSVData(String filePath) async {
-    final fileContent = await rootBundle.loadString(filePath);
+  static List<List<dynamic>> _loadCSVData(String fileContent) {
     return const CsvToListConverter().convert(fileContent);
+  }
+
+  static Future<List<String>> _getCSVFilePaths() async {
+    return await _getCSVFileContentsFromFTP();
   }
 
   static Future<void> syncDataFromCSV() async {
     List<String> emails = [];
     try {
-      final csvFilePaths = await _getCSVFilePaths();
+      final csvContents = await _getCSVFilePaths();
 
-      for (final csvFilePath in csvFilePaths) {
-        final csvData = await _loadCSVData(csvFilePath);
+      for (final csvContent in csvContents) {
+        final csvData = _loadCSVData(csvContent);
 
         // Skip the first row and empty rows
         final Iterable<List<dynamic>> rowsToProcess =
@@ -238,7 +229,7 @@ class TaskManager {
       await _createAccountsForEmails(emails);
       await _deleteDuplicateForms();
     } catch (error) {
-      // debugPrint('Error syncing data from CSV: $error');
+      debugPrint('Error syncing data from CSV: $error');
     }
   }
 
@@ -561,6 +552,90 @@ class TaskManager {
       debugPrint('Error saving task file: $e');
       throw Exception('Error saving task file');
     }
+  }
+
+  static Future<List<String>> _getCSVFileContentsFromFTP() async {
+    const String ftpHost = '122.55.242.110';
+    const int ftpPort = 21;
+    const String ftpUser = 'k2c_User1';
+    const String ftpPassword = 'K2C@PC!C2024';
+
+    FTPConnect ftpConnect =
+        FTPConnect(ftpHost, port: ftpPort, user: ftpUser, pass: ftpPassword);
+    List<String> csvContents = [];
+
+    try {
+      await ftpConnect.connect();
+      debugPrint('Connected to FTP server');
+
+      await ftpConnect.changeDirectory('Work');
+      debugPrint('Changed directory to Work');
+
+      List<FTPEntry> ftpFiles = await ftpConnect.listDirectoryContent();
+      debugPrint(
+          'Listed directory contents: ${ftpFiles.map((e) => e.name).toList()}');
+
+      Directory tempDir = await getTemporaryDirectory();
+      for (FTPEntry ftpFile in ftpFiles) {
+        if (ftpFile.type == FTPEntryType.FILE &&
+            ftpFile.name.endsWith('.csv')) {
+          // Check if file has already been processed
+          final processedFileSnapshot = await FirebaseFirestore.instance
+              .collection('processedFiles')
+              .doc(ftpFile.name)
+              .get();
+
+          if (processedFileSnapshot.exists) {
+            debugPrint('File ${ftpFile.name} already processed, skipping...');
+            continue;
+          }
+
+          String localPath = '${tempDir.path}/${ftpFile.name}';
+          File localFile = File(localPath);
+          await ftpConnect.downloadFile(ftpFile.name, localFile);
+          debugPrint('Downloaded file: ${ftpFile.name} to $localPath');
+
+          String fileContent = await localFile.readAsString();
+          csvContents.add(fileContent);
+
+          // Add file to processedFiles collection
+          await FirebaseFirestore.instance
+              .collection('processedFiles')
+              .doc(ftpFile.name)
+              .set({'processedAt': Timestamp.now()});
+
+          // Update existing tasks collection to reference the FTP file
+          final tasksSnapshot = await FirebaseFirestore.instance
+              .collection('tasks')
+              .where('ftpFileName', isEqualTo: ftpFile.name)
+              .get();
+
+          if (tasksSnapshot.docs.isNotEmpty) {
+            for (final taskDoc in tasksSnapshot.docs) {
+              await taskDoc.reference.update({'ftpFileName': ftpFile.name});
+            }
+          } else {
+            // Create a new task document if none exists for the FTP file
+            await FirebaseFirestore.instance.collection('tasks').add({
+              'title': 'Task from ${ftpFile.name}',
+              'ftpFileName': ftpFile.name,
+              'createdAt': Timestamp.now(),
+            });
+          }
+
+          await localFile.delete();
+          debugPrint('Deleted temporary file: $localPath');
+        }
+      }
+    } catch (e) {
+      debugPrint('Error downloading files from FTP: $e');
+      throw Exception('Error downloading files from FTP: $e');
+    } finally {
+      await ftpConnect.disconnect();
+      debugPrint('Disconnected from FTP server');
+    }
+
+    return csvContents;
   }
 
   static Future<void> uploadFileToFTP(File file) async {
