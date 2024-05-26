@@ -1,22 +1,22 @@
-import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
-class SearchButton extends StatefulWidget {
+class SearchMessageButton extends StatefulWidget {
   final String searchQuery;
   final ValueChanged<String> onUpdateValue;
 
-  const SearchButton({
+  const SearchMessageButton({
     super.key,
     required this.searchQuery,
     required this.onUpdateValue,
   });
 
   @override
-  State<SearchButton> createState() => _SearchButtonState();
+  State<SearchMessageButton> createState() => _SearchMessageButtonState();
 }
 
-class _SearchButtonState extends State<SearchButton> {
+class _SearchMessageButtonState extends State<SearchMessageButton> {
   final TextEditingController _controller = TextEditingController();
   bool _isSearching = false;
 
@@ -27,7 +27,7 @@ class _SearchButtonState extends State<SearchButton> {
   }
 
   @override
-  void didUpdateWidget(SearchButton oldWidget) {
+  void didUpdateWidget(SearchMessageButton oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.searchQuery != widget.searchQuery) {
       _controller.text = widget.searchQuery;
@@ -67,7 +67,7 @@ class _SearchButtonState extends State<SearchButton> {
                   },
                   textAlign: TextAlign.left,
                   decoration: InputDecoration(
-                    hintText: 'Search Task',
+                    hintText: 'Search Message',
                     hintStyle:
                         TextStyle(color: Colors.grey, fontSize: t?.caption),
                     isDense: true,

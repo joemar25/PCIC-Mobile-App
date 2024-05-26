@@ -45,5 +45,4 @@ app.*.map.json
 # mar
 /.vscode
 *test*
-# if error on other devs, pass this .env file to them
-*.env
+/assets/storage/ftp/.vscode/sftp.json

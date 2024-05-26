@@ -44,16 +44,6 @@ class _ProfileBodyState extends State<ProfileBody> {
               svgPath: 'assets/storage/images/settings.svg',
             ),
           ),
-          const SizedBox(height: 16.0),
-          GestureDetector(
-            onTap: () {
-              // Handle "Change Password" tap
-            },
-            child: const ProfileBodyItem(
-              label: 'Change Password',
-              svgPath: 'assets/storage/images/lock.svg',
-            ),
-          ),
         ],
       ),
     );

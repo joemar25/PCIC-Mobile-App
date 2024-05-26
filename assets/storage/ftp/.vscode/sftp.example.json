@@ -1,0 +1,12 @@
+{
+  "name": "Mar Server",
+  "host": "",
+  "protocol": "ftp",
+  "port": 21,
+  "username": "usermo",
+  "password": "passwordko",
+  "remotePath": "/",
+  "uploadOnSave": false,
+  "useTempFile": false,
+  "openSsh": false
+}
