@@ -4,7 +4,7 @@
 
 ## Download
 
-- VS Code Extension SFTP
+- VS Code Extension ```SFTP```
 
 ## Credentials
 
