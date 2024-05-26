@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class MessageDetailsPage extends StatefulWidget {
@@ -11,14 +13,89 @@ class MessageDetailsPage extends StatefulWidget {
 
 class MessageDetailsPageState extends State<MessageDetailsPage> {
   final TextEditingController _messageController = TextEditingController();
-  final List<String> _userMessages = [];
+  final List<Map<String, dynamic>> _userMessages = [];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  void _sendMessage() {
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserMessages();
+  }
+
+  void _fetchUserMessages() async {
+    User? currentUser = _auth.currentUser;
+    if (currentUser == null) return;
+
+    QuerySnapshot snapshot = await _firestore
+        .collection('users')
+        .doc(currentUser.uid)
+        .collection('conversations')
+        .doc(widget.message['authUid'])
+        .collection('messages')
+        .orderBy('timestamp', descending: false)
+        .get();
+
+    List<Map<String, dynamic>> fetchedMessages = snapshot.docs.map((doc) {
+      return {
+        'message': doc['message'],
+        'timestamp': doc['timestamp'],
+        'senderId': doc['senderId'],
+      };
+    }).toList();
+
+    setState(() {
+      _userMessages.addAll(fetchedMessages);
+    });
+  }
+
+  void _sendMessage() async {
     if (_messageController.text.isNotEmpty) {
-      setState(() {
-        _userMessages.add(_messageController.text);
-        _messageController.clear();
-      });
+      String message = _messageController.text;
+      String currentUserUid = _auth.currentUser!.uid;
+
+      print("Sending message: $message");
+
+      try {
+        DocumentReference currentUserDoc = _firestore
+            .collection('users')
+            .doc(currentUserUid)
+            .collection('conversations')
+            .doc(widget.message['authUid']);
+
+        DocumentReference recipientUserDoc = _firestore
+            .collection('users')
+            .doc(widget.message['authUid'])
+            .collection('conversations')
+            .doc(currentUserUid);
+
+        await currentUserDoc.collection('messages').add({
+          'message': message,
+          'timestamp': FieldValue.serverTimestamp(),
+          'senderId': currentUserUid,
+        });
+
+        await recipientUserDoc.collection('messages').add({
+          'message': message,
+          'timestamp': FieldValue.serverTimestamp(),
+          'senderId': currentUserUid,
+        });
+
+        print("Message sent successfully");
+
+        setState(() {
+          _userMessages.add({
+            'message': message,
+            'timestamp': Timestamp.now(),
+            'senderId': currentUserUid,
+          });
+          _messageController.clear();
+        });
+      } catch (e) {
+        print("Error sending message: $e");
+      }
+    } else {
+      print("Message text is empty");
     }
   }
 
@@ -55,141 +132,120 @@ class MessageDetailsPageState extends State<MessageDetailsPage> {
       ),
 
       // body (scrollable)
-      body: SingleChildScrollView(
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 16),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipOval(
-                        child: Image.asset(
-                          widget.message['profilepic'],
-                          width: 55,
-                          height: 55,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      const SizedBox(width: 8.0),
-                      Container(
-                        padding: const EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
-                          color: mainColor,
-                          borderRadius: BorderRadius.circular(32.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 2,
-                              blurRadius: 10,
-                              offset: const Offset(4, 5),
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          widget.message['message'],
-                          style: const TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w300,
-                            fontFamily: 'Inter',
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  ..._userMessages.map(
-                    (message) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Container(
-                          padding: const EdgeInsets.all(16.0),
-                          decoration: BoxDecoration(
-                            color: const Color.fromRGBO(97, 97, 97, 1)
-                                .withOpacity(0.85),
-                            borderRadius: BorderRadius.circular(32),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 2,
-                                blurRadius: 10,
-                                offset: const Offset(4, 5),
+            Expanded(
+              child: ListView.builder(
+                reverse: true,
+                itemCount: _userMessages.length,
+                itemBuilder: (context, index) {
+                  final message =
+                      _userMessages[_userMessages.length - 1 - index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Align(
+                      alignment: message['senderId'] == _auth.currentUser?.uid
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (message['senderId'] != _auth.currentUser?.uid)
+                            ClipOval(
+                              child: Image.network(
+                                widget.message['profilePicUrl'],
+                                width: 55,
+                                height: 55,
+                                fit: BoxFit.cover,
                               ),
-                            ],
+                            ),
+                          if (message['senderId'] != _auth.currentUser?.uid)
+                            const SizedBox(width: 8.0),
+                          Container(
+                            padding: const EdgeInsets.all(16.0),
+                            decoration: BoxDecoration(
+                              color:
+                                  message['senderId'] == _auth.currentUser?.uid
+                                      ? const Color.fromRGBO(97, 97, 97, 1)
+                                          .withOpacity(0.85)
+                                      : mainColor,
+                              borderRadius: BorderRadius.circular(32),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  spreadRadius: 2,
+                                  blurRadius: 10,
+                                  offset: const Offset(4, 5),
+                                ),
+                              ],
+                            ),
+                            child: Text(
+                              message['message'],
+                              style: const TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w300,
+                                fontFamily: 'Inter',
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
-                          child: Text(
-                            message,
-                            style: const TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w300,
-                              fontFamily: 'Inter',
-                              color: Colors.white,
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).viewInsets.top,
+              ),
+              child: Container(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 24, 0, 0),
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(32),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _messageController,
+                            decoration: const InputDecoration(
+                              hintText: 'Reply here... ',
+                              hintStyle: TextStyle(
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w300,
+                              ),
+                              border: InputBorder.none,
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 80), // Add space for the footer
-          ],
-        ),
-      ),
-
-      // footer (text field)
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: Container(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(32),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      decoration: const InputDecoration(
-                        hintText: 'Reply here... ',
-                        hintStyle: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w300,
+                        IconButton(
+                          icon: const Icon(Icons.arrow_upward_sharp),
+                          onPressed: _sendMessage,
+                          color: mainColor,
                         ),
-                        border: InputBorder.none,
-                      ),
+                      ],
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.arrow_upward_sharp),
-                    onPressed: _sendMessage,
-                    color: mainColor,
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );

@@ -2,8 +2,12 @@ import '_model.dart';
 import '_detail.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
-import '../home/_search_button.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:pcic_mobile_app/src/messages/_searchMessage.dart';
+import '../home/_search_button.dart'; // Update this import to the correct path
 
 class MessagesPage extends StatefulWidget {
   const MessagesPage({super.key});
@@ -13,70 +17,173 @@ class MessagesPage extends StatefulWidget {
 }
 
 class MessagesPageState extends State<MessagesPage> {
-  final List<Map<String, dynamic>> messages = [
-    {
-      'profilepic': 'assets/image/mar.png',
-      'name': 'Joemar Cardiño',
-      'message': 'Hey, how are you?',
-      'time': DateTime(2023, 6, 5, 10, 30),
-      'color': Colors.blue,
-    },
-    {
-      'profilepic': 'assets/image/sean.jpg',
-      'name': 'Sean Palacay',
-      'message': 'I have a question for you.',
-      'time': DateTime(24, 6, 3, 11, 15),
-    },
-    {
-      'profilepic': 'assets/image/tonnn.jpg',
-      'name': 'Anton Cabais',
-      'message': 'Hello?',
-      'time': DateTime(24, 6, 3, 11, 13),
-    },
-  ];
-
-  List<Map<String, dynamic>> filteredMessages = [];
-
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final List<Map<String, dynamic>> allUsers = [];
+  final List<Map<String, dynamic>> usersWithConversations = [];
+  List<Map<String, dynamic>> filteredUsers = [];
   String _searchQuery = '';
-  final bool _sortEarliest = true;
+  User? _currentUser;
 
   @override
   void initState() {
     super.initState();
-    _filterMessagesAsync();
+    _firebaseMessaging.requestPermission();
+    _firebaseMessaging.getToken().then((token) {
+      print("Firebase Messaging Token: $token");
+      // Save the token in Firestore or use it as needed
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Handle foreground messages
+      if (message.notification != null) {
+        print('Message data: ${message.data}');
+        print('Message notification: ${message.notification}');
+      }
+    });
+
+    _getCurrentUser();
   }
 
-  Future<void> _filterMessagesAsync() async {
-    final filteredList = messages
-        .where((message) =>
-            message['name']
-                .toLowerCase()
-                .contains(_searchQuery.toLowerCase()) ||
-            message['message']
+  void _getCurrentUser() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        _currentUser = user;
+      });
+      _fetchAllUsers();
+      _fetchUsersWithConversations();
+    }
+  }
+
+  Future<void> _fetchAllUsers() async {
+    QuerySnapshot snapshot = await _firestore.collection('users').get();
+    List<Map<String, dynamic>> fetchedUsers =
+        snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+
+    // Remove current user from the list
+    fetchedUsers.removeWhere((user) => user['authUid'] == _currentUser?.uid);
+
+    setState(() {
+      allUsers.clear();
+      allUsers.addAll(fetchedUsers);
+    });
+  }
+
+  Future<void> _fetchUsersWithConversations() async {
+    if (_currentUser == null) return;
+
+    QuerySnapshot snapshot = await _firestore.collection('users').get();
+    List<Map<String, dynamic>> fetchedUsers =
+        snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+
+    for (var user in fetchedUsers) {
+      if (user['authUid'] == _currentUser?.uid)
+        continue; // Skip the current user
+
+      String userId = user['authUid'];
+      QuerySnapshot messageSnapshot = await _firestore
+          .collection('users')
+          .doc(_currentUser!.uid)
+          .collection('conversations')
+          .doc(userId)
+          .collection('messages')
+          .orderBy('timestamp', descending: true)
+          .limit(1)
+          .get();
+
+      if (messageSnapshot.docs.isNotEmpty) {
+        user['lastMessage'] = messageSnapshot.docs.first['message'];
+        user['lastMessageTime'] = messageSnapshot.docs.first['timestamp'];
+        usersWithConversations.add(user);
+      }
+    }
+
+    setState(() {
+      filteredUsers = usersWithConversations;
+      _filterUsers();
+    });
+  }
+
+  void _filterUsers() {
+    final filteredList = usersWithConversations
+        .where((user) =>
+            user['name'].toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            user['email'].toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            user['lastMessage']
                 .toLowerCase()
                 .contains(_searchQuery.toLowerCase()))
         .toList();
 
-    filteredList.sort((a, b) {
-      if (_sortEarliest) {
-        return a['time'].compareTo(b['time']);
-      } else {
-        return b['time'].compareTo(a['time']);
-      }
-    });
-
     setState(() {
-      filteredMessages = filteredList;
+      filteredUsers = filteredList;
     });
   }
 
-  void _navigateToMessageDetails(Map<String, dynamic> message) {
+  void _navigateToMessageDetails(Map<String, dynamic> user) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MessageDetailsPage(message: message),
+        builder: (context) => MessageDetailsPage(message: {
+          'authUid': user['authUid'],
+          'name': user['name'],
+          'profilePicUrl': user['profilePicUrl'], // Passing profilePicUrl
+        }),
       ),
     );
+  }
+
+  void _showUserListModal() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'Chat with',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: allUsers.length,
+                itemBuilder: (context, index) {
+                  final user = allUsers[index];
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(user['profilePicUrl']),
+                    ),
+                    title: Text(user['name']),
+                    onTap: () {
+                      Navigator.pop(context);
+                      _navigateToMessageDetails(user);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  String _formatTimestamp(Timestamp? timestamp) {
+    if (timestamp == null) {
+      return '';
+    }
+    DateTime date = timestamp.toDate();
+    return DateFormat('MMM dd, hh:mm a').format(date);
+  }
+
+  String _getFirstName(String name) {
+    return name.split(' ').first;
   }
 
   @override
@@ -98,28 +205,43 @@ class MessagesPageState extends State<MessagesPage> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                child: SearchButton(
+                child: SearchMessageButton(
                   searchQuery: _searchQuery,
                   onUpdateValue: (value) {
                     setState(() {
                       _searchQuery = value;
+                      _filterUsers();
                     });
-                    _filterMessagesAsync();
                   },
                 ),
               ),
+              const SizedBox(height: 16),
               Expanded(
                 child: ListView.builder(
-                  itemCount: filteredMessages.length,
+                  itemCount: filteredUsers.length,
                   itemBuilder: (context, index) {
-                    final message = filteredMessages[index];
-                    return MessageItem(
-                      profilepic: message['profilepic'],
-                      name: message['name'],
-                      message: message['message'],
-                      time:
-                          DateFormat('M/d/yy hh:mm a').format(message['time']),
-                      onTap: () => _navigateToMessageDetails(message),
+                    final user = filteredUsers[index];
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(user['profilePicUrl']),
+                      ),
+                      title: Text(
+                        _getFirstName(user['name']),
+                        style: const TextStyle(
+                          color: mainColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      subtitle: Text(user['lastMessage'] ?? 'No messages yet'),
+                      trailing: Text(
+                        _formatTimestamp(user['lastMessageTime']),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                      onTap: () => _navigateToMessageDetails(user),
                     );
                   },
                 ),
@@ -127,6 +249,11 @@ class MessagesPageState extends State<MessagesPage> {
             ],
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showUserListModal,
+        child: const Icon(Icons.add, color: Colors.white),
+        backgroundColor: mainColor,
       ),
     );
   }
