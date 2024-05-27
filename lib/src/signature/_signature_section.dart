@@ -278,6 +278,7 @@ class SignatureSectionState extends State<SignatureSection> {
         await fileRef.delete();
       }
     }
+    
 
     const uuid = Uuid();
     final signatureFilename = '${uuid.v4()}_$signatureName.png';
