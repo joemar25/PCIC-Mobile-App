@@ -472,10 +472,10 @@ class TaskManager {
         final ppirFormRef =
             FirebaseFirestore.instance.collection('ppirForms').doc();
 
-        final taskData = _createTaskData(row, taskRef.id, formDetailsRef);
+        final taskData = _createTask(row, taskRef.id, formDetailsRef);
         final formDetailsData =
-            _createFormDetailsData(row, ppirFormRef.id, taskRef);
-        final ppirFormData = _createPPIRFormData(row, ppirFormRef.id, taskRef);
+            _createFormDetails(row, ppirFormRef.id, taskRef);
+        final ppirFormData = _createForm(row, ppirFormRef.id, taskRef);
 
         final batch = FirebaseFirestore.instance.batch();
         batch.set(taskRef, taskData);
@@ -489,13 +489,13 @@ class TaskManager {
   }
 
   /// ***************               CREATE              ***************** ///
-  static Map<String, dynamic> _createTaskData(
+  static Map<String, dynamic> _createTask(
       List<dynamic> row, String taskId, DocumentReference formDetailsRef) {
     return {
       'assignee': FirebaseFirestore.instance
           .collection('users')
           .doc(row[5]?.toString().trim() ?? ''),
-      'assignor': null, // Assign appropriate assignor
+      'assignor': null,
       'formDetailsId': formDetailsRef,
       'dateCreated': FieldValue.serverTimestamp(),
       'dateAccess': FieldValue.serverTimestamp(),
@@ -503,7 +503,7 @@ class TaskManager {
     };
   }
 
-  static Map<String, dynamic> _createFormDetailsData(
+  static Map<String, dynamic> _createFormDetails(
       List<dynamic> row, String formDetailsId, DocumentReference taskRef) {
     return {
       'taskId': taskRef,
@@ -513,7 +513,7 @@ class TaskManager {
     };
   }
 
-  static Map<String, dynamic> _createPPIRFormData(
+  static Map<String, dynamic> _createForm(
       List<dynamic> row, String ppirFormId, DocumentReference taskRef) {
     return {
       'taskId': taskRef,
@@ -567,8 +567,7 @@ class TaskManager {
   }
 
   /// ***************           FTP Control             ***************** ///
-  static Future<void> uploadFileToFTP(File file) async {
-    // Replace these with your FTP server details
+  static Future<void> uploadTask(File file) async {
     const String ftpHost = '122.55.242.110';
     const int ftpPort = 21;
     const String ftpUser = 'k2c_User2';
@@ -579,25 +578,17 @@ class TaskManager {
 
     try {
       await ftpConnect.connect();
-      debugPrint('Connected to FTP server');
-
       await ftpConnect.changeDirectory('taskarchive');
-      debugPrint('Changed directory to taskarchive');
-
-      bool result = await ftpConnect.uploadFileWithRetry(file, pRetryCount: 2);
-      debugPrint('Upload result: $result');
-
+      await ftpConnect.uploadFileWithRetry(file, pRetryCount: 2);
       await ftpConnect.disconnect();
-      debugPrint('Disconnected from FTP server');
     } catch (e) {
-      debugPrint('Error uploading file to FTP server: $e');
       throw Exception('Error uploading file to FTP server: $e');
     } finally {
       await ftpConnect.disconnect();
     }
   }
 
-  static Future<List<String>> _getCSVFileContentsFromFTP() async {
+  static Future<List<String>> syncTask() async {
     const String ftpHost = '122.55.242.110';
     const int ftpPort = 21;
     const String ftpUser = 'k2c_User1';
@@ -683,7 +674,7 @@ class TaskManager {
 
   /// ***************        CSV to Firestore           ***************** ///
   static Future<List<String>> _getCSVFilePaths() async {
-    return await _getCSVFileContentsFromFTP();
+    return await syncTask();
   }
 
   static List<List<dynamic>> _loadCSVData(String fileContent) {
@@ -691,7 +682,7 @@ class TaskManager {
   }
 
   static Future<void> syncDataFromCSV() async {
-    List<String> emails = [];
+    List<String> emails = ['scottandrewpro@gmail.com'];
     try {
       final csvContents = await _getCSVFilePaths();
 
@@ -826,7 +817,7 @@ class TaskManager {
       await compressedRef.putFile(zipFile);
 
       // Upload to FTP server
-      await uploadFileToFTP(zipFile);
+      await uploadTask(zipFile);
 
       // Delete the temporary file
       await zipFile.delete();
