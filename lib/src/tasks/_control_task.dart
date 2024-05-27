@@ -4,17 +4,18 @@
 // import 'package:xml/xml.dart';
 
 import 'dart:io';
-import 'package:csv/csv.dart';
-import 'package:mailer/mailer.dart';
+
 import 'package:archive/archive.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:csv/csv.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:ftpconnect/ftpconnect.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server/gmail.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 import 'task_xml_generator.dart';
 
@@ -728,14 +729,36 @@ class TaskManager {
   /// ***************         Account Control           ***************** ///
   static Future<void> _createAccountsForEmails(List<String> emails) async {
     final FirebaseAuth auth = FirebaseAuth.instance;
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     for (final email in emails) {
       try {
-        await auth.createUserWithEmailAndPassword(
-            email: email, password: 'admin1234');
+        UserCredential userCredential =
+            await auth.createUserWithEmailAndPassword(
+          email: email,
+          password: 'admin1234',
+        );
 
-        await sendEmail(email, 'Your New Account Details',
-            'Your account has been created.\nEmail: $email\nPassword: admin1234');
+        User? user = userCredential.user;
+        if (user != null) {
+          String name = _getNameFromEmail(email);
+
+          await firestore.collection('users').doc(user.uid).set({
+            'authUid': user.uid,
+            'email': email,
+            'name': name,
+            'profilePicUrl':
+                'https://firebasestorage.googleapis.com/v0/b/pcic-mobile-app.appspot.com/o/profile_pics%2Fdefault.png?alt=media&token=cecb3e4c-6f43-48fa-96ab-f743c4d8abe5', // Add appropriate value or get it from another source
+            'role': 'user', // Add appropriate role
+            'verified': true,
+          });
+
+          await sendEmail(
+            email,
+            'Your New Account Details',
+            'Your account has been created.\nEmail: $email\nPassword: admin1234',
+          );
+        }
       } catch (e) {
         if (e is FirebaseAuthException && e.code == 'email-already-in-use') {
           // Account already exists, skip creation
@@ -745,6 +768,11 @@ class TaskManager {
         }
       }
     }
+  }
+
+  static String _getNameFromEmail(String email) {
+    final localPart = email.split('@')[0];
+    return localPart[0].toUpperCase() + localPart.substring(1);
   }
 
   static Future<void> sendEmail(
