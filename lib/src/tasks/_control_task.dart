@@ -649,13 +649,6 @@ class TaskManager {
             for (final taskDoc in tasksSnapshot.docs) {
               await taskDoc.reference.update({'ftpFileName': ftpFile.name});
             }
-          } else {
-            // Create a new task document if none exists for the FTP file
-            await FirebaseFirestore.instance.collection('tasks').add({
-              'title': 'Task from ${ftpFile.name}',
-              'ftpFileName': ftpFile.name,
-              'createdAt': Timestamp.now(),
-            });
           }
 
           await localFile.delete();
