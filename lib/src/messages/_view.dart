@@ -1,14 +1,13 @@
-import '_model.dart';
 import '_detail.dart';
 import 'package:intl/intl.dart';
-import '../home/_search_button.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:pcic_mobile_app/src/messages/_searchMessage.dart';
-import '../home/_search_button.dart'; // Update this import to the correct path
+// import '_model.dart';
+// import '../home/_search_button.dart';
 // import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class MessagesPage extends StatefulWidget {
@@ -32,15 +31,15 @@ class MessagesPageState extends State<MessagesPage> {
     super.initState();
     _firebaseMessaging.requestPermission();
     _firebaseMessaging.getToken().then((token) {
-      print("Firebase Messaging Token: $token");
+      debugPrint("Firebase Messaging Token: $token");
       // Save the token in Firestore or use it as needed
     });
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       // Handle foreground messages
       if (message.notification != null) {
-        print('Message data: ${message.data}');
-        print('Message notification: ${message.notification}');
+        debugPrint('Message data: ${message.data}');
+        debugPrint('Message notification: ${message.notification}');
       }
     });
 
@@ -80,8 +79,9 @@ class MessagesPageState extends State<MessagesPage> {
         snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
 
     for (var user in fetchedUsers) {
-      if (user['authUid'] == _currentUser?.uid)
+      if (user['authUid'] == _currentUser?.uid) {
         continue; // Skip the current user
+      }
 
       String userId = user['authUid'];
       QuerySnapshot messageSnapshot = await _firestore
@@ -254,8 +254,8 @@ class MessagesPageState extends State<MessagesPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showUserListModal,
-        child: const Icon(Icons.add, color: Colors.white),
         backgroundColor: mainColor,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
