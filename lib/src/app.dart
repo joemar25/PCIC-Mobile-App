@@ -13,9 +13,9 @@ import '_starting.dart';
 import 'geotag/_geotag.dart';
 import 'home/_home.dart';
 import 'messages/_view.dart';
-import 'navigation/service.dart';
+import '../utils/navigation/service.dart';
 import 'splash/_splash.dart';
-import 'tasks/_control_task.dart';
+import 'tasks/controllers/task_manager.dart';
 import 'tasks/_task.dart';
 
 class App extends StatelessWidget {

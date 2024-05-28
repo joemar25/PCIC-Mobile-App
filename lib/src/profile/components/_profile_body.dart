@@ -1,8 +1,8 @@
 import '_profile_body_item.dart';
 import 'package:flutter/material.dart';
-import '../settings/_view.dart';
-import '../settings/_controller.dart';
-import '../settings/_service.dart';
+import '../../settings/_view.dart';
+import '../../settings/_controller.dart';
+import '../../settings/_service.dart';
 
 class ProfileBody extends StatefulWidget {
   const ProfileBody({super.key});

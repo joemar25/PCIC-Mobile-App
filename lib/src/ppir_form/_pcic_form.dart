@@ -7,18 +7,19 @@ import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pcic_mobile_app/src/tasks/controllers/storage_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../utils/app/_show_flash_message.dart';
 import '../../utils/seeds/_dropdown.dart';
 import '../geotag/_geotag.dart';
-import '../geotag/_map_service.dart';
-import '../signature/_signature_section.dart';
-import '../tasks/_control_task.dart';
-import '_form_field.dart' as form_field;
-import '_form_section.dart';
-import '_gpx_file_buttons.dart';
-import '_success.dart';
+import '../geotag/controls/_map_service.dart';
+import 'form_components/_signature_section.dart';
+import '../tasks/controllers/task_manager.dart';
+import 'form_components/_form_field.dart' as form_field;
+import 'form_components/_form_section.dart';
+import 'form_components/_gpx_file_buttons.dart';
+import 'form_components/_success.dart';
 
 class PPIRFormPage extends StatefulWidget {
   final TaskManager task;
@@ -235,10 +236,10 @@ class PPIRFormPageState extends State<PPIRFormPage> {
 
       await widget.task.updatePpirFormData(_formData, taskData);
 
-      await TaskManager.saveTaskFileToFirebaseStorage(
+      await StorageService.saveTaskFileToFirebaseStorage(
           widget.task.formId, _formData);
 
-      await TaskManager.compressAndUploadTaskFiles(
+      await StorageService.compressAndUploadTaskFiles(
           widget.task.formId, widget.task.taskId);
 
       if (mounted) {

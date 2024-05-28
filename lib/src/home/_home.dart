@@ -1,11 +1,11 @@
-import '_home_header.dart';
+import 'components/_home_header.dart';
 import '../tasks/_task.dart';
-import '_search_button.dart';
+import 'components/_search_button.dart';
 import '../messages/_view.dart';
 import '../splash/_splash.dart';
-import '_task_count_container.dart';
-import '../tasks/_control_task.dart';
-import '_recent_task_container.dart';
+import 'components/_task_count_container.dart';
+import '../tasks/controllers/task_manager.dart';
+import 'components/_recent_task_container.dart';
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';

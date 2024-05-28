@@ -6,9 +6,9 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../utils/agent/_logout_view.dart';
 import '../theme/_theme.dart';
-import '_profile_body.dart';
-import '_profile_body_item.dart';
-import '_profile_edit.dart';
+import 'components/_profile_body.dart';
+import 'components/_profile_body_item.dart';
+import 'components/_profile_edit.dart';
 import '../../utils/agent/_session.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -308,7 +308,7 @@ Future<void> _logout(BuildContext context) async {
     await Session().stop();
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => LogoutSuccessPage()),
+      MaterialPageRoute(builder: (context) => const LogoutSuccessPage()),
     );
   } catch (e) {
     // Handle errors

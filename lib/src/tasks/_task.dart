@@ -1,7 +1,7 @@
 // filename: _task.dart
 import 'package:flutter/material.dart';
-import '_control_task.dart';
-import '_task_view.dart';
+import 'controllers/task_manager.dart';
+import 'components/_task_view.dart';
 import 'package:lottie/lottie.dart';
 
 class TaskPage extends StatefulWidget {

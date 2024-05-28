@@ -1,8 +1,8 @@
-import '../tasks/_control_task.dart';
-import '../tasks/_task_details.dart';
+import '../../tasks/controllers/task_manager.dart';
+import '../../tasks/components/_task_details.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter/material.dart';
-import '_recent_task_data.dart';
+import '../controllers/_recent_task_data.dart';
 
 class RecentTaskContainer extends StatefulWidget {
   final String searchQuery;
