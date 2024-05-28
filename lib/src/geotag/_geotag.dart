@@ -17,7 +17,7 @@ import '../theme/_theme.dart';
 import '_location_service.dart';
 import '_geotag_bottomsheet.dart';
 import '../../utils/app/_gpx.dart';
-import '../tasks/controller_component/task_manager.dart';
+import '../tasks/controller_components/task_manager.dart';
 import '../../utils/app/_show_flash_message.dart';
 import 'package:geocoding/geocoding.dart';
 

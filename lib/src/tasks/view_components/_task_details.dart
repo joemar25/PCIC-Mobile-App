@@ -10,7 +10,7 @@ import 'package:lottie/lottie.dart';
 
 import '../../geotag/_geotag.dart';
 import '../../ppir_form/_pcic_form.dart';
-import '../controller_component/task_manager.dart';
+import '../controller_components/task_manager.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class TaskDetailsPage extends StatelessWidget {
