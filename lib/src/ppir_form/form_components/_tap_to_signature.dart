@@ -6,7 +6,7 @@ import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
 
-import '../tasks/controller_component/task_manager.dart';
+import '../../tasks/controller_components/task_manager.dart';
 
 class TapToSignature extends StatefulWidget {
   final TaskManager task;

@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
 import 'package:uuid/uuid.dart';
 
-import '../ppir_form/_tap_to_signature.dart';
-import '../tasks/controller_component/task_manager.dart';
+import '_tap_to_signature.dart';
+import '../../tasks/controller_components/task_manager.dart';
 
 class SignatureSection extends StatefulWidget {
   final TaskManager task;
