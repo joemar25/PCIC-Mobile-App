@@ -74,6 +74,7 @@ dependencies:
   ftpconnect: ^2.0.7
   firebase_messaging: ^14.9.3
   mailer: ^6.1.0
+  logging: ^1.2.0
 
   # surely not used
   # screenshot: ^2.3.0

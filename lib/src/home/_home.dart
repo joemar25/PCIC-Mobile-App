@@ -4,7 +4,7 @@ import '_search_button.dart';
 import '../messages/_view.dart';
 import '../splash/_splash.dart';
 import '_task_count_container.dart';
-import '../tasks/_control_task.dart';
+import '../tasks/controller_component/task_manager.dart';
 import '_recent_task_container.dart';
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';

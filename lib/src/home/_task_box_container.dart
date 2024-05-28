@@ -1,5 +1,5 @@
 import '../tasks/_task.dart';
-import '../tasks/_control_task.dart';
+import '../tasks/controller_component/task_manager.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';

@@ -1,5 +1,5 @@
-import '../tasks/_control_task.dart';
-import '../tasks/_task_details.dart';
+import '../tasks/controller_component/task_manager.dart';
+import '../tasks/view_components/_task_details.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter/material.dart';
 import '_recent_task_data.dart';

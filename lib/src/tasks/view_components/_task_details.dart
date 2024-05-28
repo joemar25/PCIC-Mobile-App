@@ -8,9 +8,9 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:lottie/lottie.dart';
 
-import '../geotag/_geotag.dart';
-import '../ppir_form/_pcic_form.dart';
-import '_control_task.dart';
+import '../../geotag/_geotag.dart';
+import '../../ppir_form/_pcic_form.dart';
+import '../controller_component/task_manager.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class TaskDetailsPage extends StatelessWidget {
@@ -37,6 +37,26 @@ class TaskDetailsPage extends StatelessWidget {
       'PNCR': 'NCR',
       'PCAR': 'CAR',
       'PBARMM': 'BARMM',
+      /**
+       * https://www.philatlas.com/regions.html
+       * Region I – Ilocos Region
+       * Region II – Cagayan Valley
+       * Region III – Central Luzon
+       * Region IV‑A – CALABARZON
+       * MIMAROPA Region
+       * Region V – Bicol Region
+       * Region VI – Western Visayas
+       * Region VII – Central Visayas
+       * Region VIII – Eastern Visayas
+       * Region IX – Zamboanga Peninsula
+       * Region X – Northern Mindanao
+       * Region XI – Davao Region
+       * Region XII – SOCCSKSARGEN
+       * Region XIII – Caraga
+       * NCR – National Capital Region
+       * CAR – Cordillera Administrative Region
+       * BARMM – Bangsamoro Autonomous Region in Muslim Mindanao
+      */
     };
     return serviceCode == null ? '' : romanMap[serviceCode] ?? serviceCode;
   }
