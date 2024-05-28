@@ -1,4 +1,4 @@
-import '../controller_component/task_manager.dart';
+import '../controller_components/task_manager.dart';
 import '_task_details.dart';
 import '_task_filter_button.dart';
 import '_task_filter_footer.dart';

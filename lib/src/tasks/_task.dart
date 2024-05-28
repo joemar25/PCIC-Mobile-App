@@ -1,6 +1,6 @@
 // filename: _task.dart
 import 'package:flutter/material.dart';
-import 'controller_component/task_manager.dart';
+import 'controller_components/task_manager.dart';
 import 'view_components/_task_view.dart';
 import 'package:lottie/lottie.dart';
 

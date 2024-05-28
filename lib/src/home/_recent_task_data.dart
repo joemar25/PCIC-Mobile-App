@@ -1,7 +1,7 @@
 // filename: home/_recent_task_container.dart
 import '../theme/_theme.dart';
 import 'package:intl/intl.dart';
-import '../tasks/controller_component/task_manager.dart';
+import '../tasks/controller_components/task_manager.dart';
 // import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
 

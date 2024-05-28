@@ -1,4 +1,4 @@
-import '../tasks/controller_component/task_manager.dart';
+import '../tasks/controller_components/task_manager.dart';
 import '../tasks/view_components/_task_details.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter/material.dart';

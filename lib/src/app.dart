@@ -15,7 +15,7 @@ import 'home/_home.dart';
 import 'messages/_view.dart';
 import 'navigation/service.dart';
 import 'splash/_splash.dart';
-import 'tasks/controller_component/task_manager.dart';
+import 'tasks/controller_components/task_manager.dart';
 import 'tasks/_task.dart';
 
 class App extends StatelessWidget {
