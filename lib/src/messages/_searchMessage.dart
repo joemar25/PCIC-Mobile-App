@@ -1,5 +1,5 @@
-import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class SearchMessageButton extends StatefulWidget {

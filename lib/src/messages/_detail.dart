@@ -54,7 +54,7 @@ class MessageDetailsPageState extends State<MessageDetailsPage> {
       String message = _messageController.text;
       String currentUserUid = _auth.currentUser!.uid;
 
-      print("Sending message: $message");
+      debugPrint("Sending message: $message");
 
       try {
         DocumentReference currentUserDoc = _firestore
@@ -81,7 +81,7 @@ class MessageDetailsPageState extends State<MessageDetailsPage> {
           'senderId': currentUserUid,
         });
 
-        print("Message sent successfully");
+        debugPrint("Message sent successfully");
 
         setState(() {
           _userMessages.add({
@@ -92,10 +92,10 @@ class MessageDetailsPageState extends State<MessageDetailsPage> {
           _messageController.clear();
         });
       } catch (e) {
-        print("Error sending message: $e");
+        debugPrint("Error sending message: $e");
       }
     } else {
-      print("Message text is empty");
+      debugPrint("Message text is empty");
     }
   }
 
