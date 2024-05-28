@@ -7,15 +7,15 @@ import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pcic_mobile_app/src/tasks/controller_components/storage_service.dart';
+import 'package:pcic_mobile_app/src/tasks/controllers/storage_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../utils/app/_show_flash_message.dart';
 import '../../utils/seeds/_dropdown.dart';
 import '../geotag/_geotag.dart';
-import '../geotag/_map_service.dart';
+import '../geotag/controls/_map_service.dart';
 import 'form_components/_signature_section.dart';
-import '../tasks/controller_components/task_manager.dart';
+import '../tasks/controllers/task_manager.dart';
 import 'form_components/_form_field.dart' as form_field;
 import 'form_components/_form_section.dart';
 import 'form_components/_gpx_file_buttons.dart';

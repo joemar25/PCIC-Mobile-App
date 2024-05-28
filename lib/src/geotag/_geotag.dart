@@ -12,12 +12,12 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import '../ppir_form/_pcic_form.dart';
-import '_map_service.dart';
+import 'controls/_map_service.dart';
 import '../theme/_theme.dart';
-import '_location_service.dart';
-import '_geotag_bottomsheet.dart';
+import 'controls/_location_service.dart';
+import 'components/_bottomsheet.dart';
 import '../../utils/app/_gpx.dart';
-import '../tasks/controller_components/task_manager.dart';
+import '../tasks/controllers/task_manager.dart';
 import '../../utils/app/_show_flash_message.dart';
 import 'package:geocoding/geocoding.dart';
 
@@ -645,13 +645,19 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
           if (countdown > 0)
             Positioned.fill(
               child: Container(
-                color: Colors.black54,
+                color: Colors.black54.withOpacity(0.8),
                 child: Center(
-                  child: Text(
-                    '$countdown',
-                    style: const TextStyle(
-                      fontSize: 48.0,
-                      color: Colors.white,
+                  child: AnimatedOpacity(
+                    opacity: countdown > 0 ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 500),
+                    child: Text(
+                      '$countdown',
+                      style: const TextStyle(
+                        fontSize: 60.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        decoration: TextDecoration.none, // Ensure no underline
+                      ),
                     ),
                   ),
                 ),

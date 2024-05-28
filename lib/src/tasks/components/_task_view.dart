@@ -1,11 +1,11 @@
-import '../controller_components/task_manager.dart';
+import '../controllers/task_manager.dart';
 import '_task_details.dart';
 import '_task_filter_button.dart';
 import '_task_filter_footer.dart';
-import '../../home/_search_button.dart';
+import '../../home/components/_search_button.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter/material.dart';
-import '../../home/_recent_task_data.dart';
+import '../../home/controllers/_recent_task_data.dart';
 import 'package:lottie/lottie.dart';
 
 class TaskView extends StatefulWidget {

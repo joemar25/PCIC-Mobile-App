@@ -6,7 +6,7 @@ import 'package:signature/signature.dart';
 import 'package:uuid/uuid.dart';
 
 import '_tap_to_signature.dart';
-import '../../tasks/controller_components/task_manager.dart';
+import '../../tasks/controllers/task_manager.dart';
 
 class SignatureSection extends StatefulWidget {
   final TaskManager task;
