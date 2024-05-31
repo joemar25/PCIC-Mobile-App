@@ -75,7 +75,7 @@ class SignatureSectionState extends State<SignatureSection> {
   Future<Map<String, String>> _fetchSignatures() async {
     final storageRef = FirebaseStorage.instance
         .ref()
-        .child('PPIR_SAVES/${widget.task.formId}/Attachments');
+        .child('PPIR_SAVES/${widget.task.taskId}/Attachments');
 
     final ListResult result = await storageRef.listAll();
     Map<String, String> signatures = {};
@@ -269,7 +269,7 @@ class SignatureSectionState extends State<SignatureSection> {
   ) async {
     final storageRef = FirebaseStorage.instance.ref();
     final folderRef =
-        storageRef.child('PPIR_SAVES/${widget.task.formId}/Attachments');
+        storageRef.child('PPIR_SAVES/${widget.task.taskId}/Attachments');
 
     final ListResult result = await folderRef.listAll();
 

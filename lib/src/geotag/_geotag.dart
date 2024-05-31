@@ -1,25 +1,20 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:uuid/uuid.dart';
-import 'package:gpx/gpx.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'dart:async';
+import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geocoding/geocoding.dart';
+import 'controls/countdown_timer.dart';
 
 import '../ppir_form/_pcic_form.dart';
 import 'controls/_map_service.dart';
-import '../theme/_theme.dart';
 import 'controls/_location_service.dart';
 import 'components/_bottomsheet.dart';
-import '../../utils/app/_gpx.dart';
-import '../tasks/controllers/task_manager.dart';
+import '../theme/_theme.dart';
 import '../../utils/app/_show_flash_message.dart';
-import 'package:geocoding/geocoding.dart';
+import '../tasks/controllers/task_manager.dart';
+import 'controls/gpx_service.dart';
 
 class GeotagPage extends StatefulWidget {
   final TaskManager task;
@@ -36,6 +31,7 @@ class GeotagPage extends StatefulWidget {
 class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   final LocationService _locationService = LocationService();
   final MapService _mapService = MapService();
+  final GpxService _gpxService = GpxService();
   final panelController = PanelController();
 
   static const double fabHeightClosed = 225.0;
@@ -243,28 +239,17 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
       _locationSubscription = null;
 
       try {
-        List<Wpt> routePoints = _mapService.routePoints
-            .map((point) => Wpt(lat: point.latitude, lon: point.longitude))
-            .toList();
+        List<LatLng> routePoints = _mapService.routePoints;
+        var gpx = _gpxService.createGpxFromRoutePoints(routePoints);
+        var gpxString = _gpxService.convertGpxToString(gpx);
 
-        // Add starting point coordinates to close the route
-        routePoints.add(Wpt(
-          lat: routePoints.first.lat,
-          lon: routePoints.first.lon,
-        ));
+        await _gpxService.saveGpxFile(gpxString, widget.task, saveOnline);
 
-        var gpx = GpxUtil.createGpx(routePoints);
-        var gpxString = GpxWriter().asString(gpx);
-
-        await _saveGpxFile(gpxString);
-
-        // Update last coordinates in Firestore after saving the GPX file
         if (routePoints.isNotEmpty) {
           await widget.task.updateLastCoordinates(
-              LatLng(routePoints.last.lat!, routePoints.last.lon!));
+              LatLng(routePoints.last.latitude, routePoints.last.longitude));
         }
 
-        // Wait for the current frame to complete before navigating
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
             setState(() {
@@ -273,10 +258,8 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
               isLoading = false;
             });
 
-            // Dispose of the MapService before navigating
             _mapService.dispose();
 
-            // Navigate to the forms page
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -293,98 +276,14 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
             setState(() {
               isLoading = false;
             });
-            // Handle the exception gracefully
             debugPrint('Exception caught: $e');
 
-            // Show an error message to the user
             showFlashMessage(context, 'Error', 'Error Saving File',
                 'Something went wrong! Please try again.');
             Navigator.pop(context);
           }
         });
       }
-    }
-  }
-
-  Future<void> _saveGpxFile(String gpxString) async {
-    if (saveOnline) {
-      try {
-        // Create a reference to Firebase Storage
-        final storageRef = FirebaseStorage.instance.ref();
-
-        // Create a reference to the folder named after widget.task.formId
-        final folderRef =
-            storageRef.child('PPIR_SAVES/${widget.task.formId}/Attachments');
-
-        // List all items in the folder
-        final ListResult result = await folderRef.listAll();
-
-        // Delete all existing GPX files in the folder
-        for (Reference fileRef in result.items) {
-          if (fileRef.name.endsWith('.gpx')) {
-            await fileRef.delete();
-          }
-        }
-
-        // Generate a unique filename using Uuid
-        var uuid = const Uuid();
-        String gpxFilename = '${uuid.v4()}.gpx';
-
-        // Create a reference to the file location inside the folder
-        final gpxFileRef = folderRef.child(gpxFilename);
-
-        // Upload the GPX file as a string (blob)
-        await gpxFileRef.putString(gpxString, format: PutStringFormat.raw);
-
-        // Get the download URL of the uploaded file
-        final downloadUrl = await gpxFileRef.getDownloadURL();
-
-        debugPrint('GPX file uploaded to Firebase: $downloadUrl');
-
-        // Update the task status to Ongoing in Firestore
-        await widget.task.updateTaskStatus('Ongoing');
-      } catch (e) {
-        debugPrint('Error uploading GPX file to Firebase: $e');
-        throw Exception('Error uploading GPX file to Firebase');
-      }
-    } else {
-      final directory = await getExternalStorageDirectory();
-      final dataDirectory =
-          directory?.path ?? '/storage/emulated/0/Android/data';
-
-      // Access the relevant task data directly from the TaskManager
-      final baseFilename = widget.task.formId;
-      final insuranceDirectory = Directory('$dataDirectory/$baseFilename');
-
-      // Delete the insurance directory if it already exists
-      if (await insuranceDirectory.exists()) {
-        await insuranceDirectory.delete(recursive: true);
-      }
-
-      // Create the insurance directory
-      await insuranceDirectory.create(recursive: true);
-
-      // Define the Attachments directory inside the insurance directory
-      final attachmentsDirectory =
-          Directory('${insuranceDirectory.path}/Attachments');
-
-      // Create the Attachments directory if it doesn't exist
-      if (!await attachmentsDirectory.exists()) {
-        await attachmentsDirectory.create(recursive: true);
-      }
-
-      // Generate a unique ID for the files
-      var uuid = const Uuid();
-      String gpxFilename = '${uuid.v4()}.gpx';
-
-      final gpxFile = File('${attachmentsDirectory.path}/$gpxFilename');
-
-      await gpxFile.writeAsString(gpxString);
-
-      debugPrint('GPX file saved: ${gpxFile.path}');
-
-      // Update the task status to Ongoing in Firestore
-      await widget.task.updateTaskStatus('Ongoing');
     }
   }
 
@@ -642,27 +541,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                 ),
               ),
             ),
-          if (countdown > 0)
-            Positioned.fill(
-              child: Container(
-                color: Colors.black54.withOpacity(0.8),
-                child: Center(
-                  child: AnimatedOpacity(
-                    opacity: countdown > 0 ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 500),
-                    child: Text(
-                      '$countdown',
-                      style: const TextStyle(
-                        fontSize: 60.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        decoration: TextDecoration.none, // Ensure no underline
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          if (countdown > 0) CountdownTimer(countdown: countdown),
         ],
       ),
     );

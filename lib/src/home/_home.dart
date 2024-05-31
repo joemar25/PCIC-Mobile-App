@@ -1,7 +1,6 @@
 import 'components/_home_header.dart';
 import '../tasks/_task.dart';
 import 'components/_search_button.dart';
-import '../messages/_view.dart';
 import '../splash/_splash.dart';
 import 'components/_task_count_container.dart';
 import '../tasks/controllers/task_manager.dart';
@@ -10,94 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
-
-  @override
-  DashboardPageState createState() => DashboardPageState();
-}
-
-class DashboardPageState extends State<DashboardPage>
-    with WidgetsBindingObserver {
-  int _selectedIndex = 0;
-
-  static const List<Widget> _widgetOptions = <Widget>[
-    HomeScreen(),
-    MessagesPage(),
-    TaskPage(),
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  @override
-  Future<bool> didPopRoute() async {
-    return await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirm Exit'),
-        content: const Text('Are you sure you want to exit the app?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Exit'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final CustomThemeExtension? t =
-        Theme.of(context).extension<CustomThemeExtension>();
-    return Scaffold(
-      body: _widgetOptions.elementAt(_selectedIndex),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          _buildNavigationBarItem(Icons.home, 'Home'),
-          _buildNavigationBarItem(Icons.chat_rounded, 'Messages'),
-          _buildNavigationBarItem(Icons.calendar_today_outlined, 'Tasks'),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: mainColor,
-        unselectedItemColor: Colors.black.withOpacity(0.7),
-        onTap: _onItemTapped,
-        backgroundColor: Colors.white,
-        selectedLabelStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: t?.overline ?? 14.0,
-        ),
-      ),
-    );
-  }
-
-  BottomNavigationBarItem _buildNavigationBarItem(IconData icon, String label) {
-    return BottomNavigationBarItem(
-      icon: Icon(icon),
-      label: label,
-    );
-  }
-}
+import 'controllers/sync_controller.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -111,6 +23,9 @@ class HomeScreenState extends State<HomeScreen> {
   List<TaskManager> _tasks = [];
   String _searchQuery = '';
   bool _isLoadingRecentTasks = true;
+  final SyncController _syncController = SyncController();
+  bool _isSyncing = false;
+  String _syncStatus = '';
 
   @override
   void initState() {
@@ -183,12 +98,29 @@ class HomeScreenState extends State<HomeScreen> {
     await _fetchTasks();
   }
 
-  // void _updateSearchQuery(String newValue) {
-  //   setState(() {
-  //     _searchQuery = newValue;                            _searchQuery = value;
+  Future<void> startSync() async {
+    setState(() {
+      _isSyncing = true;
+      _syncStatus = 'Syncing data...';
+    });
 
-  //   });
-  // }
+    try {
+      await _syncController.syncData();
+
+      setState(() {
+        _isSyncing = false;
+        _syncStatus = 'Sync completed successfully';
+      });
+
+      // Refresh the tasks after syncing
+      await _fetchTasks();
+    } catch (e) {
+      setState(() {
+        _isSyncing = false;
+        _syncStatus = 'Sync failed: $e';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -214,6 +146,12 @@ class HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.only(left: 6.0),
           child: HomeHeader(onLogout: _handleLogout),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.sync),
+            onPressed: _isSyncing ? null : startSync,
+          ),
+        ],
       ),
       body: RefreshIndicator(
         backgroundColor: Colors.white,
@@ -269,6 +207,17 @@ class HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                 ),
+                if (_isSyncing)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        const CircularProgressIndicator(),
+                        const SizedBox(width: 16.0),
+                        Text(_syncStatus),
+                      ],
+                    ),
+                  ),
               ],
             ),
           ),

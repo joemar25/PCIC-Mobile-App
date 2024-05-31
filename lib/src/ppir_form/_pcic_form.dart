@@ -37,7 +37,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   List<Seeds> seedsList = Seeds.getAllSeeds();
   Map<String, int> seedTitleToIdMap = {};
   List<DropdownMenuItem<int>> uniqueSeedsItems = [];
-  final _formData = <String, dynamic>{};
+  final _taskData = <String, dynamic>{};
   final _areaPlantedController = TextEditingController();
   final _areaInHectaresController = TextEditingController();
   final _totalDistanceController = TextEditingController();
@@ -61,7 +61,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
 
   Future<void> _initializeData() async {
     try {
-      final formData = await widget.task.getFormData(widget.task.type);
+      final formData = await widget.task.getTaskData();
       if (formData.isNotEmpty) {
         _initializeFormData(formData);
       }
@@ -94,15 +94,15 @@ class PPIRFormPageState extends State<PPIRFormPage> {
     _areaInHectaresController.text = formData['trackTotalarea'] ?? '';
     _totalDistanceController.text = formData['trackTotaldistance'] ?? '';
 
-    _formData['trackLastcoord'] =
+    _taskData['trackLastcoord'] =
         formData['trackLastcoord'] ?? 'No coordinates available';
-    _formData['ppirDopdsAct'] = formData['ppirDopdsAct'] ?? '';
-    _formData['ppirDoptpAct'] = formData['ppirDoptpAct'] ?? '';
-    _formData['ppirSvpAct'] = formData['ppirSvpAct'] ?? '';
-    _formData['ppirAreaAct'] = formData['ppirAreaAct'] ?? '';
-    _formData['ppirRemarks'] = formData['ppirRemarks'] ?? '';
-    _formData['ppirNameInsured'] = formData['ppirNameInsured'] ?? '';
-    _formData['ppirNameIuia'] = formData['ppirNameIuia'] ?? '';
+    _taskData['ppirDopdsAct'] = formData['ppirDopdsAct'] ?? '';
+    _taskData['ppirDoptpAct'] = formData['ppirDoptpAct'] ?? '';
+    _taskData['ppirSvpAct'] = formData['ppirSvpAct'] ?? '';
+    _taskData['ppirAreaAct'] = formData['ppirAreaAct'] ?? '';
+    _taskData['ppirRemarks'] = formData['ppirRemarks'] ?? '';
+    _taskData['ppirNameInsured'] = formData['ppirNameInsured'] ?? '';
+    _taskData['ppirNameIuia'] = formData['ppirNameIuia'] ?? '';
   }
 
   void _initializeSeeds() {
@@ -178,8 +178,8 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       final signatureData =
           await _signatureSectionKey.currentState?.getSignatureData() ?? {};
 
-      _formData['ppirNameInsured'] = signatureData['ppirNameInsured'];
-      _formData['ppirNameIuia'] = signatureData['ppirNameIuia'];
+      _taskData['ppirNameInsured'] = signatureData['ppirNameInsured'];
+      _taskData['ppirNameIuia'] = signatureData['ppirNameIuia'];
 
       if (!_formSectionKey.currentState!.validate() ||
           !_signatureSectionKey.currentState!.validate() ||
@@ -193,7 +193,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
         return;
       }
 
-      final enabledFieldKeys = _formData.keys.where((key) {
+      final enabledFieldKeys = _taskData.keys.where((key) {
         return key != 'trackLastcoord' &&
             key != 'trackTotalarea' &&
             key != 'trackDatetime' &&
@@ -202,7 +202,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       }).toList();
 
       bool hasEmptyEnabledFields = enabledFieldKeys.any((key) =>
-          _formData[key] == null || _formData[key].toString().trim().isEmpty);
+          _taskData[key] == null || _taskData[key].toString().trim().isEmpty);
 
       bool hasEmptySignatureFields = signatureData['ppirSigInsured'] == null ||
           signatureData['ppirNameInsured']?.trim().isEmpty == true ||
@@ -218,29 +218,27 @@ class PPIRFormPageState extends State<PPIRFormPage> {
         return;
       }
 
-      _formData['trackTotalarea'] = _areaInHectaresController.text;
-      _formData['trackDatetime'] = _areaPlantedController.text;
-      _formData['trackLastcoord'] = _formData['trackLastcoord'];
-      _formData['trackTotaldistance'] = _totalDistanceController.text;
+      _taskData['trackTotalarea'] = _areaInHectaresController.text;
+      _taskData['trackDatetime'] = _areaPlantedController.text;
+      _taskData['trackLastcoord'] = _taskData['trackLastcoord'];
+      _taskData['trackTotaldistance'] = _totalDistanceController.text;
 
-      _formData['ppirRemarks'] = _formData['ppirRemarks'] ?? 'no value';
-      _formData['ppirSigInsured'] =
+      _taskData['ppirRemarks'] = _taskData['ppirRemarks'] ?? 'no value';
+      _taskData['ppirSigInsured'] =
           signatureData['ppirSigInsured'] ?? 'no value';
-      _formData['ppirNameInsured'] =
+      _taskData['ppirNameInsured'] =
           signatureData['ppirNameInsured'] ?? 'no value';
-      _formData['ppirSigIuia'] = signatureData['ppirSigIuia'] ?? 'no value';
-      _formData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
-      _formData['status'] = 'Completed';
+      _taskData['ppirSigIuia'] = signatureData['ppirSigIuia'] ?? 'no value';
+      _taskData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
+      _taskData['status'] = 'Completed';
 
-      Map<String, dynamic> taskData = {'status': 'Completed'};
-
-      await widget.task.updatePpirFormData(_formData, taskData);
+      await widget.task.updatePpirFormData(_taskData);
 
       await StorageService.saveTaskFileToFirebaseStorage(
-          widget.task.formId, _formData);
+          widget.task.taskId, _taskData);
 
       await StorageService.compressAndUploadTaskFiles(
-          widget.task.formId, widget.task.taskId);
+          widget.task.taskId, widget.task.taskId);
 
       if (mounted) {
         Navigator.pushReplacement(
@@ -271,20 +269,19 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       final signatureData =
           await _signatureSectionKey.currentState?.getSignatureData() ?? {};
 
-      _formData['trackTotalarea'] = _areaInHectaresController.text;
-      _formData['trackDatetime'] = _areaPlantedController.text;
-      _formData['trackLastcoord'] = _formData['trackLastcoord'];
-      _formData['trackTotaldistance'] = _totalDistanceController.text;
+      _taskData['trackTotalarea'] = _areaInHectaresController.text;
+      _taskData['trackDatetime'] = _areaPlantedController.text;
+      _taskData['trackLastcoord'] = _taskData['trackLastcoord'];
+      _taskData['trackTotaldistance'] = _totalDistanceController.text;
 
-      _formData['ppirRemarks'] = _formData['ppirRemarks'] ?? 'no value';
-      _formData['ppirSigInsured'] =
+      _taskData['ppirRemarks'] = _taskData['ppirRemarks'] ?? 'no value';
+      _taskData['ppirSigInsured'] =
           signatureData['ppirSigInsured'] ?? 'no value';
-      _formData['ppirNameInsured'] =
+      _taskData['ppirNameInsured'] =
           signatureData['ppirNameInsured'] ?? 'no value';
-      _formData['ppirSigIuia'] = signatureData['ppirSigIuia'] ?? 'no value';
-      _formData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
-
-      await widget.task.updatePpirFormData(_formData, {'status': 'Ongoing'});
+      _taskData['ppirSigIuia'] = signatureData['ppirSigIuia'] ?? 'no value';
+      _taskData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
+      _taskData['status'] = 'Ongoing';
 
       if (mounted) {
         showFlashMessage(
@@ -464,7 +461,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                     children: [
                       form_field.FormField(
                         labelText: 'Last Coordinates',
-                        initialValue: _formData['trackLastcoord'] ?? '',
+                        initialValue: _taskData['trackLastcoord'] ?? '',
                         enabled: false,
                       ),
                       const SizedBox(height: 16),
@@ -497,7 +494,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                       const SizedBox(height: 24),
                       FormSection(
                         key: _formSectionKey,
-                        formData: _formData,
+                        formData: _taskData,
                         uniqueSeedsItems: uniqueSeedsItems,
                         seedTitleToIdMap: seedTitleToIdMap,
                         isSubmitting: isSubmitting,

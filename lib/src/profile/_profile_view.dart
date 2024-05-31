@@ -35,28 +35,26 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void fetchUserData() async {
-    debugPrint("fetching user data...");
     User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
       String authUid = currentUser.uid;
-
-      // Fetch user data from Firestore
-      QuerySnapshot userQuery = await FirebaseFirestore.instance
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
           .collection('users')
-          .where('authUid', isEqualTo: authUid)
+          .doc(authUid)
           .get();
 
-      debugPrint("userQuery $userQuery");
-
-      if (userQuery.docs.isNotEmpty) {
-        DocumentSnapshot userDoc = userQuery.docs.first;
+      if (userDoc.exists) {
         setState(() {
           name = userDoc['name'];
           email = userDoc['email'];
           profilePicUrl = userDoc['profilePicUrl'];
-          documentId = userDoc.id; // Store the document ID
+          documentId = userDoc.id;
         });
+      } else {
+        print("User document not found");
       }
+    } else {
+      print("No authenticated user");
     }
   }
 
@@ -73,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
 
     if (result == true) {
-      fetchUserData(); // Refresh data after returning from edit page
+      fetchUserData();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profile updated successfully!')),
@@ -89,7 +87,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _pickImage() async {
-    if (_isPickerActive) return; // Prevent multiple instances of image picker
+    if (_isPickerActive) return;
     _isPickerActive = true;
 
     final XFile? pickedFile =
@@ -97,10 +95,9 @@ class _ProfilePageState extends State<ProfilePage> {
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
-        _isUploading = true; // Start uploading
+        _isUploading = true;
       });
 
-      // Upload to Firebase Storage and update Firestore
       if (_imageFile != null) {
         String fileName =
             'profile_pics/${DateTime.now().millisecondsSinceEpoch}.png';
@@ -139,19 +136,16 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<String> _getProfilePicUrl() async {
     try {
       if (profilePicUrl.isNotEmpty) {
-        // Attempt to access the specified profile picture URL
         await FirebaseStorage.instance
             .refFromURL(profilePicUrl)
             .getDownloadURL();
         return profilePicUrl;
       } else {
-        // Fetch the default profile picture URL from Firebase Storage
         return await FirebaseStorage.instance
             .ref('profile_pics/default.png')
             .getDownloadURL();
       }
     } catch (e) {
-      // If there's an error, fetch the default profile picture URL from Firebase Storage
       return await FirebaseStorage.instance
           .ref('profile_pics/default.png')
           .getDownloadURL();
@@ -311,7 +305,6 @@ Future<void> _logout(BuildContext context) async {
       MaterialPageRoute(builder: (context) => const LogoutSuccessPage()),
     );
   } catch (e) {
-    // Handle errors
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Error logging out: $e')),
     );

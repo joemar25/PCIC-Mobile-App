@@ -8,6 +8,7 @@ import 'task_xml_generator.dart';
 
 class StorageService {
   static final Logger _logger = Logger('StorageService');
+  static final FTPService _ftpService = FTPService();
 
   static Future<void> compressAndUploadTaskFiles(
       String formId, String taskId) async {
@@ -44,19 +45,18 @@ class StorageService {
       final zipFile = File('$tempDirPath/$taskId.task');
       await zipFile.writeAsBytes(zipData!);
 
-      // Upload the zip file to Firebase Storage
-      final compressedRef = FirebaseStorage.instance
-          .ref()
-          .child('PPIR_SAVES/tasks_saves/$taskId.task');
+      // Upload the zip file to Firebase Storage in 'For Sync' folder
+      final compressedRef =
+          FirebaseStorage.instance.ref().child('For Sync/$taskId.task');
       await compressedRef.putFile(zipFile);
 
       // Upload to FTP server
-      await FTPService.uploadTask(zipFile);
+      await _ftpService.uploadTask(zipFile);
 
       // Delete the temporary file
       await zipFile.delete();
     } catch (e) {
-      _logError('Error compressing and uploading task files: $e');
+      _logger.severe('Error compressing and uploading task files: $e');
       throw Exception('Error compressing and uploading task files');
     }
   }
@@ -69,7 +69,7 @@ class StorageService {
           FirebaseStorage.instance.ref().child('PPIR_SAVES/$formId/Task.xml');
       await storageRef.putString(xmlContent);
     } catch (e) {
-      _logError('Error saving task file: $e');
+      _logger.severe('Error saving task file: $e');
       throw Exception('Error saving task file');
     }
   }
@@ -77,19 +77,16 @@ class StorageService {
   static Future<List<Reference>> _getAllFiles(Reference storageRef) async {
     List<Reference> allFiles = [];
     final ListResult result = await storageRef.listAll();
-
     for (final ref in result.items) {
       allFiles.add(ref);
     }
-
     for (final prefix in result.prefixes) {
       allFiles.addAll(await _getAllFiles(prefix));
     }
-
     return allFiles;
   }
 
-  static void _logError(String message) {
+  void _logError(String message) {
     _logger.severe(message);
   }
 }

@@ -1,6 +1,5 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_svg/svg.dart';
 import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
@@ -37,26 +36,6 @@ class TaskDetailsPage extends StatelessWidget {
       'PNCR': 'NCR',
       'PCAR': 'CAR',
       'PBARMM': 'BARMM',
-      /**
-       * https://www.philatlas.com/regions.html
-       * Region I – Ilocos Region
-       * Region II – Cagayan Valley
-       * Region III – Central Luzon
-       * Region IV‑A – CALABARZON
-       * MIMAROPA Region
-       * Region V – Bicol Region
-       * Region VI – Western Visayas
-       * Region VII – Central Visayas
-       * Region VIII – Eastern Visayas
-       * Region IX – Zamboanga Peninsula
-       * Region X – Northern Mindanao
-       * Region XI – Davao Region
-       * Region XII – SOCCSKSARGEN
-       * Region XIII – Caraga
-       * NCR – National Capital Region
-       * CAR – Cordillera Administrative Region
-       * BARMM – Bangsamoro Autonomous Region in Muslim Mindanao
-      */
     };
     return serviceCode == null ? '' : romanMap[serviceCode] ?? serviceCode;
   }
@@ -187,7 +166,7 @@ class TaskDetailsPage extends StatelessWidget {
   Future<Map<String, String>> _fetchSignatures() async {
     final storageRef = FirebaseStorage.instance
         .ref()
-        .child('PPIR_SAVES/${task.formId}/Attachments');
+        .child('PPIR_SAVES/${task.taskId}/Attachments');
 
     final ListResult result = await storageRef.listAll();
     Map<String, String> signatures = {};
@@ -219,7 +198,7 @@ class TaskDetailsPage extends StatelessWidget {
         ),
       ),
       body: FutureBuilder<Map<String, dynamic>>(
-        future: task.getFormData(task.type),
+        future: task.getTaskData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -303,34 +282,35 @@ class TaskDetailsPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 16.0),
-                        _buildFormField(
-                            context, 'Farmer Name', formData['ppirFarmerName']),
-                        _buildFormField(
-                            context, 'Address', formData['ppirAddress']),
-                        _buildFormField(
-                            context, 'Mobile No.', formData['ppirMobileNo']),
+                        _buildFormField(context, 'Farmer Name',
+                            formData['ppirFarmerName']?.toString()),
+                        _buildFormField(context, 'Address',
+                            formData['ppirAddress']?.toString()),
+                        _buildFormField(context, 'Mobile No.',
+                            formData['ppirMobileNo']?.toString()),
                         _buildFormField(context, 'Type of Farmers',
-                            formData['ppirFarmerType']),
+                            formData['ppirFarmerType']?.toString()),
                         const Divider(height: 32.0),
-                        _buildFormField(
-                            context, 'Group Name', formData['ppirGroupName']),
+                        _buildFormField(context, 'Group Name',
+                            formData['ppirGroupName']?.toString()),
                         _buildFormField(context, 'Group Address',
-                            formData['ppirGroupAddress']),
+                            formData['ppirGroupAddress']?.toString()),
                         const Divider(height: 32.0),
-                        _buildFormField(
-                            context, 'Lender Name', formData['ppirLenderName']),
+                        _buildFormField(context, 'Lender Name',
+                            formData['ppirLenderName']?.toString()),
                         _buildFormField(context, 'Lender Address',
-                            formData['ppirLenderAddress']),
+                            formData['ppirLenderAddress']?.toString()),
                         const Divider(height: 32.0),
                         _buildFormField(
                           context,
                           'Region',
-                          _convertServiceGroupToRoman(formData['serviceGroup']),
+                          _convertServiceGroupToRoman(
+                              formData['serviceGroup']?.toString()),
                         ),
                         _buildFormField(context, 'Location of Farm',
-                            formData['ppirFarmLoc']),
-                        _buildFormField(
-                            context, 'CIC No.', formData['ppirCicNo']),
+                            formData['ppirFarmLoc']?.toString()),
+                        _buildFormField(context, 'CIC No.',
+                            formData['ppirCicNo']?.toString()),
                         const SizedBox(height: 24.0),
                         Text(
                           'Location Sketch Plan',
@@ -340,12 +320,14 @@ class TaskDetailsPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 16.0),
+                        _buildFormField(context, 'North',
+                            formData['ppirNorth']?.toString()),
                         _buildFormField(
-                            context, 'North', formData['ppirNorth']),
-                        _buildFormField(context, 'East', formData['ppirEast']),
+                            context, 'East', formData['ppirEast']?.toString()),
+                        _buildFormField(context, 'South',
+                            formData['ppirSouth']?.toString()),
                         _buildFormField(
-                            context, 'South', formData['ppirSouth']),
-                        _buildFormField(context, 'West', formData['ppirWest']),
+                            context, 'West', formData['ppirWest']?.toString()),
                         const SizedBox(height: 24.0),
                         Text(
                           'Findings (Per ACI)',
@@ -355,14 +337,14 @@ class TaskDetailsPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 16.0),
-                        _buildFormField(
-                            context, 'Area Planted', formData['ppirAreaAci']),
+                        _buildFormField(context, 'Area Planted',
+                            formData['ppirAreaAci']?.toString()),
                         _buildFormField(context, 'Date of Planting (DS)',
-                            formData['ppirDopdsAci']),
+                            formData['ppirDopdsAci']?.toString()),
                         _buildFormField(context, 'Date of Planting (TP)',
-                            formData['ppirDoptpAci']),
+                            formData['ppirDoptpAci']?.toString()),
                         _buildFormField(context, 'Seed Variety Planted',
-                            formData['ppirSvpAct']),
+                            formData['ppirSvpAct']?.toString()),
                         const SizedBox(height: 24.0),
                         if (status == 'Completed') ...[
                           ElevatedButton(
@@ -389,19 +371,20 @@ class TaskDetailsPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 16.0),
                           _buildFormField(context, 'Last Coordinates',
-                              formData['trackLastcoord']),
+                              formData['trackLastcoord']?.toString()),
                           _buildFormField(
                             context,
                             'Date and Time',
                             formData['trackDatetime'] != null
-                                ? DateTime.parse(formData['trackDatetime'])
+                                ? DateTime.parse(
+                                        formData['trackDatetime'].toString())
                                     .toString()
                                 : '',
                           ),
                           _buildFormField(context, 'Total Area (Hectares)',
-                              formData['trackTotalarea']),
+                              formData['trackTotalarea']?.toString()),
                           _buildFormField(context, 'Total Distance',
-                              formData['trackTotaldistance']),
+                              formData['trackTotaldistance']?.toString()),
                           const SizedBox(height: 24.0),
                           Text(
                             'Actual Details',
@@ -411,22 +394,22 @@ class TaskDetailsPage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 16.0),
-                          _buildFormField(
-                              context, 'Area Planted', formData['ppirAreaAct']),
-                          _buildFormField(
-                              context, 'Seed Variety', formData['ppirSvpAct']),
+                          _buildFormField(context, 'Area Planted',
+                              formData['ppirAreaAct']?.toString()),
+                          _buildFormField(context, 'Seed Variety',
+                              formData['ppirSvpAct']?.toString()),
                           _buildFormField(
                             context,
                             'Actual Date of Planting (DS)',
-                            formData['ppirDopdsAct'],
+                            formData['ppirDopdsAct']?.toString(),
                           ),
                           _buildFormField(
                             context,
                             'Actual Date of Planting (TP)',
-                            formData['ppirDoptpAct'],
+                            formData['ppirDoptpAct']?.toString(),
                           ),
-                          _buildFormField(
-                              context, 'Remarks', formData['ppirRemarks']),
+                          _buildFormField(context, 'Remarks',
+                              formData['ppirRemarks']?.toString()),
                           const SizedBox(height: 24.0),
                           Text(
                             'Assignees',
@@ -437,7 +420,7 @@ class TaskDetailsPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 16.0),
                           _buildFormField(context, 'Confirmed By',
-                              formData['ppirNameInsured']),
+                              formData['ppirNameInsured']?.toString()),
                           if (signatures['ppirSigInsured'] != null)
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -457,8 +440,8 @@ class TaskDetailsPage extends StatelessWidget {
                                 ),
                               ],
                             ),
-                          _buildFormField(
-                              context, 'Prepared By', formData['ppirNameIuia']),
+                          _buildFormField(context, 'Prepared By',
+                              formData['ppirNameIuia']?.toString()),
                           if (signatures['ppirSigIuia'] != null)
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
