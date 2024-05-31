@@ -175,6 +175,17 @@ class HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
+                if (_isSyncing)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        const CircularProgressIndicator(),
+                        const SizedBox(width: 16.0),
+                        Text(_syncStatus),
+                      ],
+                    ),
+                  ),
                 const SizedBox(height: 8.0),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -207,17 +218,6 @@ class HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                 ),
-                if (_isSyncing)
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: [
-                        const CircularProgressIndicator(),
-                        const SizedBox(width: 16.0),
-                        Text(_syncStatus),
-                      ],
-                    ),
-                  ),
               ],
             ),
           ),

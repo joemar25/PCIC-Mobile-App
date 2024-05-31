@@ -22,7 +22,7 @@ class FTPService {
         port: _ftpPort,
         user: _ftpUserSync,
         pass: _ftpPasswordSync,
-        timeout: 60);
+        timeout: 10);
 
     try {
       await _ftpConnectSync.connect();
@@ -40,7 +40,7 @@ class FTPService {
         port: _ftpPort,
         user: _ftpUserUpload,
         pass: _ftpPasswordUpload,
-        timeout: 10000);
+        timeout: 10);
 
     try {
       await _ftpConnectUpload.connect();
