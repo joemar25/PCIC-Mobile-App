@@ -1,13 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:pcic_mobile_app/src/home/dashboard.dart';
 import 'package:pcic_mobile_app/utils/agent/_session.dart';
 import 'package:pcic_mobile_app/utils/agent/_verify_login.dart';
 import 'package:pcic_mobile_app/utils/agent/login-components/_login_remember_and_forgot.dart';
 import 'package:pcic_mobile_app/utils/agent/login-components/_login_text_field.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-import '../../src/home/_home.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -30,9 +29,7 @@ class LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _checkExistingToken(BuildContext context) async {
-    Session session = Session();
-    String? token = await session.getToken();
-    // Token exists, navigate to the dashboard
+    String? token = await _session.getToken();
     if (token != null && context.mounted) {
       _navigateToDashboard();
     }
@@ -56,16 +53,16 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _showLoginFailedSnackBar() {
+  void _showLoginFailedSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text(
-          style: TextStyle(
+        content: Text(
+          message,
+          style: const TextStyle(
             color: Colors.red,
             fontSize: 13.3,
             fontWeight: FontWeight.w600,
           ),
-          'Login failed. Please check your email and password.',
         ),
         backgroundColor: Colors.white,
         duration: const Duration(seconds: 3),
@@ -98,10 +95,9 @@ class LoginPageState extends State<LoginPage> {
         await _getCurrentLocation();
       } else {
         if (!locationStatus.isGranted) {
-          // debugPrint('Location permission denied');
+          _showLoginFailedSnackBar('Location permission denied');
         }
         if (!storageStatus.isGranted) {
-          // debugPrint('MANAGE_EXTERNAL_STORAGE permission denied');
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text(
@@ -121,7 +117,6 @@ class LoginPageState extends State<LoginPage> {
       debugPrint(
           'Current location: ${position.latitude}, ${position.longitude}');
     } catch (e) {
-      // debugPrint('Error getting current location: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -129,6 +124,51 @@ class LoginPageState extends State<LoginPage> {
           ),
         );
       }
+    }
+  }
+
+  Future<void> _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: parentEmail,
+        password: parentPassword,
+      );
+      // Login successful, initialize the session with the user token
+      String? token = await userCredential.user?.getIdToken();
+      _session.init(token!);
+      // Request location permission
+      await _requestPermissions();
+      // Navigate to the next screen
+      _navigateToVerifyLogin();
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      switch (e.code) {
+        case 'user-not-found':
+          errorMessage = 'No user found for that email.';
+          break;
+        case 'wrong-password':
+          errorMessage = 'Wrong password provided for that user.';
+          break;
+        case 'too-many-requests':
+          errorMessage = 'Too many attempts. Please try again later.';
+          break;
+        default:
+          errorMessage = 'An error occurred. Please try again.';
+          break;
+      }
+      _showLoginFailedSnackBar(errorMessage);
+    } catch (e) {
+      _showLoginFailedSnackBar(
+          'An unexpected error occurred. Please try again later.');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -203,39 +243,7 @@ class LoginPageState extends State<LoginPage> {
                       children: [
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () async {
-                              setState(() {
-                                _isLoading = true;
-                              });
-
-                              try {
-                                UserCredential userCredential =
-                                    await FirebaseAuth.instance
-                                        .signInWithEmailAndPassword(
-                                  email: parentEmail,
-                                  password: parentPassword,
-                                );
-                                // Login successful, initialize the session with the user token
-                                String? token =
-                                    await userCredential.user?.getIdToken();
-                                _session.init(token!);
-                                // Request location permission
-                                await _requestPermissions();
-                                // Navigate to the next screen
-                                _navigateToVerifyLogin();
-
-                                // debugPrint('Token: $token');
-                              } catch (e) {
-                                // Handle login error
-                                // debugPrint('Login error: $e');
-                                // Show an error message to the user
-                                _showLoginFailedSnackBar();
-                              } finally {
-                                setState(() {
-                                  _isLoading = false;
-                                });
-                              }
-                            },
+                            onPressed: _isLoading ? null : _login,
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(100),

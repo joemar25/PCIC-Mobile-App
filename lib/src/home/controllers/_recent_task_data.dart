@@ -2,7 +2,6 @@
 import '../../theme/_theme.dart';
 import 'package:intl/intl.dart';
 import '../../tasks/controllers/task_manager.dart';
-// import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
 
 class TaskData extends StatelessWidget {
@@ -38,8 +37,6 @@ class TaskData extends StatelessWidget {
     final titleFontSize = isPortrait ? 12.0 : t?.title ?? 18.0;
     final captionFontSize = isPortrait ? 6.0 : t?.caption ?? 14.0;
     final overlineFontSize = isPortrait ? 6.0 : t?.overline ?? 12.0;
-
-    // Updated statusFontSize
     final statusFontSize = isPortrait ? 9.0 : t?.caption ?? 14.0;
 
     return Padding(
@@ -131,8 +128,7 @@ class TaskData extends StatelessWidget {
                       return Text(
                         status,
                         style: TextStyle(
-                          fontSize:
-                              statusFontSize, // Updated font size for status
+                          fontSize: statusFontSize,
                           fontWeight: FontWeight.w600,
                           color: statusColor,
                         ),

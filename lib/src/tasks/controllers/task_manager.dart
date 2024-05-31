@@ -1,138 +1,46 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:logging/logging.dart';
-import 'csv_service.dart';
+import 'package:logging/logging.dart' as logging;
+import 'package:flutter/material.dart';
 
 class TaskManager {
   final String taskId;
-  final String formId;
-  final String type;
 
-  static final Logger _logger = Logger('TaskManager');
+  static final logging.Logger _logger = logging.Logger('TaskManager');
 
   TaskManager({
-    required this.formId,
     required this.taskId,
-    required this.type,
   });
 
-  factory TaskManager.fromMap(Map<String, dynamic> data) {
-    return TaskManager(
-      formId: data['formId'] ?? '',
-      taskId: data['taskId'] ?? '',
-      type: data['type'] ?? '',
-    );
-  }
-
   Future<String?> get confirmedByName async {
-    try {
-      final formData = await getFormData(type);
-      return formData['ppirNameInsured'] as String?;
-    } catch (error) {
-      _logError('Error fetching confirmedByName: $error');
-      return null;
-    }
+    debugPrint('Fetching confirmedByName for taskId: $taskId');
+    return await _getFieldFromTask('ppirNameInsured');
   }
 
   Future<String?> get preparedByName async {
-    try {
-      final formData = await getFormData(type);
-      return formData['ppirNameIuia'] as String?;
-    } catch (error) {
-      _logError('Error fetching preparedByName: $error');
-      return null;
-    }
+    debugPrint('Fetching preparedByName for taskId: $taskId');
+    return await _getFieldFromTask('ppirNameIuia');
   }
 
   Future<String?> get taskManagerNumber async {
-    try {
-      final formData = await getFormData(type);
-      return formData['ppirInsuranceId'] as String?;
-    } catch (error) {
-      _logError('Error fetching taskManagerNumber: $error');
-      return null;
-    }
+    debugPrint('Fetching taskManagerNumber for taskId: $taskId');
+    return await _getFieldFromTask('ppirInsuranceId');
   }
 
   Future<String?> get farmerName async {
-    try {
-      final formData = await getFormData(type);
-      return formData['ppirFarmerName'] as String?;
-    } catch (error) {
-      _logError('Error fetching farmerName: $error');
-      return null;
-    }
+    debugPrint('Fetching farmerName for taskId: $taskId');
+    return await _getFieldFromTask('ppirFarmerName');
   }
 
   Future<String?> get status async {
-    try {
-      final taskSnapshot = await FirebaseFirestore.instance
-          .collection('tasks')
-          .doc(taskId)
-          .get();
-
-      if (taskSnapshot.exists) {
-        final taskData = taskSnapshot.data();
-        return taskData?['status'] as String?;
-      }
-    } catch (error) {
-      _logError('Error fetching status: $error');
-    }
-    return null;
-  }
-
-  Future<String?> get north async {
-    try {
-      final formData = await getFormData(type);
-      return formData['ppirNorth'] as String?;
-    } catch (error) {
-      _logError('Error fetching north: $error');
-      return null;
-    }
-  }
-
-  Future<String?> get south async {
-    try {
-      final formData = await getFormData(type);
-      return formData['ppirSouth'] as String?;
-    } catch (error) {
-      _logError('Error fetching south: $error');
-      return null;
-    }
-  }
-
-  Future<String?> get east async {
-    try {
-      final formData = await getFormData(type);
-      return formData['ppirEast'] as String?;
-    } catch (error) {
-      _logError('Error fetching east: $error');
-      return null;
-    }
-  }
-
-  Future<String?> get west async {
-    try {
-      final formData = await getFormData(type);
-      return formData['ppirWest'] as String?;
-    } catch (error) {
-      _logError('Error fetching west: $error');
-      return null;
-    }
-  }
-
-  Future<String?> get gpxFile async {
-    try {
-      final formData = await getFormData(type);
-      return formData['gpxFile'] as String?;
-    } catch (error) {
-      _logError('Error fetching gpxFile: $error');
-      return null;
-    }
+    debugPrint('Fetching status for taskId: $taskId');
+    return await _getFieldFromTask('taskStatus');
   }
 
   Future<DateTime?> get dateAccess async {
+    debugPrint('Fetching dateAccess for taskId: $taskId');
     try {
       final taskSnapshot = await FirebaseFirestore.instance
           .collection('tasks')
@@ -145,181 +53,298 @@ class TaskManager {
         return timestamp?.toDate();
       }
     } catch (error) {
-      _logError('Error fetching dateAccess: $error');
+      _logger.severe('Error fetching dateAccess: $error');
+      debugPrint('Error fetching dateAccess: $error');
     }
     return null;
   }
 
   Future<List<LatLng>?> get routePoints async {
+    debugPrint('Fetching routePoints for taskId: $taskId');
     try {
-      final formData = await getFormData(type);
-      if (formData['routePoints'] != null) {
-        List<dynamic> points = formData['routePoints'];
-        return points
-            .map((point) => LatLng(
-                  double.parse(point.split(',')[0]),
-                  double.parse(point.split(',')[1]),
-                ))
-            .toList();
+      final taskSnapshot = await FirebaseFirestore.instance
+          .collection('tasks')
+          .doc(taskId)
+          .get();
+
+      if (taskSnapshot.exists) {
+        final taskData = taskSnapshot.data();
+        if (taskData?['routePoints'] != null) {
+          List<dynamic> points = taskData!['routePoints'];
+          return points
+              .map((point) => LatLng(
+                    double.parse(point.split(',')[0]),
+                    double.parse(point.split(',')[1]),
+                  ))
+              .toList();
+        }
       }
       return null;
     } catch (error) {
-      _logError('Error fetching routePoints: $error');
+      _logger.severe('Error fetching routePoints: $error');
+      debugPrint('Error fetching routePoints: $error');
       return null;
     }
   }
 
   Future<LatLng?> get lastCoordinates async {
+    debugPrint('Fetching lastCoordinates for taskId: $taskId');
     try {
-      final formData = await getFormData(type);
-      if (formData['trackLastcoord'] != null) {
-        List<String> lastCoord = formData['trackLastcoord'].split(',');
-        return LatLng(double.parse(lastCoord[0]), double.parse(lastCoord[1]));
-      }
-      return null;
-    } catch (error) {
-      _logError('Error fetching lastCoordinates: $error');
-      return null;
-    }
-  }
+      final taskSnapshot = await FirebaseFirestore.instance
+          .collection('tasks')
+          .doc(taskId)
+          .get();
 
-  static Future<List<TaskManager>> getTasksByQuery(Query query) async {
-    List<TaskManager> tasks = [];
-
-    try {
-      final querySnapshot = await query.get();
-
-      for (final documentSnapshot in querySnapshot.docs) {
-        final taskId = documentSnapshot.id;
-        final taskData = documentSnapshot.data() as Map<String, dynamic>?;
-
-        if (taskData != null) {
-          final formDetailsIdRef =
-              taskData['formDetailsId'] as DocumentReference?;
-
-          if (formDetailsIdRef != null) {
-            final formDetailsSnapshot = await formDetailsIdRef.get();
-
-            if (formDetailsSnapshot.exists) {
-              final formDetailsData =
-                  formDetailsSnapshot.data() as Map<String, dynamic>?;
-
-              if (formDetailsData != null) {
-                final formIdRef =
-                    formDetailsData['formId'] as DocumentReference?;
-                final formId = formIdRef?.id ?? '';
-                final type = formDetailsData['type'] ?? '';
-
-                final task = TaskManager(
-                  formId: formId,
-                  taskId: taskId,
-                  type: type,
-                );
-
-                tasks.add(task);
-              }
-            }
-          }
+      if (taskSnapshot.exists) {
+        final taskData = taskSnapshot.data();
+        if (taskData?['trackLastcoord'] != null) {
+          List<String> lastCoord = taskData!['trackLastcoord'].split(',');
+          return LatLng(double.parse(lastCoord[0]), double.parse(lastCoord[1]));
         }
       }
+      return null;
     } catch (error) {
-      _logError('Error fetching tasks by query: $error');
+      _logger.severe('Error fetching lastCoordinates: $error');
+      debugPrint('Error fetching lastCoordinates: $error');
+      return null;
     }
-
-    return tasks;
   }
 
-  static Future<List<TaskManager>> getTasksByStatus(String status) async {
-    final query = FirebaseFirestore.instance
-        .collection('tasks')
-        .where('status', isEqualTo: status);
-    return await getTasksByQuery(query);
-  }
+  Future<String?> _getFieldFromTask(String fieldName) async {
+    debugPrint('Fetching $fieldName for taskId: $taskId');
+    try {
+      final taskSnapshot = await FirebaseFirestore.instance
+          .collection('tasks')
+          .doc(taskId)
+          .get();
 
-  static Future<List<TaskManager>> getAllTasks() async {
-    final query = FirebaseFirestore.instance.collection('tasks');
-    return await getTasksByQuery(query);
-  }
-
-  static Future<List<TaskManager>> getNotCompletedTasks() async {
-    await CSVService.syncDataFromCSV();
-
-    final query = FirebaseFirestore.instance
-        .collection('tasks')
-        .where('status', isNotEqualTo: 'Completed');
-
-    return await getTasksByQuery(query);
-  }
-
-  Future<Map<String, dynamic>> getFormData(String formType) async {
-    final db = FirebaseFirestore.instance;
-    final document = await db.collection('ppirForms').doc(formId).get();
-
-    if (document.exists) {
-      return document.data() ?? {};
-    }
-
-    return {};
-  }
-
-  Future<String> getGpxFilePath() async {
-    final storageRef =
-        FirebaseStorage.instance.ref().child('PPIR_SAVES/$formId/Attachments');
-    final ListResult result = await storageRef.listAll();
-    for (Reference fileRef in result.items) {
-      if (fileRef.name.endsWith('.gpx')) {
-        return await fileRef.getDownloadURL();
+      if (taskSnapshot.exists) {
+        final taskData = taskSnapshot.data();
+        debugPrint('$fieldName: ${taskData?[fieldName]}');
+        return taskData?[fieldName] as String?;
       }
+    } catch (error) {
+      _logger.severe('Error fetching $fieldName: $error');
+      debugPrint('Error fetching $fieldName: $error');
     }
-    throw Exception('GPX file not found in Firebase Storage');
+    return null;
   }
 
-  /// ***************               UPDATE              ***************** ///
-  Future<void> updatePpirFormData(
-      Map<String, dynamic> formData, Map<String, dynamic> taskData) async {
-    final formRef =
-        FirebaseFirestore.instance.collection('ppirForms').doc(formId);
+  Future<void> updateTaskData(Map<String, dynamic> taskData) async {
+    debugPrint('Updating task data for taskId: $taskId with data: $taskData');
     final taskRef = FirebaseFirestore.instance.collection('tasks').doc(taskId);
 
-    final batch = FirebaseFirestore.instance.batch();
-    batch.update(formRef, formData);
-    batch.update(taskRef, taskData);
-
-    await batch.commit();
+    await taskRef.update(taskData);
   }
 
   Future<void> updateLastCoordinates(LatLng coordinates) async {
+    debugPrint(
+        'Updating last coordinates for taskId: $taskId with coordinates: $coordinates');
     try {
-      final ppirFormRef =
-          FirebaseFirestore.instance.collection('ppirForms').doc(formId);
       final taskRef =
           FirebaseFirestore.instance.collection('tasks').doc(taskId);
 
-      await ppirFormRef.update({
-        'trackLastcoord': '${coordinates.latitude},${coordinates.longitude}',
-      });
-
       await taskRef.update({
+        'trackLastcoord': '${coordinates.latitude},${coordinates.longitude}',
         'dateAccess': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      _logError('Error updating last coordinates or dateAccess: $e');
+      _logger.severe('Error updating last coordinates or dateAccess: $e');
+      debugPrint('Error updating last coordinates or dateAccess: $e');
       throw Exception('Error updating last coordinates or dateAccess');
     }
   }
 
   Future<void> updateTaskStatus(String status) async {
+    debugPrint('Updating task status for taskId: $taskId to status: $status');
     try {
       final taskRef =
           FirebaseFirestore.instance.collection('tasks').doc(taskId);
-      await taskRef.update({'status': status});
+      await taskRef.update({'taskStatus': status});
     } catch (e) {
-      _logError('Error updating task status: $e');
+      _logger.severe('Error updating task status: $e');
+      debugPrint('Error updating task status: $e');
       throw Exception('Error updating task status');
     }
   }
 
-  static void _logError(String message) {
-    _logger.severe(message);
+  static Future<void> createTasks(
+      List<Map<String, dynamic>> taskDataList) async {
+    debugPrint('Creating tasks: $taskDataList');
+    final batch = FirebaseFirestore.instance.batch();
+    final tasksRef = FirebaseFirestore.instance.collection('tasks');
+
+    for (final taskData in taskDataList) {
+      final taskId = taskData['taskId'] as String;
+      final newTaskRef = tasksRef.doc(taskId);
+      batch.set(newTaskRef, taskData);
+    }
+
+    await batch.commit();
+  }
+
+  static Future<List<TaskManager>> getTasksByStatus(String status) async {
+    debugPrint('Fetching tasks by status: $status');
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      _logger.severe('User is not authenticated.');
+      debugPrint('User is not authenticated.');
+      return [];
+    }
+
+    final userRef =
+        FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+    final query = FirebaseFirestore.instance
+        .collection('tasks')
+        .where('taskStatus', isEqualTo: status)
+        .where('user', isEqualTo: userRef);
+
+    return await _getTasksByQuery(query);
+  }
+
+  static Future<List<TaskManager>> getAllTasks() async {
+    debugPrint('Fetching all tasks');
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      _logger.severe('User is not authenticated.');
+      debugPrint('User is not authenticated.');
+      return [];
+    }
+
+    final userRef =
+        FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+    final query = FirebaseFirestore.instance
+        .collection('tasks')
+        .where('user', isEqualTo: userRef);
+
+    return await _getTasksByQuery(query);
+  }
+
+  static Future<List<TaskManager>> getNotCompletedTasks() async {
+    debugPrint('Fetching not completed tasks');
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      _logger.severe('User is not authenticated.');
+      debugPrint('User is not authenticated.');
+      return [];
+    }
+
+    final userRef =
+        FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+    debugPrint('User reference: $userRef');
+
+    final query = FirebaseFirestore.instance
+        .collection('tasks')
+        .where('taskStatus', isNotEqualTo: 'Completed')
+        .where('user', isEqualTo: userRef);
+
+    return await _getTasksByQuery(query);
+  }
+
+  static Future<List<TaskManager>> _getTasksByQuery(Query query) async {
+    debugPrint('Executing query: ${query.parameters}');
+    try {
+      final querySnapshot = await query.get();
+      debugPrint('Query snapshot length: ${querySnapshot.size}');
+      final tasks = <TaskManager>[];
+
+      for (final documentSnapshot in querySnapshot.docs) {
+        final taskId = documentSnapshot.id;
+        debugPrint(
+            'Found taskId: $taskId with data: ${documentSnapshot.data()}');
+
+        final task = TaskManager(
+          taskId: taskId,
+        );
+
+        tasks.add(task);
+      }
+      debugPrint('Total tasks found: ${tasks.length}');
+      return tasks;
+    } catch (error) {
+      _logger.severe('Error executing query: $error');
+      debugPrint('Error executing query: $error');
+      return [];
+    }
+  }
+
+  Future<String?> get north async {
+    debugPrint('Fetching north for taskId: $taskId');
+    return await _getFieldFromTask('ppirNorth');
+  }
+
+  Future<String?> get south async {
+    debugPrint('Fetching south for taskId: $taskId');
+    return await _getFieldFromTask('ppirSouth');
+  }
+
+  Future<String?> get east async {
+    debugPrint('Fetching east for taskId: $taskId');
+    return await _getFieldFromTask('ppirEast');
+  }
+
+  Future<String?> get west async {
+    debugPrint('Fetching west for taskId: $taskId');
+    return await _getFieldFromTask('ppirWest');
+  }
+
+  Future<String> getGpxFilePath() async {
+    debugPrint('Fetching GPX file path for taskId: $taskId');
+    try {
+      final storageRef =
+          FirebaseStorage.instance.ref().child('tasks/$taskId/attachments');
+      final ListResult result = await storageRef.listAll();
+      for (Reference fileRef in result.items) {
+        if (fileRef.name.endsWith('.gpx')) {
+          final downloadURL = await fileRef.getDownloadURL();
+          debugPrint('Found GPX file: ${fileRef.name}, URL: $downloadURL');
+          return downloadURL;
+        }
+      }
+      throw Exception('GPX file not found in Firebase Storage');
+    } catch (error) {
+      _logger.severe('Error fetching GPX file path: $error');
+      debugPrint('Error fetching GPX file path: $error');
+      throw Exception('Error fetching GPX file path');
+    }
+  }
+
+  Future<Map<String, dynamic>> getTaskData() async {
+    debugPrint('Fetching task data for taskId: $taskId');
+    try {
+      final taskSnapshot = await FirebaseFirestore.instance
+          .collection('tasks')
+          .doc(taskId)
+          .get();
+
+      if (taskSnapshot.exists) {
+        debugPrint('Task data: ${taskSnapshot.data()}');
+        return taskSnapshot.data() ?? {};
+      } else {
+        throw Exception('Task not found');
+      }
+    } catch (error) {
+      _logger.severe('Error fetching task data: $error');
+      debugPrint('Error fetching task data: $error');
+      throw Exception('Error fetching task data');
+    }
+  }
+
+  Future<void> updatePpirFormData(Map<String, dynamic> updatedTaskData) async {
+    debugPrint(
+        'Updating task data for taskId: $taskId with data: $updatedTaskData');
+    try {
+      final taskRef =
+          FirebaseFirestore.instance.collection('tasks').doc(taskId);
+
+      await taskRef.update(updatedTaskData);
+    } catch (error) {
+      _logger.severe('Error updating task data: $error');
+      debugPrint('Error updating task data: $error');
+      throw Exception('Error updating task data');
+    }
   }
 }

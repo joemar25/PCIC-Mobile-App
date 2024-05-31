@@ -71,7 +71,7 @@ class TapToSignatureState extends State<TapToSignature> {
   Future<Map<String, String>> _fetchSignatures() async {
     final storageRef = FirebaseStorage.instance
         .ref()
-        .child('PPIR_SAVES/${widget.task.formId}/Attachments');
+        .child('PPIR_SAVES/${widget.task.taskId}/Attachments');
 
     final ListResult result = await storageRef.listAll();
     Map<String, String> signatures = {};
@@ -102,14 +102,11 @@ class TapToSignatureState extends State<TapToSignature> {
       }
 
       await widget.task.updatePpirFormData(
-        {
-          widget.signatureType: downloadUrl,
-        },
-        {'status': 'Ongoing'},
+        {'status': 'Ongoing', 'signatureFile': downloadUrl},
       );
     }
 
-    controller.dismiss(); // Close the modal
+    controller.dismiss();
   }
 
   void _clearSignature() {

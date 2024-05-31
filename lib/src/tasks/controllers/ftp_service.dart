@@ -1,114 +1,120 @@
-// ftp_service.dart
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:ftpconnect/ftpconnect.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:logging/logging.dart' as log;
 
 class FTPService {
-  static const String _ftpHost = '122.55.242.110';
-  static const int _ftpPort = 21;
-  static const String _ftpUserUpload = 'k2c_User2';
-  static const String _ftpPasswordUpload = 'K2C@PC!C2024';
-  static const String _ftpUserSync = 'k2c_User1';
-  static const String _ftpPasswordSync = 'K2C@PC!C2024';
+  final String _ftpHost = '122.55.242.110';
+  final int _ftpPort = 21;
+  final String _ftpUserUpload = 'k2c_User2';
+  final String _ftpPasswordUpload = 'K2C@PC!C2024';
+  final String _ftpUserSync = 'k2c_User1';
+  final String _ftpPasswordSync = 'K2C@PC!C2024';
+  final String _workDirectory = '/Work';
+  final String _uploadDirectory = '/taskarchive';
 
-  static final log.Logger _logger = log.Logger('FTPService');
+  late FTPConnect _ftpConnectSync;
+  late FTPConnect _ftpConnectUpload;
+  bool _isConnectedSync = false;
 
-  static Future<void> uploadTask(File file) async {
-    FTPConnect ftpConnect = FTPConnect(
-      _ftpHost,
-      port: _ftpPort,
-      user: _ftpUserUpload,
-      pass: _ftpPasswordUpload,
-    );
-
-    try {
-      await ftpConnect.connect();
-      await ftpConnect.changeDirectory('taskarchive');
-      await ftpConnect.uploadFileWithRetry(file, pRetryCount: 2);
-    } catch (e) {
-      _logError('Error uploading file to FTP server: $e');
-      throw Exception('Error uploading file to FTP server: $e');
-    } finally {
-      await ftpConnect.disconnect();
-    }
-  }
-
-  static Future<List<String>> syncTask() async {
-    FTPConnect ftpConnect = FTPConnect(
-      _ftpHost,
-      port: _ftpPort,
-      user: _ftpUserSync,
-      pass: _ftpPasswordSync,
-    );
-    List<String> csvContents = [];
+  Future<void> connectSync() async {
+    debugPrint('Connecting to FTP server...');
+    _ftpConnectSync = FTPConnect(_ftpHost,
+        port: _ftpPort,
+        user: _ftpUserSync,
+        pass: _ftpPasswordSync,
+        timeout: 10);
 
     try {
-      await ftpConnect.connect();
-      await ftpConnect.changeDirectory('Work');
-
-      List<FTPEntry> ftpFiles = await ftpConnect.listDirectoryContent();
-
-      Directory tempDir = await getTemporaryDirectory();
-      for (FTPEntry ftpFile in ftpFiles) {
-        if (ftpFile.type == FTPEntryType.FILE &&
-            ftpFile.name.endsWith('.csv')) {
-          bool isProcessed = await _isFileProcessed(ftpFile.name);
-          if (isProcessed) continue;
-
-          String localPath = '${tempDir.path}/${ftpFile.name}';
-          File localFile = File(localPath);
-          await ftpConnect.downloadFile(ftpFile.name, localFile);
-
-          String fileContent = await localFile.readAsString();
-          csvContents.add(fileContent);
-
-          await _markFileAsProcessed(ftpFile.name);
-          await _updateTasksWithFTPFile(ftpFile.name);
-
-          await localFile.delete();
-        }
-      }
+      await _ftpConnectSync.connect();
+      await _ftpConnectSync.changeDirectory(_workDirectory);
+      _isConnectedSync = true;
     } catch (e) {
-      _logError('Error downloading files from FTP: $e');
-      throw Exception('Error downloading files from FTP: $e');
-    } finally {
-      await ftpConnect.disconnect();
+      _isConnectedSync = false;
+      throw Exception('Failed to connect to FTP or change directory');
     }
-
-    return csvContents;
+    debugPrint('Connected to FTP server');
   }
 
-  static Future<bool> _isFileProcessed(String fileName) async {
-    final processedFileSnapshot = await FirebaseFirestore.instance
-        .collection('processedFiles')
-        .doc(fileName)
-        .get();
-    return processedFileSnapshot.exists;
-  }
+  Future<void> connectUpload() async {
+    _ftpConnectUpload = FTPConnect(_ftpHost,
+        port: _ftpPort,
+        user: _ftpUserUpload,
+        pass: _ftpPasswordUpload,
+        timeout: 10);
 
-  static Future<void> _markFileAsProcessed(String fileName) async {
-    await FirebaseFirestore.instance
-        .collection('processedFiles')
-        .doc(fileName)
-        .set({'processedAt': Timestamp.now()});
-  }
-
-  static Future<void> _updateTasksWithFTPFile(String fileName) async {
-    final tasksSnapshot = await FirebaseFirestore.instance
-        .collection('tasks')
-        .where('ftpFileName', isEqualTo: fileName)
-        .get();
-
-    if (tasksSnapshot.docs.isNotEmpty) {
-      for (final taskDoc in tasksSnapshot.docs) {
-        await taskDoc.reference.update({'ftpFileName': fileName});
-      }
+    try {
+      await _ftpConnectUpload.connect();
+      await _ftpConnectUpload.changeDirectory(_uploadDirectory);
+    } catch (e) {
+      throw Exception('Failed to connect to FTP or change directory');
     }
   }
 
-  static void _logError(String message) {
-    _logger.severe(message);
+  Future<void> disconnectSync() async {
+    debugPrint('Disconnecting from FTP server...');
+    try {
+      await _ftpConnectSync.disconnect();
+      _isConnectedSync = false;
+    } catch (e) {
+      throw Exception('Failed to disconnect from FTP');
+    }
+    debugPrint('Disconnected from FTP server');
   }
+
+  Future<void> disconnectUpload() async {
+    try {
+      await _ftpConnectUpload.disconnect();
+    } catch (e) {
+      throw Exception('Failed to disconnect from FTP');
+    }
+  }
+
+  Future<List<String>> getFileList() async {
+    try {
+      debugPrint('Getting file list from FTP...');
+      final fileList = await _ftpConnectSync.listDirectoryContent();
+      debugPrint('File list: $fileList');
+
+      return fileList
+          .where((file) =>
+              file.type == FTPEntryType.FILE &&
+              file.name.endsWith('.csv') &&
+              !file.name.contains('@Recycle'))
+          .map((file) => file.name)
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to get file list from FTP');
+    }
+  }
+
+  Future<String> downloadFile(String fileName) async {
+    try {
+      debugPrint('Downloading file from FTP: $fileName');
+
+      final tempDir = await Directory.systemTemp.createTemp();
+      final localFilePath = '${tempDir.path}/$fileName';
+
+      final file = File(localFilePath);
+      await _ftpConnectSync.downloadFile(fileName, file);
+
+      final csvContent = await file.readAsString();
+      await file.delete();
+
+      debugPrint('CSV Content: $csvContent');
+
+      return csvContent;
+    } catch (e) {
+      throw Exception('Failed to download file from FTP');
+    }
+  }
+
+  Future<void> uploadTask(File file) async {
+    try {
+      await _ftpConnectUpload.uploadFileWithRetry(file, pRetryCount: 2);
+    } catch (e) {
+      throw Exception('Error uploading file to FTP server');
+    }
+  }
+
+  bool get isConnected => _isConnectedSync;
 }

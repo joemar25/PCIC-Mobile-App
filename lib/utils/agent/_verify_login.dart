@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:pcic_mobile_app/src/home/dashboard.dart';
 import 'package:pcic_mobile_app/utils/app/_colors.dart';
-import '../../src/home/_home.dart';
 
 class VerifyLoginPage extends StatelessWidget {
   final bool isLoginSuccessful;

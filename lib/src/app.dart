@@ -9,7 +9,6 @@ import '../utils/agent/_signup.dart';
 import '../utils/agent/_verify_login.dart';
 import '../utils/agent/_verify_signup.dart';
 import '../utils/app/_routes.dart';
-import '_starting.dart';
 import 'geotag/_geotag.dart';
 import 'home/_home.dart';
 import 'messages/_view.dart';
@@ -49,24 +48,18 @@ class App extends StatelessWidget {
               // Route configuration
               routes: {
                 AppRoutes.splash: (context) => const SplashScreen(),
-                AppRoutes.starting: (context) => const StartingPage(),
                 AppRoutes.login: (context) => const LoginPage(),
                 AppRoutes.signup: (context) => const SignupPage(),
-                AppRoutes.home: (context) => const DashboardPage(),
+                AppRoutes.home: (context) => const HomeScreen(),
                 AppRoutes.task: (context) => const TaskPage(),
                 AppRoutes.message: (context) => const MessagesPage(),
-                AppRoutes.job: (context) => GeotagPage(
-                      task: TaskManager(
-                        formId: '',
-                        taskId: '',
-                        type: '',
-                      ),
-                    ),
+                AppRoutes.job: (context) =>
+                    GeotagPage(task: TaskManager(taskId: '')),
                 AppRoutes.verifyLogin: (context) =>
                     const VerifyLoginPage(isLoginSuccessful: true),
                 AppRoutes.verifySignup: (context) =>
                     const VerifySignupPage(isSignupSuccessful: true),
-                AppRoutes.dashboard: (context) => const DashboardPage(),
+                AppRoutes.dashboard: (context) => const HomeScreen(),
                 SettingsView.routeName: (context) =>
                     SettingsView(controller: settingsController),
               },
