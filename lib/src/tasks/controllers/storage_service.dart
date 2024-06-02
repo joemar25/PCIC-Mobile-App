@@ -10,10 +10,9 @@ class StorageService {
   static final Logger _logger = Logger('StorageService');
   static final FTPService _ftpService = FTPService();
 
-  static Future<void> saveTaskFileToFirebaseStorage(
-      String taskId, Map<String, dynamic> taskData) async {
+  static Future<void> saveTaskFileToFirebaseStorage(String taskId) async {
     try {
-      final xmlContent = await generateTaskXmlContent(taskId, taskData);
+      final xmlContent = await generateTaskXmlContent(taskId);
       final storageRef =
           FirebaseStorage.instance.ref().child('PPIR_SAVES/$taskId/Task.xml');
       await storageRef.putString(xmlContent);

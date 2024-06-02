@@ -194,7 +194,6 @@ class SyncController {
       'ppir_sig_insured': rowData['ppir_sig_insured'] ?? '',
       'ppir_sig_iuia': rowData['ppir_sig_iuia'] ?? '',
       'isPPIR': rowData['isPPIR'] ?? false,
-      'formId': rowData['formId'] ?? '',
     };
   }
 }

@@ -196,8 +196,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
 
       await widget.task.updatePpirFormData(_taskData);
 
-      await StorageService.saveTaskFileToFirebaseStorage(
-          widget.task.taskId, _taskData);
+      await StorageService.saveTaskFileToFirebaseStorage(widget.task.taskId);
 
       await StorageService.compressAndUploadTaskFiles(widget.task.taskId);
 

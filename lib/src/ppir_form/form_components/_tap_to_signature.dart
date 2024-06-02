@@ -102,7 +102,7 @@ class TapToSignatureState extends State<TapToSignature> {
       }
 
       await widget.task.updatePpirFormData(
-        {'status': 'Ongoing', 'signatureFile': downloadUrl},
+        {'status': 'Ongoing'},
       );
     }
 
