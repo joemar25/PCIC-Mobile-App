@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -240,6 +241,10 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
 
       try {
         List<LatLng> routePoints = _mapService.routePoints;
+
+        // Close the route loop
+        _closeRouteLoop(routePoints);
+
         var gpx = _gpxService.createGpxFromRoutePoints(routePoints);
         var gpxString = _gpxService.convertGpxToString(gpx);
 
@@ -249,6 +254,9 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
           await widget.task.updateLastCoordinates(
               LatLng(routePoints.last.latitude, routePoints.last.longitude));
         }
+
+        // Calculate and update the area and distance
+        await _calculateAndUpdateTask(routePoints);
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
@@ -285,6 +293,40 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
         });
       }
     }
+  }
+
+  Future<void> _calculateAndUpdateTask(List<LatLng> routePoints) async {
+    if (routePoints.isNotEmpty) {
+      final mapService = MapService();
+      final distance = mapService.calculateTotalDistance(routePoints);
+      double area = mapService.calculateAreaOfPolygon(routePoints);
+      double areaInHectares = area / 10000;
+
+      final taskData = {
+        'trackTotalarea': areaInHectares.toString(),
+        'trackTotaldistance': distance.toString()
+      };
+
+      await widget.task.updateTaskData(taskData);
+    }
+  }
+
+  void _closeRouteLoop(List<LatLng> routePoints) {
+    if (routePoints.isNotEmpty) {
+      final initialPoint = routePoints.first;
+      final closingPoint = routePoints.last;
+
+      if (!_isCloseEnough(initialPoint, closingPoint)) {
+        // Add the initial point to the end to close the loop
+        routePoints.add(initialPoint);
+      }
+    }
+  }
+
+  bool _isCloseEnough(LatLng point1, LatLng point2) {
+    const double threshold = 10.0;
+    final distance = const Distance().as(LengthUnit.Meter, point1, point2);
+    return distance <= threshold;
   }
 
   Future<void> _addMarkerAtCurrentLocation() async {
