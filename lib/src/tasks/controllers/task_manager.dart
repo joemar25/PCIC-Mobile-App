@@ -291,6 +291,35 @@ class TaskManager {
     return await _getFieldFromTask('ppirWest');
   }
 
+  Future<int?> _getFieldFromTasks(String fieldName) async {
+    debugPrint('Fetching $fieldName for taskId: $taskId');
+    try {
+      final taskSnapshot = await FirebaseFirestore.instance
+          .collection('tasks')
+          .doc(taskId)
+          .get();
+
+      if (taskSnapshot.exists) {
+        final taskData = taskSnapshot.data();
+        debugPrint('$fieldName: ${taskData?[fieldName]}');
+
+        // Ensure the fetched value is always an integer if it's for ppirAssignmentId
+        if (fieldName == 'ppirAssignmentId' && taskData?[fieldName] is int) {
+          return taskData?[fieldName] as int?;
+        }
+      }
+    } catch (error) {
+      _logger.severe('Error fetching $fieldName: $error');
+      debugPrint('Error fetching $fieldName: $error');
+    }
+    return null;
+  }
+
+  Future<int?> get assignmentID async {
+    debugPrint('Fetching ppirAssignmentId for taskId: $taskId');
+    return await _getFieldFromTasks('ppirAssignmentId');
+  }
+
   Future<String> getGpxFilePath() async {
     debugPrint('Fetching GPX file path for taskId: $taskId');
     try {

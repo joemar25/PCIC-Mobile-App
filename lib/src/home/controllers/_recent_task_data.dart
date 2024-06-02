@@ -36,9 +36,9 @@ class TaskData extends StatelessWidget {
 
     final titleFontSize = isPortrait ? 12.0 : t?.title ?? 18.0;
     final captionFontSize = isPortrait ? 6.0 : t?.caption ?? 14.0;
-    final heheFontSize = isPortrait ? 6.0 : t?.caption ?? 18.0;
-    final overlineFontSize = isPortrait ? 6.0 : t?.overline ?? 12.0;
-    final statusFontSize = isPortrait ? 9.0 : t?.caption ?? 14.0;
+    final heheFontSize = isPortrait ? 10.0 : t?.caption ?? 14.0;
+    final overlineFontSize = isPortrait ? 9.0 : t?.overline ?? 12.0;
+    final statusFontSize = isPortrait ? 10.0 : t?.caption ?? 14.0;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
@@ -49,13 +49,14 @@ class TaskData extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                FutureBuilder<List<String?>>(
+                FutureBuilder<List<dynamic>>(
                   future: Future.wait([
                     task.farmerName,
                     task.north,
                     task.south,
                     task.east,
-                    task.west
+                    task.west,
+                    task.assignmentID,
                   ]),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -91,11 +92,11 @@ class TaskData extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                           SizedBox(
-                            height: 50,
+                            height: 45,
                             child: Text(
                               '(N: $north, S: $south, E: $east, W: $west)',
                               style: TextStyle(
-                                fontSize: titleFontSize,
+                                fontSize: heheFontSize,
                               ),
                               // softWrap: true,
                               // overflow: TextOverflow.ellipsis,
@@ -143,6 +144,24 @@ class TaskData extends StatelessWidget {
                     return const SizedBox();
                   },
                 ),
+                FutureBuilder<int?>(
+                  future: task.assignmentID,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final assignmentID = snapshot.data!;
+                      return Text(
+                        'PPI Assignment ID: ${assignmentID.toString()}',
+                        style: TextStyle(
+                          fontSize: statusFontSize,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                      );
+                    }
+                    return const SizedBox();
+                  },
+                ),
                 FutureBuilder<DateTime?>(
                   future: task.dateAccess,
                   builder: (context, snapshot) {
@@ -150,7 +169,7 @@ class TaskData extends StatelessWidget {
                       return Text(
                         'Last Access: ${formatDate(snapshot.data)}',
                         style: TextStyle(
-                          fontSize: overlineFontSize,
+                          fontSize: statusFontSize,
                         ),
                         softWrap: true,
                         overflow: TextOverflow.ellipsis,
