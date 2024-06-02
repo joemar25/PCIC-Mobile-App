@@ -1,12 +1,10 @@
 import 'dart:typed_data';
-
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:uuid/uuid.dart';
+import '_tap_to_signature.dart';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
-import 'package:uuid/uuid.dart';
-
-import '_tap_to_signature.dart';
 import '../../tasks/controllers/task_manager.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class SignatureSection extends StatefulWidget {
   final TaskManager task;
@@ -37,6 +35,9 @@ class SignatureSectionState extends State<SignatureSection> {
 
   String? _confirmedByUrl;
   String? _preparedByUrl;
+
+  bool _isConfirmedBySignatureValid = true;
+  bool _isPreparedBySignatureValid = true;
 
   @override
   void initState() {
@@ -103,10 +104,26 @@ class SignatureSectionState extends State<SignatureSection> {
     }
     if (_confirmedBySignatureController.isEmpty && _confirmedByUrl == null) {
       isValid = false;
+      setState(() {
+        _isConfirmedBySignatureValid = false;
+      });
+    } else {
+      setState(() {
+        _isConfirmedBySignatureValid = true;
+      });
     }
     if (_preparedBySignatureController.isEmpty && _preparedByUrl == null) {
       isValid = false;
+      setState(() {
+        _isPreparedBySignatureValid = false;
+      });
+    } else {
+      setState(() {
+        _isPreparedBySignatureValid = true;
+      });
     }
+
+    setState(() {}); // Trigger a rebuild to show/hide error messages
 
     return isValid;
   }
@@ -141,19 +158,15 @@ class SignatureSectionState extends State<SignatureSection> {
           onTap: () => setState(() {}),
           child: Container(
             height: 200,
-            color: widget.isSubmitting &&
-                    (_confirmedBySignatureController.isEmpty &&
-                        _confirmedByUrl == null)
+            color: !_isConfirmedBySignatureValid
                 ? Colors.red[100]
-                : Colors.grey,
+                : Colors.grey[300],
             child: TapToSignature(
               task: widget.task,
               controller: _confirmedBySignatureController,
               height: 200,
               backgroundColor: Colors.white70,
-              isError: widget.isSubmitting &&
-                  (_confirmedBySignatureController.isEmpty &&
-                      _confirmedByUrl == null),
+              isError: !_isConfirmedBySignatureValid,
               isSubmitting: widget.isSubmitting,
               isEmpty: _confirmedBySignatureController.isEmpty,
               onSaveSignature: (Uint8List signatureBytes) async {
@@ -164,9 +177,7 @@ class SignatureSectionState extends State<SignatureSection> {
             ),
           ),
         ),
-        if (widget.isSubmitting &&
-            (_confirmedBySignatureController.isEmpty &&
-                _confirmedByUrl == null))
+        if (!_isConfirmedBySignatureValid)
           const Text(
             'This field is required',
             style: TextStyle(color: Colors.red),
@@ -197,19 +208,15 @@ class SignatureSectionState extends State<SignatureSection> {
           onTap: () => setState(() {}),
           child: Container(
             height: 200,
-            color: widget.isSubmitting &&
-                    (_preparedBySignatureController.isEmpty &&
-                        _preparedByUrl == null)
+            color: !_isPreparedBySignatureValid
                 ? Colors.red[100]
-                : Colors.grey,
+                : Colors.grey[300],
             child: TapToSignature(
               task: widget.task,
               controller: _preparedBySignatureController,
               height: 200,
               backgroundColor: Colors.white70,
-              isError: widget.isSubmitting &&
-                  (_preparedBySignatureController.isEmpty &&
-                      _preparedByUrl == null),
+              isError: !_isPreparedBySignatureValid,
               isSubmitting: widget.isSubmitting,
               isEmpty: _preparedBySignatureController.isEmpty,
               onSaveSignature: (Uint8List signatureBytes) async {
@@ -220,8 +227,7 @@ class SignatureSectionState extends State<SignatureSection> {
             ),
           ),
         ),
-        if (widget.isSubmitting &&
-            (_preparedBySignatureController.isEmpty && _preparedByUrl == null))
+        if (!_isPreparedBySignatureValid)
           const Text(
             'This field is required',
             style: TextStyle(color: Colors.red),

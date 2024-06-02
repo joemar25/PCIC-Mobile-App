@@ -147,9 +147,9 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       _taskData['ppirNameInsured'] = signatureData['ppirNameInsured'];
       _taskData['ppirNameIuia'] = signatureData['ppirNameIuia'];
 
-      if (!_formSectionKey.currentState!.validate() ||
-          !_signatureSectionKey.currentState!.validate() ||
+      if (signatureData['ppirSigInsured'] == null ||
           signatureData['ppirNameInsured']?.trim().isEmpty == true ||
+          signatureData['ppirSigIuia'] == null ||
           signatureData['ppirNameIuia']?.trim().isEmpty == true) {
         showFlashMessage(context, 'Info', 'Validation Failed',
             'Please fill in all required fields.');
@@ -170,12 +170,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       bool hasEmptyEnabledFields = enabledFieldKeys.any((key) =>
           _taskData[key] == null || _taskData[key].toString().trim().isEmpty);
 
-      bool hasEmptySignatureFields = signatureData['ppirSigInsured'] == null ||
-          signatureData['ppirNameInsured']?.trim().isEmpty == true ||
-          signatureData['ppirSigIuia'] == null ||
-          signatureData['ppirNameIuia']?.trim().isEmpty == true;
-
-      if (hasEmptyEnabledFields || hasEmptySignatureFields) {
+      if (hasEmptyEnabledFields) {
         showFlashMessage(context, 'Info', 'Form Fields',
             'Please fill in all required fields');
         setState(() {

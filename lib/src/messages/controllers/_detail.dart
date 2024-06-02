@@ -102,7 +102,6 @@ class MessageDetailsPageState extends State<MessageDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // header (appbar)
       appBar: AppBar(
         elevation: 0,
         iconTheme: const IconThemeData(color: mainColor),
@@ -130,8 +129,6 @@ class MessageDetailsPageState extends State<MessageDetailsPage> {
           ),
         ),
       ),
-
-      // body (scrollable)
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(

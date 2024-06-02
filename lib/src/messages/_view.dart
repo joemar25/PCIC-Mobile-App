@@ -1,14 +1,11 @@
-import 'controllers/_detail.dart';
 import 'package:intl/intl.dart';
+import 'controllers/_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:pcic_mobile_app/src/messages/components/_searchMessage.dart';
-// import '_model.dart';
-// import '../home/_search_button.dart';
-// import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class MessagesPage extends StatefulWidget {
   const MessagesPage({super.key});
