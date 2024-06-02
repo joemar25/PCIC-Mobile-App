@@ -19,8 +19,6 @@ import 'form_components/_form_field.dart' as form_field;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pcic_mobile_app/src/tasks/controllers/storage_service.dart';
 
-
-
 class PPIRFormPage extends StatefulWidget {
   final TaskManager task;
 
@@ -41,6 +39,8 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   final _areaPlantedController = TextEditingController();
   final _areaInHectaresController = TextEditingController();
   final _totalDistanceController = TextEditingController();
+  //farm location
+  final _farmLocationController = TextEditingController();
   final _signatureSectionKey = GlobalKey<SignatureSectionState>();
   final _formSectionKey = GlobalKey<FormSectionState>();
 
@@ -94,7 +94,8 @@ class PPIRFormPageState extends State<PPIRFormPage> {
             DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
     _areaInHectaresController.text = formData['trackTotalarea'] ?? 'Empty';
     _totalDistanceController.text = formData['trackTotaldistance'] ?? 'Empty';
-
+    //farm location
+    _farmLocationController.text = formData['ppirFarmLoc'] ?? '';
     _taskData['trackLastcoord'] =
         formData['trackLastcoord'] ?? 'No coordinates available';
     _taskData['ppirDopdsAct'] = formData['ppirDopdsAct'] ?? '';
@@ -145,11 +146,16 @@ class PPIRFormPageState extends State<PPIRFormPage> {
             areaInHectares > 0 ? _formatNumber(areaInHectares, 'ha') : 'Empty';
         _totalDistanceController.text =
             distance > 0 ? _formatNumber(distance, 'm') : 'Empty';
+        //farm location
+        _farmLocationController.text =
+            distance > 0 ? _formatNumber(distance, 'm') : '';
       });
     } else {
       setState(() {
         _areaInHectaresController.text = 'Empty';
         _totalDistanceController.text = 'Empty';
+        //farm location
+        _farmLocationController.text = '';
       });
     }
   }
@@ -229,7 +235,8 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       _taskData['trackDatetime'] = _areaPlantedController.text;
       _taskData['trackLastcoord'] = _taskData['trackLastcoord'];
       _taskData['trackTotaldistance'] = _totalDistanceController.text;
-
+      //farm location
+      _taskData['ppirFarmLoc'] = _farmLocationController.text;
       _taskData['ppirRemarks'] = _taskData['ppirRemarks'] ?? 'no value';
       _taskData['ppirSigInsured'] =
           signatureData['ppirSigInsured'] ?? 'no value';
@@ -280,7 +287,8 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       _taskData['trackDatetime'] = _areaPlantedController.text;
       _taskData['trackLastcoord'] = _taskData['trackLastcoord'];
       _taskData['trackTotaldistance'] = _totalDistanceController.text;
-
+      //farm location
+      _taskData['ppirFarmLoc'] = _farmLocationController.text;
       _taskData['ppirRemarks'] = _taskData['ppirRemarks'] ?? 'no value';
       _taskData['ppirSigInsured'] =
           signatureData['ppirSigInsured'] ?? 'no value';
@@ -506,6 +514,16 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                         controller: _totalDistanceController,
                         decoration: const InputDecoration(
                           labelText: 'Total Distance',
+                          border: OutlineInputBorder(),
+                        ),
+                        enabled: false,
+                      ),
+                      const SizedBox(height: 16),
+                      //farm location
+                      TextFormField(
+                        controller: _farmLocationController,
+                        decoration: const InputDecoration(
+                          labelText: 'Farm Location',
                           border: OutlineInputBorder(),
                         ),
                         enabled: false,
