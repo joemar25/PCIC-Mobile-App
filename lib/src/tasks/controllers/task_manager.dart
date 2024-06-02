@@ -294,8 +294,9 @@ class TaskManager {
   Future<String> getGpxFilePath() async {
     debugPrint('Fetching GPX file path for taskId: $taskId');
     try {
-      final storageRef =
-          FirebaseStorage.instance.ref().child('tasks/$taskId/attachments');
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('PPIR_SAVES/$taskId/Attachments');
       final ListResult result = await storageRef.listAll();
       for (Reference fileRef in result.items) {
         if (fileRef.name.endsWith('.gpx')) {
