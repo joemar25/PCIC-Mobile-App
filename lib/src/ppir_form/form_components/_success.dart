@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:pcic_mobile_app/src/home/dashboard.dart';
 import 'package:pcic_mobile_app/utils/app/_colors.dart';
-import '../../home/_home.dart';
 
 class FormSuccessPage extends StatelessWidget {
   final bool isSaveSuccessful;
@@ -14,7 +14,7 @@ class FormSuccessPage extends StatelessWidget {
       Future.delayed(const Duration(seconds: 1), () {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const DashboardPage()),
         );
       });
     }
