@@ -1,23 +1,23 @@
 import 'dart:io';
-import 'package:intl/intl.dart';
-import '../geotag/_geotag.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
-import 'form_components/_success.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_file/open_file.dart';
-import '../../utils/seeds/_dropdown.dart';
-import 'form_components/_form_section.dart';
-import '../geotag/controls/_map_service.dart';
-import '../tasks/controllers/task_manager.dart';
-import 'form_components/_gpx_file_buttons.dart';
-import 'form_components/_signature_section.dart';
 import 'package:path_provider/path_provider.dart';
-import '../../utils/app/_show_flash_message.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'form_components/_form_field.dart' as form_field;
 import 'package:permission_handler/permission_handler.dart';
-import 'package:pcic_mobile_app/src/tasks/controllers/storage_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'form_components/_form_section.dart';
+import 'form_components/_signature_section.dart';
+import 'form_components/_gpx_file_buttons.dart';
+import 'form_components/_form_field.dart' as form_field;
+import 'form_components/_success.dart';
+import '../../utils/app/_show_flash_message.dart';
+import '../../utils/seeds/_dropdown.dart';
+import '../tasks/controllers/task_manager.dart';
+import '../geotag/controls/_map_service.dart';
+import '../geotag/_geotag.dart';
+import '../tasks/controllers/storage_service.dart';
 
 class PPIRFormPage extends StatefulWidget {
   final TaskManager task;
@@ -191,15 +191,14 @@ class PPIRFormPageState extends State<PPIRFormPage> {
           signatureData['ppirNameInsured'] ?? 'no value';
       _taskData['ppirSigIuia'] = signatureData['ppirSigIuia'] ?? 'no value';
       _taskData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
-      _taskData['status'] = 'Completed';
+      _taskData['taskStatus'] = 'Completed';
 
       await widget.task.updatePpirFormData(_taskData);
 
       await StorageService.saveTaskFileToFirebaseStorage(
           widget.task.taskId, _taskData);
 
-      await StorageService.compressAndUploadTaskFiles(
-          widget.task.taskId, widget.task.taskId);
+      await StorageService.compressAndUploadTaskFiles(widget.task.taskId);
 
       if (mounted) {
         Navigator.pushReplacement(
@@ -243,7 +242,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
           signatureData['ppirNameInsured'] ?? 'no value';
       _taskData['ppirSigIuia'] = signatureData['ppirSigIuia'] ?? 'no value';
       _taskData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
-      _taskData['status'] = 'Ongoing';
+      _taskData['taskStatus'] = 'Ongoing';
 
       if (mounted) {
         showFlashMessage(
@@ -329,7 +328,8 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   }
 
   void _openGpxFile(String gpxFilePath) async {
-    if (_areaInHectaresController.text == 'Empty') {
+    if (_areaInHectaresController.text == 'Empty' ||
+        _areaInHectaresController.text == '0.0') {
       showFlashMessage(context, 'Error', 'GPX File Error',
           'Total area in hectares is empty. Cannot open GPX file.');
       return;
@@ -355,12 +355,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   }
 
   void _openLocalFile(String filePath) async {
-    if (_areaInHectaresController.text == 'Empty') {
-      showFlashMessage(context, 'Error', 'GPX File Error',
-          'Total area in hectares is empty. Cannot open GPX file.');
-      return;
-    }
-
     try {
       final gpxFile = File(filePath);
       if (await gpxFile.exists()) {
@@ -471,9 +465,10 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       SignatureSection(
-                          key: _signatureSectionKey,
-                          task: widget.task,
-                          isSubmitting: isSubmitting),
+                        key: _signatureSectionKey,
+                        task: widget.task,
+                        isSubmitting: isSubmitting,
+                      ),
                       const SizedBox(height: 24),
                       const Text(
                         'Map Geotag',

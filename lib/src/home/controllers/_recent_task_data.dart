@@ -35,9 +35,9 @@ class TaskData extends StatelessWidget {
         MediaQuery.of(context).orientation == Orientation.portrait;
 
     final titleFontSize = isPortrait ? 12.0 : t?.title ?? 18.0;
-    final captionFontSize = isPortrait ? 6.0 : t?.caption ?? 14.0;
+    // final captionFontSize = isPortrait ? 6.0 : t?.caption ?? 14.0;
     final heheFontSize = isPortrait ? 10.0 : t?.caption ?? 14.0;
-    final overlineFontSize = isPortrait ? 9.0 : t?.overline ?? 12.0;
+    // final overlineFontSize = isPortrait ? 9.0 : t?.overline ?? 12.0;
     final statusFontSize = isPortrait ? 10.0 : t?.caption ?? 14.0;
 
     return Padding(
