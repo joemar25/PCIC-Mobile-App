@@ -68,6 +68,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
 
       final mapService = MapService();
       gpxFile = await widget.task.getGpxFilePath();
+      debugPrint("gpx file is $gpxFile");
       if (gpxFile != null) {
         final gpxData = await mapService.readGpxFile(gpxFile!);
         routePoints = await mapService.parseGpxData(gpxData);
@@ -91,8 +92,8 @@ class PPIRFormPageState extends State<PPIRFormPage> {
         ? (formData['trackDatetime'] as Timestamp).toDate().toString()
         : formData['trackDatetime'] ??
             DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
-    _areaInHectaresController.text = formData['trackTotalarea'] ?? '';
-    _totalDistanceController.text = formData['trackTotaldistance'] ?? '';
+    _areaInHectaresController.text = formData['trackTotalarea'] ?? 'Empty';
+    _totalDistanceController.text = formData['trackTotaldistance'] ?? 'Empty';
 
     _taskData['trackLastcoord'] =
         formData['trackLastcoord'] ?? 'No coordinates available';
@@ -141,8 +142,14 @@ class PPIRFormPageState extends State<PPIRFormPage> {
 
       setState(() {
         _areaInHectaresController.text =
-            areaInHectares > 0 ? _formatNumber(areaInHectares, 'ha') : '';
-        _totalDistanceController.text = _formatNumber(distance, 'm');
+            areaInHectares > 0 ? _formatNumber(areaInHectares, 'ha') : 'Empty';
+        _totalDistanceController.text =
+            distance > 0 ? _formatNumber(distance, 'm') : 'Empty';
+      });
+    } else {
+      setState(() {
+        _areaInHectaresController.text = 'Empty';
+        _totalDistanceController.text = 'Empty';
       });
     }
   }
@@ -368,6 +375,12 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   }
 
   void _openGpxFile(String gpxFilePath) async {
+    if (_areaInHectaresController.text == 'Empty') {
+      showFlashMessage(context, 'Error', 'GPX File Error',
+          'Total area in hectares is empty. Cannot open GPX file.');
+      return;
+    }
+
     if (openOnline) {
       try {
         final response = await http.get(Uri.parse(gpxFilePath));
@@ -396,6 +409,12 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   }
 
   void _openLocalFile(String filePath) async {
+    if (_areaInHectaresController.text == 'Empty') {
+      showFlashMessage(context, 'Error', 'GPX File Error',
+          'Total area in hectares is empty. Cannot open GPX file.');
+      return;
+    }
+
     try {
       final gpxFile = File(filePath);
       if (await gpxFile.exists()) {
@@ -461,7 +480,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                     children: [
                       form_field.FormField(
                         labelText: 'Last Coordinates',
-                        initialValue: _taskData['trackLastcoord'] ?? '',
+                        initialValue: _taskData['trackLastcoord'] ?? 'Empty',
                         enabled: false,
                       ),
                       const SizedBox(height: 16),
@@ -516,13 +535,14 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 16),
-                      if (gpxFile != null)
+                      if (gpxFile != null &&
+                          _areaInHectaresController.text != 'Empty')
                         GPXFileButtons(
                           openGpxFile: () {
                             _openGpxFile(gpxFile!);
                           },
                         )
-                      else
+                      else if (_areaInHectaresController.text == 'Empty')
                         Column(
                           children: [
                             const Text(
