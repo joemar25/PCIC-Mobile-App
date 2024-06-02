@@ -1,8 +1,8 @@
-// filename: home/_recent_task_container.dart
-import '../../theme/_theme.dart';
 import 'package:intl/intl.dart';
-import '../../tasks/controllers/task_manager.dart';
+import '../../theme/_theme.dart';
 import 'package:flutter/material.dart';
+import '../../tasks/controllers/task_manager.dart';
+// filename: home/_recent_task_container.dart
 
 class TaskData extends StatelessWidget {
   final TaskManager task;
@@ -36,6 +36,7 @@ class TaskData extends StatelessWidget {
 
     final titleFontSize = isPortrait ? 12.0 : t?.title ?? 18.0;
     final captionFontSize = isPortrait ? 6.0 : t?.caption ?? 14.0;
+    final heheFontSize = isPortrait ? 6.0 : t?.caption ?? 18.0;
     final overlineFontSize = isPortrait ? 6.0 : t?.overline ?? 12.0;
     final statusFontSize = isPortrait ? 9.0 : t?.caption ?? 14.0;
 
@@ -89,13 +90,16 @@ class TaskData extends StatelessWidget {
                             softWrap: true,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          Text(
-                            '(N: $north, S: $south, E: $east, W: $west)',
-                            style: TextStyle(
-                              fontSize: captionFontSize,
+                          SizedBox(
+                            height: 50,
+                            child: Text(
+                              '(N: $north, S: $south, E: $east, W: $west)',
+                              style: TextStyle(
+                                fontSize: titleFontSize,
+                              ),
+                              // softWrap: true,
+                              // overflow: TextOverflow.ellipsis,
                             ),
-                            softWrap: true,
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       );

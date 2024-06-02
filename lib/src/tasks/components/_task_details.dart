@@ -1,16 +1,15 @@
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
-import 'package:open_file/open_file.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:http/http.dart' as http;
 import 'dart:io';
-import 'package:lottie/lottie.dart';
-
 import '../../geotag/_geotag.dart';
+import 'package:lottie/lottie.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import '../../ppir_form/_pcic_form.dart';
+import 'package:open_file/open_file.dart';
 import '../controllers/task_manager.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class TaskDetailsPage extends StatelessWidget {
   final TaskManager task;
@@ -284,8 +283,10 @@ class TaskDetailsPage extends StatelessWidget {
                         const SizedBox(height: 16.0),
                         _buildFormField(context, 'Farmer Name',
                             formData['ppirFarmerName']?.toString()),
-                        _buildFormField(context, 'Address',
-                            formData['ppirAddress']?.toString()),
+                        _buildFormField(context, 'PPI Assignment ID',
+                            formData['ppirAssignmentId']?.toString()),
+                        _buildFormField(context, 'Insurance ID',
+                            formData['ppirInsuranceId']?.toString()),
                         _buildFormField(context, 'Mobile No.',
                             formData['ppirMobileNo']?.toString()),
                         _buildFormField(context, 'Type of Farmers',
