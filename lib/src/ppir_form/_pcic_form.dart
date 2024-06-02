@@ -39,7 +39,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   final _areaPlantedController = TextEditingController();
   final _areaInHectaresController = TextEditingController();
   final _totalDistanceController = TextEditingController();
-  //farm location
   final _farmLocationController = TextEditingController();
   final _signatureSectionKey = GlobalKey<SignatureSectionState>();
   final _formSectionKey = GlobalKey<FormSectionState>();
@@ -72,7 +71,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       if (gpxFile != null) {
         final gpxData = await mapService.readGpxFile(gpxFile!);
         routePoints = await mapService.parseGpxData(gpxData);
-        await _calculateAreaAndDistance();
       }
 
       _initializeSeeds();
@@ -94,7 +92,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
             DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
     _areaInHectaresController.text = formData['trackTotalarea'] ?? 'Empty';
     _totalDistanceController.text = formData['trackTotaldistance'] ?? 'Empty';
-    //farm location
     _farmLocationController.text = formData['ppirFarmLoc'] ?? '';
     _taskData['trackLastcoord'] =
         formData['trackLastcoord'] ?? 'No coordinates available';
@@ -124,53 +121,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
     }
   }
 
-  Future<void> _calculateAreaAndDistance() async {
-    if (routePoints != null && routePoints!.isNotEmpty) {
-      final mapService = MapService();
-      final distance = mapService.calculateTotalDistance(routePoints!);
-
-      double area = 0.0;
-      double areaInHectares = 0.0;
-      final initialPoint = routePoints!.first;
-      final closingPoint = routePoints!.last;
-
-      if (_isCloseEnough(initialPoint, closingPoint)) {
-        area = mapService.calculateAreaOfPolygon(routePoints!);
-        areaInHectares = area / 10000;
-      } else {
-        geotagSuccess = false;
-      }
-
-      setState(() {
-        _areaInHectaresController.text =
-            areaInHectares > 0 ? _formatNumber(areaInHectares, 'ha') : 'Empty';
-        _totalDistanceController.text =
-            distance > 0 ? _formatNumber(distance, 'm') : 'Empty';
-        //farm location
-        _farmLocationController.text =
-            distance > 0 ? _formatNumber(distance, 'm') : '';
-      });
-    } else {
-      setState(() {
-        _areaInHectaresController.text = 'Empty';
-        _totalDistanceController.text = 'Empty';
-        //farm location
-        _farmLocationController.text = '';
-      });
-    }
-  }
-
-  bool _isCloseEnough(LatLng point1, LatLng point2) {
-    const double threshold = 10.0;
-    final distance = const Distance().as(LengthUnit.Meter, point1, point2);
-    return distance <= threshold;
-  }
-
-  String _formatNumber(double value, String unit) {
-    final formatter = NumberFormat('#,##0.############', 'en_US');
-    return '${formatter.format(value)} $unit';
-  }
-
   Future<void> _submitForm(BuildContext context) async {
     setState(() {
       isSubmitting = true;
@@ -180,6 +130,9 @@ class PPIRFormPageState extends State<PPIRFormPage> {
         !_signatureSectionKey.currentState!.validate()) {
       showFlashMessage(context, 'Info', 'Validation Failed',
           'Please fill in all required fields.');
+      setState(() {
+        isSubmitting = false;
+      });
       return;
     }
 
@@ -235,7 +188,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       _taskData['trackDatetime'] = _areaPlantedController.text;
       _taskData['trackLastcoord'] = _taskData['trackLastcoord'];
       _taskData['trackTotaldistance'] = _totalDistanceController.text;
-      //farm location
       _taskData['ppirFarmLoc'] = _farmLocationController.text;
       _taskData['ppirRemarks'] = _taskData['ppirRemarks'] ?? 'no value';
       _taskData['ppirSigInsured'] =
@@ -269,6 +221,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       if (mounted) {
         setState(() {
           isSaving = false;
+          isSubmitting = false;
         });
       }
     }
@@ -287,7 +240,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       _taskData['trackDatetime'] = _areaPlantedController.text;
       _taskData['trackLastcoord'] = _taskData['trackLastcoord'];
       _taskData['trackTotaldistance'] = _totalDistanceController.text;
-      //farm location
       _taskData['ppirFarmLoc'] = _farmLocationController.text;
       _taskData['ppirRemarks'] = _taskData['ppirRemarks'] ?? 'no value';
       _taskData['ppirSigInsured'] =
@@ -353,15 +305,14 @@ class PPIRFormPageState extends State<PPIRFormPage> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context, true); // Close dialog and pop screen
+                Navigator.pop(context, true);
               },
               child: const Text('Leave', style: TextStyle(color: Colors.red)),
             ),
             TextButton(
               onPressed: () {
                 _saveForm();
-                Navigator.pop(
-                    context, false); // Close dialog and stay on screen
+                Navigator.pop(context, false);
               },
               child: const Text('Save', style: TextStyle(color: Colors.blue)),
             ),
@@ -398,18 +349,10 @@ class PPIRFormPageState extends State<PPIRFormPage> {
           await file.writeAsBytes(response.bodyBytes);
           _openLocalFile(file.path);
         } else {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Error downloading GPX file')),
-            );
-          }
+          _showSnackBar('Error downloading GPX file');
         }
       } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error downloading GPX file')),
-          );
-        }
+        _showSnackBar('Error downloading GPX file');
       }
     } else {
       _openLocalFile(gpxFilePath);
@@ -426,41 +369,32 @@ class PPIRFormPageState extends State<PPIRFormPage> {
     try {
       final gpxFile = File(filePath);
       if (await gpxFile.exists()) {
-        final status = await Permission.manageExternalStorage.status;
+        var status = await Permission.storage.status;
+        if (!status.isGranted) {
+          status = await Permission.storage.request();
+        }
+
         if (status.isGranted) {
           final result = await OpenFile.open(gpxFile.path);
-          if (result.type == ResultType.done) {
-            // debugPrint('GPX file opened successfully');
-          } else {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Error opening GPX file')),
-              );
-            }
+          if (result.type != ResultType.done) {
+            _showSnackBar('Error opening GPX file');
           }
         } else {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                    'External storage permission is required to open GPX files'),
-              ),
-            );
-          }
+          _showSnackBar('Storage permission is required to open GPX files');
         }
       } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('GPX file not found')),
-          );
-        }
+        _showSnackBar('GPX file not found');
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error opening GPX file')),
-        );
-      }
+      _showSnackBar('Error opening GPX file');
+    }
+  }
+
+  void _showSnackBar(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
     }
   }
 
@@ -519,7 +453,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                         enabled: false,
                       ),
                       const SizedBox(height: 16),
-                      //farm location
                       TextFormField(
                         controller: _farmLocationController,
                         decoration: const InputDecoration(
@@ -554,13 +487,28 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                       ),
                       const SizedBox(height: 16),
                       if (gpxFile != null &&
-                          _areaInHectaresController.text != 'Empty')
-                        GPXFileButtons(
-                          openGpxFile: () {
-                            _openGpxFile(gpxFile!);
-                          },
+                          _areaInHectaresController.text != 'Empty' &&
+                          _areaInHectaresController.text != '0.0')
+                        Column(
+                          children: [
+                            GPXFileButtons(
+                              openGpxFile: () {
+                                _openGpxFile(gpxFile!);
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () => _navigateToGeotagPage(context),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text('Restart Geotag'),
+                            ),
+                          ],
                         )
-                      else if (_areaInHectaresController.text == 'Empty')
+                      else if (_areaInHectaresController.text == 'Empty' ||
+                          _areaInHectaresController.text == '0.0')
                         Column(
                           children: [
                             const Text(
