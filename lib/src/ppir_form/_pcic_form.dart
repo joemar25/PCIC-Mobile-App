@@ -7,6 +7,7 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../home/dashboard.dart';
 import 'form_components/_form_section.dart';
 import 'form_components/_signature_section.dart';
 import 'form_components/_gpx_file_buttons.dart';
@@ -248,7 +249,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
         showFlashMessage(
             context, 'Info', 'Form Saved', 'Form data saved successfully.');
         // Navigate to dashboard
-        Navigator.of(context).pushReplacementNamed('/dashboard');
+        _navigateToDashboard(context);
       }
     } catch (e) {
       showFlashMessage(
@@ -323,6 +324,15 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       context,
       MaterialPageRoute(
         builder: (context) => GeotagPage(task: widget.task),
+      ),
+    );
+  }
+
+  void _navigateToDashboard(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const DashboardPage(),
       ),
     );
   }
