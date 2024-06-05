@@ -1,7 +1,64 @@
 // task_xml_generator.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dart_ipify/dart_ipify.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:xml/xml.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'task_manager.dart';
+
+Future<String> getGpxFilePath(String taskId) async {
+  debugPrint('Fetching GPX file path for taskId: $taskId');
+  try {
+    final storageRef =
+        FirebaseStorage.instance.ref().child('PPIR_SAVES/$taskId/Attachments');
+    final ListResult result = await storageRef.listAll();
+    for (Reference fileRef in result.items) {
+      if (fileRef.name.endsWith('.gpx')) {
+        final downloadURL = await fileRef.getDownloadURL();
+        debugPrint('Found GPX file: ${fileRef.name}, URL: $downloadURL');
+        return downloadURL;
+      }
+    }
+    throw Exception('GPX file not found in Firebase Storage');
+  } catch (error) {
+    debugPrint('Error fetching GPX file path: $error');
+    throw Exception('Error fetching GPX file path');
+  }
+}
+
+Future<String> fetchGpxContent(String gpxUrl) async {
+  final response = await http.get(Uri.parse(gpxUrl));
+  if (response.statusCode == 200) {
+    return response.body;
+  } else {
+    throw Exception('Failed to load GPX content');
+  }
+}
+
+Future<Map<String, dynamic>> fetchAddressFromCoordinates(
+    double latitude, double longitude) async {
+  final response = await http.get(Uri.parse(
+      'https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude&addressdetails=1'));
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body);
+    final address = data['address'] as Map<String, dynamic>;
+    return {
+      "barangayVillage": address['neighbourhood'] ?? address['suburb'],
+      "buildingName": address['building'],
+      "city": address['city'] ?? address['town'] ?? address['village'],
+      "country": address['country'],
+      "province": address['state'],
+      "street": address['road'],
+      "unitLotNo": address['house_number'],
+      "zipCode": address['postcode']
+    };
+  } else {
+    throw Exception('Failed to fetch address from coordinates');
+  }
+}
 
 Future<String> generateTaskXmlContent(String taskId) async {
   // Fetch the task data from Firestore
@@ -14,29 +71,16 @@ Future<String> generateTaskXmlContent(String taskId) async {
 
   final taskData = taskDoc.data();
 
-  // sample - get its blob later
-  // ppirSigInsured //"https://firebasestorage.googleapis.com/v0/b/pcic-mobile-app.appspot.com/o/PPIR_SAVES%2FyYKcFDJcksVUVTj2EMvj%2FAttachments%2F24520728-6dbe-433a-8f45-4ee110d778fa_ppirSigInsured.png?alt=media&token=fdb34520-eb75-4ea8-9e6d-d514f7e6ec85"
-  // ppirSigIuia // "https://firebasestorage.googleapis.com/v0/b/pcic-mobile-app.appspot.com/o/PPIR_SAVES%2FyYKcFDJcksVUVTj2EMvj%2FAttachments%2F82412bd9-8338-43d8-bb19-20841be68d24_ppirSigIuia.png?alt=media&token=116f7af7-42ff-4e04-a4fd-dc961053e5cf"
-
-  final assignee = taskData?['assignee'] ??
-      'Assignee not found'; // "christian_suarez.pcic@gmail.com"
-  final createdAt = taskData?['createdAt'] ??
-      'Created At not found'; // June 2, 2024 at 8:54:40 PM UTC+8
-  final dateAccess = taskData?['dateAccess'] ??
-      'Date Access not found'; // June 2, 2024 at 8:54:40 PM UTC+8
-  final formType = taskData?['formType'] ?? 'Form Type not found'; // "PPIR"
-  final ppirAddress =
-      taskData?['ppirAddress'] ?? 'Address not found'; // "PASONG BANGKAL"
-  final ppirAreaAci = taskData?['ppirAreaAci'] ?? 'Area ACI not found'; // 1.6
-  final ppirAreaAct = taskData?['ppirAreaAct'] ?? 'Area ACT not found'; // "1.6"
-  final ppirAssignmentId = taskData?['ppirAssignmentId'] ??
-      'Assignment ID not found'; // "PASONG BANGKAL"
-  final ppirCicNo = taskData?['ppirCicNo'] ?? 'CIC No not found'; // 1662879
-  final ppirDopdsAci =
-      taskData?['ppirDopdsAci'] ?? 'DOPDS ACI not found'; // "Nov 30, 2023"
+  // Extract various task data fields
+  final ppirAddress = taskData?['ppirAddress'] ?? 'Address not found';
+  final ppirAreaAci = taskData?['ppirAreaAci'] ?? 'Area ACI not found';
+  final ppirAreaAct = taskData?['ppirAreaAct'] ?? 'Area ACT not found';
+  final ppirAssignmentId =
+      taskData?['ppirAssignmentId'] ?? 'Assignment ID not found';
+  final ppirCicNo = taskData?['ppirCicNo'] ?? 'CIC No not found';
+  final ppirDopdsAci = taskData?['ppirDopdsAci'] ?? 'DOPDS ACI not found';
   final ppirDopdsAct = taskData?['ppirDopdsAct'] ?? 'DOPDS ACT not found';
-  final ppirDoptpAci =
-      taskData?['ppirDoptpAci'] ?? 'DOPTP ACI not found'; // "Nov 30, 2023"
+  final ppirDoptpAci = taskData?['ppirDoptpAci'] ?? 'DOPTP ACI not found';
   final ppirDoptpAct = taskData?['ppirDoptpAct'] ?? 'DOPTP ACT not found';
   final ppirEast = taskData?['ppirEast'] ?? 'East not found';
   final ppirFarmLoc = taskData?['ppirFarmLoc'] ?? 'Farm Location not found';
@@ -46,12 +90,11 @@ Future<String> generateTaskXmlContent(String taskId) async {
       taskData?['ppirGroupAddress'] ?? 'Group Address not found';
   final ppirGroupName = taskData?['ppirGroupName'] ?? 'Group Name not found';
   final ppirInsuranceId =
-      taskData?['ppirInsuranceId'] ?? 'Insurance ID not found'; // 798446
+      taskData?['ppirInsuranceId'] ?? 'Insurance ID not found';
   final ppirLenderAddress =
       taskData?['ppirLenderAddress'] ?? 'Lender Address not found';
   final ppirLenderName = taskData?['ppirLenderName'] ?? 'Lender Name not found';
-  final ppirMobileNo = taskData?['ppirMobileNo'] ??
-      'Mobile Number not found'; // "(0992) 813-6909"
+  final ppirMobileNo = taskData?['ppirMobileNo'] ?? 'Mobile Number not found';
   final ppirNameInsured =
       taskData?['ppirNameInsured'] ?? 'Name Insured not found';
   final ppirNameIuia = taskData?['ppirNameIuia'] ?? 'Name IU/IA not found';
@@ -63,25 +106,45 @@ Future<String> generateTaskXmlContent(String taskId) async {
   final ppirSvpAct = taskData?['ppirSvpAct'] ?? 'SVP ACT not found';
   final ppirVariety = taskData?['ppirVariety'] ?? 'Variety not found';
   final ppirWest = taskData?['ppirWest'] ?? 'West not found';
-  final priority =
-      taskData?['priority'] ?? 'Priority not found'; // "Normal Priority"
-  final serviceGroup =
-      taskData?['serviceGroup'] ?? 'Service Group not found'; // "P03"
-  final serviceType =
-      taskData?['serviceType'] ?? 'Service Type not found'; // "Region 03 PPIR"
-  final taskNumber = taskData?['taskNumber'] ?? 'Task Number not found';
-  final taskStatus =
-      taskData?['taskStatus'] ?? 'Task Status not found'; // "For Dispatch"
-  final trackDatetime = taskData?['trackDatetime'] ??
-      'Track Datetime not found'; // "2024-06-02 13:48:36"
-  final trackLastcoord = taskData?['trackLastcoord'] ??
-      'Track Lastcoord not found'; // "13.1384721,123.7346903"
-  final trackTotalarea = taskData?['trackTotalarea'] ??
-      'Track Totalarea not found'; // "0.026367133007525287"
-  final trackTotaldistance = taskData?['trackTotaldistance'] ??
-      'Track Totaldistance not found'; // "138.0"
+  final priority = taskData?['priority'] ?? 'Priority not found';
+  final serviceType = taskData?['serviceType'] ?? 'Service Type not found';
+  final taskNumber = taskData?['taskNumber'] ?? 'xxxxxxx';
+  final taskStatus = taskData?['taskStatus'] ?? 'Task Status not found';
+  final trackDatetime =
+      taskData?['trackDatetime'] ?? 'Track Datetime not found';
+  final trackTotalarea =
+      taskData?['trackTotalarea'] ?? 'Track Totalarea not found';
 
-  // Function ni mar para ma extract so filename without extension from a URL
+  // Parse the trackLastcoord
+  final trackLastcoord =
+      taskData?['trackLastcoord']?.toString() ?? 'Track Lastcoord not found';
+  final coords = trackLastcoord.split(',');
+  final latitude = coords.isNotEmpty ? double.tryParse(coords[0]) : null;
+  final longitude = coords.length > 1 ? double.tryParse(coords[1]) : null;
+
+  // Fetch address information from coordinates if both latitude and longitude are available
+  Map<String, dynamic> address = {};
+  if (latitude != null && longitude != null) {
+    address = await fetchAddressFromCoordinates(latitude, longitude);
+  }
+
+  // Construct the JSON value
+  final locationJson = jsonEncode({
+    "accuracy": null,
+    "barangayVillage": address["barangayVillage"],
+    "buildingName": address["buildingName"],
+    "city": address["city"],
+    "country": address["country"],
+    "latitude": latitude,
+    "longitude": longitude,
+    "province": address["province"],
+    "street": address["street"],
+    "timestamp": DateTime.now().toIso8601String(),
+    "unitLotNo": address["unitLotNo"],
+    "zipCode": address["zipCode"]
+  });
+
+  // Function to extract filename without extension from a URL
   String extractFilename(String url) {
     final startIndex = url.indexOf('Attachments%2F') + 'Attachments%2F'.length;
     final endIndex = url.indexOf('?');
@@ -100,7 +163,6 @@ Future<String> generateTaskXmlContent(String taskId) async {
     if (str.length > 4) {
       return str.substring(0, str.length - 4);
     } else {
-      // Handle the case where the string is less than or equal to 4 characters
       return str;
     }
   }
@@ -109,11 +171,19 @@ Future<String> generateTaskXmlContent(String taskId) async {
       ? removeLastFourChars(taskData?['serviceType'])
       : 'Unknown';
 
-  // joemar: extra
+  // Create an instance of TaskManager to get the GPX file path
+  final taskManager = TaskManager(taskId: taskId);
+  final gpxUrl = await taskManager.getGpxFilePath();
+
+  // Fetch the GPX file content
+  final gpxContent = await fetchGpxContent(gpxUrl);
+  final gpxBlob = base64Encode(gpxContent.codeUnits);
+
+  // Generate the XML content using the task data and GPX filename
+  final builder = XmlBuilder();
   final timestamp = DateTime.now().toIso8601String();
   final ipv4 = await Ipify.ipv4();
-
-  final builder = XmlBuilder();
+  final date = DateTime.now().toIso8601String().split('T').first;
 
   builder.processing('xml', 'version="1.0" encoding="UTF-8"');
   builder.element('TaskArchiveZipModel', nest: () {
@@ -1330,7 +1400,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
             });
             builder.element('Options', nest: '');
             builder.element('Sequence', nest: '7');
-            builder.element('Type', nest: 'Text');
+            builder.element('Type', nest: ppirMobileNo);
           });
 
           builder.element('FormFieldZipModel', nest: () {
@@ -2029,9 +2099,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
             builder.element('Sequence', nest: '60');
             builder.element('Type', nest: 'ESignature');
 
-            // joemar is here
             builder.element('Value', nest: ppirSigInsured);
-            // old val is e4ef107c-6764-4d22-898b-adb27364e945.png
           });
 
           builder.element('FormFieldZipModel', nest: () {
@@ -2088,9 +2156,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
             builder.element('Options', nest: '');
             builder.element('Sequence', nest: '64');
             builder.element('Type', nest: 'ESignature');
-            builder.element('Value',
-                nest:
-                    ppirSigIuia); // old val is 92e7a921-eddb-4ce2-91cb-974834e22c40.png
+            builder.element('Value', nest: ppirSigIuia);
           });
 
           builder.element('FormFieldZipModel', nest: () {
@@ -2181,7 +2247,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
             builder.element('Options', nest: '');
             builder.element('Sequence', nest: '37');
             builder.element('Type', nest: 'Date');
-            builder.element('Value', nest: ppirDoptpAct);
+            builder.element('Value', nest: ppirDopdsAct);
           });
 
           builder.element('FormFieldZipModel', nest: () {
@@ -2249,7 +2315,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
             });
             builder.element('Options', nest: '');
             builder.element('Sequence', nest: '46');
-            builder.element('Type', nest: 'Text');
+            builder.element('Type', nest: ppirSvpAci);
           });
 
           builder.element('FormFieldZipModel', nest: () {
@@ -2562,22 +2628,22 @@ Future<String> generateTaskXmlContent(String taskId) async {
           builder.element('FormFieldZipModel', nest: () {
             builder.element('Attachment', nest: () {
               builder.element('AuthorId', nest: '1001');
-              builder.element('Blob', nest: 'BLOB_MAR');
+              builder.element('Blob', nest: gpxBlob);
               builder.element('BlobLocation',
                   nest: '3bb8a48d-4b87-4d96-a6fa-8dc7804aaf0c');
               builder.element('CapturedDateTime', nest: () {
                 builder.attribute('xsi:nil', 'true');
               });
               builder.element('FileName',
-                  nest: 'P$ipv4-20240408-26864_ppir_att_1.gpx');
+                  nest:
+                      "P$ipv4-$date-$taskNumber-ppir_att_1.gpx"); // ip date __ att_1
               builder.element('FromMobile', nest: 'false');
               builder.element('Height', nest: '0');
               builder.element('LastModifiedDate', nest: '0001-01-01T00:00:00');
               builder.element('Length', nest: '1349');
               builder.element('MimeType', nest: 'application/gpx+xml');
               builder.element('Width', nest: '0');
-              builder.element('ZipEntryFileName',
-                  nest: 'a81e8752-7e9d-468f-a254-180028a09c0b');
+              builder.element('ZipEntryFileName', nest: gpxUrl.split('/').last);
             });
 
             builder.element('FieldId', nest: 'ppir_att_1');
@@ -2707,7 +2773,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
             builder.element('Options', nest: '');
             builder.element('Sequence', nest: '54');
             builder.element('Type', nest: 'List');
-            builder.element('Value', nest: ppirSvpAct);
+            builder.element('Value', nest: ppirVariety);
           });
 
           builder.element('FormFieldZipModel', nest: () {
@@ -3012,9 +3078,8 @@ Future<String> generateTaskXmlContent(String taskId) async {
             builder.element('Options', nest: '');
             builder.element('Sequence', nest: '7');
             builder.element('Type', nest: 'PolygonPoint');
-            builder.element('Value',
-                nest:
-                    '{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:22.228+08:00","unitLotNo":null,"zipCode":null}');
+            builder.element('Mar', nest: 'Mar');
+            builder.element('Value', nest: locationJson);
           });
 
           builder.element('FormFieldZipModel', nest: () {
@@ -3929,7 +3994,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
     builder.element('CapturedMobileLocationHash', nest: '0');
     builder.element('LastAssignedAgentId', nest: '53111');
     builder.element('LastModifiedDate', nest: '2024-04-08T05:30:59.9217363Z');
-    builder.element('Priority', nest: 'NormalPriority');
+    builder.element('Priority', nest: priority);
     builder.element('Remarks', nest: '');
     builder.element('ServiceGroupId', nest: '10010');
     builder.element('ServiceGroupName', nest: '$regionName - PPIR');
@@ -3946,7 +4011,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
         builder.element('Source', nest: 'System');
         builder.element('SourceId', nest: '1001');
         builder.element('TaskId', nest: ppirAssignmentId);
-        builder.element('TaskNumber', nest: 'P$ipv4-20240408-26864');
+        builder.element('TaskNumber', nest: 'P$ipv4-$date-$taskNumber');
         builder.element('TaskStatus', nest: 'For Dispatch');
         builder.element('Timestamp', nest: '2024-04-08T02:31:03.8278713Z');
       });
@@ -3955,7 +4020,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
         builder.element('Agent', nest: 'Suarez, Christian');
         builder.element('AgentId', nest: '53111');
         builder.element('TaskId', nest: ppirAssignmentId);
-        builder.element('TaskNumber', nest: 'P$ipv4-20240408-26864');
+        builder.element('TaskNumber', nest: 'P$ipv4-$date-$taskNumber');
         builder.element('TaskStatus', nest: 'In Progress');
         builder.element('Timestamp', nest: '2024-04-08T05:26:32.092Z');
       });
@@ -3966,7 +4031,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
         builder.element('Source', nest: 'Suarez, Christian');
         builder.element('SourceId', nest: '53111');
         builder.element('TaskId', nest: ppirAssignmentId);
-        builder.element('TaskNumber', nest: 'P$ipv4-20240408-26864');
+        builder.element('TaskNumber', nest: 'P$ipv4-$date-$taskNumber');
         builder.element('TaskStatus', nest: 'In Progress');
         builder.element('Timestamp', nest: '2024-04-08T05:26:32.092Z');
       });
@@ -3976,7 +4041,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
           builder.attribute('xsi:nil', 'true');
         });
         builder.element('TaskId', nest: ppirAssignmentId);
-        builder.element('TaskNumber', nest: 'P$ipv4-20240408-26864');
+        builder.element('TaskNumber', nest: 'P$ipv4-$date-$taskNumber');
         builder.element('TaskStatus', nest: 'Submitted');
         builder.element('Timestamp', nest: '2024-04-08T05:30:59.9217363Z');
       });
@@ -3987,13 +4052,13 @@ Future<String> generateTaskXmlContent(String taskId) async {
         builder.element('Source', nest: 'Suarez, Christian');
         builder.element('SourceId', nest: '53111');
         builder.element('TaskId', nest: ppirAssignmentId);
-        builder.element('TaskNumber', nest: 'P$ipv4-20240408-26864');
+        builder.element('TaskNumber', nest: 'P$ipv4-$date-$taskNumber');
         builder.element('TaskStatus', nest: 'Submitted');
         builder.element('Timestamp', nest: '2024-04-08T05:30:57.111Z');
       });
     });
 
-    builder.element('TaskNumber', nest: 'P$ipv4-20240408-26864');
+    builder.element('TaskNumber', nest: 'P$ipv4-$date-$taskNumber');
     builder.element('TaskStatus', nest: 'Submitted');
     builder.element('ArchiveDateTime',
         nest: '2024-04-08T13:31:01.155522+08:00');
@@ -4004,3 +4069,221 @@ Future<String> generateTaskXmlContent(String taskId) async {
   final xmlDocument = builder.buildDocument();
   return xmlDocument.toXmlString(pretty: true, indent: '\t');
 }
+
+
+
+
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:dart_ipify/dart_ipify.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:flutter/foundation.dart';
+// import 'package:xml/xml.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
+
+// import 'task_manager.dart';
+
+// Future<String> getGpxFilePath(taskId) async {
+//   debugPrint('Fetching GPX file path for taskId: $taskId');
+//   try {
+//     final storageRef =
+//         FirebaseStorage.instance.ref().child('PPIR_SAVES/$taskId/Attachments');
+//     final ListResult result = await storageRef.listAll();
+//     for (Reference fileRef in result.items) {
+//       if (fileRef.name.endsWith('.gpx')) {
+//         final downloadURL = await fileRef.getDownloadURL();
+//         debugPrint('Found GPX file: ${fileRef.name}, URL: $downloadURL');
+//         return downloadURL;
+//       }
+//     }
+//     throw Exception('GPX file not found in Firebase Storage');
+//   } catch (error) {
+//     debugPrint('Error fetching GPX file path: $error');
+//     throw Exception('Error fetching GPX file path');
+//   }
+// }
+
+// Future<String> fetchGpxContent(String gpxUrl) async {
+//   final response = await http.get(Uri.parse(gpxUrl));
+//   if (response.statusCode == 200) {
+//     return response.body;
+//   } else {
+//     throw Exception('Failed to load GPX content');
+//   }
+// }
+
+// Future<Map<String, dynamic>> fetchAddressFromCoordinates(
+//     double latitude, double longitude) async {
+//   final response = await http.get(Uri.parse(
+//       'https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude&addressdetails=1'));
+//   if (response.statusCode == 200) {
+//     final data = jsonDecode(response.body);
+//     final address = data['address'] as Map<String, dynamic>;
+//     return {
+//       "barangayVillage": address['neighbourhood'] ?? address['suburb'],
+//       "buildingName": address['building'],
+//       "city": address['city'] ?? address['town'] ?? address['village'],
+//       "country": address['country'],
+//       "province": address['state'],
+//       "street": address['road'],
+//       "unitLotNo": address['house_number'],
+//       "zipCode": address['postcode']
+//     };
+//   } else {
+//     throw Exception('Failed to fetch address from coordinates');
+//   }
+// }
+
+// Future<String> generateTaskXmlContent(String taskId) async {
+//   // Fetch the task data from Firestore
+//   final taskDoc =
+//       await FirebaseFirestore.instance.collection('tasks').doc(taskId).get();
+
+//   if (!taskDoc.exists) {
+//     throw Exception('Task not found');
+//   }
+
+//   final taskData = taskDoc.data();
+
+//   // sample - get its blob later
+//   // ppirSigInsured //"https://firebasestorage.googleapis.com/v0/b/pcic-mobile-app.appspot.com/o/PPIR_SAVES%2FyYKcFDJcksVUVTj2EMvj%2FAttachments%2F24520728-6dbe-433a-8f45-4ee110d778fa_ppirSigInsured.png?alt=media&token=fdb34520-eb75-4ea8-9e6d-d514f7e6ec85"
+//   // ppirSigIuia // "https://firebasestorage.googleapis.com/v0/b/pcic-mobile-app.appspot.com/o/PPIR_SAVES%2FyYKcFDJcksVUVTj2EMvj%2FAttachments%2F82412bd9-8338-43d8-bb19-20841be68d24_ppirSigIuia.png?alt=media&token=116f7af7-42ff-4e04-a4fd-dc961053e5cf"
+//   // final assignee = taskData?['assignee'] ??
+//   //     'Assignee not found'; // "christian_suarez.pcic@gmail.com"
+//   // final createdAt = taskData?['createdAt'] ??
+//   //     'Created At not found'; // June 2, 2024 at 8:54:40 PM UTC+8
+//   // final dateAccess = taskData?['dateAccess'] ??
+//   //     'Date Access not found'; // June 2, 2024 at 8:54:40 PM UTC+8
+//   // final formType = taskData?['formType'] ?? 'Form Type not found'; // "PPIR"
+//   final ppirAddress =
+//       taskData?['ppirAddress'] ?? 'Address not found'; // "PASONG BANGKAL"
+//   final ppirAreaAci = taskData?['ppirAreaAci'] ?? 'Area ACI not found'; // 1.6
+//   final ppirAreaAct = taskData?['ppirAreaAct'] ?? 'Area ACT not found'; // "1.6"
+//   final ppirAssignmentId = taskData?['ppirAssignmentId'] ??
+//       'Assignment ID not found'; // "PASONG BANGKAL"
+//   final ppirCicNo = taskData?['ppirCicNo'] ?? 'CIC No not found'; // 1662879
+//   final ppirDopdsAci =
+//       taskData?['ppirDopdsAci'] ?? 'DOPDS ACI not found'; // "Nov 30, 2023"
+//   final ppirDopdsAct = taskData?['ppirDopdsAct'] ?? 'DOPDS ACT not found';
+//   final ppirDoptpAci =
+//       taskData?['ppirDoptpAci'] ?? 'DOPTP ACI not found'; // "Nov 30, 2023"
+//   final ppirDoptpAct = taskData?['ppirDoptpAct'] ?? 'DOPTP ACT not found';
+//   final ppirEast = taskData?['ppirEast'] ?? 'East not found';
+//   final ppirFarmLoc = taskData?['ppirFarmLoc'] ?? 'Farm Location not found';
+//   final ppirFarmerName = taskData?['ppirFarmerName'] ?? 'Farmer Name not found';
+//   final ppirFarmerType = taskData?['ppirFarmerType'] ?? 'Farmer Type not found';
+//   final ppirGroupAddress =
+//       taskData?['ppirGroupAddress'] ?? 'Group Address not found';
+//   final ppirGroupName = taskData?['ppirGroupName'] ?? 'Group Name not found';
+//   final ppirInsuranceId =
+//       taskData?['ppirInsuranceId'] ?? 'Insurance ID not found'; // 798446
+//   final ppirLenderAddress =
+//       taskData?['ppirLenderAddress'] ?? 'Lender Address not found';
+//   final ppirLenderName = taskData?['ppirLenderName'] ?? 'Lender Name not found';
+//   final ppirMobileNo = taskData?['ppirMobileNo'] ??
+//       'Mobile Number not found'; // "(0992) 813-6909"
+//   final ppirNameInsured =
+//       taskData?['ppirNameInsured'] ?? 'Name Insured not found';
+//   final ppirNameIuia = taskData?['ppirNameIuia'] ?? 'Name IU/IA not found';
+//   final ppirNorth = taskData?['ppirNorth'] ?? 'North not found';
+//   final ppirRemarks = taskData?['ppirRemarks'] ?? 'Remarks not found';
+//   final ppirSouth = taskData?['ppirSouth'] ?? 'South not found';
+//   final ppirStageCrop = taskData?['ppirStageCrop'] ?? 'Stage Crop not found';
+//   final ppirSvpAci = taskData?['ppirSvpAci'] ?? 'SVP ACI not found';
+//   final ppirSvpAct = taskData?['ppirSvpAct'] ?? 'SVP ACT not found';
+//   final ppirVariety = taskData?['ppirVariety'] ?? 'Variety not found';
+//   final ppirWest = taskData?['ppirWest'] ?? 'West not found';
+//   final priority =
+//       taskData?['priority'] ?? 'Priority not found'; // "Normal Priority"
+//   // final serviceGroup =
+//   //     taskData?['serviceGroup'] ?? 'Service Group not found'; // "P03"
+//   final serviceType =
+//       taskData?['serviceType'] ?? 'Service Type not found'; // "Region 03 PPIR"
+//   final taskNumber = taskData?['taskNumber'] ?? 'xxxxxxx';
+//   final taskStatus =
+//       taskData?['taskStatus'] ?? 'Task Status not found'; // "For Dispatch"
+//   final trackDatetime = taskData?['trackDatetime'] ??
+//       'Track Datetime not found'; // "2024-06-02 13:48:36"
+
+//   // Parse the trackLastcoord
+//   final trackLastcoord =
+//       taskData?['trackLastcoord']?.toString() ?? 'Track Lastcoord not found';
+//   final coords = trackLastcoord.split(',');
+//   final latitude = coords.isNotEmpty ? double.tryParse(coords[0]) : null;
+//   final longitude = coords.length > 1 ? double.tryParse(coords[1]) : null;
+
+//   // Fetch address information from coordinates if both latitude and longitude are available
+//   Map<String, dynamic> address = {};
+//   if (latitude != null && longitude != null) {
+//     address = await fetchAddressFromCoordinates(latitude, longitude);
+//   }
+
+//   // Construct the JSON value
+//   final locationJson = jsonEncode({
+//     "accuracy": null,
+//     "barangayVillage": address["barangayVillage"],
+//     "buildingName": address["buildingName"],
+//     "city": address["city"],
+//     "country": address["country"],
+//     "latitude": latitude,
+//     "longitude": longitude,
+//     "province": address["province"],
+//     "street": address["street"],
+//     "timestamp": DateTime.now().toIso8601String(),
+//     "unitLotNo": address["unitLotNo"],
+//     "zipCode": address["zipCode"]
+//   });
+
+//   final trackTotalarea = taskData?['trackTotalarea'] ??
+//       'Track Totalarea not found'; // "0.026367133007525287"
+//   final trackTotaldistance = taskData?['trackTotaldistance'] ??
+//       'Track Totaldistance not found'; // "138.0"
+
+//   // Function ni mar para ma extract so filename without extension from a URL
+//   String extractFilename(String url) {
+//     final startIndex = url.indexOf('Attachments%2F') + 'Attachments%2F'.length;
+//     final endIndex = url.indexOf('?');
+//     return url.substring(startIndex, endIndex);
+//   }
+
+//   // Extract ppirSigInsured and ppirSigIuia
+//   final ppirSigInsured = taskData?['ppirSigInsured'] != null
+//       ? extractFilename(taskData?['ppirSigInsured'])
+//       : 'Unknown';
+//   final ppirSigIuia = taskData?['ppirSigIuia'] != null
+//       ? extractFilename(taskData?['ppirSigIuia'])
+//       : 'Unknown';
+
+//   String removeLastFourChars(String str) {
+//     if (str.length > 4) {
+//       return str.substring(0, str.length - 4);
+//     } else {
+//       return str;
+//     }
+//   }
+
+//   final regionName = taskData?['serviceType'] != null
+//       ? removeLastFourChars(taskData?['serviceType'])
+//       : 'Unknown';
+
+//   // getting gpx filename sample output is a81e8752-7e9d-468f-a254-180028a09c0b instead of a81e8752-7e9d-468f-a254-180028a09c0b.gpx
+//   // Create an instance of TaskManager to get the GPX file path
+//   final taskManager = TaskManager(taskId: taskId);
+//   String gpxRef = taskId;
+//   final gpxUrl = await taskManager.getGpxFilePath();
+
+//   // Fetch the GPX file content
+//   final gpxContent = await fetchGpxContent(gpxUrl);
+//   final gpxBlob = base64Encode(gpxContent.codeUnits);
+
+//   // joemar: extra
+//   final timestamp = DateTime.now().toIso8601String();
+//   final ipv4 = await Ipify.ipv4();
+
+//   // extra -> get something like this 20240408 this is 2024 04 08
+//   final year = DateTime.now().year.toString();
+//   final month = DateTime.now().month.toString().padLeft(2, '0');
+//   final day = DateTime.now().day.toString().padLeft(2, '0');
+//   final date = '$year$month$day';
+
+//   final builder = XmlBuilder();
