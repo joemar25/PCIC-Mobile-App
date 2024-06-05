@@ -1,9 +1,9 @@
+import '_home.dart';
 import '../tasks/_task.dart';
 import '../messages/_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
-
-import '_home.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -66,30 +66,83 @@ class DashboardPageState extends State<DashboardPage>
     final CustomThemeExtension? t =
         Theme.of(context).extension<CustomThemeExtension>();
     return Scaffold(
-      body: _widgetOptions.elementAt(_selectedIndex),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          _buildNavigationBarItem(Icons.home, 'Home'),
-          _buildNavigationBarItem(Icons.chat_rounded, 'Messages'),
-          _buildNavigationBarItem(Icons.calendar_today_outlined, 'Tasks'),
+      body: Stack(
+        children: [
+          _widgetOptions.elementAt(_selectedIndex),
+          Positioned(
+            left: 20,
+            right: 20,
+            bottom: 20,
+            child: CustomBottomNavBar(
+              selectedIndex: _selectedIndex,
+              onItemTapped: _onItemTapped,
+            ),
+          ),
         ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: mainColor,
-        unselectedItemColor: Colors.black.withOpacity(0.7),
-        onTap: _onItemTapped,
-        backgroundColor: Colors.white,
-        selectedLabelStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: t?.overline ?? 14.0,
-        ),
+      ),
+    );
+  }
+}
+
+class CustomBottomNavBar extends StatelessWidget {
+  final int selectedIndex;
+  final ValueChanged<int> onItemTapped;
+
+  const CustomBottomNavBar({
+    Key? key,
+    required this.selectedIndex,
+    required this.onItemTapped,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 70,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(35),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            offset: Offset(0, 2),
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          _buildNavigationBarItem(
+            context,
+            iconPath: 'assets/icons/home.svg',
+            index: 0,
+          ),
+          _buildNavigationBarItem(
+            context,
+            iconPath: 'assets/icons/messages.svg',
+            index: 1,
+          ),
+          _buildNavigationBarItem(
+            context,
+            iconPath: 'assets/icons/tasks.svg',
+            index: 2,
+          ),
+        ],
       ),
     );
   }
 
-  BottomNavigationBarItem _buildNavigationBarItem(IconData icon, String label) {
-    return BottomNavigationBarItem(
-      icon: Icon(icon),
-      label: label,
+  Widget _buildNavigationBarItem(BuildContext context,
+      {required String iconPath, required int index}) {
+    bool isSelected = index == selectedIndex;
+    return GestureDetector(
+      onTap: () => onItemTapped(index),
+      child: SvgPicture.asset(
+        iconPath,
+        width: 24,
+        height: 24,
+        color: isSelected ? mainColor : Colors.black.withOpacity(0.7),
+      ),
     );
   }
 }

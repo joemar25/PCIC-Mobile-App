@@ -63,6 +63,7 @@ dependencies:
   flash: ^3.1.0
   cloud_firestore: ^4.17.3
   lottie: ^3.1.2
+  curved_labeled_navigation_bar: ^2.0.2
 
   # firebase
   firebase_core: ^2.27.2
@@ -101,6 +102,7 @@ flutter:
     - assets/storage/images/
     - assets/storage/tasks/
     - assets/image/
+    - assets/icons/
     - assets/animations/
     - assets/storage/mergedtask/
     - assets/storage/ftp/Work/
