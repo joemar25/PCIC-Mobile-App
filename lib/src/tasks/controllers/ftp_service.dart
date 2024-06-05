@@ -30,6 +30,7 @@ class FTPService {
       _isConnectedSync = true;
     } catch (e) {
       _isConnectedSync = false;
+      debugPrint('Failed to connect to FTP or change directory: $e');
       throw Exception('Failed to connect to FTP or change directory');
     }
     debugPrint('Connected to FTP server');
@@ -46,6 +47,7 @@ class FTPService {
       await _ftpConnectUpload.connect();
       await _ftpConnectUpload.changeDirectory(_uploadDirectory);
     } catch (e) {
+      debugPrint('Failed to connect to FTP or change directory: $e');
       throw Exception('Failed to connect to FTP or change directory');
     }
   }
@@ -56,6 +58,7 @@ class FTPService {
       await _ftpConnectSync.disconnect();
       _isConnectedSync = false;
     } catch (e) {
+      debugPrint('Failed to disconnect from FTP: $e');
       throw Exception('Failed to disconnect from FTP');
     }
     debugPrint('Disconnected from FTP server');
@@ -65,6 +68,7 @@ class FTPService {
     try {
       await _ftpConnectUpload.disconnect();
     } catch (e) {
+      debugPrint('Failed to disconnect from FTP: $e');
       throw Exception('Failed to disconnect from FTP');
     }
   }
@@ -83,13 +87,14 @@ class FTPService {
           .map((file) => file.name)
           .toList();
     } catch (e) {
+      debugPrint('Failed to get file list from FTP: $e');
       throw Exception('Failed to get file list from FTP');
     }
   }
 
   Future<String> downloadFile(String fileName) async {
     try {
-      debugPrint('Downloading file from FTP: $fileName');
+      debugPrint('Downloading file from FTP: $_workDirectory/$fileName');
 
       final tempDir = await Directory.systemTemp.createTemp();
       final localFilePath = '${tempDir.path}/$fileName';
@@ -104,6 +109,7 @@ class FTPService {
 
       return csvContent;
     } catch (e) {
+      debugPrint('Failed to download file from FTP: $e');
       throw Exception('Failed to download file from FTP');
     }
   }
@@ -112,6 +118,7 @@ class FTPService {
     try {
       await _ftpConnectUpload.uploadFileWithRetry(file, pRetryCount: 2);
     } catch (e) {
+      debugPrint('Error uploading file to FTP server: $e');
       throw Exception('Error uploading file to FTP server');
     }
   }
