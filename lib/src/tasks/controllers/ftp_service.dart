@@ -125,3 +125,10 @@ class FTPService {
 
   bool get isConnected => _isConnectedSync;
 }
+
+
+/*
+
+  Test if credentials for ftp is wrong and still syncing to the local files for the csv
+
+*/

@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 import '../../tasks/controllers/csv_parser.dart';
 import '../../tasks/controllers/firebase_service.dart';
@@ -88,59 +88,64 @@ class SyncController {
   }
 
   Future<void> _processFiles(List<String> fileList) async {
-    for (final fileName in fileList) {
-      final shortFileName = fileName.split('/').last;
-      debugPrint("Processing file: $shortFileName");
+    // Ensure FTP connection is active
+    await _ftpService.connectSync();
+    try {
+      for (final fileName in fileList) {
+        final shortFileName = fileName.split('/').last;
+        debugPrint("Processing file: $shortFileName");
 
-      final fileRead = await _firebaseService.isFileRead(shortFileName);
-      debugPrint("File read status for $shortFileName: $fileRead");
+        final fileRead = await _firebaseService.isFileRead(shortFileName);
+        debugPrint("File read status for $shortFileName: $fileRead");
 
-      if (!fileRead) {
-        String csvContent;
-        try {
-          debugPrint("Downloading CSV content from FTP for file: $fileName");
-          await _ftpService.connectSync(); // Ensure FTP connection is active
-          csvContent = await _ftpService.downloadFile(shortFileName);
-          await _ftpService.disconnectSync(); // Disconnect after download
-          debugPrint("CSV content: $csvContent");
-        } catch (e) {
-          debugPrint("Failed to download file from FTP: $e");
-          continue;
-        }
-
-        debugPrint("Parsing CSV content...");
-        final csvData = CSVParser.parseCSV(csvContent);
-        debugPrint("Parsed CSV data: $csvData");
-
-        for (final rowData in csvData) {
-          final userEmail = rowData['Assignee'];
-          debugPrint("Checking if user exists: $userEmail");
-          final isUserExists = await _firebaseService.isUserExists(userEmail);
-          debugPrint("User exists status for $userEmail: $isUserExists");
-
-          if (!isUserExists) {
-            debugPrint("User does not exist, creating user...");
-            final userData = extractUserData(rowData);
-            await _firebaseService.createUser(userData);
-            debugPrint("User created: $userData");
+        if (!fileRead) {
+          String csvContent;
+          try {
+            debugPrint("Downloading CSV content from FTP for file: $fileName");
+            csvContent = await _ftpService.downloadFile(shortFileName);
+            debugPrint("CSV content: $csvContent");
+          } catch (e) {
+            debugPrint("Failed to download file from FTP: $e");
+            continue;
           }
 
-          debugPrint("Creating task...");
-          final taskData = extractTaskData(rowData);
-          await _firebaseService.createTask(taskData);
-          debugPrint("Task created: $taskData");
-        }
+          debugPrint("Parsing CSV content...");
+          final csvData = CSVParser.parseCSV(csvContent);
+          debugPrint("Parsed CSV data: $csvData");
 
-        debugPrint("Marking file as read: $shortFileName");
-        await _firebaseService.updateFilesRead(shortFileName);
-        debugPrint("File marked as read: $shortFileName");
+          for (final rowData in csvData) {
+            final userEmail = rowData['Assignee'];
+            debugPrint("Checking if user exists: $userEmail");
+            final isUserExists = await _firebaseService.isUserExists(userEmail);
+            debugPrint("User exists status for $userEmail: $isUserExists");
+
+            if (!isUserExists) {
+              debugPrint("User does not exist, creating user...");
+              final userData = extractUserData(rowData);
+              await _firebaseService.createUser(userData);
+              debugPrint("User created: $userData");
+            }
+
+            debugPrint("Creating task...");
+            final taskData = extractTaskData(rowData);
+            await _firebaseService.createTask(taskData);
+            debugPrint("Task created: $taskData");
+          }
+
+          debugPrint("Marking file as read: $shortFileName");
+          await _firebaseService.updateFilesRead(shortFileName);
+          debugPrint("File marked as read: $shortFileName");
+        }
       }
+    } finally {
+      // Disconnect after processing files
+      await _ftpService.disconnectSync();
     }
   }
 
   Map<String, dynamic> extractUserData(Map<String, dynamic> rowData) {
     return {
-      'name': rowData['ppir_name_iuia'] ?? 'User',
+      'name': rowData['ppir_name_iuia'] ?? '',
       'email': rowData['Assignee'] ?? '',
       'profilePicUrl': '',
       'role': 'user',
@@ -196,3 +201,14 @@ class SyncController {
     };
   }
 }
+
+/**
+ *  
+ * Issue #1 : After creating the account for the firebase if account is not created, it does change the session to the first created account.
+ *             function to fix, _processFiles
+ *        
+ *   Output : Behavior to have, even after syncing it retains or not tamper the session of the current user that is currently logged in.
+ * 
+ * Issue #2 : Email Verification first before first login.
+ * 
+ */
