@@ -36,13 +36,22 @@ class FirebaseService {
     }
   }
 
-  Future<void> createUser(Map<String, dynamic> userData) async {
+  Future<UserCredential> createUserAccount(
+      String email, String password) async {
     try {
       final userCredential = await _auth.createUserWithEmailAndPassword(
-        email: userData['email'],
-        password: 'password',
+        email: email,
+        password: password,
       );
+      return userCredential;
+    } catch (e) {
+      throw Exception('Error creating user account: $e');
+    }
+  }
 
+  Future<void> createUserDocument(
+      UserCredential userCredential, Map<String, dynamic> userData) async {
+    try {
       final user = userCredential.user;
       await _firestore.collection('users').doc(user?.uid).set({
         'name': userData['name'],
@@ -55,7 +64,7 @@ class FirebaseService {
       });
       debugPrint('User created in Firestore with UID: ${user?.uid}');
     } catch (e) {
-      throw Exception('Error creating user: $e');
+      throw Exception('Error creating user document: $e');
     }
   }
 
@@ -76,7 +85,10 @@ class FirebaseService {
           'isVerified': false,
           'isActive': true,
         };
-        await createUser(userData);
+
+        final userCredential =
+            await createUserAccount(userData['email'], 'defaultPassword');
+        await createUserDocument(userCredential, userData);
         userRef = await getUserRef(userEmail);
       }
 

@@ -68,7 +68,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
 
       final mapService = MapService();
       gpxFile = await widget.task.getGpxFilePath();
-      debugPrint("gpx file is $gpxFile");
+      // debugPrint("gpx file is $gpxFile");
       if (gpxFile != null) {
         final gpxData = await mapService.readGpxFile(gpxFile!);
         routePoints = await mapService.parseGpxData(gpxData);
