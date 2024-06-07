@@ -1,3 +1,4 @@
+// FTPService class
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:ftpconnect/ftpconnect.dart';
@@ -16,24 +17,26 @@ class FTPService {
   late FTPConnect _ftpConnectUpload;
   bool _isConnectedSync = false;
 
-  Future<void> connectSync() async {
-    debugPrint('Connecting to FTP server...');
+  FTPService() {
     _ftpConnectSync = FTPConnect(_ftpHost,
         port: _ftpPort,
         user: _ftpUserSync,
         pass: _ftpPasswordSync,
         timeout: 10);
+  }
 
+  Future<bool> connectSync() async {
+    debugPrint('Connecting to FTP server...');
     try {
       await _ftpConnectSync.connect();
       await _ftpConnectSync.changeDirectory(_workDirectory);
       _isConnectedSync = true;
+      return true;
     } catch (e) {
       _isConnectedSync = false;
       debugPrint('Failed to connect to FTP or change directory: $e');
-      throw Exception('Failed to connect to FTP or change directory');
+      return false;
     }
-    debugPrint('Connected to FTP server');
   }
 
   Future<void> connectUpload() async {
@@ -125,10 +128,3 @@ class FTPService {
 
   bool get isConnected => _isConnectedSync;
 }
-
-
-/*
-
-  Test if credentials for ftp is wrong and still syncing to the local files for the csv
-
-*/
