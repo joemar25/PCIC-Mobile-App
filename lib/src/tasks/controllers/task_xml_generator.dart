@@ -298,7 +298,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
         builder.element('Source', nest: 'Suarez, Christian');
         builder.element('TaskId', nest: ppirAssignmentId);
         builder.element('Timestamp', nest: timestamp);
-        builder.element('UpdatedValue', nest: '023-10-25');
+        builder.element('UpdatedValue', nest: ppirDopdsAct);
         builder.element('FieldId', nest: '');
         builder.element('FormTitle',
             nest: 'PPIR - Post Planting Inspection Report');
@@ -315,7 +315,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
         builder.element('Source', nest: 'Suarez, Christian');
         builder.element('TaskId', nest: ppirAssignmentId);
         builder.element('Timestamp', nest: timestamp);
-        builder.element('UpdatedValue', nest: '2023-10-24');
+        builder.element('UpdatedValue', nest: ppirDoptpAct);
         builder.element('FieldId', nest: '');
         builder.element('FormTitle',
             nest: 'PPIR - Post Planting Inspection Report');

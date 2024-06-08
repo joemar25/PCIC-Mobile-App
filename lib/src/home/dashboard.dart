@@ -63,8 +63,6 @@ class DashboardPageState extends State<DashboardPage>
 
   @override
   Widget build(BuildContext context) {
-    final CustomThemeExtension? t =
-        Theme.of(context).extension<CustomThemeExtension>();
     return Scaffold(
       body: Stack(
         children: [
@@ -89,10 +87,10 @@ class CustomBottomNavBar extends StatelessWidget {
   final ValueChanged<int> onItemTapped;
 
   const CustomBottomNavBar({
-    Key? key,
+    super.key,
     required this.selectedIndex,
     required this.onItemTapped,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

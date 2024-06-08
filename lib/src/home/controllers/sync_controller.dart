@@ -1,6 +1,9 @@
+// SyncController class
+import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 import '../../tasks/controllers/csv_parser.dart';
 import '../../tasks/controllers/firebase_service.dart';
@@ -11,18 +14,18 @@ class SyncController {
   final FirebaseService _firebaseService = FirebaseService();
 
   Future<void> syncData() async {
-    debugPrint("Starting data sync...");
-
     List<String> fileList = [];
 
-    // Try to connect to the FTP server and get the file list
-    try {
-      await _tryConnectToFtp(fileList);
-    } catch (e) {
-      debugPrint('FTP connection failed after max retries: $e');
+    final isFTPConnected = await _tryConnectToFtp();
+
+    if (isFTPConnected) {
+      try {
+        fileList = await _ftpService.getFileList();
+      } catch (e) {
+        debugPrint('Failed to get file list from FTP: $e');
+      }
     }
 
-    // If fileList is still empty, try to read from local files
     if (fileList.isEmpty) {
       try {
         await _readFilesLocally(fileList);
@@ -31,117 +34,149 @@ class SyncController {
       }
     }
 
-    // Process the files if any were found
-    if (fileList.isEmpty) {
-      debugPrint("No files found to process.");
-    } else {
+    if (fileList.isNotEmpty) {
       await _processFiles(fileList);
+    } else {
+      debugPrint("No files found to process.");
     }
-
-    debugPrint("Data sync completed successfully.");
   }
 
-  Future<void> _tryConnectToFtp(List<String> fileList) async {
+  Future<bool> _tryConnectToFtp() async {
     const maxRetries = 3;
     var retryCount = 0;
     var retryDelay = const Duration(seconds: 1);
 
     while (retryCount < maxRetries) {
-      try {
-        debugPrint(
-            'Attempting to connect to FTP server... (Attempt $retryCount)');
-        await _ftpService.connectSync();
-        debugPrint(
-            "Successfully connected to FTP server. Retrieving file list...");
-        fileList.addAll(await _ftpService.getFileList());
-        debugPrint("Received file list from FTP server: $fileList");
-        debugPrint("Disconnecting from FTP server...");
-        await _ftpService.disconnectSync();
-        debugPrint("Disconnected from FTP server.");
-        return;
-      } catch (e) {
-        debugPrint('FTP connection error: $e');
+      debugPrint(
+          'Attempting to connect to FTP server... (Attempt $retryCount)');
+      final isConnected = await _ftpService.connectSync();
+      if (isConnected) {
+        debugPrint("Successfully connected to FTP server.");
+        return true;
+      } else {
         if (retryCount < maxRetries - 1) {
-          debugPrint('Retrying in ${retryDelay.inSeconds} seconds...');
           await Future.delayed(retryDelay);
           retryDelay *= 2;
           retryCount++;
         } else {
-          throw Exception(
+          debugPrint(
               'Failed to connect to FTP server after $maxRetries retries');
+          return false;
         }
       }
     }
+    return false;
   }
 
   Future<void> _readFilesLocally(List<String> fileList) async {
     final manifestContent = await rootBundle.loadString('AssetManifest.json');
-    debugPrint("AssetManifest.json content: $manifestContent");
 
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
-    debugPrint("Parsed AssetManifest.json content: $manifestMap");
 
-    fileList.addAll(manifestMap.keys
+    final localFiles = manifestMap.keys
         .where((filePath) =>
             filePath.startsWith('assets/storage/ftp/Work/') &&
             filePath.endsWith('.csv') &&
             !filePath.contains('@Recycle'))
-        .toList());
-    debugPrint("Filtered local file list: $fileList");
+        .toList();
+
+    for (final filePath in localFiles) {
+      final fileName = filePath.split('/').last;
+      final csvContent = await rootBundle.loadString(filePath);
+      final csvData = CSVParser.parseCSV(csvContent);
+
+      for (final rowData in csvData) {
+        final userEmail = rowData['Assignee'];
+        final isUserExists = await _firebaseService.isUserExists(userEmail);
+
+        if (!isUserExists) {
+          final userData = extractUserData(rowData);
+          await _createUserForSync(userData);
+        }
+
+        final taskData = extractTaskData(rowData);
+        await _firebaseService.createTask(taskData);
+      }
+
+      await _firebaseService.updateFilesRead(fileName);
+      fileList.add(fileName);
+    }
   }
 
   Future<void> _processFiles(List<String> fileList) async {
-    for (final filePath in fileList) {
-      final fileName = filePath.split('/').last;
-      debugPrint("Processing file: $fileName");
+    await _ftpService.connectSync();
+    try {
+      for (final fileName in fileList) {
+        final shortFileName = fileName.split('/').last;
+        final fileRead = await _firebaseService.isFileRead(shortFileName);
 
-      final fileRead = await _firebaseService.isFileRead(fileName);
-      debugPrint("File read status for $fileName: $fileRead");
-
-      if (!fileRead) {
-        String csvContent;
-        if (_ftpService.isConnected) {
-          debugPrint("Downloading CSV content from FTP for file: $filePath");
-          csvContent = await _ftpService.downloadFile(fileName);
-        } else {
-          debugPrint("Reading CSV content from local file: $filePath");
-          csvContent = await rootBundle.loadString(filePath);
-        }
-        debugPrint("CSV content: $csvContent");
-
-        debugPrint("Parsing CSV content...");
-        final csvData = CSVParser.parseCSV(csvContent);
-        debugPrint("Parsed CSV data: $csvData");
-
-        for (final rowData in csvData) {
-          final userEmail = rowData['Assignee'];
-          debugPrint("Checking if user exists: $userEmail");
-          final isUserExists = await _firebaseService.isUserExists(userEmail);
-          debugPrint("User exists status for $userEmail: $isUserExists");
-
-          if (!isUserExists) {
-            debugPrint("User does not exist, creating user...");
-            final userData = extractUserData(rowData);
-            await _firebaseService.createUser(userData);
-            debugPrint("User created: $userData");
+        if (!fileRead) {
+          String csvContent;
+          try {
+            csvContent = await _ftpService.downloadFile(shortFileName);
+          } catch (e) {
+            continue;
           }
 
-          debugPrint("Creating task...");
-          final taskData = extractTaskData(rowData);
-          await _firebaseService.createTask(taskData);
-          debugPrint("Task created: $taskData");
-        }
+          final csvData = CSVParser.parseCSV(csvContent);
+          final processedEmails = <String>[];
 
-        debugPrint("Marking file as read: $fileName");
-        await _firebaseService.updateFilesRead(fileName);
-        debugPrint("File marked as read: $fileName");
+          await runZoned(() async {
+            for (final rowData in csvData) {
+              final userEmail = rowData['Assignee'];
+
+              if (!processedEmails.contains(userEmail)) {
+                final isUserExists =
+                    await _firebaseService.isUserExists(userEmail);
+
+                if (!isUserExists) {
+                  final userData = extractUserData(rowData);
+                  await _createUserForSync(userData);
+                }
+
+                processedEmails.add(userEmail);
+              }
+
+              final taskData = extractTaskData(rowData);
+              await _firebaseService.createTask(taskData);
+            }
+          }, zoneSpecification: ZoneSpecification(
+            handleUncaughtError: (Zone self, ZoneDelegate parent, Zone zone,
+                Object error, StackTrace stackTrace) {
+              debugPrint('Error during syncing: $error');
+              parent.handleUncaughtError(zone, error, stackTrace);
+            },
+          ));
+
+          await _firebaseService.updateFilesRead(shortFileName);
+        }
       }
+    } finally {
+      await _ftpService.disconnectSync();
+    }
+  }
+
+  Future<void> _createUserForSync(Map<String, dynamic> userData) async {
+    try {
+      final userCredential = await _firebaseService.createUserAccount(
+          userData['email'], 'password');
+      await _firebaseService.createUserDocument(userCredential, userData);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        debugPrint(
+            'User with email ${userData['email']} already exists. Skipping user creation.');
+      } else {
+        rethrow;
+      }
+    } catch (e) {
+      debugPrint('Error creating user for sync: $e');
+      rethrow;
     }
   }
 
   Map<String, dynamic> extractUserData(Map<String, dynamic> rowData) {
     return {
-      'name': rowData['ppir_name_iuia'] ?? '',
+      'name': 'User',
       'email': rowData['Assignee'] ?? '',
       'profilePicUrl': '',
       'role': 'user',
@@ -197,3 +232,14 @@ class SyncController {
     };
   }
 }
+
+/**
+ *  
+ * Issue #1 : After creating the account for the firebase if account is not created, it does change the session to the first created account.
+ *             function to fix, _processFiles
+ *        
+ *   Output : Behavior to have, even after syncing it retains or not tamper the session of the current user that is currently logged in.
+ * 
+ * Issue #2 : Email Verification first before first login.
+ * 
+ */
