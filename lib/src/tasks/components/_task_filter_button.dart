@@ -59,7 +59,7 @@ class _FilterButtonState extends State<FilterButton> {
                         width: 30,
                         height: 5,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF0F7D40),
+                          color: mainColor,
                           borderRadius: BorderRadius.circular(30.0),
                         ),
                       ),
@@ -137,7 +137,7 @@ class _FilterButtonState extends State<FilterButton> {
                             _setFilter('Completed');
                           },
                           style: TextButton.styleFrom(
-                            backgroundColor: const Color(0xFF006400),
+                            backgroundColor: mainColor,
                             shape: RoundedRectangleBorder(
                               side: const BorderSide(
                                 color: Colors.black,

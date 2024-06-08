@@ -50,7 +50,7 @@ class TaskDetailsPage extends StatelessWidget {
           Text(
             '$label:',
             style: TextStyle(
-              color: const Color(0xFF0F7D40),
+              color: mainColor,
               fontWeight: FontWeight.w600,
               fontSize: t?.caption ?? 14.0,
             ),
@@ -247,7 +247,7 @@ class TaskDetailsPage extends StatelessWidget {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(25.0),
                                   ),
-                                  backgroundColor: const Color(0xFF0F7D40),
+                                  backgroundColor: mainColor,
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -355,7 +355,7 @@ class TaskDetailsPage extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(25.0),
                               ),
-                              backgroundColor: const Color(0xFF0F7D40),
+                              backgroundColor: mainColor,
                             ),
                             child: const Text(
                               'Open GPX File',
@@ -429,7 +429,7 @@ class TaskDetailsPage extends StatelessWidget {
                                 Text(
                                   'Confirmed By Signature:',
                                   style: TextStyle(
-                                    color: const Color(0xFF0F7D40),
+                                    color: mainColor,
                                     fontWeight: FontWeight.w600,
                                     fontSize: t?.caption ?? 14.0,
                                   ),
@@ -450,7 +450,7 @@ class TaskDetailsPage extends StatelessWidget {
                                 Text(
                                   'Prepared By Signature:',
                                   style: TextStyle(
-                                    color: const Color(0xFF0F7D40),
+                                    color: mainColor,
                                     fontWeight: FontWeight.w600,
                                     fontSize: t?.caption ?? 14.0,
                                   ),
