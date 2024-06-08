@@ -1,7 +1,7 @@
 import '../../tasks/_task.dart';
-import '../../tasks/controllers/task_manager.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
+import '../../tasks/controllers/task_manager.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 // filename: _task_count_box.dart
@@ -55,11 +55,11 @@ class _TaskCountBoxState extends State<TaskCountBox> {
     if (widget.label == 'Completed') {
       containerColor = shadowMainColor;
       circleColor = mainColor;
-      imagePath = 'assets/storage/images/completed.svg';
+      imagePath = 'assets/icons/done.svg';
     } else {
       containerColor = shadowMainColor2;
       circleColor = mainColor2;
-      imagePath = 'assets/storage/images/clock.svg';
+      imagePath = 'assets/icons/notdone.svg';
     }
 
     return GestureDetector(

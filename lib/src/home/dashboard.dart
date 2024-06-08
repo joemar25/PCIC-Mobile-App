@@ -2,8 +2,10 @@ import '_home.dart';
 import '../tasks/_task.dart';
 import '../messages/_view.dart';
 import 'package:flutter/material.dart';
+import 'dart:ui'; // For BackdropFilter
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
+// filename: dashboard_page.dart
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -68,12 +70,45 @@ class DashboardPageState extends State<DashboardPage>
         children: [
           _widgetOptions.elementAt(_selectedIndex),
           Positioned(
+            left: 1,
+            right: 1,
+            bottom: 0,
+            child: Stack(
+              children: [
+                ClipRRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                    child: Container(
+                      height: 70,
+                      color: Colors.transparent,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
             left: 20,
             right: 20,
             bottom: 20,
-            child: CustomBottomNavBar(
-              selectedIndex: _selectedIndex,
-              onItemTapped: _onItemTapped,
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(35),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+                    child: Container(
+                      height: 70,
+                      color: Colors.transparent,
+                    ),
+                  ),
+                ),
+                // Navbar container
+                CustomBottomNavBar(
+                  selectedIndex: _selectedIndex,
+                  onItemTapped: _onItemTapped,
+                ),
+              ],
             ),
           ),
         ],
@@ -99,11 +134,11 @@ class CustomBottomNavBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(35),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: mainColor,
+            color: Colors.black.withOpacity(0.2),
             offset: Offset(0, 0.5),
-            blurRadius: 8,
+            blurRadius: 16,
           ),
         ],
       ),
@@ -112,18 +147,21 @@ class CustomBottomNavBar extends StatelessWidget {
         children: <Widget>[
           _buildNavigationBarItem(
             context,
-            iconPath: 'assets/icons/home.svg',
+            iconPath: 'assets/icons/home1.svg',
             index: 0,
+            // label: 'Home',
           ),
           _buildNavigationBarItem(
             context,
-            iconPath: 'assets/icons/messages.svg',
+            iconPath: 'assets/icons/messages1.svg',
             index: 1,
+            // label: 'Messages',
           ),
           _buildNavigationBarItem(
             context,
-            iconPath: 'assets/icons/tasks.svg',
+            iconPath: 'assets/icons/notes1.svg',
             index: 2,
+            // label: 'Tasks',
           ),
         ],
       ),
@@ -131,15 +169,15 @@ class CustomBottomNavBar extends StatelessWidget {
   }
 
   Widget _buildNavigationBarItem(BuildContext context,
-      {required String iconPath, required int index}) {
+      {required String iconPath, required int index, String? label}) {
     bool isSelected = index == selectedIndex;
     return GestureDetector(
       onTap: () => onItemTapped(index),
       child: SvgPicture.asset(
         iconPath,
-        width: 26,
-        height: 26,
-        color: isSelected ? mainColor : Colors.black.withOpacity(0.7),
+        width: 34,
+        height: 34,
+        color: isSelected ? mainColor : Colors.black.withOpacity(0.5),
       ),
     );
   }

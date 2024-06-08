@@ -1,10 +1,9 @@
-// filename: home/_recent_task_container.dart
-import '../../tasks/controllers/task_manager.dart';
-import '../../tasks/components/_task_details.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter/material.dart';
-
 import '../controllers/_recent_task_data.dart';
+import '../../tasks/controllers/task_manager.dart';
+import '../../tasks/components/_task_details.dart';
+// filename: home/_recent_task_container.dart
 
 class RecentTaskContainer extends StatefulWidget {
   final String searchQuery;
@@ -69,7 +68,7 @@ class RecentTaskContainerState extends State<RecentTaskContainer> {
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
-                        color: statusColor.withOpacity(0.8),
+                        color: Colors.black.withOpacity(0.2),
                         blurRadius: 1,
                         spreadRadius: 1,
                         offset: const Offset(0, 2),

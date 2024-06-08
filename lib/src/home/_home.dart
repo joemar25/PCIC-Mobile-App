@@ -155,69 +155,77 @@ class HomeScreenState extends State<HomeScreen> {
       body: RefreshIndicator(
         backgroundColor: Colors.white,
         onRefresh: _onRefresh,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 8.0),
-                TaskCountContainer(onTasksPressed: _navigateToTaskPage),
-                const SizedBox(height: 16.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Text(
-                    'Recent Tasks',
-                    style: TextStyle(
-                      fontSize: t?.headline ?? 20.0,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                if (_isSyncing)
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 110.0),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 8.0),
+                  TaskCountContainer(onTasksPressed: _navigateToTaskPage),
+                  const SizedBox(height: 16.0),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: [
-                        const CircularProgressIndicator(),
-                        const SizedBox(width: 16.0),
-                        Text(_syncStatus),
-                      ],
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Text(
+                      'Recent Tasks',
+                      style: TextStyle(
+                        fontSize: t?.headline ?? 20.0,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
-                const SizedBox(height: 8.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: StatefulBuilder(
-                    builder: (context, setState) {
-                      return Column(
+                  if (_isSyncing)
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
                         children: [
-                          SearchButton(
-                            searchQuery: _searchQuery,
-                            onUpdateValue: (value) {
-                              setState(() {
-                                _searchQuery = value;
-                              });
-                            },
-                          ),
-                          const SizedBox(height: 16.0),
-                          _isLoadingRecentTasks
-                              ? const Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
-                                  child: Center(
-                                      child: CircularProgressIndicator()),
-                                )
-                              : RecentTaskContainer(
-                                  notCompletedTasks: _tasks,
-                                  searchQuery: _searchQuery,
-                                ),
-                          const SizedBox(height: 8.0),
+                          const CircularProgressIndicator(),
+                          const SizedBox(width: 16.0),
+                          Text(_syncStatus),
                         ],
-                      );
-                    },
+                      ),
+                    ),
+                  const SizedBox(height: 8.0),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: StatefulBuilder(
+                      builder: (context, setState) {
+                        return Column(
+                          children: [
+                            SearchButton(
+                              searchQuery: _searchQuery,
+                              onUpdateValue: (value) {
+                                setState(() {
+                                  _searchQuery = value;
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 10.0),
+                            _isLoadingRecentTasks
+                                ? const Padding(
+                                    padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
+                                    child: Center(
+                                        child: CircularProgressIndicator()),
+                                  )
+                                : Container(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.75,
+                                    child: SingleChildScrollView(
+                                      child: RecentTaskContainer(
+                                        notCompletedTasks: _tasks,
+                                        searchQuery: _searchQuery,
+                                      ),
+                                    ),
+                                  ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

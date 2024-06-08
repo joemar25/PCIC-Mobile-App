@@ -1,6 +1,8 @@
 import '_task_box_container.dart';
 import 'package:flutter/material.dart';
 import '../../tasks/controllers/task_manager.dart';
+import 'package:pcic_mobile_app/src/theme/_theme.dart';
+
 // filename: home/_task_count_container.dart
 
 class TaskCountContainer extends StatefulWidget {
@@ -62,9 +64,8 @@ class _TaskCountContainerState extends State<TaskCountContainer> {
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
-                      spreadRadius: 2,
-                      blurRadius: 2,
-                      offset: const Offset(0, 3),
+                      offset: Offset(0, 0.5),
+                      blurRadius: 8,
                     ),
                   ],
                 ),
@@ -85,9 +86,8 @@ class _TaskCountContainerState extends State<TaskCountContainer> {
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
-                      spreadRadius: 2,
-                      blurRadius: 2,
-                      offset: const Offset(0, 3),
+                      offset: Offset(0, 0.5),
+                      blurRadius: 8,
                     ),
                   ],
                 ),
