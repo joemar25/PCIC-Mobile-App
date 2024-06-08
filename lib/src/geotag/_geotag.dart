@@ -148,7 +148,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
 
   void _startCountdown() {
     setState(() {
-      countdown = 3;
+      countdown = 5;
     });
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
