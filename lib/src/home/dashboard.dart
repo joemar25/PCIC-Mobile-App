@@ -69,28 +69,28 @@ class DashboardPageState extends State<DashboardPage>
       body: Stack(
         children: [
           _widgetOptions.elementAt(_selectedIndex),
-          Positioned(
-            left: 1,
-            right: 1,
-            bottom: 0,
-            child: Stack(
-              children: [
-                ClipRRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                    child: Container(
-                      height: 70,
-                      color: Colors.transparent,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // Positioned(
+          //   left: 1,
+          //   right: 1,
+          //   bottom: 0,
+          //   child: Stack(
+          //     children: [
+          //       ClipRRect(
+          //         child: BackdropFilter(
+          //           filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+          //           child: Container(
+          //             height: 70,
+          //             color: Colors.transparent,
+          //           ),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
           Positioned(
             left: 20,
             right: 20,
-            bottom: 20,
+            bottom: 5,
             child: Stack(
               children: [
                 ClipRRect(
@@ -130,7 +130,7 @@ class CustomBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 70,
+      height: 60,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(35),

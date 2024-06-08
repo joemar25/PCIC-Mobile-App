@@ -157,7 +157,7 @@ class HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.white,
         onRefresh: _onRefresh,
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 110.0),
+          padding: const EdgeInsets.only(bottom: 90.0),
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -220,6 +220,7 @@ class HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                   ),
+                            const SizedBox(height: 55.0),
                           ],
                         );
                       },
