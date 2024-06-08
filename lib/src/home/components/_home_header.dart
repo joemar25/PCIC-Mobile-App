@@ -93,15 +93,16 @@ class _HomeHeaderState extends State<HomeHeader> {
             Text(
               'Welcome back,',
               style: TextStyle(
-                fontSize: t?.caption ?? 20.0,
-                color: Colors.grey,
-                fontWeight: FontWeight.w500,
+                fontSize: t?.caption ?? 16.0,
+                color: Colors.white,
+                fontWeight: FontWeight.normal,
               ),
             ),
             Text(
               userName ?? 'Agent 007 👋',
               style: TextStyle(
-                fontSize: t?.title ?? 18.0,
+                color: Colors.white,
+                fontSize: t?.title ?? 20.0,
                 fontWeight: FontWeight.bold,
               ),
             )
