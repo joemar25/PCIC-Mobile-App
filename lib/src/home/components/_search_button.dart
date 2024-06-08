@@ -48,7 +48,7 @@ class _SearchButtonState extends State<SearchButton> {
                 borderRadius: BorderRadius.circular(32.0),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.grey.withOpacity(0.2),
                     blurRadius: 2,
                     spreadRadius: 2,
                     offset: const Offset(0, 2),

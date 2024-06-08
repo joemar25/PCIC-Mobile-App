@@ -84,19 +84,18 @@ class TaskContainerState extends State<TaskView> {
       });
     }
   }
-
-  Color getStatusColor(String? status) {
-    switch (status) {
-      case 'For Dispatch':
-        return const Color(0xFFFF4500); // Red
-      case 'Ongoing':
-        return const Color(0xFF87CEFA); // Light Blue
-      case 'Completed':
-        return const Color(0xFF006400); // Dark Green
-      default:
-        return Colors.grey;
-    }
-  }
+  // Color getStatusColor(String? status) {
+  //   switch (status) {
+  //     case 'For Dispatch':
+  //       return const Color(0xFFFF4500); // Red
+  //     case 'Ongoing':
+  //       return const Color(0xFF87CEFA); // Light Blue
+  //     case 'Completed':
+  //       return const Color(0xFF006400); // Dark Green
+  //     default:
+  //       return Colors.grey;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -179,8 +178,8 @@ class TaskContainerState extends State<TaskView> {
                               child: FutureBuilder<String?>(
                                 future: task.status,
                                 builder: (context, snapshot) {
-                                  final statusColor =
-                                      getStatusColor(snapshot.data);
+                                  // final statusColor =
+                                  //     getStatusColor(snapshot.data);
                                   return Container(
                                     margin: const EdgeInsets.symmetric(
                                         vertical: 8.0),
@@ -193,7 +192,7 @@ class TaskContainerState extends State<TaskView> {
                                       borderRadius: BorderRadius.circular(15.0),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: statusColor.withOpacity(0.8),
+                                          color: Colors.grey.withOpacity(0.4),
                                           blurRadius: 1,
                                           spreadRadius: 1,
                                           offset: const Offset(0, 2),

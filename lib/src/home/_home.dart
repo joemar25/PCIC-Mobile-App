@@ -139,15 +139,16 @@ class HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       key: key,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1.0,
+        backgroundColor: const Color(0xFF0F7D40),
+        elevation: 2.0,
         automaticallyImplyLeading: false,
         title: Padding(
-          padding: const EdgeInsets.only(left: 6.0),
+          padding: const EdgeInsets.only(bottom: 8.0, left: 6.0),
           child: HomeHeader(onLogout: _handleLogout),
         ),
         actions: [
           IconButton(
+            color: Colors.white,
             icon: const Icon(Icons.sync),
             onPressed: _isSyncing ? null : startSync,
           ),

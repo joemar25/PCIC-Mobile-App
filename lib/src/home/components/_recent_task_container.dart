@@ -23,18 +23,18 @@ class RecentTaskContainer extends StatefulWidget {
 class RecentTaskContainerState extends State<RecentTaskContainer> {
   int _hoveredIndex = -1;
 
-  Color getStatusColor(String? status) {
-    switch (status) {
-      case 'For Dispatch':
-        return const Color(0xFFFF4500); // Red
-      case 'Ongoing':
-        return const Color(0xFF87CEFA); // Light Blue
-      case 'Completed':
-        return const Color(0xFF006400); // Dark Green
-      default:
-        return Colors.grey;
-    }
-  }
+  // Color getStatusColor(String? status) {
+  //   switch (status) {
+  //     case 'For Dispatch':
+  //       return const Color(0xFFFF4500); // Red
+  //     case 'Ongoing':
+  //       return const Color(0xFF87CEFA); // Light Blue
+  //     case 'Completed':
+  //       return const Color(0xFF006400); // Dark Green
+  //     default:
+  //       return Colors.grey;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +58,7 @@ class RecentTaskContainerState extends State<RecentTaskContainer> {
             child: FutureBuilder<String?>(
               future: task.status,
               builder: (context, snapshot) {
-                final statusColor = getStatusColor(snapshot.data);
+                // final statusColor = getStatusColor(snapshot.data);
                 return Container(
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
@@ -69,7 +69,7 @@ class RecentTaskContainerState extends State<RecentTaskContainer> {
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
-                        color: statusColor.withOpacity(0.8),
+                        color: Colors.grey.withOpacity(0.4),
                         blurRadius: 1,
                         spreadRadius: 1,
                         offset: const Offset(0, 2),

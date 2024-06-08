@@ -274,7 +274,7 @@ class TaskDetailsPage extends StatelessWidget {
                             ),
                           ),
                         Text(
-                          'Post Planting Inspection Report',
+                          'POST PLANTING INSPECTION REPORT',
                           style: TextStyle(
                             fontSize: t?.headline,
                             fontWeight: FontWeight.bold,
