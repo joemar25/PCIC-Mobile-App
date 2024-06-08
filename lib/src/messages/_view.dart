@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:pcic_mobile_app/src/messages/components/_searchMessage.dart';
+// filename: messages_page.dart
 
 class MessagesPage extends StatefulWidget {
   const MessagesPage({super.key});
@@ -249,10 +250,13 @@ class MessagesPageState extends State<MessagesPage> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showUserListModal,
-        backgroundColor: mainColor,
-        child: const Icon(Icons.add, color: Colors.white),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 0, 5, 100),
+        child: FloatingActionButton(
+          onPressed: _showUserListModal,
+          backgroundColor: mainColor,
+          child: const Icon(Icons.add, color: Colors.white),
+        ),
       ),
     );
   }
