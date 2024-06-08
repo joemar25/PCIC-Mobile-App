@@ -101,11 +101,11 @@ class CustomBottomNavBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(35),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: Colors.black26,
-            offset: Offset(0, 2),
-            blurRadius: 10,
+            color: mainColor,
+            offset: Offset(0, 0.5),
+            blurRadius: 8,
           ),
         ],
       ),
@@ -139,8 +139,8 @@ class CustomBottomNavBar extends StatelessWidget {
       onTap: () => onItemTapped(index),
       child: SvgPicture.asset(
         iconPath,
-        width: 24,
-        height: 24,
+        width: 26,
+        height: 26,
         color: isSelected ? mainColor : Colors.black.withOpacity(0.7),
       ),
     );

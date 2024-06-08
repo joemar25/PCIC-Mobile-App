@@ -1,21 +1,21 @@
-// filename: app.dart
-import 'package:flash/flash_helper.dart';
-import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/src/settings/_controller.dart';
-import 'package:pcic_mobile_app/src/settings/_view.dart';
-
+import 'home/_home.dart';
+import 'tasks/_task.dart';
+import 'geotag/_geotag.dart';
+import 'messages/_view.dart';
+import 'splash/_splash.dart';
+import '../utils/app/_routes.dart';
 import '../utils/agent/_login.dart';
 import '../utils/agent/_signup.dart';
+import 'package:flutter/material.dart';
+import 'package:flash/flash_helper.dart';
+import '../utils/navigation/service.dart';
 import '../utils/agent/_verify_login.dart';
 import '../utils/agent/_verify_signup.dart';
-import '../utils/app/_routes.dart';
-import 'geotag/_geotag.dart';
-import 'home/_home.dart';
-import 'messages/_view.dart';
-import '../utils/navigation/service.dart';
-import 'splash/_splash.dart';
 import 'tasks/controllers/task_manager.dart';
-import 'tasks/_task.dart';
+import 'package:pcic_mobile_app/src/settings/_view.dart';
+import 'package:pcic_mobile_app/src/settings/_controller.dart';
+// filename: app.dart
+
 
 class App extends StatelessWidget {
   const App(
