@@ -105,14 +105,14 @@ class FormSectionState extends State<FormSection> {
 
     if (picked != null && picked != initialDate) {
       setState(() {
-        widget.formData[key] = DateFormat('yyyy-MM-dd').format(picked);
+        widget.formData[key] = DateFormat('MM-dd-yyyy').format(picked);
         if (key == 'ppirDopdsAct') {
           _ppirDopdsActController.text =
-              DateFormat('yyyy-MM-dd').format(picked);
+              DateFormat('MM-dd-yyyy').format(picked);
         }
         if (key == 'ppirDoptpAct') {
           _ppirDoptpActController.text =
-              DateFormat('yyyy-MM-dd').format(picked);
+              DateFormat('MM-dd-yyyy').format(picked);
         }
       });
     }
