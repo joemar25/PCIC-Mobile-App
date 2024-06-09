@@ -251,10 +251,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
             convertDateFormat(_taskData['ppirDoptpAci']);
       }
 
-      // Debug print to check the converted values
-      debugPrint('Converted ppirDopdsAci: ${_taskData['ppirDopdsAci']}');
-      debugPrint('Converted ppirDoptpAci: ${_taskData['ppirDoptpAci']}');
-
       await widget.task.updateTaskData(_taskData);
 
       final filename = await widget.task.filename;
