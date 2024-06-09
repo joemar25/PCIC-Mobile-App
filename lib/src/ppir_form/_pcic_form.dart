@@ -111,16 +111,11 @@ class PPIRFormPageState extends State<PPIRFormPage> {
     _taskData['ppirNameInsured'] = formData['ppirNameInsured'] ?? '';
     _taskData['ppirNameIuia'] = formData['ppirNameIuia'] ?? '';
 
+    _taskData['ppirDopdsAci'] = formData['ppirDopdsAci'] ?? '';
+    _taskData['ppirDoptpAci'] = formData['ppirDoptpAci'] ?? '';
+
     selectedSeedType = _taskData['ppirSvpAct'] ?? 'Rice';
     _initializeSeeds();
-
-    // if (selectedSeedType == 'Rice') {
-    //   selectedSeedId = seedTitleToIdMap[_taskData['ppirVariety']];
-    //   selectedRiceSeedId = selectedSeedId;
-    // } else if (selectedSeedType == 'Corn') {
-    //   selectedSeedId = seedTitleToIdMap[_taskData['ppirVariety']];
-    //   selectedCornSeedId = selectedSeedId;
-    // }
   }
 
   void _initializeSeeds() {
@@ -243,6 +238,19 @@ class PPIRFormPageState extends State<PPIRFormPage> {
           : null;
       _taskData['taskStatus'] = 'Completed';
 
+      // Convert date format for ppirDopdsAci and ppirDoptpAci
+      if (_taskData['ppirDopdsAci'] != null &&
+          _taskData['ppirDopdsAci'].isNotEmpty) {
+        _taskData['ppirDopdsAci'] =
+            convertDateFormat(_taskData['ppirDopdsAci']);
+      }
+
+      if (_taskData['ppirDoptpAci'] != null &&
+          _taskData['ppirDoptpAci'].isNotEmpty) {
+        _taskData['ppirDoptpAci'] =
+            convertDateFormat(_taskData['ppirDoptpAci']);
+      }
+
       await widget.task.updateTaskData(_taskData);
 
       final filename = await widget.task.filename;
@@ -274,6 +282,18 @@ class PPIRFormPageState extends State<PPIRFormPage> {
     }
   }
 
+  String convertDateFormat(String dateStr) {
+    try {
+      DateTime parsedDate = DateFormat('MMM dd, yyyy').parse(dateStr);
+      debugPrint('Parsed date: $parsedDate');
+      return DateFormat('MM-dd-yyyy').format(parsedDate);
+    } catch (e) {
+      // Log the error or handle it as needed
+      debugPrint('Error parsing date: $e');
+      return dateStr; // Return the original string if parsing fails
+    }
+  }
+
   Future<void> _saveForm() async {
     setState(() {
       isSaving = true;
@@ -302,6 +322,19 @@ class PPIRFormPageState extends State<PPIRFormPage> {
               .key
           : null;
       _taskData['taskStatus'] = 'Ongoing';
+
+      // Convert date format for ppirDopdsAci and ppirDoptpAci
+      if (_taskData['ppirDopdsAci'] != null &&
+          _taskData['ppirDopdsAci'].isNotEmpty) {
+        _taskData['ppirDopdsAci'] =
+            convertDateFormat(_taskData['ppirDopdsAci']);
+      }
+
+      if (_taskData['ppirDoptpAci'] != null &&
+          _taskData['ppirDoptpAci'].isNotEmpty) {
+        _taskData['ppirDoptpAci'] =
+            convertDateFormat(_taskData['ppirDoptpAci']);
+      }
 
       await widget.task.updateTaskData(_taskData);
 
