@@ -283,7 +283,7 @@ class TaskDetailsPage extends StatelessWidget {
                         const SizedBox(height: 16.0),
                         _buildFormField(context, 'Farmer Name',
                             formData['ppirFarmerName']?.toString()),
-                        _buildFormField(context, 'PPI Assignment ID',
+                        _buildFormField(context, 'PPIR Assignment ID',
                             formData['ppirAssignmentId']?.toString()),
                         _buildFormField(context, 'Insurance ID',
                             formData['ppirInsuranceId']?.toString()),
@@ -345,7 +345,7 @@ class TaskDetailsPage extends StatelessWidget {
                         _buildFormField(context, 'Date of Planting (TP)',
                             formData['ppirDoptpAci']?.toString()),
                         _buildFormField(context, 'Seed Variety Planted',
-                            formData['ppirSvpAct']?.toString()),
+                            formData['ppirSvpAci']?.toString()),
                         const SizedBox(height: 24.0),
                         if (status == 'Completed') ...[
                           ElevatedButton(

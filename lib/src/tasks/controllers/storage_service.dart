@@ -22,12 +22,13 @@ class StorageService {
     }
   }
 
-  static Future<void> compressAndUploadTaskFiles(String taskId) async {
+  static Future<void> compressAndUploadTaskFiles(
+      String filename, String taskId) async {
     try {
       // Get the temporary directory
       final tempDir = await getTemporaryDirectory();
       final tempDirPath = tempDir.path;
-      final zipFilePath = '$tempDirPath/$taskId.task';
+      final zipFilePath = '$tempDirPath/$filename.task';
 
       // Download files from Firebase Storage and save them in the temporary directory
       await _downloadFilesFromFirebase(taskId, tempDirPath);
@@ -36,13 +37,20 @@ class StorageService {
       final encoder = ZipFileEncoder();
       encoder.create(zipFilePath);
 
-      // Add the entire task folder to the zip file
+      // Add the contents of the task folder to the zip file
       final taskDir = Directory('$tempDirPath/PPIR_SAVES/$taskId');
       if (!await taskDir.exists()) {
         _logger.severe('Task directory does not exist: $taskDir');
         throw Exception('Task directory does not exist: $taskDir');
       }
-      encoder.addDirectory(taskDir);
+
+      final taskContents = taskDir.listSync(recursive: true);
+      for (var file in taskContents) {
+        if (file is File) {
+          final relativePath = file.path.replaceFirst('${taskDir.path}/', '');
+          encoder.addFile(file, relativePath);
+        }
+      }
 
       // Close the encoder to finalize the zip file
       encoder.close();
@@ -51,7 +59,7 @@ class StorageService {
       final zipFile = File(zipFilePath);
 
       // Upload to Firebase Storage
-      await _uploadToFirebase(taskId, zipFile);
+      await _uploadToFirebase(filename, zipFile);
 
       // Upload to FTP Server
       await _uploadToFTP(zipFile);
@@ -94,11 +102,11 @@ class StorageService {
     }
   }
 
-  static Future<void> _uploadToFirebase(String taskId, File file) async {
+  static Future<void> _uploadToFirebase(String filename, File file) async {
     try {
       final storageRef = FirebaseStorage.instance
           .ref()
-          .child('PPIR_SAVES/submitted_tasks/$taskId.task');
+          .child('PPIR_SAVES/submitted_tasks/$filename.task');
       await storageRef.putFile(file);
     } catch (e) {
       _logger.severe('Error uploading file to Firebase Storage: $e');
