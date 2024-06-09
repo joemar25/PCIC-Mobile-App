@@ -136,8 +136,11 @@ class TaskManager {
 
   Future<void> updateTaskData(Map<String, dynamic> taskData) async {
     // debugPrint('Updating task data for taskId: $taskId with data: $taskData');
+    // print all updating in proper format
+    // taskData.forEach((key, value) {
+    //   debugPrint('key: $key, value: $value');
+    // });
     final taskRef = FirebaseFirestore.instance.collection('tasks').doc(taskId);
-
     await taskRef.update(taskData);
   }
 
