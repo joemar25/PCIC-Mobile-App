@@ -3,8 +3,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class FirebaseService {
+  User? get currentUser => _auth.currentUser;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<UserCredential> signInWithEmailAndPassword(
+      String email, String password) async {
+    try {
+      final userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return userCredential;
+    } catch (e) {
+      throw Exception('Error signing in: $e');
+    }
+  }
 
   Future<bool> isUserExists(String email) async {
     try {
@@ -50,10 +64,9 @@ class FirebaseService {
   }
 
   Future<void> createUserDocument(
-      UserCredential userCredential, Map<String, dynamic> userData) async {
+      String uid, Map<String, dynamic> userData) async {
     try {
-      final user = userCredential.user;
-      await _firestore.collection('users').doc(user?.uid).set({
+      await _firestore.collection('users').doc(uid).set({
         'name': userData['name'],
         'email': userData['email'],
         'profilePicUrl': userData['profilePicUrl'],
@@ -62,9 +75,23 @@ class FirebaseService {
         'createdAt': FieldValue.serverTimestamp(),
         'isActive': userData['isActive'],
       });
-      debugPrint('User created in Firestore with UID: ${user?.uid}');
+      debugPrint('User created in Firestore with UID: $uid');
     } catch (e) {
       throw Exception('Error creating user document: $e');
+    }
+  }
+
+  Future<String?> createUserAccountWithoutSigningIn(
+      String email, String password) async {
+    try {
+      final userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      final uid = userCredential.user?.uid;
+      return uid;
+    } catch (e) {
+      throw Exception('Error creating user account: $e');
     }
   }
 
@@ -87,9 +114,14 @@ class FirebaseService {
         };
 
         final userCredential =
-            await createUserAccount(userData['email'], 'defaultPassword');
-        await createUserDocument(userCredential, userData);
-        userRef = await getUserRef(userEmail);
+            await createUserAccount(userData['email'], 'password');
+        final uid = userCredential.user?.uid;
+        if (uid != null) {
+          await createUserDocument(uid, userData);
+          userRef = await getUserRef(userEmail);
+        } else {
+          throw Exception('User creation failed: UID is null');
+        }
       }
 
       final taskDoc = await _firestore.collection('tasks').add({
