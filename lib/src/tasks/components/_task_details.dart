@@ -345,7 +345,7 @@ class TaskDetailsPage extends StatelessWidget {
                         _buildFormField(context, 'Date of Planting (TP)',
                             formData['ppirDoptpAci']?.toString()),
                         _buildFormField(context, 'Seed Variety Planted',
-                            formData['ppirSvpAct']?.toString()),
+                            formData['ppirSvpAci']?.toString()),
                         const SizedBox(height: 24.0),
                         if (status == 'Completed') ...[
                           ElevatedButton(
