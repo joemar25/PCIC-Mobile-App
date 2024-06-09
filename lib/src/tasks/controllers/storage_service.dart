@@ -22,12 +22,13 @@ class StorageService {
     }
   }
 
-  static Future<void> compressAndUploadTaskFiles(String taskId) async {
+  static Future<void> compressAndUploadTaskFiles(
+      String filename, String taskId) async {
     try {
       // Get the temporary directory
       final tempDir = await getTemporaryDirectory();
       final tempDirPath = tempDir.path;
-      final zipFilePath = '$tempDirPath/$taskId.task';
+      final zipFilePath = '$tempDirPath/$filename.task';
 
       // Download files from Firebase Storage and save them in the temporary directory
       await _downloadFilesFromFirebase(taskId, tempDirPath);

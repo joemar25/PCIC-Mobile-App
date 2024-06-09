@@ -1,4 +1,3 @@
-// SyncController class
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -85,8 +84,14 @@ class SyncController {
       final csvData = CSVParser.parseCSV(csvContent);
 
       for (final rowData in csvData) {
-        final userEmail = rowData['Assignee'];
+        final userEmail = rowData['Assignee'] ?? '';
         final isUserExists = await _firebaseService.isUserExists(userEmail);
+
+        final fileNameWithoutExtension =
+            fileName.replaceFirst(RegExp(r'\.[^\.]+$'), ' ');
+        rowData['filename'] = fileNameWithoutExtension +
+            (rowData['ppir_insuranceid']?.toString() ?? '');
+        debugPrint('filename: $fileName');
 
         if (!isUserExists) {
           final userData = extractUserData(rowData);
@@ -122,7 +127,7 @@ class SyncController {
 
           await runZoned(() async {
             for (final rowData in csvData) {
-              final userEmail = rowData['Assignee'];
+              final userEmail = rowData['Assignee']?.toString() ?? '';
 
               if (!processedEmails.contains(userEmail)) {
                 final isUserExists =
@@ -135,6 +140,12 @@ class SyncController {
 
                 processedEmails.add(userEmail);
               }
+
+              final fileNameWithoutExtension =
+                  fileName.replaceFirst(RegExp(r'\.[^\.]+$'), ' ');
+              rowData['filename'] = fileNameWithoutExtension +
+                  (rowData['ppir_insuranceid']?.toString() ?? '');
+              debugPrint('filename: $fileNameWithoutExtension');
 
               final taskData = extractTaskData(rowData);
               await _firebaseService.createTask(taskData);
@@ -233,17 +244,7 @@ class SyncController {
       'ppir_sig_insured': rowData['ppir_sig_insured'] ?? '',
       'ppir_sig_iuia': rowData['ppir_sig_iuia'] ?? '',
       'isPPIR': rowData['isPPIR'] ?? false,
+      'filename': rowData['filename'] ?? "",
     };
   }
 }
-
-/**
- *  
- * Issue #1 : After creating the account for the firebase if account is not created, it does change the session to the first created account.
- *             function to fix, _processFiles
- *        
- *   Output : Behavior to have, even after syncing it retains or not tamper the session of the current user that is currently logged in.
- * 
- * Issue #2 : Email Verification first before first login.
- * 
- */

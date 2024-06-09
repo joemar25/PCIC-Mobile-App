@@ -14,6 +14,10 @@ class TaskManager {
     required this.taskId,
   });
 
+  Future<String?> get filename async {
+    return await _getFieldFromTask('filename');
+  }
+
   Future<String?> get confirmedByName async {
     // debugPrint('Fetching confirmedByName for taskId: $taskId');
     return await _getFieldFromTask('ppirNameInsured');

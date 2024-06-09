@@ -198,7 +198,12 @@ class PPIRFormPageState extends State<PPIRFormPage> {
 
       await StorageService.saveTaskFileToFirebaseStorage(widget.task.taskId);
 
-      await StorageService.compressAndUploadTaskFiles(widget.task.taskId);
+      final filename = await widget.task.filename;
+      debugPrint("Saving using the filename: $filename");
+      if (filename != null) {
+        await StorageService.compressAndUploadTaskFiles(
+            filename, widget.task.taskId);
+      }
 
       if (mounted) {
         Navigator.pushReplacement(

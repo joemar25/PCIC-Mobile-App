@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 
 class FirebaseService {
   User? get currentUser => _auth.currentUser;
@@ -75,7 +75,7 @@ class FirebaseService {
         'createdAt': FieldValue.serverTimestamp(),
         'isActive': userData['isActive'],
       });
-      debugPrint('User created in Firestore with UID: $uid');
+      // debugPrint('User created in Firestore with UID: $uid');
     } catch (e) {
       throw Exception('Error creating user document: $e');
     }
@@ -103,7 +103,7 @@ class FirebaseService {
       try {
         userRef = await getUserRef(userEmail);
       } catch (e) {
-        debugPrint('User does not exist, creating user...');
+        // debugPrint('User does not exist, creating user...');
         final userData = {
           'name': taskData['ppir_name_iuia'],
           'email': taskData['assignee'],
@@ -124,7 +124,8 @@ class FirebaseService {
         }
       }
 
-      final taskDoc = await _firestore.collection('tasks').add({
+      // final taskDoc =
+      await _firestore.collection('tasks').add({
         'taskNumber': taskData['task_number'] ?? '',
         'serviceGroup': taskData['service_group'] ?? '',
         'serviceType': taskData['service_type'] ?? '',
@@ -166,6 +167,7 @@ class FirebaseService {
         'ppirNameIuia': taskData['ppir_name_iuia'] ?? '',
         'ppirSigInsured': taskData['ppir_sig_insured'] ?? '',
         'ppirSigIuia': taskData['ppir_sig_iuia'] ?? '',
+        'filename': taskData['filename'] ?? '',
         'createdAt': FieldValue.serverTimestamp(),
         'dateAccess': FieldValue.serverTimestamp(),
 
@@ -176,7 +178,7 @@ class FirebaseService {
             : 'Others',
       });
 
-      debugPrint('Task created with ID: ${taskDoc.id}');
+      // debugPrint('Task created with ID: ${taskDoc.id}');
     } catch (e) {
       throw Exception('Error creating task: $e');
     }

@@ -283,7 +283,7 @@ class TaskDetailsPage extends StatelessWidget {
                         const SizedBox(height: 16.0),
                         _buildFormField(context, 'Farmer Name',
                             formData['ppirFarmerName']?.toString()),
-                        _buildFormField(context, 'PPI Assignment ID',
+                        _buildFormField(context, 'PPIR Assignment ID',
                             formData['ppirAssignmentId']?.toString()),
                         _buildFormField(context, 'Insurance ID',
                             formData['ppirInsuranceId']?.toString()),
