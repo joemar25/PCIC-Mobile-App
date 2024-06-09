@@ -27,20 +27,21 @@ class MessageDetailsPageState extends State<MessageDetailsPage> {
     User? currentUser = _auth.currentUser;
     if (currentUser == null) return;
 
+    String conversationId =
+        _getConversationId(currentUser.uid, widget.message['authUid']);
+
     QuerySnapshot snapshot = await _firestore
-        .collection('users')
-        .doc(currentUser.uid)
         .collection('conversations')
-        .doc(widget.message['authUid'])
+        .doc(conversationId)
         .collection('messages')
         .orderBy('timestamp', descending: false)
         .get();
 
     List<Map<String, dynamic>> fetchedMessages = snapshot.docs.map((doc) {
       return {
-        'message': doc['message'],
-        'timestamp': doc['timestamp'],
-        'senderId': doc['senderId'],
+        'message': doc.get('message') ?? '',
+        'timestamp': doc.get('timestamp') ?? Timestamp.now(),
+        'senderId': doc.get('senderId') ?? '',
       };
     }).toList();
 
@@ -52,42 +53,46 @@ class MessageDetailsPageState extends State<MessageDetailsPage> {
   void _sendMessage() async {
     if (_messageController.text.isNotEmpty) {
       String message = _messageController.text;
-      String currentUserUid = _auth.currentUser!.uid;
+      User? currentUser = _auth.currentUser;
+      String? recipientUid = widget.message['authUid'];
 
-      debugPrint("Sending message: $message");
+      if (currentUser == null) {
+        debugPrint("No current user logged in");
+        return;
+      }
+
+      if (recipientUid == null) {
+        debugPrint("Recipient UID is null");
+        return;
+      }
+
+      String conversationId = _getConversationId(currentUser.uid, recipientUid);
+      debugPrint("Sending message in conversation ID: $conversationId");
 
       try {
-        DocumentReference currentUserDoc = _firestore
-            .collection('users')
-            .doc(currentUserUid)
-            .collection('conversations')
-            .doc(widget.message['authUid']);
+        DocumentReference conversationDoc =
+            _firestore.collection('conversations').doc(conversationId);
 
-        DocumentReference recipientUserDoc = _firestore
-            .collection('users')
-            .doc(widget.message['authUid'])
-            .collection('conversations')
-            .doc(currentUserUid);
-
-        await currentUserDoc.collection('messages').add({
+        // Add message to the messages subcollection
+        await conversationDoc.collection('messages').add({
           'message': message,
           'timestamp': FieldValue.serverTimestamp(),
-          'senderId': currentUserUid,
+          'senderId': currentUser.uid,
         });
+        debugPrint("Message added to Firestore");
 
-        await recipientUserDoc.collection('messages').add({
-          'message': message,
-          'timestamp': FieldValue.serverTimestamp(),
-          'senderId': currentUserUid,
-        });
-
-        debugPrint("Message sent successfully");
+        // Ensure the participants array is updated in the conversation document
+        await conversationDoc.set({
+          'participants':
+              FieldValue.arrayUnion([currentUser.uid, recipientUid]),
+        }, SetOptions(merge: true));
+        debugPrint("Participants updated in Firestore");
 
         setState(() {
           _userMessages.add({
             'message': message,
             'timestamp': Timestamp.now(),
-            'senderId': currentUserUid,
+            'senderId': currentUser.uid,
           });
           _messageController.clear();
         });
@@ -97,6 +102,10 @@ class MessageDetailsPageState extends State<MessageDetailsPage> {
     } else {
       debugPrint("Message text is empty");
     }
+  }
+
+  String _getConversationId(String user1, String user2) {
+    return user1.compareTo(user2) < 0 ? '$user1-$user2' : '$user2-$user1';
   }
 
   @override
@@ -152,7 +161,7 @@ class MessageDetailsPageState extends State<MessageDetailsPage> {
                           if (message['senderId'] != _auth.currentUser?.uid)
                             ClipOval(
                               child: Image.network(
-                                widget.message['profilePicUrl'],
+                                widget.message['profilePicUrl'] ?? '',
                                 width: 55,
                                 height: 55,
                                 fit: BoxFit.cover,

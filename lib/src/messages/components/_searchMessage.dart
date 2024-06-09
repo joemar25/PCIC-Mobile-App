@@ -67,7 +67,7 @@ class _SearchMessageButtonState extends State<SearchMessageButton> {
                   },
                   textAlign: TextAlign.left,
                   decoration: InputDecoration(
-                    hintText: 'Search Message',
+                    hintText: 'Search Messages',
                     hintStyle:
                         TextStyle(color: Colors.grey, fontSize: t?.caption),
                     isDense: true,
