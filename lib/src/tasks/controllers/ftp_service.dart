@@ -1,7 +1,7 @@
 // FTPService class
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:ftpconnect/ftpconnect.dart';
+// import 'package:flutter/foundation.dart';
 
 class FTPService {
   final String _ftpHost = '122.55.242.110';
@@ -26,7 +26,7 @@ class FTPService {
   }
 
   Future<bool> connectSync() async {
-    debugPrint('Connecting to FTP server...');
+    // debugPrint('Connecting to FTP server...');
     try {
       await _ftpConnectSync.connect();
       await _ftpConnectSync.changeDirectory(_workDirectory);
@@ -34,7 +34,7 @@ class FTPService {
       return true;
     } catch (e) {
       _isConnectedSync = false;
-      debugPrint('Failed to connect to FTP or change directory: $e');
+      // debugPrint('Failed to connect to FTP or change directory: $e');
       return false;
     }
   }
@@ -50,37 +50,37 @@ class FTPService {
       await _ftpConnectUpload.connect();
       await _ftpConnectUpload.changeDirectory(_uploadDirectory);
     } catch (e) {
-      debugPrint('Failed to connect to FTP or change directory: $e');
+      // debugPrint('Failed to connect to FTP or change directory: $e');
       throw Exception('Failed to connect to FTP or change directory');
     }
   }
 
   Future<void> disconnectSync() async {
-    debugPrint('Disconnecting from FTP server...');
+    // debugPrint('Disconnecting from FTP server...');
     try {
       await _ftpConnectSync.disconnect();
       _isConnectedSync = false;
     } catch (e) {
-      debugPrint('Failed to disconnect from FTP: $e');
+      // debugPrint('Failed to disconnect from FTP: $e');
       throw Exception('Failed to disconnect from FTP');
     }
-    debugPrint('Disconnected from FTP server');
+    // debugPrint('Disconnected from FTP server');
   }
 
   Future<void> disconnectUpload() async {
     try {
       await _ftpConnectUpload.disconnect();
     } catch (e) {
-      debugPrint('Failed to disconnect from FTP: $e');
+      // debugPrint('Failed to disconnect from FTP: $e');
       throw Exception('Failed to disconnect from FTP');
     }
   }
 
   Future<List<String>> getFileList() async {
     try {
-      debugPrint('Getting file list from FTP...');
+      // debugPrint('Getting file list from FTP...');
       final fileList = await _ftpConnectSync.listDirectoryContent();
-      debugPrint('File list: $fileList');
+      // debugPrint('File list: $fileList');
 
       return fileList
           .where((file) =>
@@ -90,14 +90,14 @@ class FTPService {
           .map((file) => file.name)
           .toList();
     } catch (e) {
-      debugPrint('Failed to get file list from FTP: $e');
+      // debugPrint('Failed to get file list from FTP: $e');
       throw Exception('Failed to get file list from FTP');
     }
   }
 
   Future<String> downloadFile(String fileName) async {
     try {
-      debugPrint('Downloading file from FTP: $_workDirectory/$fileName');
+      // debugPrint('Downloading file from FTP: $_workDirectory/$fileName');
 
       final tempDir = await Directory.systemTemp.createTemp();
       final localFilePath = '${tempDir.path}/$fileName';
@@ -108,11 +108,11 @@ class FTPService {
       final csvContent = await file.readAsString();
       await file.delete();
 
-      debugPrint('CSV Content: $csvContent');
+      // debugPrint('CSV Content: $csvContent');
 
       return csvContent;
     } catch (e) {
-      debugPrint('Failed to download file from FTP: $e');
+      // debugPrint('Failed to download file from FTP: $e');
       throw Exception('Failed to download file from FTP');
     }
   }
@@ -121,7 +121,7 @@ class FTPService {
     try {
       await _ftpConnectUpload.uploadFileWithRetry(file, pRetryCount: 2);
     } catch (e) {
-      debugPrint('Error uploading file to FTP server: $e');
+      // debugPrint('Error uploading file to FTP server: $e');
       throw Exception('Error uploading file to FTP server');
     }
   }

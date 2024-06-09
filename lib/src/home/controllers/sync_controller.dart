@@ -1,7 +1,6 @@
 // SyncController class
 import 'dart:async';
 import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
@@ -158,15 +157,20 @@ class SyncController {
 
   Future<void> _createUserForSync(Map<String, dynamic> userData) async {
     try {
-      final userCredential = await _firebaseService.createUserAccount(
-          userData['email'], 'password');
-      await _firebaseService.createUserDocument(userCredential, userData);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'email-already-in-use') {
+      final isUserExists =
+          await _firebaseService.isUserExists(userData['email']);
+
+      if (!isUserExists) {
+        final uid = await _firebaseService.createUserAccountWithoutSigningIn(
+            userData['email'], 'password');
+        if (uid != null) {
+          await _firebaseService.createUserDocument(uid, userData);
+        } else {
+          throw Exception('User creation failed: UID is null');
+        }
+      } else {
         debugPrint(
             'User with email ${userData['email']} already exists. Skipping user creation.');
-      } else {
-        rethrow;
       }
     } catch (e) {
       debugPrint('Error creating user for sync: $e');
