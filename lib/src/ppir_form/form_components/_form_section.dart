@@ -6,20 +6,23 @@ class FormSection extends StatefulWidget {
   final List<DropdownMenuItem<int>> uniqueSeedsItems;
   final Map<String, int> seedTitleToIdMap;
   final bool isSubmitting;
+  final int? selectedSeedId;
+  final ValueChanged<int?> onSelectedSeedIdChanged;
 
   const FormSection(
       {super.key,
       required this.formData,
       required this.uniqueSeedsItems,
       required this.seedTitleToIdMap,
-      required this.isSubmitting});
+      required this.isSubmitting,
+      required this.selectedSeedId,
+      required this.onSelectedSeedIdChanged});
 
   @override
   FormSectionState createState() => FormSectionState();
 }
 
 class FormSectionState extends State<FormSection> {
-  int? dropdownValue;
   final TextEditingController _ppirNameInsuredController =
       TextEditingController();
   final TextEditingController _ppirNameIuiaController = TextEditingController();
@@ -32,21 +35,28 @@ class FormSectionState extends State<FormSection> {
   @override
   void initState() {
     super.initState();
-    _initializeDropdownValue();
     _initializeTextControllers();
     _setupListeners();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeDropdownValue();
+    });
+  }
+
   void _initializeDropdownValue() {
-    String? seedTitle = widget.formData['ppirSvpAct']?.trim();
+    String? seedTitle = widget.formData['ppirVariety']?.trim();
     if (seedTitle != null && widget.seedTitleToIdMap.containsKey(seedTitle)) {
-      dropdownValue = widget.seedTitleToIdMap[seedTitle];
+      widget.onSelectedSeedIdChanged(widget.seedTitleToIdMap[seedTitle]);
     } else {
-      dropdownValue = null; // Set to null to show the placeholder
+      widget.onSelectedSeedIdChanged(null);
     }
 
     setState(() {
-      widget.formData['ppirSvpAct'] = seedTitle;
+      widget.formData['ppirVariety'] = seedTitle;
     });
   }
 
@@ -61,22 +71,22 @@ class FormSectionState extends State<FormSection> {
 
   void _setupListeners() {
     _ppirNameInsuredController.addListener(() {
-      setState(() {}); // Update the UI to remove the error message
+      setState(() {});
     });
     _ppirNameIuiaController.addListener(() {
-      setState(() {}); // Update the UI to remove the error message
+      setState(() {});
     });
     _ppirAreaController.addListener(() {
-      setState(() {}); // Update the UI to remove the error message
+      setState(() {});
     });
     _remarksController.addListener(() {
-      setState(() {}); // Update the UI to remove the error message
+      setState(() {});
     });
     _ppirDopdsActController.addListener(() {
-      setState(() {}); // Update the UI to remove the error message
+      setState(() {});
     });
     _ppirDoptpActController.addListener(() {
-      setState(() {}); // Update the UI to remove the error message
+      setState(() {});
     });
   }
 
@@ -133,15 +143,16 @@ class FormSectionState extends State<FormSection> {
                 child: DropdownButtonFormField<int>(
                   isExpanded: true,
                   decoration: const InputDecoration.collapsed(hintText: ''),
-                  value: dropdownValue,
+                  value: widget.selectedSeedId,
                   items: widget.uniqueSeedsItems,
                   onChanged: (value) {
                     setState(() {
-                      dropdownValue = value;
-                      widget.formData['ppirSvpAct'] = widget
-                          .seedTitleToIdMap.entries
-                          .firstWhere((entry) => entry.value == value)
-                          .key;
+                      widget.onSelectedSeedIdChanged(value);
+                      widget.formData['ppirVariety'] = value != null
+                          ? widget.seedTitleToIdMap.entries
+                              .firstWhere((entry) => entry.value == value)
+                              .key
+                          : null;
                     });
                   },
                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -224,39 +235,6 @@ class FormSectionState extends State<FormSection> {
                   ),
                 ),
               ),
-              // GestureDetector(
-              //   onTap: () => _pickDate(context, 'ppirDoptpAct'),
-              //   child: AbsorbPointer(
-              //     child: TextFormField(
-              //       decoration: InputDecoration(
-              //         errorText: widget.isSubmitting &&
-              //                 widget.formData['ppirDoptpAct'].isEmpty
-              //             ? 'This field is required'
-              //             : null,
-              //         labelText: 'Actual Date of Planting (TP)',
-              //         border: OutlineInputBorder(
-              //           borderRadius: BorderRadius.circular(8),
-              //         ),
-              //         suffixIcon: const Icon(Icons.calendar_today),
-              //       ),
-              //       controller: TextEditingController(
-              //         text: widget.formData['ppirDoptpAct'],
-              //       ),
-              //       onChanged: (value) {
-              //         widget.formData['ppirDoptpAct'] = value;
-              //       },
-              //       autovalidateMode: AutovalidateMode.onUserInteraction,
-              //       validator: (value) {
-              //         if (value == null ||
-              //             widget.formData['ppirDoptpAct'].isEmpty) {
-              //           return 'This field is required';
-              //         }
-              //         return null;
-              //       },
-              //     ),
-              //   ),
-              // ),
-
               const SizedBox(height: 16),
               TextFormField(
                 controller: _remarksController,

@@ -14,11 +14,12 @@ import 'form_components/_gpx_file_buttons.dart';
 import 'form_components/_form_field.dart' as form_field;
 import 'form_components/_success.dart';
 import '../../utils/app/_show_flash_message.dart';
-import '../../utils/seeds/_dropdown.dart';
 import '../tasks/controllers/task_manager.dart';
 import '../geotag/controls/_map_service.dart';
 import '../geotag/_geotag.dart';
 import '../tasks/controllers/storage_service.dart';
+import '../../utils/seeds/_rice_dropdown.dart';
+import '../../utils/seeds/_corn_dropdown.dart';
 
 class PPIRFormPage extends StatefulWidget {
   final TaskManager task;
@@ -33,7 +34,9 @@ class PPIRFormPage extends StatefulWidget {
 }
 
 class PPIRFormPageState extends State<PPIRFormPage> {
-  List<Seeds> seedsList = Seeds.getAllSeeds();
+  List<Rice> riceSeedsList = Rice.getAllSeeds();
+  List<Corn> cornSeedsList = Corn.getAllSeeds();
+
   Map<String, int> seedTitleToIdMap = {};
   List<DropdownMenuItem<int>> uniqueSeedsItems = [];
   final _taskData = <String, dynamic>{};
@@ -52,6 +55,10 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   String? gpxFile;
   List<LatLng>? routePoints;
   LatLng? lastCoordinates;
+  String selectedSeedType = 'Rice';
+  int? selectedSeedId;
+  int? selectedRiceSeedId;
+  int? selectedCornSeedId;
 
   @override
   void initState() {
@@ -64,17 +71,16 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       final formData = await widget.task.getTaskData();
       if (formData.isNotEmpty) {
         _initializeFormData(formData);
+      } else {
+        _initializeSeeds();
       }
 
       final mapService = MapService();
       gpxFile = await widget.task.getGpxFilePath();
-      // debugPrint("gpx file is $gpxFile");
       if (gpxFile != null) {
         final gpxData = await mapService.readGpxFile(gpxFile!);
         routePoints = await mapService.parseGpxData(gpxData);
       }
-
-      _initializeSeeds();
 
       setState(() {
         isLoading = false;
@@ -98,14 +104,31 @@ class PPIRFormPageState extends State<PPIRFormPage> {
         formData['trackLastcoord'] ?? 'No coordinates available';
     _taskData['ppirDopdsAct'] = formData['ppirDopdsAct'] ?? '';
     _taskData['ppirDoptpAct'] = formData['ppirDoptpAct'] ?? '';
-    _taskData['ppirSvpAct'] = formData['ppirSvpAct'] ?? '';
+    _taskData['ppirSvpAct'] = formData['ppirSvpAct'] ?? 'Rice';
+    _taskData['ppirVariety'] = formData['ppirVariety'] ?? '';
     _taskData['ppirAreaAct'] = formData['ppirAreaAct'] ?? '';
     _taskData['ppirRemarks'] = formData['ppirRemarks'] ?? '';
     _taskData['ppirNameInsured'] = formData['ppirNameInsured'] ?? '';
     _taskData['ppirNameIuia'] = formData['ppirNameIuia'] ?? '';
+
+    selectedSeedType = _taskData['ppirSvpAct'] ?? 'Rice';
+    _initializeSeeds();
+
+    // if (selectedSeedType == 'Rice') {
+    //   selectedSeedId = seedTitleToIdMap[_taskData['ppirVariety']];
+    //   selectedRiceSeedId = selectedSeedId;
+    // } else if (selectedSeedType == 'Corn') {
+    //   selectedSeedId = seedTitleToIdMap[_taskData['ppirVariety']];
+    //   selectedCornSeedId = selectedSeedId;
+    // }
   }
 
   void _initializeSeeds() {
+    uniqueSeedsItems.clear();
+    seedTitleToIdMap.clear();
+    List<dynamic> seedsList =
+        selectedSeedType == 'Rice' ? riceSeedsList : cornSeedsList;
+
     uniqueSeedsItems.add(const DropdownMenuItem<int>(
       value: null,
       child: Text(
@@ -120,6 +143,26 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       ));
       seedTitleToIdMap[seed.title] = seed.id;
     }
+
+    setState(() {
+      if (_taskData['ppirVariety'] != null &&
+          _taskData['ppirVariety'].isNotEmpty) {
+        selectedSeedId = seedTitleToIdMap[_taskData['ppirVariety']];
+      } else {
+        selectedSeedId = null;
+      }
+    });
+  }
+
+  void _onSelectedSeedIdChanged(int? value) {
+    setState(() {
+      if (selectedSeedType == 'Rice') {
+        selectedRiceSeedId = value;
+      } else {
+        selectedCornSeedId = value;
+      }
+      selectedSeedId = value;
+    });
   }
 
   Future<void> _submitForm(BuildContext context) async {
@@ -192,15 +235,20 @@ class PPIRFormPageState extends State<PPIRFormPage> {
           signatureData['ppirNameInsured'] ?? 'no value';
       _taskData['ppirSigIuia'] = signatureData['ppirSigIuia'] ?? 'no value';
       _taskData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
+      _taskData['ppirSvpAct'] = selectedSeedType;
+      _taskData['ppirVariety'] = selectedSeedId != null
+          ? seedTitleToIdMap.entries
+              .firstWhere((entry) => entry.value == selectedSeedId)
+              .key
+          : null;
       _taskData['taskStatus'] = 'Completed';
 
-      await widget.task.updatePpirFormData(_taskData);
+      await widget.task.updateTaskData(_taskData);
 
       final filename = await widget.task.filename;
       if (filename != null) {
         await StorageService.saveTaskFileToFirebaseStorage(widget.task.taskId);
 
-        // Ensure the filename used for compressing and uploading is the same as the one saved to Firebase
         await StorageService.compressAndUploadTaskFiles(
             filename, widget.task.taskId);
       }
@@ -247,12 +295,19 @@ class PPIRFormPageState extends State<PPIRFormPage> {
           signatureData['ppirNameInsured'] ?? 'no value';
       _taskData['ppirSigIuia'] = signatureData['ppirSigIuia'] ?? 'no value';
       _taskData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
+      _taskData['ppirSvpAct'] = selectedSeedType;
+      _taskData['ppirVariety'] = selectedSeedId != null
+          ? seedTitleToIdMap.entries
+              .firstWhere((entry) => entry.value == selectedSeedId)
+              .key
+          : null;
       _taskData['taskStatus'] = 'Ongoing';
+
+      await widget.task.updateTaskData(_taskData);
 
       if (mounted) {
         showFlashMessage(
             context, 'Info', 'Form Saved', 'Form data saved successfully.');
-        // Navigate to dashboard
         _navigateToDashboard(context);
       }
     } catch (e) {
@@ -465,12 +520,47 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                         enabled: false,
                       ),
                       const SizedBox(height: 24),
+                      const Text(
+                        'Select Seed Type',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Radio<String>(
+                            value: 'Rice',
+                            groupValue: selectedSeedType,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedSeedType = value!;
+                                _initializeSeeds();
+                              });
+                            },
+                          ),
+                          const Text('Rice'),
+                          Radio<String>(
+                            value: 'Corn',
+                            groupValue: selectedSeedType,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedSeedType = value!;
+                                _initializeSeeds();
+                              });
+                            },
+                          ),
+                          const Text('Corn'),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
                       FormSection(
                         key: _formSectionKey,
                         formData: _taskData,
                         uniqueSeedsItems: uniqueSeedsItems,
                         seedTitleToIdMap: seedTitleToIdMap,
                         isSubmitting: isSubmitting,
+                        selectedSeedId: selectedSeedId,
+                        onSelectedSeedIdChanged: _onSelectedSeedIdChanged,
                       ),
                       const SizedBox(height: 24),
                       const Text(
