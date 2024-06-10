@@ -1,6 +1,8 @@
 # pcic_mobile_app
 
-Q
+## Contribution
+
+![Alt](https://repobeats.axiom.co/api/embed/37b9b287aafd26877e0087657cdca3d1ef4b2c03.svg "Repobeats analytics image")
 
 ## Getting Started
 
@@ -25,56 +27,3 @@ samples, guidance on mobile development, and a full API reference.
 [Flutter on Real Devices](https://youtu.be/aohkII1C4JY?si=OniTGV9St1JK0I_u)
 [Flutter Map Stable Tutorial](https://www.youtube.com/watch?v=hZwrcOTxDJI)
 [Flutter Refresh](https://www.dhiwise.com/post/flutter-pull-to-refresh-how-to-implement-customize)
-
-rebuilding commands in flutter
-
-```cmd
-    flutter clean
-    flutter pub get
-    flutter run
-```
-
-Your project contains issues that can be fixed by running "dart fix" from the command line.
-
-```cmd
-    dart fix
-    dart fix --apply
-```
-
-## Mapbox
-
-(long, lat) - n word place
-   12, 12
-
-[Styles Documentation](https://docs.mapbox.com/api/maps/styles/)
-satilite view: mapbox://styles/mapbox/satellite-v9
-
-## Builing APK
-
-```cmd
-    flutter build apk
-```
-
-nav bar from dashboard should be SettingsPage not Test
-
-By pressing s while naka flutter run, maga screenshot sya sa chrome or device man
-
-## TODO
-
-making sure that .task is added
-    Attachments/
-        - gpx
-        - geotag screenshot
-        - confirmed by signature
-        - prepared by signatures
-    task or the csv data
-
-saving routes is not yet implemented (markers)
-apply algo for prediction of the path (dijkstra's algo)
-genetic algo & particle
-
-<!-- flutter pub outdated --}} knowing versions -->
-<!-- flutter pub upgrade --major-versions -->
-<!-- flutter pub upgrade -->
-
-<!-- flutter pub cache clean -->
