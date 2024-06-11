@@ -228,6 +228,7 @@ class MessagesPageState extends State<MessagesPage> {
                 child: Text(
                   'Messages',
                   style: TextStyle(
+                    color: mainColor,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
