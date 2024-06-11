@@ -209,9 +209,9 @@ class MessageDetailsPageState extends State<MessageDetailsPage> {
                                 decoration: BoxDecoration(
                                   color: message['senderId'] ==
                                           _auth.currentUser?.uid
-                                      ? const Color.fromRGBO(97, 97, 97, 1)
-                                          .withOpacity(0.85)
-                                      : mainColor,
+                                      ? mainColor
+                                      : const Color.fromRGBO(97, 97, 97, 1)
+                                          .withOpacity(0.85),
                                   borderRadius: BorderRadius.circular(32),
                                   boxShadow: [
                                     BoxShadow(

@@ -1,3 +1,188 @@
+// import '_home.dart';
+// import '../tasks/_task.dart';
+// import '../messages/_view.dart';
+// import 'package:flutter/material.dart';
+// import 'dart:ui'; // For BackdropFilter
+// import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:pcic_mobile_app/src/theme/_theme.dart';
+// // filename: dashboard_page.dart
+
+// class DashboardPage extends StatefulWidget {
+//   const DashboardPage({super.key});
+
+//   @override
+//   DashboardPageState createState() => DashboardPageState();
+// }
+
+// class DashboardPageState extends State<DashboardPage>
+//     with WidgetsBindingObserver {
+//   int _selectedIndex = 0;
+
+//   static const List<Widget> _widgetOptions = <Widget>[
+//     HomeScreen(),
+//     MessagesPage(),
+//     TaskPage(),
+//   ];
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     WidgetsBinding.instance.addObserver(this);
+//   }
+
+//   @override
+//   void dispose() {
+//     WidgetsBinding.instance.removeObserver(this);
+//     super.dispose();
+//   }
+
+//   void _onItemTapped(int index) {
+//     setState(() {
+//       _selectedIndex = index;
+//     });
+//   }
+
+//   @override
+//   Future<bool> didPopRoute() async {
+//     return await showDialog(
+//       context: context,
+//       builder: (context) => AlertDialog(
+//         title: const Text('Confirm Exit'),
+//         content: const Text('Are you sure you want to exit the app?'),
+//         actions: [
+//           TextButton(
+//             onPressed: () => Navigator.of(context).pop(false),
+//             child: const Text('Cancel'),
+//           ),
+//           TextButton(
+//             onPressed: () => Navigator.of(context).pop(true),
+//             child: const Text('Exit'),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Stack(
+//         children: [
+//           _widgetOptions.elementAt(_selectedIndex),
+//           // Positioned(
+//           //   left: 1,
+//           //   right: 1,
+//           //   bottom: 0,
+//           //   child: Stack(
+//           //     children: [
+//           //       ClipRRect(
+//           //         child: BackdropFilter(
+//           //           filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+//           //           child: Container(
+//           //             height: 70,
+//           //             color: Colors.transparent,
+//           //           ),
+//           //         ),
+//           //       ),
+//           //     ],
+//           //   ),
+//           // ),
+//           Positioned(
+//             left: 20,
+//             right: 20,
+//             bottom: 10,
+//             child: Stack(
+//               children: [
+//                 ClipRRect(
+//                   borderRadius: BorderRadius.circular(35),
+//                   child: BackdropFilter(
+//                     filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+//                     child: Container(
+//                       height: 70,
+//                       color: Colors.transparent,
+//                     ),
+//                   ),
+//                 ),
+//                 // Navbar container
+//                 CustomBottomNavBar(
+//                   selectedIndex: _selectedIndex,
+//                   onItemTapped: _onItemTapped,
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+// class CustomBottomNavBar extends StatelessWidget {
+//   final int selectedIndex;
+//   final ValueChanged<int> onItemTapped;
+
+//   const CustomBottomNavBar({
+//     super.key,
+//     required this.selectedIndex,
+//     required this.onItemTapped,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       height: 60,
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(35),
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.black.withOpacity(0.2),
+//             offset: Offset(0, 0.5),
+//             blurRadius: 16,
+//           ),
+//         ],
+//       ),
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceAround,
+//         children: <Widget>[
+//           _buildNavigationBarItem(
+//             context,
+//             iconPath: 'assets/icons/home1.svg',
+//             index: 0,
+//             // label: 'Home',
+//           ),
+//           _buildNavigationBarItem(
+//             context,
+//             iconPath: 'assets/icons/messages1.svg',
+//             index: 1,
+//             // label: 'Messages',
+//           ),
+//           _buildNavigationBarItem(
+//             context,
+//             iconPath: 'assets/icons/notes1.svg',
+//             index: 2,
+//             // label: 'Tasks',
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   Widget _buildNavigationBarItem(BuildContext context,
+//       {required String iconPath, required int index, String? label}) {
+//     bool isSelected = index == selectedIndex;
+//     return GestureDetector(
+//       onTap: () => onItemTapped(index),
+//       child: SvgPicture.asset(
+//         iconPath,
+//         width: 34,
+//         height: 34,
+//         color: isSelected ? mainColor : Colors.black.withOpacity(0.5),
+//       ),
+//     );
+//   }
+// }
+
 import '_home.dart';
 import '../tasks/_task.dart';
 import '../messages/_view.dart';
@@ -5,7 +190,8 @@ import 'package:flutter/material.dart';
 import 'dart:ui'; // For BackdropFilter
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
-// filename: dashboard_page.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -17,6 +203,7 @@ class DashboardPage extends StatefulWidget {
 class DashboardPageState extends State<DashboardPage>
     with WidgetsBindingObserver {
   int _selectedIndex = 0;
+  int _unreadMessagesCount = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
@@ -28,6 +215,7 @@ class DashboardPageState extends State<DashboardPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _getUnreadMessagesCount();
   }
 
   @override
@@ -36,9 +224,42 @@ class DashboardPageState extends State<DashboardPage>
     super.dispose();
   }
 
+  void _getUnreadMessagesCount() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return;
+
+    QuerySnapshot conversationsSnapshot = await FirebaseFirestore.instance
+        .collection('conversations')
+        .where('participants', arrayContains: currentUser.uid)
+        .get();
+
+    int unreadCount = 0;
+
+    for (var conversation in conversationsSnapshot.docs) {
+      QuerySnapshot messagesSnapshot = await FirebaseFirestore.instance
+          .collection('conversations')
+          .doc(conversation.id)
+          .collection('messages')
+          .where('seen', isEqualTo: false)
+          .where('senderId', isNotEqualTo: currentUser.uid)
+          .get();
+
+      unreadCount += messagesSnapshot.docs.length;
+    }
+
+    setState(() {
+      _unreadMessagesCount = unreadCount;
+    });
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      if (index == 1) {
+        // Reset unread messages count when navigating to MessagesPage
+        _unreadMessagesCount = 0;
+        _getUnreadMessagesCount();
+      }
     });
   }
 
@@ -69,24 +290,6 @@ class DashboardPageState extends State<DashboardPage>
       body: Stack(
         children: [
           _widgetOptions.elementAt(_selectedIndex),
-          // Positioned(
-          //   left: 1,
-          //   right: 1,
-          //   bottom: 0,
-          //   child: Stack(
-          //     children: [
-          //       ClipRRect(
-          //         child: BackdropFilter(
-          //           filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-          //           child: Container(
-          //             height: 70,
-          //             color: Colors.transparent,
-          //           ),
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
           Positioned(
             left: 20,
             right: 20,
@@ -103,10 +306,10 @@ class DashboardPageState extends State<DashboardPage>
                     ),
                   ),
                 ),
-                // Navbar container
                 CustomBottomNavBar(
                   selectedIndex: _selectedIndex,
                   onItemTapped: _onItemTapped,
+                  unreadMessagesCount: _unreadMessagesCount,
                 ),
               ],
             ),
@@ -120,11 +323,13 @@ class DashboardPageState extends State<DashboardPage>
 class CustomBottomNavBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onItemTapped;
+  final int unreadMessagesCount;
 
   const CustomBottomNavBar({
     super.key,
     required this.selectedIndex,
     required this.onItemTapped,
+    required this.unreadMessagesCount,
   });
 
   @override
@@ -149,19 +354,20 @@ class CustomBottomNavBar extends StatelessWidget {
             context,
             iconPath: 'assets/icons/home1.svg',
             index: 0,
-            // label: 'Home',
+            label: 'Home',
           ),
           _buildNavigationBarItem(
             context,
             iconPath: 'assets/icons/messages1.svg',
             index: 1,
-            // label: 'Messages',
+            label: 'Messages',
+            unreadCount: unreadMessagesCount,
           ),
           _buildNavigationBarItem(
             context,
             iconPath: 'assets/icons/notes1.svg',
             index: 2,
-            // label: 'Tasks',
+            label: 'Tasks',
           ),
         ],
       ),
@@ -169,15 +375,46 @@ class CustomBottomNavBar extends StatelessWidget {
   }
 
   Widget _buildNavigationBarItem(BuildContext context,
-      {required String iconPath, required int index, String? label}) {
+      {required String iconPath,
+      required int index,
+      String? label,
+      int unreadCount = 0}) {
     bool isSelected = index == selectedIndex;
     return GestureDetector(
       onTap: () => onItemTapped(index),
-      child: SvgPicture.asset(
-        iconPath,
-        width: 34,
-        height: 34,
-        color: isSelected ? mainColor : Colors.black.withOpacity(0.5),
+      child: Stack(
+        children: [
+          SvgPicture.asset(
+            iconPath,
+            width: 34,
+            height: 34,
+            color: isSelected ? mainColor : Colors.black.withOpacity(0.5),
+          ),
+          if (unreadCount > 0 && index == 1)
+            Positioned(
+              right: 0,
+              top: 0,
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                constraints: const BoxConstraints(
+                  minWidth: 16,
+                  minHeight: 16,
+                ),
+                child: Text(
+                  unreadCount.toString(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
