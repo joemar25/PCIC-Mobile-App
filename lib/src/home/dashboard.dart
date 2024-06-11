@@ -90,7 +90,7 @@ class DashboardPageState extends State<DashboardPage>
           Positioned(
             left: 20,
             right: 20,
-            bottom: 5,
+            bottom: 10,
             child: Stack(
               children: [
                 ClipRRect(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MessageDetailsPage extends StatefulWidget {
   final Map<String, dynamic> message;
@@ -39,15 +40,33 @@ class MessageDetailsPageState extends State<MessageDetailsPage> {
 
     List<Map<String, dynamic>> fetchedMessages = snapshot.docs.map((doc) {
       return {
+        'messageId': doc.id,
         'message': doc.get('message') ?? '',
         'timestamp': doc.get('timestamp') ?? Timestamp.now(),
         'senderId': doc.get('senderId') ?? '',
+        'seen': doc.get('seen') ?? false,
       };
     }).toList();
 
     setState(() {
       _userMessages.addAll(fetchedMessages);
     });
+
+    // Mark messages as seen
+    for (var message in fetchedMessages) {
+      if (message['senderId'] != currentUser.uid && !message['seen']) {
+        _markMessageAsSeen(conversationId, message['messageId']);
+      }
+    }
+  }
+
+  void _markMessageAsSeen(String conversationId, String messageId) async {
+    await _firestore
+        .collection('conversations')
+        .doc(conversationId)
+        .collection('messages')
+        .doc(messageId)
+        .update({'seen': true});
   }
 
   void _sendMessage() async {
@@ -78,6 +97,7 @@ class MessageDetailsPageState extends State<MessageDetailsPage> {
           'message': message,
           'timestamp': FieldValue.serverTimestamp(),
           'senderId': currentUser.uid,
+          'seen': false, // Initialize as unseen
         });
         debugPrint("Message added to Firestore");
 
@@ -93,6 +113,7 @@ class MessageDetailsPageState extends State<MessageDetailsPage> {
             'message': message,
             'timestamp': Timestamp.now(),
             'senderId': currentUser.uid,
+            'seen': false, // Initialize as unseen
           });
           _messageController.clear();
         });
@@ -108,55 +129,63 @@ class MessageDetailsPageState extends State<MessageDetailsPage> {
     return user1.compareTo(user2) < 0 ? '$user1-$user2' : '$user2-$user1';
   }
 
+  Future<bool> _onWillPop() async {
+    Navigator.pop(context, true);
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        iconTheme: const IconThemeData(color: mainColor),
-        title: Center(
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      widget.message['name'],
-                      style: const TextStyle(
-                        color: mainColor,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Poppins',
-                        fontSize: 24.0,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          iconTheme: const IconThemeData(color: mainColor),
+          title: Center(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.message['name'],
+                        style: const TextStyle(
+                          color: mainColor,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Poppins',
+                          fontSize: 24.0,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 32),
-            ],
+                const SizedBox(width: 32),
+              ],
+            ),
           ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                reverse: true,
-                itemCount: _userMessages.length,
-                itemBuilder: (context, index) {
-                  final message =
-                      _userMessages[_userMessages.length - 1 - index];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Align(
-                      alignment: message['senderId'] == _auth.currentUser?.uid
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  reverse: true,
+                  itemCount: _userMessages.length,
+                  itemBuilder: (context, index) {
+                    final message =
+                        _userMessages[_userMessages.length - 1 - index];
+                    bool isSeen = message['seen'];
+
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
                       child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment:
+                            message['senderId'] == _auth.currentUser?.uid
+                                ? MainAxisAlignment.end
+                                : MainAxisAlignment.start,
                         children: [
                           if (message['senderId'] != _auth.currentUser?.uid)
                             ClipOval(
@@ -169,89 +198,109 @@ class MessageDetailsPageState extends State<MessageDetailsPage> {
                             ),
                           if (message['senderId'] != _auth.currentUser?.uid)
                             const SizedBox(width: 8.0),
-                          Container(
-                            padding: const EdgeInsets.all(16.0),
-                            decoration: BoxDecoration(
-                              color:
-                                  message['senderId'] == _auth.currentUser?.uid
+                          Column(
+                            crossAxisAlignment:
+                                message['senderId'] == _auth.currentUser?.uid
+                                    ? CrossAxisAlignment.end
+                                    : CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(16.0),
+                                decoration: BoxDecoration(
+                                  color: message['senderId'] ==
+                                          _auth.currentUser?.uid
                                       ? const Color.fromRGBO(97, 97, 97, 1)
                                           .withOpacity(0.85)
                                       : mainColor,
-                              borderRadius: BorderRadius.circular(32),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.2),
-                                  spreadRadius: 2,
-                                  blurRadius: 10,
-                                  offset: const Offset(4, 5),
+                                  borderRadius: BorderRadius.circular(32),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.2),
+                                      spreadRadius: 2,
+                                      blurRadius: 10,
+                                      offset: const Offset(4, 5),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            child: Text(
-                              message['message'],
-                              style: const TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w300,
-                                fontFamily: 'Inter',
-                                color: Colors.white,
+                                child: Text(
+                                  message['message'],
+                                  style: const TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w300,
+                                    fontFamily: 'Inter',
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              if (message['senderId'] ==
+                                      _auth.currentUser?.uid &&
+                                  isSeen)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: SvgPicture.asset(
+                                    'assets/icons/seen.svg',
+                                    width: 20,
+                                    height: 20,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).viewInsets.top,
+                ),
+                child: Container(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 24, 0, 0),
+                    child: Container(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(32),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _messageController,
+                              decoration: const InputDecoration(
+                                hintText: 'Reply here... ',
+                                hintStyle: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w300,
+                                ),
+                                border: InputBorder.none,
                               ),
                             ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.arrow_upward_sharp),
+                            onPressed: _sendMessage,
+                            color: mainColor,
                           ),
                         ],
                       ),
                     ),
-                  );
-                },
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).viewInsets.top,
-              ),
-              child: Container(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 24, 0, 0),
-                  child: Container(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(32),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 5,
-                          blurRadius: 7,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _messageController,
-                            decoration: const InputDecoration(
-                              hintText: 'Reply here... ',
-                              hintStyle: TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
-                              ),
-                              border: InputBorder.none,
-                            ),
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.arrow_upward_sharp),
-                          onPressed: _sendMessage,
-                          color: mainColor,
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
