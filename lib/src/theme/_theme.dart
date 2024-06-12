@@ -88,10 +88,10 @@ class CustomThemeExtension extends ThemeExtension<CustomThemeExtension> {
 
 // COLORS
 
-// green
-
+// Green
 const mainColor = Color(0xFF0F7D40);
-// const mainColor = Color.fromARGB(255, 47, 184, 109);
+//Light Green
+const secondaryColor = Color.fromARGB(255, 206, 240, 199);
 
 const shadowMainColor = Color(0xFFD2FFCB);
 
