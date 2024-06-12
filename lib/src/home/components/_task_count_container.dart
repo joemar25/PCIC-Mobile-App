@@ -63,8 +63,8 @@ class _TaskCountContainerState extends State<TaskCountContainer> {
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
-                      offset: const Offset(0, 0.5),
-                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                      blurRadius: 4,
                     ),
                   ],
                 ),
@@ -85,8 +85,8 @@ class _TaskCountContainerState extends State<TaskCountContainer> {
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
-                      offset: const Offset(0, 0.5),
-                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                      blurRadius: 4,
                     ),
                   ],
                 ),

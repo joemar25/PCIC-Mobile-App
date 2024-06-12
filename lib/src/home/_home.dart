@@ -172,6 +172,7 @@ class HomeScreenState extends State<HomeScreen> {
                     child: Text(
                       'Recent Tasks',
                       style: TextStyle(
+                        color: mainColor,
                         fontSize: t?.headline ?? 20.0,
                         fontWeight: FontWeight.w500,
                       ),
