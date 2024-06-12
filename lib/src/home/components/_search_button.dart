@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
+// import 'package:lottie/lottie.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class SearchButton extends StatefulWidget {
@@ -68,6 +68,10 @@ class _SearchButtonState extends State<SearchButton> {
                     });
                   },
                   textAlign: TextAlign.left,
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: t?.caption,
+                  ),
                   decoration: InputDecoration(
                     hintText: 'Search Task',
                     hintStyle:
@@ -92,10 +96,10 @@ class _SearchButtonState extends State<SearchButton> {
                     suffixIcon: Padding(
                       padding: const EdgeInsetsDirectional.only(end: 12.0),
                       child: _isSearching
-                          ? Lottie.asset(
-                              'assets/animations/search.json',
-                              width: 45,
-                              height: 45,
+                          ? const Icon(
+                              Icons.search,
+                              color: Colors.black38,
+                              size: 30,
                             )
                           : const Icon(
                               Icons.search,
