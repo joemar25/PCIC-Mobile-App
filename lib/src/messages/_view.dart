@@ -900,7 +900,7 @@ class MessagesPageState extends State<MessagesPage> {
                   'Messages',
                   style: TextStyle(
                     color: mainColor,
-                    fontSize: 24,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -968,7 +968,7 @@ class MessagesPageState extends State<MessagesPage> {
                                 'assets/icons/seen.svg',
                                 width: 20,
                                 height: 20,
-                                color: Colors.green,
+                                color: mainColor,
                               ),
                             ),
                         ],

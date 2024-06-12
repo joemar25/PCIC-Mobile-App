@@ -188,10 +188,14 @@ class TaskDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
+        iconTheme: const IconThemeData(
+          color: mainColor, // Change the back button color here
+        ),
         title: Text(
           'Task Details',
           style: TextStyle(
-            fontSize: t?.title ?? 14.0,
+            color: mainColor,
+            fontSize: t?.title ?? 20,
             fontWeight: FontWeight.bold,
           ),
         ),

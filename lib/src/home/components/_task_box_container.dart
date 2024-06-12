@@ -53,11 +53,11 @@ class _TaskCountBoxState extends State<TaskCountBox> {
     Color containerColor, circleColor;
     String imagePath;
     if (widget.label == 'Completed') {
-      containerColor = const Color.fromARGB(255, 206, 240, 199);
+      containerColor = Colors.white;
       circleColor = mainColor;
       imagePath = 'assets/icons/done.svg';
     } else {
-      containerColor = const Color.fromARGB(255, 206, 240, 199);
+      containerColor = Colors.white;
       circleColor = mainColor;
       imagePath = 'assets/icons/notdone.svg';
     }

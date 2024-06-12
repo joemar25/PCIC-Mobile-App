@@ -64,11 +64,14 @@ class TaskPageState extends State<TaskPage> {
     return Scaffold(
       appBar: AppBar(
         leading: null,
+        iconTheme: const IconThemeData(
+          color: mainColor, // Change the back button color here
+        ),
         title: Text(
           title,
           textAlign: TextAlign.center,
           style: const TextStyle(
-              color: mainColor, fontSize: 24, fontWeight: FontWeight.w600),
+              color: mainColor, fontSize: 22, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
