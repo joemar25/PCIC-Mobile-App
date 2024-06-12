@@ -230,16 +230,17 @@ class _FilterButtonState extends State<FilterButton> {
         padding: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
-          side: const BorderSide(
-            color: Colors.black38,
-            width: 0.5,
-          ),
+          // side: const BorderSide(
+          //   color: Colors.black38,
+          //   width: 1,
+          // ),
         ),
-        elevation: 3,
-        shadowColor: Colors.black,
+        elevation: 3, // Custom elevation for shadow effect
+        shadowColor: Colors.grey.withOpacity(0.7), // Custom shadow color
       ),
       child: SvgPicture.asset(
         'assets/storage/images/filter.svg',
+        color: mainColor,
         height: 35,
         width: 35,
       ),

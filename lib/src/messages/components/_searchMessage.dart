@@ -94,12 +94,12 @@ class _SearchMessageButtonState extends State<SearchMessageButton> {
                       child: _isSearching
                           ? const Icon(
                               Icons.search,
-                              color: Colors.black38,
+                              color: Colors.grey,
                               size: 30,
                             )
                           : const Icon(
                               Icons.search,
-                              color: Colors.black38,
+                              color: Colors.grey,
                               size: 30,
                             ),
                     ),
