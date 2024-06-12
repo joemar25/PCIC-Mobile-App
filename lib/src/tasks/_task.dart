@@ -1,5 +1,6 @@
 // filename: _task.dart
 import 'package:flutter/material.dart';
+import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'controllers/task_manager.dart';
 import 'components/_task_view.dart';
 import 'package:lottie/lottie.dart';
@@ -66,7 +67,8 @@ class TaskPageState extends State<TaskPage> {
         title: Text(
           title,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 19.2, fontWeight: FontWeight.w600),
+          style: const TextStyle(
+              color: mainColor, fontSize: 24, fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
       ),
@@ -85,7 +87,7 @@ class TaskPageState extends State<TaskPage> {
                       const SizedBox(height: 16),
                       Text(
                         'No ${_initialFilter.toLowerCase()} tasks available.',
-                        style: const TextStyle(fontSize: 16),
+                        style: const TextStyle(color: mainColor, fontSize: 16),
                       ),
                     ],
                   ),
