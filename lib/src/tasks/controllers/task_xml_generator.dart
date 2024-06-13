@@ -1,11 +1,12 @@
 // task_xml_generator.dart
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dart_ipify/dart_ipify.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
-import 'package:xml/xml.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:xml/xml.dart';
 
 import 'task_manager.dart';
 
@@ -1400,7 +1401,8 @@ Future<String> generateTaskXmlContent(String taskId) async {
             });
             builder.element('Options', nest: '');
             builder.element('Sequence', nest: '7');
-            builder.element('Type', nest: ppirMobileNo);
+            builder.element('Type', nest: 'Text');
+            builder.element('Value', nest: ppirMobileNo);
           });
 
           builder.element('FormFieldZipModel', nest: () {
@@ -2315,7 +2317,8 @@ Future<String> generateTaskXmlContent(String taskId) async {
             });
             builder.element('Options', nest: '');
             builder.element('Sequence', nest: '46');
-            builder.element('Type', nest: ppirSvpAci);
+            builder.element('Type', nest: 'Text');
+            builder.element('Value', nest: ppirSvpAci);
           });
 
           builder.element('FormFieldZipModel', nest: () {
