@@ -165,8 +165,15 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       isSubmitting = true;
     });
 
-    if (!_formSectionKey.currentState!.validate() ||
-        !_signatureSectionKey.currentState!.validate()) {
+    final isFormSectionValid =
+        _formSectionKey.currentState?.validate() ?? false;
+    final isSignatureSectionValid =
+        _signatureSectionKey.currentState?.validate() ?? false;
+
+    debugPrint('Form Section Valid: $isFormSectionValid');
+    debugPrint('Signature Section Valid: $isSignatureSectionValid');
+
+    if (!isFormSectionValid || !isSignatureSectionValid) {
       showFlashMessage(context, 'Info', 'Validation Failed',
           'Please fill in all required fields.');
       setState(() {
@@ -183,9 +190,9 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       final signatureData =
           await _signatureSectionKey.currentState?.getSignatureData() ?? {};
 
-      _taskData['ppirNameInsured'] = signatureData['ppirNameInsured'];
-      _taskData['ppirNameIuia'] = signatureData['ppirNameIuia'];
+      debugPrint('Signature Data: $signatureData');
 
+      // Ensure required signature data
       if (signatureData['ppirSigInsured'] == null ||
           signatureData['ppirNameInsured']?.trim().isEmpty == true ||
           signatureData['ppirSigIuia'] == null ||
@@ -198,38 +205,17 @@ class PPIRFormPageState extends State<PPIRFormPage> {
         return;
       }
 
-      final enabledFieldKeys = _taskData.keys.where((key) {
-        return key != 'trackLastcoord' &&
-            key != 'trackTotalarea' &&
-            key != 'trackDatetime' &&
-            key != 'trackTotaldistance' &&
-            key != 'ppirRemarks';
-      }).toList();
+      _taskData['ppirNameInsured'] = signatureData['ppirNameInsured'];
+      _taskData['ppirNameIuia'] = signatureData['ppirNameIuia'];
+      _taskData['ppirSigInsured'] = signatureData['ppirSigInsured'];
+      _taskData['ppirSigIuia'] = signatureData['ppirSigIuia'];
 
-      bool hasEmptyEnabledFields = enabledFieldKeys.any((key) =>
-          _taskData[key] == null || _taskData[key].toString().trim().isEmpty);
-
-      if (hasEmptyEnabledFields) {
-        showFlashMessage(context, 'Info', 'Form Fields',
-            'Please fill in all required fields');
-        setState(() {
-          isSaving = false;
-        });
-        return;
-      }
-
+      // Populate form data
       _taskData['trackTotalarea'] = _areaInHectaresController.text;
       _taskData['trackDatetime'] = _areaPlantedController.text;
-      _taskData['trackLastcoord'] = _taskData['trackLastcoord'];
       _taskData['trackTotaldistance'] = _totalDistanceController.text;
       _taskData['ppirFarmLoc'] = _farmLocationController.text;
       _taskData['ppirRemarks'] = _taskData['ppirRemarks'] ?? 'no value';
-      _taskData['ppirSigInsured'] =
-          signatureData['ppirSigInsured'] ?? 'no value';
-      _taskData['ppirNameInsured'] =
-          signatureData['ppirNameInsured'] ?? 'no value';
-      _taskData['ppirSigIuia'] = signatureData['ppirSigIuia'] ?? 'no value';
-      _taskData['ppirNameIuia'] = signatureData['ppirNameIuia'] ?? 'no value';
       _taskData['ppirSvpAct'] = selectedSeedType;
       _taskData['ppirVariety'] = selectedSeedId != null
           ? seedTitleToIdMap.entries
@@ -244,19 +230,19 @@ class PPIRFormPageState extends State<PPIRFormPage> {
         _taskData['ppirDopdsAci'] =
             convertDateFormat(_taskData['ppirDopdsAci']);
       }
-
       if (_taskData['ppirDoptpAci'] != null &&
           _taskData['ppirDoptpAci'].isNotEmpty) {
         _taskData['ppirDoptpAci'] =
             convertDateFormat(_taskData['ppirDoptpAci']);
       }
 
+      debugPrint('Task Data Before Update: $_taskData');
+
       await widget.task.updateTaskData(_taskData);
 
       final filename = await widget.task.filename;
       if (filename != null) {
         await StorageService.saveTaskFileToFirebaseStorage(widget.task.taskId);
-
         await StorageService.compressAndUploadTaskFiles(
             filename, widget.task.taskId);
       }
@@ -283,15 +269,23 @@ class PPIRFormPageState extends State<PPIRFormPage> {
   }
 
   String convertDateFormat(String dateStr) {
-    try {
-      DateTime parsedDate = DateFormat('MMM dd, yyyy').parse(dateStr);
-      debugPrint('Parsed date: $parsedDate');
-      return DateFormat('MM-dd-yyyy').format(parsedDate);
-    } catch (e) {
-      // Log the error or handle it as needed
-      debugPrint('Error parsing date: $e');
-      return dateStr; // Return the original string if parsing fails
+    List<String> dateFormats = ['MMM dd, yyyy', 'MM-dd-yyyy', 'yyyy-MM-dd'];
+
+    for (String format in dateFormats) {
+      try {
+        DateTime parsedDate = DateFormat(format).parse(dateStr);
+        debugPrint('Parsed date with format $format: $parsedDate');
+        return DateFormat('MM-dd-yyyy').format(
+            DateTime(parsedDate.year, parsedDate.month, parsedDate.day));
+      } catch (e) {
+        // Continue to the next format if parsing fails
+        debugPrint('Error parsing date with format $format: $e');
+      }
     }
+
+    // Log the error if no formats matched
+    debugPrint('Error: No matching format found for date: $dateStr');
+    return dateStr; // Return the original string if parsing fails
   }
 
   Future<void> _saveForm() async {
