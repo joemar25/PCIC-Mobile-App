@@ -9,14 +9,15 @@ class FormSection extends StatefulWidget {
   final int? selectedSeedId;
   final ValueChanged<int?> onSelectedSeedIdChanged;
 
-  const FormSection(
-      {super.key,
-      required this.formData,
-      required this.uniqueSeedsItems,
-      required this.seedTitleToIdMap,
-      required this.isSubmitting,
-      required this.selectedSeedId,
-      required this.onSelectedSeedIdChanged});
+  const FormSection({
+    super.key,
+    required this.formData,
+    required this.uniqueSeedsItems,
+    required this.seedTitleToIdMap,
+    required this.isSubmitting,
+    required this.selectedSeedId,
+    required this.onSelectedSeedIdChanged,
+  });
 
   @override
   FormSectionState createState() => FormSectionState();
@@ -71,29 +72,45 @@ class FormSectionState extends State<FormSection> {
 
   void _setupListeners() {
     _ppirNameInsuredController.addListener(() {
-      setState(() {});
+      setState(() {
+        widget.formData['ppirNameInsured'] = _ppirNameInsuredController.text;
+      });
     });
     _ppirNameIuiaController.addListener(() {
-      setState(() {});
+      setState(() {
+        widget.formData['ppirNameIuia'] = _ppirNameIuiaController.text;
+      });
     });
     _ppirAreaController.addListener(() {
-      setState(() {});
+      setState(() {
+        widget.formData['ppirAreaAct'] = _ppirAreaController.text;
+      });
     });
     _remarksController.addListener(() {
-      setState(() {});
+      setState(() {
+        widget.formData['ppirRemarks'] = _remarksController.text;
+      });
     });
     _ppirDopdsActController.addListener(() {
-      setState(() {});
+      setState(() {
+        widget.formData['ppirDopdsAct'] = _ppirDopdsActController.text;
+      });
     });
     _ppirDoptpActController.addListener(() {
-      setState(() {});
+      setState(() {
+        widget.formData['ppirDoptpAct'] = _ppirDoptpActController.text;
+      });
     });
   }
 
   Future<void> _pickDate(BuildContext context, String key) async {
     DateTime initialDate = DateTime.now();
     if (widget.formData[key] != null && widget.formData[key].isNotEmpty) {
-      initialDate = DateTime.parse(widget.formData[key]);
+      try {
+        initialDate = DateFormat('MM-dd-yyyy').parse(widget.formData[key]);
+      } catch (e) {
+        initialDate = DateTime.now();
+      }
     }
 
     final DateTime? picked = await showDatePicker(
@@ -265,6 +282,9 @@ class FormSectionState extends State<FormSection> {
   }
 
   bool validate() {
-    return _formKey.currentState?.validate() ?? false;
+    bool isValid = _formKey.currentState?.validate() ?? false;
+
+    debugPrint('Form Section Validation: $isValid');
+    return isValid;
   }
 }
