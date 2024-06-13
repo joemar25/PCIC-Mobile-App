@@ -402,7 +402,7 @@ class TaskDetailsPage extends StatelessWidget {
                           _buildFormField(context, 'Area Planted',
                               formData['ppirAreaAct']?.toString()),
                           _buildFormField(context, 'Seed Variety',
-                              formData['ppirSvpAct']?.toString()),
+                              formData['ppirVariety']?.toString()),
                           _buildFormField(
                             context,
                             'Actual Date of Planting (DS)',
