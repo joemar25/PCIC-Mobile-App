@@ -45,7 +45,8 @@ class _SearchMessageButtonState extends State<SearchMessageButton> {
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(32.0),
+                borderRadius:
+                    BorderRadius.circular(8.0), // Changed from 32.0 to 8.0
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.2),
@@ -56,7 +57,8 @@ class _SearchMessageButtonState extends State<SearchMessageButton> {
                 ],
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(32.0),
+                borderRadius:
+                    BorderRadius.circular(8.0), // Changed from 32.0 to 8.0
                 child: TextField(
                   controller: _controller,
                   onChanged: (value) {
@@ -82,12 +84,14 @@ class _SearchMessageButtonState extends State<SearchMessageButton> {
                     focusedBorder: OutlineInputBorder(
                       borderSide:
                           const BorderSide(color: Colors.white, width: 0.2),
-                      borderRadius: BorderRadius.circular(32.0),
+                      borderRadius: BorderRadius.circular(
+                          8.0), // Changed from 32.0 to 8.0
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide:
                           const BorderSide(color: Colors.white, width: 0.2),
-                      borderRadius: BorderRadius.circular(32.0),
+                      borderRadius: BorderRadius.circular(
+                          8.0), // Changed from 32.0 to 8.0
                     ),
                     suffixIcon: Padding(
                       padding: const EdgeInsetsDirectional.only(end: 12.0),

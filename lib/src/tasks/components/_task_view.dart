@@ -733,10 +733,11 @@ class TaskContainerState extends State<TaskView> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 21.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(
                   mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     FilterButton(
                       onUpdateState: _updateStatusFilter,
