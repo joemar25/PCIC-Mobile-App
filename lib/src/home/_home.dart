@@ -93,10 +93,6 @@ class HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> _onRefresh() async {
-    await _fetchTasks();
-  }
-
   Future<void> startSync() async {
     setState(() {
       _isSyncing = true;
@@ -145,17 +141,10 @@ class HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.only(bottom: 8.0, left: 6.0),
           child: HomeHeader(onLogout: _handleLogout),
         ),
-        actions: [
-          IconButton(
-            color: Colors.white,
-            icon: const Icon(Icons.sync),
-            onPressed: _isSyncing ? null : startSync,
-          ),
-        ],
       ),
       body: RefreshIndicator(
         backgroundColor: Colors.white,
-        onRefresh: _onRefresh,
+        onRefresh: startSync,
         child: Padding(
           padding: const EdgeInsets.only(bottom: 90.0),
           child: SingleChildScrollView(
