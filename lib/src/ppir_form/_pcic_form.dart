@@ -354,22 +354,68 @@ class PPIRFormPageState extends State<PPIRFormPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Unsaved Changes'),
-        content: const Text(
-            'You have unsaved changes. If you go back, your data will not be saved.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Text('Leave', style: TextStyle(color: Colors.red)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        backgroundColor: Colors.white,
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 20.0, horizontal: 24.0),
+        title: const Text(
+          'UNSAVED CHANGES!',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            color: mainColor,
           ),
-          TextButton(
-            onPressed: () {
-              _saveForm();
-            },
-            child: const Text('Save', style: TextStyle(color: mainColor)),
+        ),
+        content: const Text(
+          'You have unsaved changes. If you go back, your data will not be saved.',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 16.0),
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    'Leave',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: mainColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    _saveForm();
+                  },
+                  child: const Text(
+                    'Save',
+                    style: TextStyle(
+                      color: mainColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
