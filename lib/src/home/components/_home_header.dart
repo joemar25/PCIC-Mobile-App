@@ -130,14 +130,14 @@ class _HomeHeaderState extends State<HomeHeader> {
                     ? Image.network(
                         profilePicUrl,
                         fit: BoxFit.cover,
-                        width: 48,
-                        height: 48,
+                        width: 42,
+                        height: 42,
                       )
                     : Image.asset(
                         'assets/storage/images/default.png',
                         fit: BoxFit.cover,
-                        width: 48,
-                        height: 48,
+                        width: 42,
+                        height: 42,
                       ),
               ),
             ),
