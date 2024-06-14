@@ -29,196 +29,205 @@ class _FilterButtonState extends State<FilterButton> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
+        return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
+            borderRadius: BorderRadius.circular(12.0),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 30,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: mainColor,
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                  ),
+          backgroundColor: Colors.white,
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 20.0, horizontal: 24.0),
+          title: const Text(
+            'FILTER & SORT',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+              color: mainColor,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Filter By:',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
                 ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Filter By:',
-                      style: TextStyle(
-                          fontSize: Theme.of(context)
-                              .extension<CustomThemeExtension>()
-                              ?.title,
-                          fontWeight: FontWeight.w600),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child:
-                          SvgPicture.asset('assets/storage/images/close.svg'),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
+              ),
+              const SizedBox(height: 10.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
                       onPressed: () {
                         _setFilter('Ongoing');
                       },
-                      style: TextButton.styleFrom(
-                        backgroundColor: const Color(0xFF87CEFA),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFD9F7FA),
                         shape: RoundedRectangleBorder(
-                          side: const BorderSide(
-                            color: Colors.black,
-                            width: 0.5,
-                            style: BorderStyle.solid,
-                          ),
-                          borderRadius: BorderRadius.circular(5.0),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Ongoing',
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: Theme.of(context)
-                              .extension<CustomThemeExtension>()
-                              ?.overline,
-                          fontWeight: FontWeight.w500,
+                          color: Colors.black54,
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 5.0),
-                    TextButton(
+                  ),
+                  const SizedBox(width: 10.0),
+                  Expanded(
+                    child: ElevatedButton(
                       onPressed: () {
                         _setFilter('For Dispatch');
                       },
-                      style: TextButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF4500),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
                         shape: RoundedRectangleBorder(
-                          side: const BorderSide(
-                            color: Colors.black,
-                            width: 0.5,
-                            style: BorderStyle.solid,
-                          ),
-                          borderRadius: BorderRadius.circular(5.0),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'For Dispatch',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: Theme.of(context)
-                              .extension<CustomThemeExtension>()
-                              ?.overline,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 5.0),
-                    TextButton(
-                      onPressed: () {
-                        _setFilter('Completed');
-                      },
-                      style: TextButton.styleFrom(
-                        backgroundColor: mainColor,
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(
-                            color: Colors.black,
-                            width: 0.5,
-                            style: BorderStyle.solid,
-                          ),
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                      ),
-                      child: Text(
-                        'Completed',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: Theme.of(context)
-                              .extension<CustomThemeExtension>()
-                              ?.overline,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10.0),
+              ElevatedButton(
+                onPressed: () {
+                  _setFilter('Completed');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: mainColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
-                const SizedBox(height: 10.0),
-                const Text(
-                  'Sort By:',
-                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
+                child: const Text(
+                  'Completed',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
+              ),
+              const SizedBox(height: 20.0),
+              const Text(
+                'Sort By:',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 10.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
                       onPressed: () {
                         _setOrderBy('Date Added');
                       },
-                      style: TextButton.styleFrom(
+                      style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFD9F7FA),
                         shape: RoundedRectangleBorder(
-                          side: const BorderSide(
-                            color: Colors.black,
-                            width: 0.5,
-                            style: BorderStyle.solid,
-                          ),
-                          borderRadius: BorderRadius.circular(5.0),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Date Added',
                         style: TextStyle(
-                          color: Colors.black,
-                          fontSize: Theme.of(context)
-                              .extension<CustomThemeExtension>()
-                              ?.overline,
-                          fontWeight: FontWeight.w500,
+                          color: Colors.black54,
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 5.0),
-                    TextButton(
+                  ),
+                  const SizedBox(width: 10.0),
+                  Expanded(
+                    child: ElevatedButton(
                       onPressed: () {
                         _setOrderBy('Date Accessed');
                       },
-                      style: TextButton.styleFrom(
+                      style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFD9F7FA),
                         shape: RoundedRectangleBorder(
-                          side: const BorderSide(
-                            color: Colors.black,
-                            width: 0.5,
-                            style: BorderStyle.solid,
-                          ),
-                          borderRadius: BorderRadius.circular(5.0),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Date Access',
                         style: TextStyle(
-                          color: Colors.black,
-                          fontSize: Theme.of(context)
-                              .extension<CustomThemeExtension>()
-                              ?.overline,
-                          fontWeight: FontWeight.w500,
+                          color: Colors.black54,
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                  ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: mainColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      // Apply filter and sort logic here
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'Apply',
+                      style: TextStyle(
+                        color: mainColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
-          ),
+          ],
         );
       },
     );

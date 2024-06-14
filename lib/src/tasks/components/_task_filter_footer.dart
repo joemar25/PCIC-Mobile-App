@@ -38,15 +38,16 @@ class _FilterFooterState extends State<FilterFooter> {
         children: [
           Text(
             'Applied Filter:',
-            style:
-                TextStyle(fontSize: t?.overline, fontWeight: FontWeight.w600),
+            style: TextStyle(
+                color: Colors.black54,
+                fontSize: t?.overline,
+                fontWeight: FontWeight.w600),
           ),
           const SizedBox(width: 4.0),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             decoration: BoxDecoration(
               color: _filterColors[widget.filter],
-              border: Border.all(width: 0.5),
               borderRadius: BorderRadius.circular(15.0),
             ),
             child: Text(
@@ -54,27 +55,31 @@ class _FilterFooterState extends State<FilterFooter> {
               style: TextStyle(
                 color: _filterTextColors[widget.filter],
                 fontSize: 11.24,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
           const SizedBox(width: 4.0),
           Text(
             'Order by:',
-            style:
-                TextStyle(fontSize: t?.overline, fontWeight: FontWeight.w600),
+            style: TextStyle(
+                color: Colors.black54,
+                fontSize: t?.overline,
+                fontWeight: FontWeight.w600),
           ),
           const SizedBox(width: 4.0),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(width: 0.5),
+              color: const Color(0xFFD9F7FA),
               borderRadius: BorderRadius.circular(15.0),
             ),
             child: Text(
               widget.orderBy,
-              style: const TextStyle(fontSize: 11.24),
+              style: const TextStyle(
+                  color: Colors.black54,
+                  fontSize: 11.24,
+                  fontWeight: FontWeight.bold),
             ),
           ),
         ],
