@@ -509,6 +509,17 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                     ),
                   ),
                   centerTitle: true,
+                  actions: [
+                    TextButton(
+                        onPressed: _saveForm,
+                        child: const Text(
+                          'Save',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.normal),
+                        )),
+                  ],
                 ),
                 body: SingleChildScrollView(
                   padding: const EdgeInsets.all(16.0),
@@ -662,7 +673,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                 bottomNavigationBar: BottomAppBar(
                   elevation: 0,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       ElevatedButton(
                         onPressed: _cancelForm,
@@ -671,14 +682,6 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                           foregroundColor: Colors.white,
                         ),
                         child: const Text('Cancel'),
-                      ),
-                      ElevatedButton(
-                        onPressed: _saveForm,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: mainColor,
-                          foregroundColor: Colors.white,
-                        ),
-                        child: const Text('Save'),
                       ),
                       ElevatedButton(
                         onPressed: () => _submitForm(context),
