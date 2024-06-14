@@ -54,7 +54,7 @@ class _GeoTagBottomSheetState extends State<GeoTagBottomSheet> {
                   width: 30,
                   height: 5,
                   decoration: BoxDecoration(
-                      color: const Color(0xFF0F7D40),
+                      color: mainColor,
                       borderRadius: BorderRadius.circular(30.0))),
             ),
           ),
@@ -75,9 +75,8 @@ class _GeoTagBottomSheetState extends State<GeoTagBottomSheet> {
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(0, 60),
                         shape: const CircleBorder(),
-                        backgroundColor: widget.isRoutingStarted
-                            ? null
-                            : const Color(0xFF0F7D40),
+                        backgroundColor:
+                            widget.isRoutingStarted ? null : mainColor,
                       ),
                       child: SizedBox(
                           height: 35,
@@ -138,7 +137,7 @@ class _GeoTagBottomSheetState extends State<GeoTagBottomSheet> {
                         minimumSize: const Size(0, 60),
                         shape: const CircleBorder(),
                         backgroundColor: widget.isRoutingStarted
-                            ? const Color(0xFF0F7D40)
+                            ? Colors.red
                             : Colors.white60,
                       ),
                       child: SizedBox(
@@ -174,8 +173,7 @@ class _GeoTagBottomSheetState extends State<GeoTagBottomSheet> {
               width: 35,
               child: SvgPicture.asset(
                 'assets/storage/images/navigate.svg',
-                colorFilter:
-                    const ColorFilter.mode(Color(0xFF0F7D40), BlendMode.srcIn),
+                colorFilter: const ColorFilter.mode(mainColor, BlendMode.srcIn),
               ),
             ),
             const SizedBox(width: 8.0),
@@ -184,11 +182,10 @@ class _GeoTagBottomSheetState extends State<GeoTagBottomSheet> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Address',
+                    'ADDRESS',
                     style: TextStyle(
-                      fontSize: 11.11,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF797C7B),
+                      color: mainColor,
                     ),
                   ),
                   Text(
@@ -196,7 +193,7 @@ class _GeoTagBottomSheetState extends State<GeoTagBottomSheet> {
                     style: TextStyle(
                       fontSize: t?.caption ?? 14.0,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Colors.black54,
                     ),
                   ),
                 ],
@@ -209,8 +206,7 @@ class _GeoTagBottomSheetState extends State<GeoTagBottomSheet> {
               width: 35,
               child: SvgPicture.asset(
                 'assets/storage/images/map.svg',
-                colorFilter:
-                    const ColorFilter.mode(Color(0xFF0F7D40), BlendMode.srcIn),
+                colorFilter: const ColorFilter.mode(mainColor, BlendMode.srcIn),
               ),
             ),
             const SizedBox(
@@ -221,24 +217,24 @@ class _GeoTagBottomSheetState extends State<GeoTagBottomSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Coordinates',
+                  'COORDINATES',
                   style: TextStyle(
                     fontSize: t?.overline,
                     fontWeight: FontWeight.w700,
-                    color: const Color(0xFF0F7D40),
+                    color: mainColor,
                   ),
                 ),
                 Text('Latitude: ${widget.latitude}',
                     style: TextStyle(
                         fontSize: t?.caption ?? 14.0,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black)),
+                        color: Colors.black54)),
                 Text('Longitude: ${widget.longitude}',
                     // Or clip, fade,
                     style: TextStyle(
                         fontSize: t?.caption ?? 14.0,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black))
+                        color: Colors.black54))
               ],
             )
           ])

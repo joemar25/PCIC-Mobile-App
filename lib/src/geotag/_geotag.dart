@@ -171,7 +171,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
           setState(() {
             isRoutingStarted = true;
             _mapService.clearRoutePoints();
-            _mapService.addColoredMarker(position, Colors.green);
+            _mapService.addColoredMarker(position, mainColor);
           });
           _trackRoutePoints();
         }
@@ -203,29 +203,64 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5.0),
+          borderRadius: BorderRadius.circular(12.0),
         ),
+        backgroundColor: Colors.white,
+        contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 24.0),
         title: Text(
-          'Confirmation',
+          'CONFIRMATION',
+          textAlign: TextAlign.center,
           style: TextStyle(
-              fontSize: t?.title ?? 14.0, fontWeight: FontWeight.w600),
-        ),
-        content: Text('Finish routing?',
-            style: TextStyle(fontSize: t?.caption ?? 14.0)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text(
-              'Cancel',
-              style:
-                  TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
-            ),
+            fontSize: t?.title ?? 18.0,
+            fontWeight: FontWeight.bold,
+            color: mainColor,
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('OK',
-                style: TextStyle(
-                    color: Colors.black, fontWeight: FontWeight.w500)),
+        ),
+        content: Text(
+          'Finish routing?',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: t?.caption ?? 16.0,
+            color: Colors.grey[800],
+          ),
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: mainColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(
+                      color: mainColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -340,39 +375,84 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
           context: context,
           builder: (context) => AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5.0),
+              borderRadius: BorderRadius.circular(12.0),
             ),
-            title: Text('Confirm Pin Drop',
-                style: TextStyle(
-                    fontSize: t?.title ?? 14.0, fontWeight: FontWeight.w600)),
+            backgroundColor: Colors.white,
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 24.0),
+            title: Text(
+              'CONFIRM PIN DROP',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: t?.title ?? 18.0,
+                fontWeight: FontWeight.bold,
+                color: mainColor,
+              ),
+            ),
             content: StatefulBuilder(
               builder: (context, setState) {
-                return CheckboxListTile(
-                  contentPadding: EdgeInsets.zero,
-                  activeColor: const Color(0xFF0F7D40),
-                  title: Text('Don\'t show again',
-                      style: TextStyle(fontSize: t?.caption ?? 14.0)),
-                  value: retainPinDrop,
-                  onChanged: (value) {
-                    setState(() {
-                      retainPinDrop = value!;
-                    });
-                  },
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 24.0,
+                      height: 24.0,
+                      child: Checkbox(
+                        activeColor: mainColor,
+                        value: retainPinDrop,
+                        onChanged: (value) {
+                          setState(() {
+                            retainPinDrop = value!;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8.0),
+                    Text(
+                      'Don\'t show again',
+                      style: TextStyle(fontSize: t?.caption ?? 16.0),
+                    ),
+                  ],
                 );
               },
             ),
             actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel',
-                    style: TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.w500)),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('OK',
-                    style: TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.w500)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: mainColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text(
+                        'OK',
+                        style: TextStyle(
+                          color: mainColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -439,30 +519,67 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5.0),
+          borderRadius: BorderRadius.circular(12.0),
         ),
-        title: Text('Confirm Action',
-            style: TextStyle(
-                fontSize: t?.title ?? 14.0, fontWeight: FontWeight.w600)),
-        content: Text('Are you sure you want to go back?',
-            style: TextStyle(fontSize: t?.caption ?? 14.0)),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('No',
-                style: TextStyle(
-                    color: Colors.black, fontWeight: FontWeight.w500)),
+        backgroundColor: Colors.white,
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 20.0, horizontal: 24.0),
+        title: Text(
+          'CONFIRM ACTION',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: t?.title ?? 18.0,
+            fontWeight: FontWeight.bold,
+            color: mainColor,
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-            },
-            child: const Text('Yes',
-                style: TextStyle(
-                    color: Colors.black, fontWeight: FontWeight.w500)),
+        ),
+        content: Text(
+          'Are you sure you want to go back?',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: t?.caption ?? 16.0),
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    'No',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: mainColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    'Yes',
+                    style: TextStyle(
+                      color: mainColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -537,7 +654,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                       child: FloatingActionButton(
                         onPressed: () => _getCurrentLocation(addMarker: false),
                         shape: const CircleBorder(),
-                        backgroundColor: const Color(0xFF0F7D40),
+                        backgroundColor: mainColor,
                         elevation: 4.0,
                         child: SvgPicture.asset(
                           'assets/storage/images/position.svg',
@@ -562,7 +679,7 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
                                   Navigator.pop(context);
                                 },
                           shape: const CircleBorder(),
-                          backgroundColor: const Color(0xFF0F7D40),
+                          backgroundColor: mainColor,
                           elevation: 4.0,
                           child: SvgPicture.asset(
                             'assets/storage/images/arrow-left.svg',
