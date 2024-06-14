@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class CountdownTimer extends StatelessWidget {
   final int countdown;
@@ -19,7 +20,7 @@ class CountdownTimer extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 60.0,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: mainColor,
                 decoration: TextDecoration.none,
               ),
             ),

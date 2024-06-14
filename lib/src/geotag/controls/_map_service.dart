@@ -7,6 +7,7 @@ import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:gpx/gpx.dart';
 import 'package:http/http.dart' as http;
+import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 import '_location_service.dart';
 
@@ -38,7 +39,7 @@ class MapService {
         point: point,
         child: const Icon(
           Icons.location_on,
-          color: Colors.red,
+          color: mainColor,
           size: 40.0,
         ),
       ),
@@ -53,9 +54,9 @@ class MapService {
         width: 80.0,
         height: 80.0,
         point: point,
-        child: Icon(
+        child: const Icon(
           Icons.location_on,
-          color: color,
+          color: mainColor,
           size: 40.0,
         ),
       ),
@@ -142,7 +143,7 @@ class MapService {
               Polyline(
                 points: routePoints,
                 strokeWidth: 4.0,
-                color: Colors.blue,
+                color: Colors.white,
               ),
             ],
           ),
@@ -152,16 +153,24 @@ class MapService {
           CurrentLocationLayer(
             alignPositionOnUpdate: AlignOnUpdate.always,
             alignDirectionOnUpdate: AlignOnUpdate.never,
-            style: const LocationMarkerStyle(
+            style: LocationMarkerStyle(
               marker: DefaultLocationMarker(
-                child: Icon(
-                  Icons.location_pin,
-                  color: Colors.red,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color:
+                        secondaryColor, // Set your desired background color here
+                    borderRadius: BorderRadius.circular(
+                        15), // Set your desired border radius here
+                  ),
+                  child: const Icon(
+                    Icons.location_pin,
+                    color: mainColor,
+                  ),
                 ),
               ),
               showAccuracyCircle: false,
               showHeadingSector: false,
-              markerSize: Size(30, 30),
+              markerSize: const Size(30, 30),
               markerDirection: MarkerDirection.heading,
             ),
           ),

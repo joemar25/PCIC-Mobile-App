@@ -20,6 +20,7 @@ import '../geotag/_geotag.dart';
 import '../tasks/controllers/storage_service.dart';
 import '../../utils/seeds/_rice_dropdown.dart';
 import '../../utils/seeds/_corn_dropdown.dart';
+import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class PPIRFormPage extends StatefulWidget {
   final TaskManager task;
@@ -368,7 +369,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
             onPressed: () {
               _saveForm();
             },
-            child: const Text('Save', style: TextStyle(color: Colors.blue)),
+            child: const Text('Save', style: TextStyle(color: mainColor)),
           ),
         ],
       ),
@@ -395,7 +396,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                 _saveForm();
                 Navigator.pop(context, false);
               },
-              child: const Text('Save', style: TextStyle(color: Colors.blue)),
+              child: const Text('Save', style: TextStyle(color: mainColor)),
             ),
           ],
         ),
@@ -497,7 +498,16 @@ class PPIRFormPageState extends State<PPIRFormPage> {
               Scaffold(
                 appBar: AppBar(
                   automaticallyImplyLeading: false,
-                  title: const Text('PCIC Form'),
+                  backgroundColor: mainColor,
+                  title: const Text(
+                    'PCIC FORM',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22.0,
+                      fontWeight:
+                          FontWeight.bold, // Change this to your desired color
+                    ),
+                  ),
                   centerTitle: true,
                 ),
                 body: SingleChildScrollView(
@@ -665,7 +675,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                       ElevatedButton(
                         onPressed: _saveForm,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: mainColor,
                           foregroundColor: Colors.white,
                         ),
                         child: const Text('Save'),
@@ -673,7 +683,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                       ElevatedButton(
                         onPressed: () => _submitForm(context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                          backgroundColor: mainColor,
                           foregroundColor: Colors.white,
                         ),
                         child: const Text('Submit'),
