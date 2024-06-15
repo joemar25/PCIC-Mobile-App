@@ -90,17 +90,23 @@ class TaskDetailsPage extends StatelessWidget {
         final directory = await getTemporaryDirectory();
         final file = File('${directory.path}/temp.gpx');
         await file.writeAsBytes(response.bodyBytes);
-        _openLocalFile(context, file.path);
+        if (context.mounted) {
+          _openLocalFile(context, file.path);
+        }
       } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Error downloading GPX file')),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Error downloading GPX file')),
         );
+        debugPrint('Error downloading GPX file: $e');
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error downloading GPX file')),
-      );
-      debugPrint('Error downloading GPX file: $e');
     }
   }
 
@@ -112,28 +118,36 @@ class TaskDetailsPage extends StatelessWidget {
         if (status.isGranted) {
           final result = await OpenFile.open(gpxFile.path);
           if (result.type != ResultType.done) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Error opening GPX file')),
-            );
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Error opening GPX file')),
+              );
+            }
           }
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                  'External storage permission is required to open GPX files'),
-            ),
-          );
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                    'External storage permission is required to open GPX files'),
+              ),
+            );
+          }
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('GPX file not found')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('GPX file not found')),
+          );
+        }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error opening GPX file')),
-      );
-      debugPrint('Error opening GPX file: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error opening GPX file')),
+        );
+        debugPrint('Error opening GPX file: $e');
+      }
     }
   }
 
@@ -189,7 +203,7 @@ class TaskDetailsPage extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         iconTheme: const IconThemeData(
-          color: mainColor, // Change the back button color here
+          color: mainColor,
         ),
         title: Text(
           'Task Details',
@@ -287,6 +301,8 @@ class TaskDetailsPage extends StatelessWidget {
                         const SizedBox(height: 16.0),
                         _buildFormField(context, 'Farmer Name',
                             formData['ppirFarmerName']?.toString()),
+                        _buildFormField(context, 'Address',
+                            formData['ppirAddress']?.toString()),
                         _buildFormField(context, 'PPIR Assignment ID',
                             formData['ppirAssignmentId']?.toString()),
                         _buildFormField(context, 'Insurance ID',

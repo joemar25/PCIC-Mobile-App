@@ -696,9 +696,9 @@ class TaskContainerState extends State<TaskView> {
         _sortedTasks = sortedTasks;
       });
 
-      debugPrint('Sorted Tasks: ${_sortedTasks.length}'); // Debugging statement
+      // debugPrint('Sorted Tasks: ${_sortedTasks.length}');
     } catch (error) {
-      debugPrint("Error sorting tasks: $error");
+      // debugPrint("Error sorting tasks: $error");
     } finally {
       setState(() {
         _isLoading = false;
@@ -717,9 +717,9 @@ class TaskContainerState extends State<TaskView> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt('tasksCount', tasksCount);
 
-      print('Tasks Count: $tasksCount'); // Print the count to the console
+      // debugPrint('Tasks Count: $tasksCount');
     } catch (e) {
-      debugPrint("Error updating task counts: $e");
+      // debugPrint("Error updating task counts: $e");
     }
   }
 

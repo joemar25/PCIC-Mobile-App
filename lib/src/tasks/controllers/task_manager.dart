@@ -303,6 +303,11 @@ class TaskManager {
     return await _getFieldFromTasks('ppirAssignmentId');
   }
 
+  Future<String?> get address async {
+    // debugPrint('Fetching east for taskId: $taskId');
+    return await _getFieldFromTask('ppirAddress');
+  }
+
   Future<int?> _getFieldFromTasks(String fieldName) async {
     // debugPrint('Fetching $fieldName for taskId: $taskId');
     try {
