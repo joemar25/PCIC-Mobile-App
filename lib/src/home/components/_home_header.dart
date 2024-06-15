@@ -92,7 +92,7 @@ class _HomeHeaderState extends State<HomeHeader> {
           children: [
             const SizedBox(height: 10),
             Text(
-              'Hi $userName 👋 ' ?? 'Agent 007 ',
+              'Hi $userName 👋',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: t?.title ?? 16.0,
@@ -100,7 +100,7 @@ class _HomeHeaderState extends State<HomeHeader> {
               ),
             ),
             Text(
-              'Welcome back,',
+              'Welcome back!',
               style: TextStyle(
                 fontSize: t?.title ?? 22.0,
                 color: Colors.white,
