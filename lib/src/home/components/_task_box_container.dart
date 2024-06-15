@@ -37,14 +37,17 @@ class _TaskCountBoxState extends State<TaskCountBox> {
       default:
         initialFilter = 'Ongoing';
     }
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TaskPage(
-          initialFilter: initialFilter,
+
+    if (mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TaskPage(
+            initialFilter: initialFilter,
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   @override

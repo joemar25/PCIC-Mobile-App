@@ -1476,8 +1476,7 @@ class MessagesPageState extends State<MessagesPage> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt('unseenMessagesCount', unseenMessagesCount);
 
-      print(
-          'Unseen Messages Count: $unseenMessagesCount'); // Print the count to the console
+      // debugPrint('Unseen Messages Count: $unseenMessagesCount');
 
       setState(() {
         usersWithConversations.clear();
