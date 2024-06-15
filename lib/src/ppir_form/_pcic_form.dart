@@ -183,6 +183,17 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       return;
     }
 
+    // Check if geotag failed
+    if (_areaInHectaresController.text == 'Empty' ||
+        _areaInHectaresController.text == '0.0') {
+      showFlashMessage(context, 'Error', 'Geotag Failed',
+          'Please repeat the geotag process to calculate the land area.');
+      setState(() {
+        isSubmitting = false;
+      });
+      return;
+    }
+
     setState(() {
       isSaving = true;
     });
