@@ -90,22 +90,23 @@ class _HomeHeaderState extends State<HomeHeader> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 10),
             Text(
-              'Welcome back,',
+              'Hi $userName 👋 ' ?? 'Agent 007 ',
               style: TextStyle(
-                fontSize: t?.caption ?? 16.0,
                 color: Colors.white,
+                fontSize: t?.title ?? 16.0,
                 fontWeight: FontWeight.normal,
               ),
             ),
             Text(
-              userName ?? 'Agent 007 👋',
+              'Welcome back,',
               style: TextStyle(
+                fontSize: t?.title ?? 22.0,
                 color: Colors.white,
-                fontSize: t?.title ?? 20.0,
                 fontWeight: FontWeight.bold,
               ),
-            )
+            ),
           ],
         ),
         GestureDetector(
@@ -130,14 +131,14 @@ class _HomeHeaderState extends State<HomeHeader> {
                     ? Image.network(
                         profilePicUrl,
                         fit: BoxFit.cover,
-                        width: 42,
-                        height: 42,
+                        width: 50,
+                        height: 50,
                       )
                     : Image.asset(
                         'assets/storage/images/default.png',
                         fit: BoxFit.cover,
-                        width: 42,
-                        height: 42,
+                        width: 50,
+                        height: 50,
                       ),
               ),
             ),

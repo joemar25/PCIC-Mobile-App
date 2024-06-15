@@ -212,7 +212,7 @@ class MessageDetailsPageState extends State<MessageDetailsPage> {
                                       ? mainColor
                                       : const Color.fromRGBO(97, 97, 97, 1)
                                           .withOpacity(0.85),
-                                  borderRadius: BorderRadius.circular(32),
+                                  borderRadius: BorderRadius.circular(20),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.grey.withOpacity(0.2),

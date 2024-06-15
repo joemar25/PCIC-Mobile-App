@@ -46,7 +46,7 @@ class _SearchMessageButtonState extends State<SearchMessageButton> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius:
-                    BorderRadius.circular(8.0), // Changed from 32.0 to 8.0
+                    BorderRadius.circular(14), // Changed from 32.0 to 8.0
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.2),
@@ -69,13 +69,14 @@ class _SearchMessageButtonState extends State<SearchMessageButton> {
                   },
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                    color: Colors.grey,
+                    color: Color.fromARGB(255, 87, 87, 87),
                     fontSize: t?.caption,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Search Messages',
-                    hintStyle:
-                        TextStyle(color: Colors.grey, fontSize: t?.caption),
+                    hintStyle: TextStyle(
+                        color: Color.fromARGB(255, 87, 87, 87),
+                        fontSize: t?.caption),
                     isDense: true,
                     contentPadding: const EdgeInsets.symmetric(
                       vertical: 12,
@@ -98,12 +99,12 @@ class _SearchMessageButtonState extends State<SearchMessageButton> {
                       child: _isSearching
                           ? const Icon(
                               Icons.search,
-                              color: Colors.grey,
+                              color: Color.fromARGB(255, 87, 87, 87),
                               size: 30,
                             )
                           : const Icon(
                               Icons.search,
-                              color: Colors.grey,
+                              color: Color.fromARGB(255, 87, 87, 87),
                               size: 30,
                             ),
                     ),

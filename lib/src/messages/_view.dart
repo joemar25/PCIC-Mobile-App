@@ -1617,7 +1617,7 @@ class MessagesPageState extends State<MessagesPage> {
                     },
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
                 Expanded(
                   child: ListView.builder(
                     itemCount: filteredUsers.length,
@@ -1626,55 +1626,73 @@ class MessagesPageState extends State<MessagesPage> {
                       bool isSeen = user['isSeen'] ?? false;
                       bool isUserMessage = user['isUserMessage'] ?? false;
 
-                      return ListTile(
-                        leading: SizedBox(
-                          height: 60.0,
-                          width: 60.0,
-                          child: CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(user['profilePicUrl']),
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 1,
+                                blurRadius: 10,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
                           ),
-                        ),
-                        title: Text(
-                          _getFirstName(user['name']),
-                          style: const TextStyle(
-                            color: mainColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        subtitle: Text(
-                          user['lastMessage'],
-                          style: TextStyle(
-                            fontSize: isSeen ? 14 : 16,
-                            fontWeight:
-                                isSeen ? FontWeight.normal : FontWeight.w700,
-                          ),
-                        ),
-                        trailing: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            const SizedBox(height: 10),
-                            Text(
-                              _formatTimestamp(user['lastMessageTime']),
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 12,
+                          child: ListTile(
+                            leading: SizedBox(
+                              height: 60.0,
+                              width: 60.0,
+                              child: CircleAvatar(
+                                backgroundImage:
+                                    NetworkImage(user['profilePicUrl']),
                               ),
                             ),
-                            if (isUserMessage && isSeen)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 0.0),
-                                child: SvgPicture.asset(
-                                  'assets/icons/seen.svg',
-                                  width: 20,
-                                  height: 20,
-                                  color: mainColor,
-                                ),
+                            title: Text(
+                              _getFirstName(user['name']),
+                              style: const TextStyle(
+                                color: mainColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
                               ),
-                          ],
+                            ),
+                            subtitle: Text(
+                              user['lastMessage'],
+                              style: TextStyle(
+                                fontSize: isSeen ? 14 : 16,
+                                fontWeight: isSeen
+                                    ? FontWeight.normal
+                                    : FontWeight.w700,
+                              ),
+                            ),
+                            trailing: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                const SizedBox(height: 10),
+                                Text(
+                                  _formatTimestamp(user['lastMessageTime']),
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                if (isUserMessage && isSeen)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 0.0),
+                                    child: SvgPicture.asset(
+                                      'assets/icons/seen.svg',
+                                      width: 20,
+                                      height: 20,
+                                      color: mainColor,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            onTap: () => _navigateToMessageDetails(user),
+                          ),
                         ),
-                        onTap: () => _navigateToMessageDetails(user),
                       );
                     },
                   ),
