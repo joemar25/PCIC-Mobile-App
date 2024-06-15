@@ -209,8 +209,10 @@ class PPIRFormPageState extends State<PPIRFormPage> {
           signatureData['ppirNameInsured']?.trim().isEmpty == true ||
           signatureData['ppirSigIuia'] == null ||
           signatureData['ppirNameIuia']?.trim().isEmpty == true) {
-        showFlashMessage(context, 'Info', 'Validation Failed',
-            'Please fill in all required fields.');
+        if (context.mounted) {
+          showFlashMessage(context, 'Info', 'Validation Failed',
+              'Please fill in all required fields.');
+        }
         setState(() {
           isSaving = false;
         });
@@ -259,7 +261,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
             filename, widget.task.taskId);
       }
 
-      if (mounted) {
+      if (context.mounted) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -268,8 +270,10 @@ class PPIRFormPageState extends State<PPIRFormPage> {
         );
       }
     } catch (e) {
-      showFlashMessage(
-          context, 'Error', 'Save Failed', 'Failed to save form data.');
+      if (context.mounted) {
+        showFlashMessage(
+            context, 'Error', 'Save Failed', 'Failed to save form data.');
+      }
     } finally {
       if (mounted) {
         setState(() {
@@ -350,8 +354,10 @@ class PPIRFormPageState extends State<PPIRFormPage> {
         _navigateToDashboard(context);
       }
     } catch (e) {
-      showFlashMessage(
-          context, 'Error', 'Save Failed', 'Failed to save form data.');
+      if (mounted) {
+        showFlashMessage(
+            context, 'Error', 'Save Failed', 'Failed to save form data.');
+      }
     } finally {
       if (mounted) {
         setState(() {

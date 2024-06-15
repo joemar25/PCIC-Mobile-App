@@ -1379,7 +1379,7 @@ class MessagesPageState extends State<MessagesPage> {
     super.initState();
     _firebaseMessaging.requestPermission();
     _firebaseMessaging.getToken().then((token) {
-      debugPrint("Firebase Messaging Token: $token");
+      // debugPrint("Firebase Messaging Token: $token");
     });
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {

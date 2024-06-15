@@ -145,8 +145,7 @@ class TaskManager {
   }
 
   Future<void> updateLastCoordinates(LatLng coordinates) async {
-    debugPrint(
-        'Updating last coordinates for taskId: $taskId with coordinates: $coordinates');
+    // debugPrint('Updating last coordinates for taskId: $taskId with coordinates: $coordinates');
     try {
       final taskRef =
           FirebaseFirestore.instance.collection('tasks').doc(taskId);
