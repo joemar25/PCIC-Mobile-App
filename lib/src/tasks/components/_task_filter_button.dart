@@ -184,50 +184,60 @@ class _FilterButtonState extends State<FilterButton> {
               ),
             ],
           ),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: mainColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: TextButton(
-                    onPressed: () {
-                      // Apply filter and sort logic here
-                      Navigator.pop(context);
-                    },
-                    child: const Text(
-                      'Apply',
-                      style: TextStyle(
-                        color: mainColor,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
+
+          /**
+           * 
+           * Mar:
+           * 
+           * Base on current functionality we don't need the actions. The current code does change in real-time.
+           * 
+           * Though, if you need to add actions, you can uncomment the code below.
+           */
+
+          // actions: [
+          //   Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //     children: [
+          //       Container(
+          //         decoration: BoxDecoration(
+          //           color: Colors.red.withOpacity(0.1),
+          //           borderRadius: BorderRadius.circular(8.0),
+          //         ),
+          //         child: TextButton(
+          //           onPressed: () {
+          //             Navigator.pop(context);
+          //           },
+          //           child: const Text(
+          //             'Cancel',
+          //             style: TextStyle(
+          //               color: Colors.red,
+          //               fontWeight: FontWeight.w600,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //       Container(
+          //         decoration: BoxDecoration(
+          //           color: mainColor.withOpacity(0.1),
+          //           borderRadius: BorderRadius.circular(8.0),
+          //         ),
+          //         child: TextButton(
+          //           onPressed: () {
+          //             // Apply filter and sort logic here
+          //             Navigator.pop(context);
+          //           },
+          //           child: const Text(
+          //             'Apply',
+          //             style: TextStyle(
+          //               color: mainColor,
+          //               fontWeight: FontWeight.w600,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ],
         );
       },
     );
