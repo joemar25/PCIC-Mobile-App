@@ -1,6 +1,7 @@
 // filename: _task.dart
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
+import '../home/dashboard.dart';
 import 'controllers/task_manager.dart';
 import 'components/_task_view.dart';
 import 'package:lottie/lottie.dart';
@@ -58,14 +59,26 @@ class TaskPageState extends State<TaskPage> {
     });
   }
 
+  void _navigateToDashboard(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const DashboardPage(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     String title = _initialFilter == 'Completed' ? 'Completed Tasks' : 'Tasks';
     return Scaffold(
       appBar: AppBar(
-        leading: null,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => _navigateToDashboard(context),
+        ),
         iconTheme: const IconThemeData(
-          color: mainColor, // Change the back button color here
+          color: mainColor,
         ),
         title: Text(
           title,

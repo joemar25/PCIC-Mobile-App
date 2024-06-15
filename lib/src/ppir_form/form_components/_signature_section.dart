@@ -125,7 +125,7 @@ class SignatureSectionState extends State<SignatureSection> {
 
     debugPrint('Signature Section Validation: $isValid');
 
-    setState(() {}); // Trigger a rebuild to show/hide error messages
+    setState(() {});
 
     return isValid;
   }

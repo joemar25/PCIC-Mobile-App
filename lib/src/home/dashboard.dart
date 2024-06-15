@@ -838,7 +838,7 @@ import '_home.dart';
 import '../tasks/_task.dart';
 import '../messages/_view.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui'; // For BackdropFilter
+import 'dart:ui';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -887,8 +887,7 @@ class DashboardPageState extends State<DashboardPage>
     setState(() {
       _unseenMessagesCount = prefs.getInt('unseenMessagesCount') ?? 0;
     });
-    print(
-        'Unseen Messages Count: $_unseenMessagesCount'); // Print the count to the console
+    // debugPrint('Unseen Messages Count: $_unseenMessagesCount');
   }
 
   Future<void> _loadTasksCount() async {
@@ -896,7 +895,7 @@ class DashboardPageState extends State<DashboardPage>
     setState(() {
       _tasksCount = prefs.getInt('tasksCount') ?? 0;
     });
-    print('Tasks Count: $_tasksCount'); // Print the count to the console
+    // debugPrint('Tasks Count: $_tasksCount');
   }
 
   @override
@@ -942,7 +941,6 @@ class DashboardPageState extends State<DashboardPage>
                     ),
                   ),
                 ),
-                // Navbar container
                 CustomBottomNavBar(
                   selectedIndex: _selectedIndex,
                   onItemTapped: _onItemTapped,
@@ -982,7 +980,7 @@ class CustomBottomNavBar extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
-            offset: Offset(0, 0.5),
+            offset: const Offset(0, 0.5),
             blurRadius: 16,
           ),
         ],
@@ -1004,7 +1002,7 @@ class CustomBottomNavBar extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
                     child: Text(
                       '$unseenMessagesCount',
-                      style: TextStyle(color: Colors.white, fontSize: 12),
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   )
                 : null,
@@ -1018,7 +1016,7 @@ class CustomBottomNavBar extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
                     child: Text(
                       '$tasksCount',
-                      style: TextStyle(color: Colors.white, fontSize: 12),
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   )
                 : null,
@@ -1031,7 +1029,7 @@ class CustomBottomNavBar extends StatelessWidget {
   Widget _buildNavigationBarItem(BuildContext context,
       {required String iconPath,
       required int index,
-      String? label,
+      // String? label,
       Widget? badgeContent}) {
     bool isSelected = index == selectedIndex;
     return GestureDetector(
@@ -1053,7 +1051,7 @@ class CustomBottomNavBar extends StatelessWidget {
                   color: Colors.red,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   minWidth: 12,
                   minHeight: 12,
                 ),

@@ -2,7 +2,6 @@ import 'package:intl/intl.dart';
 import '../../theme/_theme.dart';
 import 'package:flutter/material.dart';
 import '../../tasks/controllers/task_manager.dart';
-// filename: home/_recent_task_container.dart
 
 class TaskData extends StatelessWidget {
   final TaskManager task;
@@ -56,6 +55,7 @@ class TaskData extends StatelessWidget {
                     task.south,
                     task.east,
                     task.west,
+                    task.address,
                     task.assignmentID,
                   ]),
                   builder: (context, snapshot) {
@@ -78,6 +78,7 @@ class TaskData extends StatelessWidget {
                       final south = data[2] ?? 'N/A';
                       final east = data[3] ?? 'N/A';
                       final west = data[4] ?? 'N/A';
+                      final address = data[5] ?? 'N/A';
 
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,8 +99,12 @@ class TaskData extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: heheFontSize,
                               ),
-                              // softWrap: true,
-                              // overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Text(
+                            'Address: $address',
+                            style: TextStyle(
+                              fontSize: heheFontSize,
                             ),
                           ),
                         ],
