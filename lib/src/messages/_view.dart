@@ -1346,17 +1346,17 @@
 //     );
 //   }
 // }
-
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'controllers/_detail.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:pcic_mobile_app/src/messages/components/_searchMessage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class MessagesPage extends StatefulWidget {
   const MessagesPage({super.key});
@@ -1372,6 +1372,7 @@ class MessagesPageState extends State<MessagesPage> {
   List<Map<String, dynamic>> filteredUsers = [];
   String _searchQuery = '';
   User? _currentUser;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -1397,10 +1398,13 @@ class MessagesPageState extends State<MessagesPage> {
       setState(() {
         _currentUser = user;
       });
-      _fetchUsersWithConversations();
+      await _fetchUsersWithConversations();
     } else {
       debugPrint("No current user logged in");
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Future<void> _fetchUsersWithConversations() async {
@@ -1581,7 +1585,13 @@ class MessagesPageState extends State<MessagesPage> {
   }
 
   Future<void> _handleRefresh() async {
+    setState(() {
+      _isLoading = true;
+    });
     await _fetchUsersWithConversations();
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -1589,117 +1599,127 @@ class MessagesPageState extends State<MessagesPage> {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: _handleRefresh,
-        child: Builder(
-          builder: (context) {
-            return Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(16, 48.0, 16, 2),
-                  child: Text(
-                    'Messages',
-                    style: TextStyle(
-                      color: mainColor,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+        child: _isLoading
+            ? Center(
+                child: Image.asset(
+                  'assets/icons/pccc.gif',
+                  width: 175,
+                  height: 175,
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                  child: SearchMessageButton(
-                    searchQuery: _searchQuery,
-                    onUpdateValue: (value) {
-                      setState(() {
-                        _searchQuery = value;
-                        _filterUsers();
-                      });
-                    },
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: filteredUsers.length,
-                    itemBuilder: (context, index) {
-                      final user = filteredUsers[index];
-                      bool isSeen = user['isSeen'] ?? false;
-                      bool isUserMessage = user['isUserMessage'] ?? false;
-
-                      return Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(14),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 1,
-                                blurRadius: 10,
-                                offset: const Offset(0, 1),
-                              ),
-                            ],
-                          ),
-                          child: ListTile(
-                            leading: SizedBox(
-                              height: 60.0,
-                              width: 60.0,
-                              child: CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(user['profilePicUrl']),
-                              ),
-                            ),
-                            title: Text(
-                              _getFirstName(user['name']),
-                              style: const TextStyle(
-                                color: mainColor,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            subtitle: Text(
-                              user['lastMessage'],
-                              style: TextStyle(
-                                fontSize: isSeen ? 14 : 16,
-                                fontWeight: isSeen
-                                    ? FontWeight.normal
-                                    : FontWeight.w700,
-                              ),
-                            ),
-                            trailing: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                const SizedBox(height: 10),
-                                Text(
-                                  _formatTimestamp(user['lastMessageTime']),
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                if (isUserMessage && isSeen)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 0.0),
-                                    child: SvgPicture.asset(
-                                      'assets/icons/seen.svg',
-                                      width: 20,
-                                      height: 20,
-                                      color: mainColor,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                            onTap: () => _navigateToMessageDetails(user),
+              )
+            : Builder(
+                builder: (context) {
+                  return Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(16, 48.0, 16, 2),
+                        child: Text(
+                          'Messages',
+                          style: TextStyle(
+                            color: mainColor,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                        child: SearchMessageButton(
+                          searchQuery: _searchQuery,
+                          onUpdateValue: (value) {
+                            setState(() {
+                              _searchQuery = value;
+                              _filterUsers();
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: filteredUsers.length,
+                          itemBuilder: (context, index) {
+                            final user = filteredUsers[index];
+                            bool isSeen = user['isSeen'] ?? false;
+                            bool isUserMessage = user['isUserMessage'] ?? false;
+
+                            return Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(14),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 1,
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 1),
+                                    ),
+                                  ],
+                                ),
+                                child: ListTile(
+                                  leading: SizedBox(
+                                    height: 60.0,
+                                    width: 60.0,
+                                    child: CircleAvatar(
+                                      backgroundImage:
+                                          NetworkImage(user['profilePicUrl']),
+                                    ),
+                                  ),
+                                  title: Text(
+                                    _getFirstName(user['name']),
+                                    style: const TextStyle(
+                                      color: mainColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    user['lastMessage'],
+                                    style: TextStyle(
+                                      fontSize: isSeen ? 14 : 16,
+                                      fontWeight: isSeen
+                                          ? FontWeight.normal
+                                          : FontWeight.w700,
+                                    ),
+                                  ),
+                                  trailing: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        _formatTimestamp(
+                                            user['lastMessageTime']),
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      if (isUserMessage && isSeen)
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 0.0),
+                                          child: SvgPicture.asset(
+                                            'assets/icons/seen.svg',
+                                            width: 20,
+                                            height: 20,
+                                            color: mainColor,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                  onTap: () => _navigateToMessageDetails(user),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 5, 100),

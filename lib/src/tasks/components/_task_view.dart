@@ -616,7 +616,6 @@
 //     );
 //   }
 // }
-
 import '../controllers/task_manager.dart';
 import '_task_details.dart';
 import '_task_filter_button.dart';
@@ -728,195 +727,214 @@ class TaskContainerState extends State<TaskView> {
     List<TaskManager> tasksToDisplay = _isLoading ? [] : _sortedTasks;
 
     return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 21.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+      body: _isLoading
+          ? Center(
+              child: Image.asset(
+                'assets/icons/pccc.gif', // Update the path according to your file location
+                width: 175,
+                height: 175,
+              ),
+            )
+          : Column(
               children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    FilterButton(
-                      onUpdateState: _updateStatusFilter,
-                      onUpdateValue: _updateSortBy,
-                    ),
-                    const SizedBox(width: 8.0),
-                    Expanded(
-                      child: SearchButton(
-                        searchQuery: _searchQuery,
-                        onUpdateValue: _updateSearchQuery,
-                      ),
-                    ),
-                  ],
-                ),
-                FilterFooter(
-                  filter: _statusFilter,
-                  orderBy: _sortBy,
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: _refreshTasks,
-              child: tasksToDisplay.isEmpty
-                  ? Center(
-                      child: Column(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 21.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Lottie.asset(
-                            'assets/animations/emptybox.json',
-                            width: 200,
-                            height: 200,
+                          FilterButton(
+                            onUpdateState: _updateStatusFilter,
+                            onUpdateValue: _updateSortBy,
                           ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'No tasks',
-                            style: TextStyle(color: Colors.black),
+                          const SizedBox(width: 8.0),
+                          Expanded(
+                            child: SearchButton(
+                              searchQuery: _searchQuery,
+                              onUpdateValue: _updateSearchQuery,
+                            ),
                           ),
                         ],
                       ),
-                    )
-                  : ListView.builder(
-                      itemCount: tasksToDisplay.length,
-                      itemBuilder: (context, index) {
-                        final task = tasksToDisplay[index];
-
-                        bool matchesSearchQuery = _searchQuery.isEmpty ||
-                            task.taskId
-                                .toLowerCase()
-                                .contains(_searchQuery.toLowerCase());
-
-                        if (!matchesSearchQuery) {
-                          return const SizedBox.shrink();
-                        }
-
-                        return MouseRegion(
-                          onEnter: (_) => setState(() => _hoveredIndex = index),
-                          onExit: (_) => setState(() => _hoveredIndex = -1),
-                          child: GestureDetector(
-                            onTap: () => _navigateToTaskDetails(context, task),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 21.0),
-                              child: FutureBuilder<String?>(
-                                future: task.status,
-                                builder: (context, snapshot) {
-                                  // final statusColor =
-                                  //     getStatusColor(snapshot.data);
-                                  return Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          width: 0.2, color: Colors.grey),
-                                      color: _hoveredIndex == index
-                                          ? Colors.grey[200]
-                                          : Colors.white,
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.withOpacity(0.4),
-                                          blurRadius: 1,
-                                          spreadRadius: 1,
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        FutureBuilder(
-                                          future: Future.delayed(
-                                              const Duration(seconds: 1)),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.done) {
-                                              return TaskData(task: task);
-                                            } else {
-                                              return Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                  horizontal: 16.0,
-                                                  vertical: 16.0,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8.0),
-                                                ),
-                                                child: Shimmer.fromColors(
-                                                  baseColor: Colors.grey[300]!,
-                                                  highlightColor:
-                                                      Colors.grey[100]!,
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Container(
-                                                            height: 16,
-                                                            width: 150,
-                                                            color: Colors.white,
-                                                          ),
-                                                          const SizedBox(
-                                                              height: 8),
-                                                          Container(
-                                                            height: 12,
-                                                            width: 120,
-                                                            color: Colors.white,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .end,
-                                                        children: [
-                                                          Container(
-                                                            height: 16,
-                                                            width: 60,
-                                                            color: Colors.white,
-                                                          ),
-                                                          const SizedBox(
-                                                              height: 8),
-                                                          Container(
-                                                            height: 12,
-                                                            width: 100,
-                                                            color: Colors.white,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
+                      FilterFooter(
+                        filter: _statusFilter,
+                        orderBy: _sortBy,
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: _refreshTasks,
+                    child: tasksToDisplay.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Lottie.asset(
+                                  'assets/animations/emptybox.json',
+                                  width: 200,
+                                  height: 200,
+                                ),
+                                const SizedBox(height: 16),
+                                const Text(
+                                  'No tasks',
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ],
                             ),
+                          )
+                        : ListView.builder(
+                            itemCount: tasksToDisplay.length,
+                            itemBuilder: (context, index) {
+                              final task = tasksToDisplay[index];
+
+                              bool matchesSearchQuery = _searchQuery.isEmpty ||
+                                  task.taskId
+                                      .toLowerCase()
+                                      .contains(_searchQuery.toLowerCase());
+
+                              if (!matchesSearchQuery) {
+                                return const SizedBox.shrink();
+                              }
+
+                              return MouseRegion(
+                                onEnter: (_) =>
+                                    setState(() => _hoveredIndex = index),
+                                onExit: (_) =>
+                                    setState(() => _hoveredIndex = -1),
+                                child: GestureDetector(
+                                  onTap: () =>
+                                      _navigateToTaskDetails(context, task),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 21.0),
+                                    child: FutureBuilder<String?>(
+                                      future: task.status,
+                                      builder: (context, snapshot) {
+                                        // final statusColor =
+                                        //     getStatusColor(snapshot.data);
+                                        return Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                width: 0.2, color: Colors.grey),
+                                            color: _hoveredIndex == index
+                                                ? Colors.grey[200]
+                                                : Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(15.0),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.grey
+                                                    .withOpacity(0.4),
+                                                blurRadius: 1,
+                                                spreadRadius: 1,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              FutureBuilder(
+                                                future: Future.delayed(
+                                                    const Duration(seconds: 1)),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.done) {
+                                                    return TaskData(task: task);
+                                                  } else {
+                                                    return Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                        horizontal: 16.0,
+                                                        vertical: 16.0,
+                                                      ),
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                      ),
+                                                      child: Shimmer.fromColors(
+                                                        baseColor:
+                                                            Colors.grey[300]!,
+                                                        highlightColor:
+                                                            Colors.grey[100]!,
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Container(
+                                                                  height: 16,
+                                                                  width: 150,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 8),
+                                                                Container(
+                                                                  height: 12,
+                                                                  width: 120,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .end,
+                                                              children: [
+                                                                Container(
+                                                                  height: 16,
+                                                                  width: 60,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 8),
+                                                                Container(
+                                                                  height: 12,
+                                                                  width: 100,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
