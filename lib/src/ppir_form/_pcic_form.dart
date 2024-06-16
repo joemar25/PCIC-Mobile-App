@@ -675,9 +675,11 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                       ),
                       const SizedBox(height: 24),
                       const Text(
-                        'Signatures',
+                        'SIGNATURES',
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                            color: mainColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
                       SignatureSection(
                         key: _signatureSectionKey,
@@ -686,9 +688,11 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                       ),
                       const SizedBox(height: 24),
                       const Text(
-                        'Map Geotag',
+                        'MAP GEOTAG',
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                            color: mainColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 16),
                       if (gpxFile != null &&
@@ -718,8 +722,9 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                           children: [
                             const Text(
                               'Geotag failed: Initial and end points did not match to close the land for calculation.',
-                              style: TextStyle(color: Colors.red),
+                              style: TextStyle(color: Colors.black54),
                             ),
+                            const SizedBox(height: 15),
                             ElevatedButton(
                               onPressed: () => _navigateToGeotagPage(context),
                               style: ElevatedButton.styleFrom(
@@ -744,7 +749,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
                         ),
-                        child: const Text('Cancel'),
+                        child: const Text('CANCEL'),
                       ),
                       ElevatedButton(
                         onPressed: () => _submitForm(context),
@@ -752,7 +757,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
                           backgroundColor: mainColor,
                           foregroundColor: Colors.white,
                         ),
-                        child: const Text('Submit'),
+                        child: const Text('SUBMIT'),
                       ),
                     ],
                   ),

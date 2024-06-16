@@ -147,21 +147,25 @@ class SignatureSectionState extends State<SignatureSection> {
           controller: _confirmedByNameController,
           decoration: InputDecoration(
             labelText: 'Name',
+            labelStyle: const TextStyle(
+              color: mainColor, // Change the label text color as needed
+            ),
             errorText: widget.isSubmitting &&
                     _confirmedByNameController.text.trim().isEmpty
                 ? 'This field is required'
                 : null,
             focusedBorder: const UnderlineInputBorder(
-              borderSide:
-                  BorderSide(color: mainColor), // Change the color as needed
+              borderSide: BorderSide(
+                  color: mainColor), // Change the border color as needed
             ),
             enabledBorder: const UnderlineInputBorder(
-              borderSide:
-                  BorderSide(color: mainColor), // Change the color as needed
+              borderSide: BorderSide(
+                  color: mainColor), // Change the border color as needed
             ),
           ),
           style: const TextStyle(
-              color: Colors.black54), // Change the color as needed
+            color: Colors.black54, // Change the input text color as needed
+          ),
           onChanged: (value) {
             setState(() {
               _confirmedByNameController.text = value;
@@ -208,6 +212,9 @@ class SignatureSectionState extends State<SignatureSection> {
           controller: _preparedByNameController,
           decoration: InputDecoration(
             labelText: 'Name',
+            labelStyle: const TextStyle(
+              color: mainColor, // Change the label text color as needed
+            ),
             errorText: widget.isSubmitting &&
                     _preparedByNameController.text.trim().isEmpty
                 ? 'This field is required'
