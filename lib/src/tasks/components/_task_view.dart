@@ -626,6 +626,7 @@ import 'package:flutter/material.dart';
 import '../../home/controllers/_recent_task_data.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class TaskView extends StatefulWidget {
   const TaskView({super.key, required this.tasks, required this.initialFilter});
@@ -782,7 +783,7 @@ class TaskContainerState extends State<TaskView> {
                                 const SizedBox(height: 16),
                                 const Text(
                                   'No tasks',
-                                  style: TextStyle(color: Colors.black),
+                                  style: TextStyle(color: mainColor),
                                 ),
                               ],
                             ),
