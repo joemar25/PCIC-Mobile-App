@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
-import '../_forgetPassword.dart';
+import '../_forget_password.dart';
 
 class RememberAndForgot extends StatefulWidget {
   const RememberAndForgot({super.key});

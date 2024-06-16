@@ -32,7 +32,7 @@ class LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _checkExistingToken(BuildContext context) async {
-    String? token = await _session.getToken();
+    final token = await _session.getToken();
     if (token != null && context.mounted) {
       _navigateToDashboard();
     }
@@ -91,7 +91,7 @@ class LoginPageState extends State<LoginPage> {
 
   Future<void> _requestPermissions() async {
     final locationStatus = await Permission.location.request();
-    final storageStatus = await Permission.manageExternalStorage.request();
+    final storageStatus = await Permission.storage.request();
 
     if (mounted) {
       if (locationStatus.isGranted && storageStatus.isGranted) {
@@ -104,7 +104,8 @@ class LoginPageState extends State<LoginPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text(
-                  'External storage permission is required to open GPX files'),
+                'External storage permission is required to open GPX files',
+              ),
             ),
           );
         }
@@ -114,11 +115,12 @@ class LoginPageState extends State<LoginPage> {
 
   Future<void> _getCurrentLocation() async {
     try {
-      Position position = await Geolocator.getCurrentPosition(
+      final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
       debugPrint(
-          'Current location: ${position.latitude}, ${position.longitude}');
+        'Current location: ${position.latitude}, ${position.longitude}',
+      );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -136,43 +138,43 @@ class LoginPageState extends State<LoginPage> {
     });
 
     try {
-      UserCredential userCredential =
+      final userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: parentEmail,
         password: parentPassword,
       );
-      // Login successful, initialize the session with the user token
-      String? token = await userCredential.user?.getIdToken();
-      _session.init(token!);
-      // Request location permission
-      await _requestPermissions();
-      // Navigate to the next screen
-      _navigateToVerifyLogin();
-    } on FirebaseAuthException catch (e) {
-      String errorMessage;
-      switch (e.code) {
-        case 'user-not-found':
-          errorMessage = 'No user found for that email.';
-          break;
-        case 'wrong-password':
-          errorMessage = 'Wrong password provided for that user.';
-          break;
-        case 'too-many-requests':
-          errorMessage = 'Too many attempts. Please try again later.';
-          break;
-        default:
-          errorMessage = 'An error occurred. Please try again.';
-          break;
+
+      final token = await userCredential.user?.getIdToken();
+      if (token != null) {
+        await _session.init(token);
       }
-      _showLoginFailedSnackBar(errorMessage);
+
+      await _requestPermissions();
+      _navigateToDashboard();
+    } on FirebaseAuthException catch (e) {
+      _handleAuthException(e);
     } catch (e) {
       _showLoginFailedSnackBar(
-          'An unexpected error occurred. Please try again later.');
+        'An unexpected error occurred. Please try again later.',
+      );
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
+  }
+
+  void _handleAuthException(FirebaseAuthException e) {
+    final errorMessage = {
+          'user-not-found': 'No user found for that email.',
+          'wrong-password': 'Wrong password provided for that user.',
+          'too-many-requests': 'Too many attempts. Please try again later.',
+        }[e.code] ??
+        'An error occurred. Please try again.';
+
+    _showLoginFailedSnackBar(errorMessage);
   }
 
   @override
@@ -188,14 +190,13 @@ class LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Center(
-                  child: Image.asset(
-                "assets/storage/images/icon.png",
-                height: MediaQuery.of(context).size.height * 0.14,
-                fit: BoxFit.cover,
-              )),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.07,
+                child: Image.asset(
+                  "assets/storage/images/icon.png",
+                  height: MediaQuery.of(context).size.height * 0.14,
+                  fit: BoxFit.cover,
+                ),
               ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.07),
               const Text(
                 'Sign in to your account',
                 style: TextStyle(fontSize: 27.65, fontWeight: FontWeight.w600),
