@@ -1,7 +1,6 @@
-// FTPService class
+// src/tasks/controllers/ftp_service.dart
 import 'dart:io';
 import 'package:ftpconnect/ftpconnect.dart';
-// import 'package:flutter/foundation.dart';
 
 class FTPService {
   final String _ftpHost = '122.55.242.110';

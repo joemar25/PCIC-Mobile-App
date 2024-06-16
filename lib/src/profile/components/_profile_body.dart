@@ -1,5 +1,8 @@
-import '_profile_body_item.dart';
+// src/profile/components/_profile_body.dart
 import 'package:flutter/material.dart';
+
+import '_profile_body_item.dart';
+
 import '../../settings/_view.dart';
 import '../../settings/_controller.dart';
 import '../../settings/_service.dart';
@@ -17,9 +20,8 @@ class _ProfileBodyState extends State<ProfileBody> {
   @override
   void initState() {
     super.initState();
-    final settingsService = SettingsService(); // Instantiate the service
-    _settingsController = SettingsController(
-        settingsService); // Pass the service to the controller
+    final settingsService = SettingsService();
+    _settingsController = SettingsController(settingsService);
   }
 
   @override
@@ -30,7 +32,6 @@ class _ProfileBodyState extends State<ProfileBody> {
         children: [
           GestureDetector(
             onTap: () {
-              // Handle "Settings" tap
               Navigator.push(
                 context,
                 MaterialPageRoute(

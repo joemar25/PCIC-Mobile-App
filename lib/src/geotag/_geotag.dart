@@ -1,3 +1,4 @@
+// src/geotag/_geotag.dart
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -6,16 +7,17 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
-import 'controls/countdown_timer.dart';
 
-import '../ppir_form/_pcic_form.dart';
-import 'controls/_map_service.dart';
-import 'controls/_location_service.dart';
 import 'components/_bottomsheet.dart';
-import '../theme/_theme.dart';
-import '../../utils/app/_show_flash_message.dart';
-import '../tasks/controllers/task_manager.dart';
+import 'controls/_location_service.dart';
+import 'controls/_map_service.dart';
+import 'controls/countdown_timer.dart';
 import 'controls/gpx_service.dart';
+
+import '../../utils/app/_show_flash_message.dart';
+import '../ppir_form/_pcic_form.dart';
+import '../tasks/controllers/task_manager.dart';
+import '../theme/_theme.dart';
 
 class GeotagPage extends StatefulWidget {
   final TaskManager task;
@@ -206,7 +208,8 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
           borderRadius: BorderRadius.circular(12.0),
         ),
         backgroundColor: Colors.white,
-        contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 24.0),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 20.0, horizontal: 24.0),
         title: Text(
           'CONFIRMATION',
           textAlign: TextAlign.center,

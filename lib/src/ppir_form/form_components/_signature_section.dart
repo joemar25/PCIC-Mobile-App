@@ -1,11 +1,14 @@
+// src/ppir_form/form_components/_signature_section.dart
 import 'dart:typed_data';
 import 'package:uuid/uuid.dart';
-import '_tap_to_signature.dart';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
-import '../../tasks/controllers/task_manager.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
+
+import '_tap_to_signature.dart';
+
+import '../../theme/_theme.dart';
+import '../../tasks/controllers/task_manager.dart';
 
 class SignatureSection extends StatefulWidget {
   final TaskManager task;
@@ -148,23 +151,21 @@ class SignatureSectionState extends State<SignatureSection> {
           decoration: InputDecoration(
             labelText: 'Name',
             labelStyle: const TextStyle(
-              color: mainColor, // Change the label text color as needed
+              color: mainColor,
             ),
             errorText: widget.isSubmitting &&
                     _confirmedByNameController.text.trim().isEmpty
                 ? 'This field is required'
                 : null,
             focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(
-                  color: mainColor), // Change the border color as needed
+              borderSide: BorderSide(color: mainColor),
             ),
             enabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(
-                  color: mainColor), // Change the border color as needed
+              borderSide: BorderSide(color: mainColor),
             ),
           ),
           style: const TextStyle(
-            color: Colors.black54, // Change the input text color as needed
+            color: Colors.black54,
           ),
           onChanged: (value) {
             setState(() {
@@ -220,16 +221,13 @@ class SignatureSectionState extends State<SignatureSection> {
                 ? 'This field is required'
                 : null,
             focusedBorder: const UnderlineInputBorder(
-              borderSide:
-                  BorderSide(color: mainColor), // Change the color as needed
+              borderSide: BorderSide(color: mainColor),
             ),
             enabledBorder: const UnderlineInputBorder(
-              borderSide:
-                  BorderSide(color: mainColor), // Change the color as needed
+              borderSide: BorderSide(color: mainColor),
             ),
           ),
-          style: const TextStyle(
-              color: Colors.black54), // Change the color as needed
+          style: const TextStyle(color: Colors.black54),
           onChanged: (value) {
             setState(() {
               _preparedByNameController.text = value;

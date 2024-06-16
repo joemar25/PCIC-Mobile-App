@@ -1,6 +1,8 @@
+// src/home/controllers/_recent_task_data.dart
 import 'package:intl/intl.dart';
-import '../../theme/_theme.dart';
 import 'package:flutter/material.dart';
+
+import '../../theme/_theme.dart';
 import '../../tasks/controllers/task_manager.dart';
 
 class TaskData extends StatelessWidget {
@@ -35,7 +37,7 @@ class TaskData extends StatelessWidget {
 
     final titleFontSize = isPortrait ? 12.0 : t?.title ?? 18.0;
     // final captionFontSize = isPortrait ? 6.0 : t?.caption ?? 14.0;
-    final heheFontSize = isPortrait ? 10.0 : t?.caption ?? 14.0;
+    final fontSize = isPortrait ? 10.0 : t?.caption ?? 14.0;
     // final overlineFontSize = isPortrait ? 9.0 : t?.overline ?? 12.0;
     final statusFontSize = isPortrait ? 10.0 : t?.caption ?? 14.0;
 
@@ -97,14 +99,14 @@ class TaskData extends StatelessWidget {
                             child: Text(
                               '(N: $north, S: $south, E: $east, W: $west)',
                               style: TextStyle(
-                                fontSize: heheFontSize,
+                                fontSize: fontSize,
                               ),
                             ),
                           ),
                           Text(
                             'Address: $address',
                             style: TextStyle(
-                              fontSize: heheFontSize,
+                              fontSize: fontSize,
                             ),
                           ),
                         ],

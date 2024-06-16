@@ -1,12 +1,14 @@
+// src/ppir_form/form_components/_tap_to_signature.dart
 import 'dart:typed_data';
 
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
 import '../../tasks/controllers/task_manager.dart';
+import '../../theme/_theme.dart';
 
 class TapToSignature extends StatefulWidget {
   final TaskManager task;
@@ -17,7 +19,7 @@ class TapToSignature extends StatefulWidget {
   final bool isEmpty;
   final Future<String> Function(Uint8List) onSaveSignature;
   final String signatureType;
-  final bool isSubmitting; // 'ppirSigInsured' or 'ppirSigIuia'
+  final bool isSubmitting;
 
   const TapToSignature({
     super.key,
@@ -147,8 +149,7 @@ class TapToSignatureState extends State<TapToSignature> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                          12.0), // Adjust the radius as needed
+                      borderRadius: BorderRadius.circular(12.0),
                       child: Signature(
                         controller: widget.controller,
                         height: widget.height,
@@ -162,13 +163,12 @@ class TapToSignatureState extends State<TapToSignature> {
                         ElevatedButton(
                           onPressed: _clearSignature,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white, // Background color
-                            foregroundColor: mainColor, // Text color
-                            shadowColor: Colors.grey, // Shadow color
-                            elevation: 3, // Subtle shadow
+                            backgroundColor: Colors.white,
+                            foregroundColor: mainColor,
+                            shadowColor: Colors.grey,
+                            elevation: 3,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  20), // Standard border radius
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
                           child: const Text('CLEAR'),
@@ -183,11 +183,10 @@ class TapToSignatureState extends State<TapToSignature> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: mainColor,
                                 foregroundColor: Colors.white,
-                                shadowColor: Colors.grey, // Shadow color
-                                elevation: 3, // Subtle shadow
+                                shadowColor: Colors.grey,
+                                elevation: 3,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      20), // Standard border radius
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
                               ),
                               child: const Text('SAVE'),
@@ -277,16 +276,13 @@ class TapToSignatureState extends State<TapToSignature> {
                                       ElevatedButton(
                                         onPressed: _clearSignature,
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              Colors.white, // Background color
-                                          foregroundColor:
-                                              mainColor, // Text color
-                                          shadowColor:
-                                              Colors.grey, // Shadow color
-                                          elevation: 3, // Subtle shadow
+                                          backgroundColor: Colors.white,
+                                          foregroundColor: mainColor,
+                                          shadowColor: Colors.grey,
+                                          elevation: 3,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                20), // Standard border radius
+                                            borderRadius:
+                                                BorderRadius.circular(20),
                                           ),
                                         ),
                                         child: const Text('CLEAR'),
@@ -303,12 +299,11 @@ class TapToSignatureState extends State<TapToSignature> {
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: mainColor,
                                               foregroundColor: Colors.white,
-                                              shadowColor:
-                                                  Colors.grey, // Shadow color
-                                              elevation: 3, // Subtle shadow
+                                              shadowColor: Colors.grey,
+                                              elevation: 3,
                                               shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(
-                                                    20), // Standard border radius
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
                                               ),
                                             ),
                                             child: const Text('SAVE'),

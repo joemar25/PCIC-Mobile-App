@@ -1,3 +1,4 @@
+// src/utils/seeds/_rice_dropdown.dart
 class Rice {
   static int _idCounter = 0;
 

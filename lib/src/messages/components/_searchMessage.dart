@@ -1,5 +1,5 @@
+// src/messages/components/_searchMessage.dart
 import 'package:flutter/material.dart';
-// import 'package:lottie/lottie.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class SearchMessageButton extends StatefulWidget {
@@ -69,13 +69,13 @@ class _SearchMessageButtonState extends State<SearchMessageButton> {
                   },
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                    color: Color.fromARGB(255, 87, 87, 87),
+                    color: const Color.fromARGB(255, 87, 87, 87),
                     fontSize: t?.caption,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Search Messages',
                     hintStyle: TextStyle(
-                        color: Color.fromARGB(255, 87, 87, 87),
+                        color: const Color.fromARGB(255, 87, 87, 87),
                         fontSize: t?.caption),
                     isDense: true,
                     contentPadding: const EdgeInsets.symmetric(

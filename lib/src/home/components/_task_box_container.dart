@@ -1,10 +1,10 @@
-import '../../tasks/_task.dart';
+// src/home/components/_task_count_box.dart
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
-import '../../tasks/controllers/task_manager.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
-// filename: _task_count_box.dart
+import '../../tasks/controllers/task_manager.dart';
+import '../../tasks/_task.dart';
+import '../../theme/_theme.dart';
 
 class TaskCountBox extends StatefulWidget {
   final String label;

@@ -1,11 +1,13 @@
-// gpx_service.dart
+// src/geotag/controls/gpx_service.dart
 import 'dart:io';
-import 'package:flutter/material.dart';
+
 import 'package:gpx/gpx.dart';
+import 'package:uuid/uuid.dart';
+import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+
 import '../../tasks/controllers/task_manager.dart';
 
 class GpxService {

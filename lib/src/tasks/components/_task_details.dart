@@ -1,15 +1,17 @@
+// src/tasks/components/_task_details.dart
 import 'dart:io';
-import '../../geotag/_geotag.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../../ppir_form/_pcic_form.dart';
 import 'package:open_file/open_file.dart';
-import '../controllers/task_manager.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import '../controllers/task_manager.dart';
+import '../../geotag/_geotag.dart';
+import '../../ppir_form/_pcic_form.dart';
+import '../../theme/_theme.dart';
 
 class TaskDetailsPage extends StatelessWidget {
   final TaskManager task;

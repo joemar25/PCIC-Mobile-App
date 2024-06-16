@@ -1,26 +1,31 @@
+// src/ppir_form/_ppir_form.dart
 import 'dart:io';
-import 'package:flutter/material.dart';
+
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../home/dashboard.dart';
-import 'form_components/_form_section.dart';
-import 'form_components/_signature_section.dart';
-import 'form_components/_gpx_file_buttons.dart';
-import 'form_components/_form_field.dart' as form_field;
+import 'package:permission_handler/permission_handler.dart';
+
 import 'form_components/_success.dart';
-import '../../utils/app/_show_flash_message.dart';
-import '../tasks/controllers/task_manager.dart';
-import '../geotag/controls/_map_service.dart';
+import 'form_components/_form_section.dart';
+import 'form_components/_gpx_file_buttons.dart';
+import 'form_components/_signature_section.dart';
+import 'form_components/_form_field.dart' as form_field;
+
+import '../theme/_theme.dart';
+import '../home/dashboard.dart';
 import '../geotag/_geotag.dart';
+import '../geotag/controls/_map_service.dart';
+import '../tasks/controllers/task_manager.dart';
 import '../tasks/controllers/storage_service.dart';
+
 import '../../utils/seeds/_rice_dropdown.dart';
 import '../../utils/seeds/_corn_dropdown.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
+import '../../utils/app/_show_flash_message.dart';
 
 class PPIRFormPage extends StatefulWidget {
   final TaskManager task;

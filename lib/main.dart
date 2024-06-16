@@ -1,3 +1,4 @@
+// src/main.dart
 import 'src/app.dart';
 import 'utils/app/_firebase.dart';
 import 'src/messages/controllers/_filter.dart';

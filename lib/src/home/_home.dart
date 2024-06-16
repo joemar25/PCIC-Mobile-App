@@ -1,14 +1,17 @@
-import '../tasks/_task.dart';
-import '../splash/_splash.dart';
-import 'components/_home_header.dart';
+// src/home/_home.dart
 import 'package:flutter/material.dart';
-import 'components/_search_button.dart';
-import 'controllers/sync_controller.dart';
-import 'components/_task_count_container.dart';
-import '../tasks/controllers/task_manager.dart';
-import 'components/_recent_task_container.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'components/_home_header.dart';
+import 'components/_recent_task_container.dart';
+import 'components/_search_button.dart';
+import 'components/_task_count_container.dart';
+import 'controllers/sync_controller.dart';
+
+import '../splash/_splash.dart';
+import '../tasks/_task.dart';
+import '../tasks/controllers/task_manager.dart';
+import '../theme/_theme.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,13 +21,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  String? _token;
+  final SyncController _syncController = SyncController();
+
   List<TaskManager> _tasks = [];
+  String? _token;
+  String _syncStatus = '';
+
   String _searchQuery = '';
   bool _isLoadingRecentTasks = true;
-  final SyncController _syncController = SyncController();
   bool _isSyncing = false;
-  String _syncStatus = '';
 
   @override
   void initState() {
@@ -144,10 +149,24 @@ class HomeScreenState extends State<HomeScreen> {
       ),
       body: _isSyncing
           ? Center(
-              child: Image.asset(
-                'assets/icons/pccc.gif',
-                width: 175,
-                height: 175,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/icons/pccc.gif',
+                    width: 175,
+                    height: 175,
+                  ),
+                  const SizedBox(height: 16.0),
+                  Text(
+                    _syncStatus,
+                    style: TextStyle(
+                      color: mainColor,
+                      fontSize: t?.headline ?? 16.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             )
           : RefreshIndicator(

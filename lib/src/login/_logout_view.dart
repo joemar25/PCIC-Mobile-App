@@ -1,23 +1,21 @@
+// src/login/_logout_view.dart
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:pcic_mobile_app/src/home/dashboard.dart';
 import 'package:pcic_mobile_app/utils/app/_colors.dart';
 
-class VerifyLoginPage extends StatelessWidget {
-  final bool isLoginSuccessful;
+import '_login.dart';
 
-  const VerifyLoginPage({super.key, required this.isLoginSuccessful});
+class LogoutSuccessPage extends StatelessWidget {
+  const LogoutSuccessPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    if (isLoginSuccessful) {
-      Future.delayed(const Duration(seconds: 3), () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const DashboardPage()),
-        );
-      });
-    }
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
+    });
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -32,7 +30,7 @@ class VerifyLoginPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             const Text(
-              "Login Successful",
+              "Logout Successful",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,

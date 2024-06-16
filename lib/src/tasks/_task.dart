@@ -1,10 +1,12 @@
-// filename: _task.dart
+// src/tasks/components/_filter_task.dart
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
-import '../home/dashboard.dart';
-import 'controllers/task_manager.dart';
-import 'components/_task_view.dart';
 import 'package:lottie/lottie.dart';
+
+import '../theme/_theme.dart';
+import 'components/_task_view.dart';
+import 'controllers/task_manager.dart';
+
+import '../home/dashboard.dart';
 
 class TaskPage extends StatefulWidget {
   const TaskPage({super.key, this.initialFilter = 'Ongoing'});

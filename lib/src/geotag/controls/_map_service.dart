@@ -1,14 +1,16 @@
+// src/geotag/controls/_map_service.dart
 import 'dart:async';
 import 'dart:math';
-import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
-import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:gpx/gpx.dart';
-import 'package:http/http.dart' as http;
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
+import 'package:gpx/gpx.dart';
+import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
+
+import '../../theme/_theme.dart';
 import '_location_service.dart';
 
 class MapService {

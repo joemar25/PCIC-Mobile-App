@@ -1,6 +1,8 @@
+// src/login/_verify_signup.dart
 import "package:flutter/material.dart";
-import 'package:pcic_mobile_app/utils/agent/_login.dart';
 import 'package:pcic_mobile_app/utils/app/_colors.dart';
+
+import '_login.dart';
 
 class VerifySignupPage extends StatelessWidget {
   final bool isSignupSuccessful;
