@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class FormSection extends StatefulWidget {
   final Map<String, dynamic> formData;
@@ -138,144 +139,210 @@ class FormSectionState extends State<FormSection> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Seed Variety',
-                style: Theme.of(context).textTheme.titleLarge,
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'SEED VARIETY',
+              style: TextStyle(
+                  color: mainColor, fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.black54),
               ),
-              const SizedBox(height: 8),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey),
+              child: DropdownButtonFormField<int>(
+                isExpanded: true,
+                decoration: const InputDecoration.collapsed(hintText: ''),
+                value: widget.selectedSeedId,
+                items: widget.uniqueSeedsItems,
+                onChanged: (value) {
+                  setState(() {
+                    widget.onSelectedSeedIdChanged(value);
+                    widget.formData['ppirVariety'] = value != null
+                        ? widget.seedTitleToIdMap.entries
+                            .firstWhere((entry) => entry.value == value)
+                            .key
+                        : null;
+                  });
+                },
+                style: const TextStyle(color: mainColor),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (value == null) {
+                    return 'Please select a seed variety';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _ppirAreaController,
+              decoration: InputDecoration(
+                labelText: 'Actual Area Planted',
+                labelStyle: const TextStyle(
+                  color: Colors.black54,
                 ),
-                child: DropdownButtonFormField<int>(
-                  isExpanded: true,
-                  decoration: const InputDecoration.collapsed(hintText: ''),
-                  value: widget.selectedSeedId,
-                  items: widget.uniqueSeedsItems,
-                  onChanged: (value) {
-                    setState(() {
-                      widget.onSelectedSeedIdChanged(value);
-                      widget.formData['ppirVariety'] = value != null
-                          ? widget.seedTitleToIdMap.entries
-                              .firstWhere((entry) => entry.value == value)
-                              .key
-                          : null;
-                    });
-                  },
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(
+                    color: Colors.black54,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(
+                    color: mainColor,
+                  ),
+                ),
+              ),
+              style: const TextStyle(
+                color: mainColor,
+              ),
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                setState(() {
+                  widget.formData['ppirAreaAct'] = value;
+                });
+              },
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'This field is required';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            GestureDetector(
+              onTap: () => _pickDate(context, 'ppirDopdsAct'),
+              child: AbsorbPointer(
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Actual Date of Planting (DS)',
+                    labelStyle: const TextStyle(
+                      color: Colors.black54,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(
+                        color: Colors.black54,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(
+                        color: mainColor,
+                      ),
+                    ),
+                    suffixIcon: const Icon(
+                      Icons.calendar_today,
+                      color: mainColor,
+                    ),
+                    suffixIconColor: mainColor,
+                  ),
+                  controller: _ppirDopdsActController,
+                  style: const TextStyle(
+                    color: mainColor,
+                  ),
+                  readOnly: true,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) {
-                    if (value == null) {
-                      return 'Please select a seed variety';
+                    if (value == null || value.trim().isEmpty) {
+                      return 'This field is required';
                     }
                     return null;
                   },
                 ),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _ppirAreaController,
-                decoration: InputDecoration(
-                  labelText: 'Actual Area Planted',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  setState(() {
-                    widget.formData['ppirAreaAct'] = value;
-                  });
-                },
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'This field is required';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              GestureDetector(
-                onTap: () => _pickDate(context, 'ppirDopdsAct'),
-                child: AbsorbPointer(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Actual Date of Planting (DS)',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      suffixIcon: const Icon(Icons.calendar_today),
+            ),
+            const SizedBox(height: 16),
+            GestureDetector(
+              onTap: () => _pickDate(context, 'ppirDoptpAct'),
+              child: AbsorbPointer(
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Actual Date of Planting (TS)',
+                    labelStyle: const TextStyle(
+                      color: Colors.black54,
                     ),
-                    controller: _ppirDopdsActController,
-                    readOnly: true,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'This field is required';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              GestureDetector(
-                onTap: () => _pickDate(context, 'ppirDoptpAct'),
-                child: AbsorbPointer(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Actual Date of Planting (TS)',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(
+                        color: Colors.black54,
                       ),
-                      suffixIcon: const Icon(Icons.calendar_today),
                     ),
-                    controller: _ppirDoptpActController,
-                    readOnly: true,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'This field is required';
-                      }
-                      return null;
-                    },
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(
+                        color: mainColor,
+                      ),
+                    ),
+                    suffixIcon: const Icon(
+                      Icons.calendar_today,
+                      color: mainColor,
+                    ),
+                    suffixIconColor: mainColor,
+                  ),
+                  controller: _ppirDoptpActController,
+                  style: const TextStyle(
+                    color: mainColor,
+                  ),
+                  readOnly: true,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'This field is required';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _remarksController,
+              decoration: InputDecoration(
+                labelText: 'Remarks',
+                labelStyle: const TextStyle(
+                  color: Colors.black54,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(
+                    color: Colors.black54,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(
+                    color: mainColor,
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _remarksController,
-                decoration: InputDecoration(
-                  labelText: 'Remarks',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                maxLines: 5,
-                onChanged: (value) {
-                  widget.formData['ppirRemarks'] = value;
-                },
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) {
-                  if (value == null || _remarksController.text.trim().isEmpty) {
-                    return 'This field is required';
-                  }
-                  return null;
-                },
+              style: const TextStyle(
+                color: mainColor,
               ),
-              const SizedBox(height: 16),
-            ],
-          ),
+              maxLines: 5,
+              onChanged: (value) {
+                widget.formData['ppirRemarks'] = value;
+              },
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) {
+                if (value == null || _remarksController.text.trim().isEmpty) {
+                  return 'This field is required';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+          ],
         ),
       ),
     );
