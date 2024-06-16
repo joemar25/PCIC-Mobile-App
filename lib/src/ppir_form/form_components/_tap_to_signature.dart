@@ -152,7 +152,7 @@ class TapToSignatureState extends State<TapToSignature> {
                       child: Signature(
                         controller: widget.controller,
                         height: widget.height,
-                        backgroundColor: secondaryColor,
+                        backgroundColor: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 15),
@@ -266,7 +266,7 @@ class TapToSignatureState extends State<TapToSignature> {
                                     child: Signature(
                                       controller: widget.controller,
                                       height: widget.height,
-                                      backgroundColor: secondaryColor,
+                                      backgroundColor: Colors.white,
                                     ),
                                   ),
                                   const SizedBox(height: 15),
@@ -325,9 +325,12 @@ class TapToSignatureState extends State<TapToSignature> {
                 );
               },
             ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: widget.isError ? Colors.white : mainColor,
+            ),
             child: Text(
               style: TextStyle(
-                color: widget.isError ? Colors.red : Colors.black54,
+                color: widget.isError ? Colors.red : Colors.white,
               ),
               _isConfirmed ? 'Show Signature' : 'Tap to Sign',
             ),
