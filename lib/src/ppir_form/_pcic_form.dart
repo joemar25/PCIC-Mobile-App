@@ -129,7 +129,7 @@ class PPIRFormPageState extends State<PPIRFormPage> {
       value: null,
       child: Text(
         'Select a Seed Variety',
-        style: TextStyle(color: Colors.grey),
+        style: TextStyle(color: Colors.black54, fontSize: 16),
       ),
     ));
     for (var seed in seedsList) {
