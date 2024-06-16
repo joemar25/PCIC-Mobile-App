@@ -5,7 +5,7 @@ import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
-
+import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import '../../tasks/controllers/task_manager.dart';
 
 class TapToSignature extends StatefulWidget {
@@ -146,17 +146,32 @@ class TapToSignatureState extends State<TapToSignature> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Signature(
-                      controller: widget.controller,
-                      height: widget.height,
-                      backgroundColor: widget.backgroundColor,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(
+                          12.0), // Adjust the radius as needed
+                      child: Signature(
+                        controller: widget.controller,
+                        height: widget.height,
+                        backgroundColor: secondaryColor,
+                      ),
                     ),
+                    const SizedBox(height: 15),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         ElevatedButton(
                           onPressed: _clearSignature,
-                          child: const Text('Clear Signature'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white, // Background color
+                            foregroundColor: mainColor, // Text color
+                            shadowColor: Colors.grey, // Shadow color
+                            elevation: 3, // Subtle shadow
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  20), // Standard border radius
+                            ),
+                          ),
+                          child: const Text('CLEAR'),
                         ),
                         ValueListenableBuilder<bool>(
                           valueListenable: _isSignatureEmpty,
@@ -165,7 +180,17 @@ class TapToSignatureState extends State<TapToSignature> {
                               onPressed: isSignatureEmpty
                                   ? null
                                   : () => _saveSignature(context, controller),
-                              child: const Text('Save'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: mainColor,
+                                foregroundColor: Colors.white,
+                                shadowColor: Colors.grey, // Shadow color
+                                elevation: 3, // Subtle shadow
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), // Standard border radius
+                                ),
+                              ),
+                              child: const Text('SAVE'),
                             );
                           },
                         ),
@@ -235,18 +260,36 @@ class TapToSignatureState extends State<TapToSignature> {
                             : Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Signature(
-                                    controller: widget.controller,
-                                    height: widget.height,
-                                    backgroundColor: widget.backgroundColor,
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        12.0), // Adjust the radius as needed
+                                    child: Signature(
+                                      controller: widget.controller,
+                                      height: widget.height,
+                                      backgroundColor: secondaryColor,
+                                    ),
                                   ),
+                                  const SizedBox(height: 15),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
                                       ElevatedButton(
                                         onPressed: _clearSignature,
-                                        child: const Text('Clear Signature'),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              Colors.white, // Background color
+                                          foregroundColor:
+                                              mainColor, // Text color
+                                          shadowColor:
+                                              Colors.grey, // Shadow color
+                                          elevation: 3, // Subtle shadow
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                20), // Standard border radius
+                                          ),
+                                        ),
+                                        child: const Text('CLEAR'),
                                       ),
                                       ValueListenableBuilder<bool>(
                                         valueListenable: _isSignatureEmpty,
@@ -257,7 +300,18 @@ class TapToSignatureState extends State<TapToSignature> {
                                                 ? null
                                                 : () => _saveSignature(
                                                     context, controller),
-                                            child: const Text('Save'),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: mainColor,
+                                              foregroundColor: Colors.white,
+                                              shadowColor:
+                                                  Colors.grey, // Shadow color
+                                              elevation: 3, // Subtle shadow
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(
+                                                    20), // Standard border radius
+                                              ),
+                                            ),
+                                            child: const Text('SAVE'),
                                           );
                                         },
                                       ),
@@ -273,7 +327,7 @@ class TapToSignatureState extends State<TapToSignature> {
             ),
             child: Text(
               style: TextStyle(
-                color: widget.isError ? Colors.red : Colors.black,
+                color: widget.isError ? Colors.red : Colors.black54,
               ),
               _isConfirmed ? 'Show Signature' : 'Tap to Sign',
             ),

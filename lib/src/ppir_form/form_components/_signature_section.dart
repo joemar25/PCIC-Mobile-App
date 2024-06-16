@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
 import '../../tasks/controllers/task_manager.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class SignatureSection extends StatefulWidget {
   final TaskManager task;
@@ -138,7 +139,9 @@ class SignatureSectionState extends State<SignatureSection> {
         const Text(
           'Confirmed by:',
           style: TextStyle(
-              fontSize: 16, fontWeight: FontWeight.normal, color: Colors.black),
+              fontSize: 16,
+              fontWeight: FontWeight.normal,
+              color: Colors.black54),
         ),
         TextFormField(
           controller: _confirmedByNameController,
@@ -148,7 +151,17 @@ class SignatureSectionState extends State<SignatureSection> {
                     _confirmedByNameController.text.trim().isEmpty
                 ? 'This field is required'
                 : null,
+            focusedBorder: const UnderlineInputBorder(
+              borderSide:
+                  BorderSide(color: mainColor), // Change the color as needed
+            ),
+            enabledBorder: const UnderlineInputBorder(
+              borderSide:
+                  BorderSide(color: mainColor), // Change the color as needed
+            ),
           ),
+          style: const TextStyle(
+              color: Colors.black54), // Change the color as needed
           onChanged: (value) {
             setState(() {
               _confirmedByNameController.text = value;
@@ -160,9 +173,8 @@ class SignatureSectionState extends State<SignatureSection> {
           onTap: () => setState(() {}),
           child: Container(
             height: 200,
-            color: !_isConfirmedBySignatureValid
-                ? Colors.red[100]
-                : Colors.grey[300],
+            color:
+                !_isConfirmedBySignatureValid ? Colors.red : Colors.grey[300],
             child: TapToSignature(
               task: widget.task,
               controller: _confirmedBySignatureController,
@@ -188,7 +200,9 @@ class SignatureSectionState extends State<SignatureSection> {
         const Text(
           'Prepared by:',
           style: TextStyle(
-              fontSize: 16, fontWeight: FontWeight.normal, color: Colors.black),
+              fontSize: 16,
+              fontWeight: FontWeight.normal,
+              color: Colors.black54),
         ),
         TextFormField(
           controller: _preparedByNameController,
@@ -198,7 +212,17 @@ class SignatureSectionState extends State<SignatureSection> {
                     _preparedByNameController.text.trim().isEmpty
                 ? 'This field is required'
                 : null,
+            focusedBorder: const UnderlineInputBorder(
+              borderSide:
+                  BorderSide(color: mainColor), // Change the color as needed
+            ),
+            enabledBorder: const UnderlineInputBorder(
+              borderSide:
+                  BorderSide(color: mainColor), // Change the color as needed
+            ),
           ),
+          style: const TextStyle(
+              color: Colors.black54), // Change the color as needed
           onChanged: (value) {
             setState(() {
               _preparedByNameController.text = value;
@@ -210,9 +234,7 @@ class SignatureSectionState extends State<SignatureSection> {
           onTap: () => setState(() {}),
           child: Container(
             height: 200,
-            color: !_isPreparedBySignatureValid
-                ? Colors.red[100]
-                : Colors.grey[300],
+            color: !_isPreparedBySignatureValid ? Colors.red : Colors.grey[300],
             child: TapToSignature(
               task: widget.task,
               controller: _preparedBySignatureController,
