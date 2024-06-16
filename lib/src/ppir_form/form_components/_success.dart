@@ -1,7 +1,9 @@
+// src/ppir_form/form_components/_success.dart
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:pcic_mobile_app/src/home/dashboard.dart';
-import 'package:pcic_mobile_app/utils/app/_colors.dart';
+
+import '../../../utils/app/_colors.dart';
+import '../../home/dashboard.dart';
 
 class FormSuccessPage extends StatelessWidget {
   final bool isSaveSuccessful;

@@ -1,6 +1,8 @@
+// src/tasks/components/_filter_task.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
+
+import '../../theme/_theme.dart';
 
 class FilterButton extends StatefulWidget {
   final ValueChanged<String> onUpdateState;
@@ -254,8 +256,8 @@ class _FilterButtonState extends State<FilterButton> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
-        elevation: 3, // Custom elevation for shadow effect
-        shadowColor: Colors.grey.withOpacity(0.7), // Custom shadow color
+        elevation: 3,
+        shadowColor: Colors.grey.withOpacity(0.7),
       ),
       child: SvgPicture.asset(
         'assets/storage/images/filter.svg',

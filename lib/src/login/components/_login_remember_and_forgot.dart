@@ -1,8 +1,8 @@
+// src/login/components/_login_remember_and_forgot.dart
 import 'package:flutter/material.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
-// Import the ForgetPasswordPage
-import '../../agent/_forgetPassword.dart';
+import '../_forgetPassword.dart';
 
 class RememberAndForgot extends StatefulWidget {
   const RememberAndForgot({super.key});

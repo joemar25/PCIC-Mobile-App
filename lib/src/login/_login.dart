@@ -1,12 +1,15 @@
+// src/login/_login.dart
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:pcic_mobile_app/src/home/dashboard.dart';
-import 'package:pcic_mobile_app/utils/agent/_session.dart';
-import 'package:pcic_mobile_app/utils/agent/_verify_login.dart';
-import 'package:pcic_mobile_app/utils/agent/login-components/_login_remember_and_forgot.dart';
-import 'package:pcic_mobile_app/utils/agent/login-components/_login_text_field.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import 'components/_login_remember_and_forgot.dart';
+import 'components/_login_text_field.dart';
+
+import '_session.dart';
+import '_verify_login.dart';
+import '../home/dashboard.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

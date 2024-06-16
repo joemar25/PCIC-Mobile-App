@@ -1,10 +1,11 @@
+// src/settings/_controller.dart
 import '_service.dart';
 import 'package:flutter/material.dart';
 
 class SettingsController with ChangeNotifier {
   SettingsController(this._settingsService) {
-    _themeMode = ThemeMode.light; // Default to light theme
-    loadSettings(); // Load settings asynchronously
+    _themeMode = ThemeMode.light;
+    loadSettings();
   }
 
   final SettingsService _settingsService;

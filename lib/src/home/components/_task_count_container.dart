@@ -1,8 +1,9 @@
-import '_task_box_container.dart';
+// src/home/components/_task_count_container.dart
 import 'package:flutter/material.dart';
-import '../../tasks/controllers/task_manager.dart';
 
-// filename: home/_task_count_container.dart
+import '_task_box_container.dart';
+
+import '../../tasks/controllers/task_manager.dart';
 
 class TaskCountContainer extends StatefulWidget {
   final Function(bool) onTasksPressed;

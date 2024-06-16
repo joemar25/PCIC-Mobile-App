@@ -1,3 +1,4 @@
+// src/settings/_view.dart
 import '_controller.dart';
 import 'package:flutter/material.dart';
 

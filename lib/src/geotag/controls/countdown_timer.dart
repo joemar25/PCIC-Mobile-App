@@ -1,5 +1,7 @@
+// src/geotag/controls/countdown_timer.dart
 import 'package:flutter/material.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
+
+import '../../theme/_theme.dart';
 
 class CountdownTimer extends StatelessWidget {
   final int countdown;

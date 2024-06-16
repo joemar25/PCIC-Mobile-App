@@ -1,6 +1,8 @@
+// src/profile/components/_profile_body_item.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
+
+import '../../theme/_theme.dart';
 
 class ProfileBodyItem extends StatefulWidget {
   final String label;

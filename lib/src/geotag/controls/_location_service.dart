@@ -1,9 +1,10 @@
-// filename: geotag/_location_service.dart
-import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:permission_handler/permission_handler.dart';
+// src/geotag/controls/_location_service.dart
 import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class LocationService {
   StreamSubscription<Position>? positionStream;

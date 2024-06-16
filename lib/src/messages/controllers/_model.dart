@@ -1,4 +1,6 @@
+// src/messages/controllers/_model.dart
 import 'package:flutter/material.dart';
+
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class MessageItem extends StatelessWidget {

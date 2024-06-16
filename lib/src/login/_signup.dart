@@ -1,6 +1,8 @@
+// src/login/_signup.dart
 import "package:flutter/material.dart";
-import "package:pcic_mobile_app/utils/agent/_login.dart";
-import "package:pcic_mobile_app/utils/agent/_verify_signup.dart";
+
+import "_login.dart";
+import "_verify_signup.dart";
 
 class SignupPage extends StatelessWidget {
   const SignupPage({super.key});

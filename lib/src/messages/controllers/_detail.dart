@@ -1,8 +1,10 @@
+// src/messages/controllers/_detail.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../theme/_theme.dart';
 
 class MessageDetailsPage extends StatefulWidget {
   final Map<String, dynamic> message;

@@ -1,15 +1,18 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// src/profile/_profile_view.dart
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-import '../../utils/agent/_logout_view.dart';
-import '../theme/_theme.dart';
+
 import 'components/_profile_body.dart';
 import 'components/_profile_body_item.dart';
 import 'components/_profile_edit.dart';
-import '../../utils/agent/_session.dart';
+
+import '../login/_logout_view.dart';
+import '../login/_session.dart';
+import '../theme/_theme.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -51,10 +54,10 @@ class _ProfilePageState extends State<ProfilePage> {
           documentId = userDoc.id;
         });
       } else {
-        print("User document not found");
+        debugPrint("User document not found");
       }
     } else {
-      print("No authenticated user");
+      debugPrint("No authenticated user");
     }
   }
 
@@ -300,13 +303,17 @@ Future<void> _logout(BuildContext context) async {
   try {
     await FirebaseAuth.instance.signOut();
     await Session().stop();
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const LogoutSuccessPage()),
-    );
+    if (context.mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const LogoutSuccessPage()),
+      );
+    }
   } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error logging out: $e')),
-    );
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error logging out: $e')),
+      );
+    }
   }
 }

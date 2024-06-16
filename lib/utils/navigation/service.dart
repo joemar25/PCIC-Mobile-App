@@ -1,4 +1,4 @@
-// file: navigation/service.dart
+// src/utils/navigation/service.dart
 import 'package:flutter/material.dart';
 
 class NavigationService {

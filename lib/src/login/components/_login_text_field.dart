@@ -1,10 +1,10 @@
+// src/login/components/login_text_field.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pcic_mobile_app/src/theme/_theme.dart';
 
 class LoginTextField extends StatefulWidget {
-  // final String password;
-  final String svgPath; //
+  final String svgPath;
   final String inputType;
 
   final Function(String) onTextChanged;
@@ -20,7 +20,7 @@ class LoginTextField extends StatefulWidget {
 }
 
 class _LoginTextFieldState extends State<LoginTextField> {
-  bool _obscureText = true; // Initially password is obscured
+  bool _obscureText = true;
   String _passwordValue = '';
 
   @override
@@ -77,7 +77,7 @@ class _LoginTextFieldState extends State<LoginTextField> {
                         hintText: "Enter your ${widget.inputType}",
                         hintStyle: TextStyle(fontSize: t?.body),
                         border: const OutlineInputBorder(
-                          borderSide: BorderSide.none, // Removes the border
+                          borderSide: BorderSide.none,
                         ),
                         contentPadding: EdgeInsets.zero,
                         filled: false,
@@ -97,7 +97,7 @@ class _LoginTextFieldState extends State<LoginTextField> {
               ),
               onPressed: () {
                 setState(() {
-                  _obscureText = !_obscureText; // Toggle obscureText value
+                  _obscureText = !_obscureText;
                 });
               },
             ),

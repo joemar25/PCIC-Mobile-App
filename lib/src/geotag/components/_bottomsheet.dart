@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
+// src/geotag/components/_bottomsheet.dart
 import 'package:flutter_svg/svg.dart';
-import 'package:pcic_mobile_app/src/theme/_theme.dart';
+import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import '../../theme/_theme.dart';
 
 class GeoTagBottomSheet extends StatefulWidget {
   final String latitude;
