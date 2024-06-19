@@ -315,7 +315,7 @@ class SignatureSectionState extends State<SignatureSection> {
     }
 
     const uuid = Uuid();
-    final signatureFilename = '${uuid.v4()}_$signatureName.png';
+    final signatureFilename = '${uuid.v4()}.png';
     final signatureFileRef = folderRef.child(signatureFilename);
 
     await signatureFileRef.putData(signatureBytes);
