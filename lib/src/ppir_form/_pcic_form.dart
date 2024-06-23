@@ -1,6 +1,7 @@
 // src/ppir_form/_ppir_form.dart
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
@@ -166,6 +167,33 @@ class PPIRFormPageState extends State<PPIRFormPage> {
     });
   }
 
+  static Future<void> _downloadFilesFromFirebase(
+      String taskId, String tempDirPath) async {
+    await _downloadDirectoryFromFirebase(
+        FirebaseStorage.instance.ref().child('PPIR_SAVES/$taskId'),
+        '$tempDirPath/PPIR_SAVES/$taskId');
+  }
+
+  static Future<void> _downloadDirectoryFromFirebase(
+      Reference storageRef, String localPath) async {
+    final listResult = await storageRef.listAll();
+    for (var item in listResult.items) {
+      String filePath = '$localPath/${item.name}';
+      if (localPath.contains('Attachments')) {
+        filePath = filePath.replaceAll(RegExp(r'\.[^.]+$'), '');
+      }
+      final file = File(filePath);
+      if (!await file.exists()) {
+        await file.create(recursive: true);
+      }
+      final bytes = await item.getData();
+      await file.writeAsBytes(bytes!);
+    }
+    for (var prefix in listResult.prefixes) {
+      await _downloadDirectoryFromFirebase(prefix, '$localPath/${prefix.name}');
+    }
+  }
+
   Future<void> _submitForm(BuildContext context) async {
     setState(() {
       isSubmitting = true;
@@ -257,13 +285,18 @@ class PPIRFormPageState extends State<PPIRFormPage> {
 
       debugPrint('Task Data Before Update: $_taskData');
 
+      // Update the task data in Firestore
       await widget.task.updateTaskData(_taskData);
 
+      // Save the task file to Firebase Storage
+      await StorageService.saveTaskFileToFirebaseStorage(widget.task.taskId);
+
+      // Compress and upload the task files
       final filename = await widget.task.filename;
+      final serviceGroup = await widget.task.serviceGroup;
       if (filename != null) {
-        await StorageService.saveTaskFileToFirebaseStorage(widget.task.taskId);
         await StorageService.compressAndUploadTaskFiles(
-            filename, widget.task.taskId);
+            filename, widget.task.taskId, serviceGroup ?? '');
       }
 
       if (context.mounted) {

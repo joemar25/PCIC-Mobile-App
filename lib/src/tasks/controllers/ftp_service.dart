@@ -1,5 +1,6 @@
 // src/tasks/controllers/ftp_service.dart
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:ftpconnect/ftpconnect.dart';
 
 class FTPService {
@@ -38,7 +39,7 @@ class FTPService {
     }
   }
 
-  Future<void> connectUpload() async {
+  Future<void> connectUpload(String serviceGroup) async {
     _ftpConnectUpload = FTPConnect(_ftpHost,
         port: _ftpPort,
         user: _ftpUserUpload,
@@ -47,7 +48,16 @@ class FTPService {
 
     try {
       await _ftpConnectUpload.connect();
-      await _ftpConnectUpload.changeDirectory(_uploadDirectory);
+
+      // Create the service group directory if it doesn't exist
+      final serviceGroupDirectory = '$_uploadDirectory/$serviceGroup';
+      if (!await _ftpConnectUpload
+          .checkFolderExistence(serviceGroupDirectory)) {
+        await _ftpConnectUpload.makeDirectory(serviceGroupDirectory);
+        debugPrint('Created directory: $serviceGroupDirectory');
+      }
+
+      await _ftpConnectUpload.changeDirectory(serviceGroupDirectory);
     } catch (e) {
       // debugPrint('Failed to connect to FTP or change directory: $e');
       throw Exception('Failed to connect to FTP or change directory');
@@ -120,7 +130,7 @@ class FTPService {
     try {
       await _ftpConnectUpload.uploadFileWithRetry(file, pRetryCount: 2);
     } catch (e) {
-      // debugPrint('Error uploading file to FTP server: $e');
+      debugPrint('Error uploading file to FTP server: $e');
       throw Exception('Error uploading file to FTP server');
     }
   }

@@ -39,6 +39,10 @@ class TaskManager {
     return await _getFieldFromTask('taskStatus');
   }
 
+  Future<String?> get serviceGroup async {
+    return await _getFieldFromTask('serviceGroup');
+  }
+
   Future<DateTime?> get dateAccess async {
     try {
       final taskSnapshot = await FirebaseFirestore.instance

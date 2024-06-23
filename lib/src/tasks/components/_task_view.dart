@@ -4,12 +4,12 @@ import 'package:shimmer/shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../theme/_theme.dart';
 import '_task_details.dart';
 import '_task_filter_button.dart';
 import '_task_filter_footer.dart';
 
 import '../controllers/task_manager.dart';
+import '../../theme/_theme.dart';
 import '../../home/components/_search_button.dart';
 import '../../home/controllers/_recent_task_data.dart';
 
@@ -108,6 +108,19 @@ class TaskContainerState extends State<TaskView> {
     }
   }
 
+  Future<void> _refreshTasks() async {
+    await Future.delayed(const Duration(seconds: 1));
+    _sortTasks(_sortBy);
+    _updateTaskCounts();
+  }
+
+  void _navigateToTaskDetails(BuildContext context, TaskManager task) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => TaskDetailsPage(task: task)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     List<TaskManager> tasksToDisplay = _isLoading ? [] : _sortedTasks;
@@ -116,7 +129,7 @@ class TaskContainerState extends State<TaskView> {
       body: _isLoading
           ? Center(
               child: Image.asset(
-                'assets/icons/pccc.gif', // Update the path according to your file location
+                'assets/icons/pccc.gif',
                 width: 175,
                 height: 175,
               ),
@@ -201,8 +214,6 @@ class TaskContainerState extends State<TaskView> {
                                     child: FutureBuilder<String?>(
                                       future: task.status,
                                       builder: (context, snapshot) {
-                                        // final statusColor =
-                                        //     getStatusColor(snapshot.data);
                                         return Container(
                                           margin: const EdgeInsets.symmetric(
                                               vertical: 8.0),
@@ -321,19 +332,6 @@ class TaskContainerState extends State<TaskView> {
                 ),
               ],
             ),
-    );
-  }
-
-  Future<void> _refreshTasks() async {
-    await Future.delayed(const Duration(seconds: 1));
-    _sortTasks(_sortBy);
-    _updateTaskCounts();
-  }
-
-  void _navigateToTaskDetails(BuildContext context, TaskManager task) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => TaskDetailsPage(task: task)),
     );
   }
 }
