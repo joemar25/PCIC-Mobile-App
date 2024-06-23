@@ -1,4 +1,4 @@
-// src/services/task_manager.dart
+// src/services/task_xml_generator.dart
 import 'dart:convert';
 import 'package:xml/xml.dart';
 import 'package:flutter/foundation.dart';
@@ -57,6 +57,15 @@ Future<Map<String, dynamic>> fetchAddressFromCoordinates(
     };
   } else {
     throw Exception('Failed to fetch address from coordinates');
+  }
+}
+
+Future<String> getFileBlob(String fileUrl) async {
+  final response = await http.get(Uri.parse(fileUrl));
+  if (response.statusCode == 200) {
+    return base64Encode(response.bodyBytes);
+  } else {
+    throw Exception('Failed to load file content');
   }
 }
 
@@ -152,12 +161,18 @@ Future<String> generateTaskXmlContent(String taskId) async {
   }
 
   // Extract ppirSigInsured and ppirSigIuia
-  final ppirSigInsured = taskData?['ppirSigInsured'] != null
-      ? extractFilename(taskData?['ppirSigInsured'])
+  final ppirSigInsuredUrl = taskData?['ppirSigInsured'];
+  final ppirSigIuiaUrl = taskData?['ppirSigIuia'];
+
+  // Extract ppirSigInsured and ppirSigIuia
+  final ppirSigInsured = extractFilename(ppirSigInsuredUrl);
+  final ppirSigIuia = extractFilename(ppirSigInsuredUrl);
+
+  final ppirSigInsuredBlob = ppirSigInsuredUrl != null
+      ? await getFileBlob(ppirSigInsuredUrl)
       : 'Unknown';
-  final ppirSigIuia = taskData?['ppirSigIuia'] != null
-      ? extractFilename(taskData?['ppirSigIuia'])
-      : 'Unknown';
+  final ppirSigIuiaBlob =
+      ppirSigIuiaUrl != null ? await getFileBlob(ppirSigIuiaUrl) : 'Unknown';
 
   String removeLastFourChars(String str) {
     if (str.length > 4) {
@@ -167,6 +182,10 @@ Future<String> generateTaskXmlContent(String taskId) async {
     }
   }
 
+  // ppirSigInsured and ppirSigIuia
+  final ppirSigInsuredNoExtension = removeLastFourChars(ppirSigInsured);
+  final ppirSigIuiaNoExtension = removeLastFourChars(ppirSigIuia);
+
   final regionName = taskData?['serviceType'] != null
       ? removeLastFourChars(taskData?['serviceType'])
       : 'Unknown';
@@ -174,6 +193,12 @@ Future<String> generateTaskXmlContent(String taskId) async {
   // Create an instance of TaskManager to get the GPX file path
   final taskManager = TaskManager(taskId: taskId);
   final gpxUrl = await taskManager.getGpxFilePath();
+
+  debugPrint("gpxUrl = $gpxUrl; gpxUrl = $gpxUrl.png");
+
+  // Extract ppirSigInsured and ppirSigIuia
+  final gpxFileName = extractFilename(gpxUrl);
+  final gpxFileNameNoExtension = removeLastFourChars(gpxFileName);
 
   // Fetch the GPX file content
   final gpxContent = await fetchGpxContent(gpxUrl);
@@ -2048,7 +2073,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
           builder.element('FormFieldZipModel', nest: () {
             builder.element('Attachment', nest: () {
               builder.element('AuthorId', nest: '53111');
-              builder.element('Blob', nest: 'BLOB_MAR');
+              builder.element('Blob', nest: ppirSigInsuredBlob);
               builder.element('BlobLocation',
                   nest: '2cba2e43-122c-4f9a-b7a7-3e97fcd3183d');
               builder.element('CapturedDateTime',
@@ -2070,7 +2095,8 @@ Future<String> generateTaskXmlContent(String taskId) async {
                 builder.element('ZipCode', nest: '1105');
               });
               builder.element('FileName',
-                  nest: 'e4ef107c-6764-4d22-898b-adb27364e945.png');
+                  nest:
+                      ppirSigInsured); // e4ef107c-6764-4d22-898b-adb27364e945.png
               builder.element('FromMobile', nest: 'false');
               builder.element('Height', nest: '0');
               builder.element('LastModifiedDate', nest: '0001-01-01T00:00:00');
@@ -2078,7 +2104,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
               builder.element('MimeType', nest: 'image/png');
               builder.element('Width', nest: '0');
               builder.element('ZipEntryFileName',
-                  nest: '1d8e0164-16a2-4b09-9f87-8b16baabbb60');
+                  nest: ppirSigInsuredNoExtension);
             });
             builder.element('FieldId', nest: 'ppir_sig_insured');
             builder.element('ContentId', nest: 'ppir_sig_insured');
@@ -2106,7 +2132,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
           builder.element('FormFieldZipModel', nest: () {
             builder.element('Attachment', nest: () {
               builder.element('AuthorId', nest: '53111');
-              builder.element('Blob', nest: 'BLOB_MAR');
+              builder.element('Blob', nest: ppirSigIuiaBlob); // mar blob
               builder.element('BlobLocation',
                   nest: '3ef6459c-3634-4bc1-b048-e1c0247cb6a1');
               builder.element('CapturedDateTime',
@@ -2126,16 +2152,14 @@ Future<String> generateTaskXmlContent(String taskId) async {
                 });
                 builder.element('ZipCode', nest: '1100');
               });
-              builder.element('FileName',
-                  nest: '92e7a921-eddb-4ce2-91cb-974834e22c40.png');
+              builder.element('FileName', nest: ppirSigIuia);
               builder.element('FromMobile', nest: 'false');
               builder.element('Height', nest: '0');
               builder.element('LastModifiedDate', nest: '0001-01-01T00:00:00');
               builder.element('Length', nest: '6421');
               builder.element('MimeType', nest: 'image/png');
               builder.element('Width', nest: '0');
-              builder.element('ZipEntryFileName',
-                  nest: '5a91c02b-0a3c-48c2-b233-445d3538d8cf');
+              builder.element('ZipEntryFileName', nest: ppirSigIuiaNoExtension);
             });
 
             builder.element('FieldId', nest: 'ppir_sig_iuia');
@@ -2638,14 +2662,14 @@ Future<String> generateTaskXmlContent(String taskId) async {
               });
               builder.element('FileName',
                   nest:
-                      "P$ipv4-$date-$taskNumber-ppir_att_1.gpx"); // ip date __ att_1
+                      gpxFileName); // ip date __ att_1 --> P$ipv4-$date-$taskNumber-ppir_att_1.gpx
               builder.element('FromMobile', nest: 'false');
               builder.element('Height', nest: '0');
               builder.element('LastModifiedDate', nest: '0001-01-01T00:00:00');
               builder.element('Length', nest: '1349');
               builder.element('MimeType', nest: 'application/gpx+xml');
               builder.element('Width', nest: '0');
-              builder.element('ZipEntryFileName', nest: gpxUrl.split('/').last);
+              builder.element('ZipEntryFileName', nest: gpxFileNameNoExtension);
             });
 
             builder.element('FieldId', nest: 'ppir_att_1');
@@ -2667,6 +2691,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
             builder.element('Options', nest: '');
             builder.element('Sequence', nest: '24');
             builder.element('Type', nest: 'Attachment');
+            // builder.element('Value', nest: ppirSigInsured);
           });
 
           builder.element('FormFieldZipModel', nest: () {
