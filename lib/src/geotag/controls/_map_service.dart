@@ -12,6 +12,7 @@ import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_ti
 
 import '../../theme/_theme.dart';
 import '_location_service.dart';
+import 'elevation_service.dart';
 
 class MapService {
   final MapController mapController = MapController();
@@ -20,6 +21,7 @@ class MapService {
   final List<Marker> markers = [];
   bool _isDisposed = false;
   StreamSubscription<LatLng>? locationSubscription;
+  final List<double> elevations = [];
 
   void initLocationService() {
     final locationService = LocationService();
@@ -36,13 +38,13 @@ class MapService {
     if (_isDisposed) return;
     markers.add(
       Marker(
-        width: 80.0,
-        height: 80.0,
+        width: 60.0,
+        height: 60.0,
         point: point,
         child: const Icon(
           Icons.location_on,
           color: mainColor,
-          size: 40.0,
+          size: 30.0,
         ),
       ),
     );
@@ -53,13 +55,13 @@ class MapService {
     if (_isDisposed) return;
     markers.add(
       Marker(
-        width: 80.0,
-        height: 80.0,
+        width: 60.0,
+        height: 60.0,
         point: point,
         child: const Icon(
           Icons.location_on,
           color: mainColor,
-          size: 40.0,
+          size: 30.0,
         ),
       ),
     );
@@ -78,15 +80,18 @@ class MapService {
     }
   }
 
-  void addRoutePoint(LatLng point) {
+  Future<void> addRoutePoint(LatLng point) async {
     if (_isDisposed) return;
+    double elevation = await ElevationService.getElevationFromMapbox(point);
     routePoints.add(point);
+    elevations.add(elevation);
     moveMap(point);
   }
 
   void clearRoutePoints() {
     if (_isDisposed) return;
     routePoints.clear();
+    elevations.clear();
   }
 
   void moveMap(LatLng point) {
@@ -159,10 +164,8 @@ class MapService {
               marker: DefaultLocationMarker(
                 child: Container(
                   decoration: BoxDecoration(
-                    color:
-                        secondaryColor, // Set your desired background color here
-                    borderRadius: BorderRadius.circular(
-                        15), // Set your desired border radius here
+                    color: secondaryColor,
+                    borderRadius: BorderRadius.circular(15),
                   ),
                   child: const Icon(
                     Icons.location_pin,
@@ -188,7 +191,7 @@ class MapService {
   }
 
   double calculateAreaOfPolygon(List<LatLng> points) {
-    if (points.length < 3) {
+    if (points.length < 3 || points.length != elevations.length) {
       return 0.0;
     }
     double radius = 6378137.0;
@@ -215,13 +218,18 @@ class MapService {
   }
 
   double calculateTotalDistance(List<LatLng> points) {
+    if (points.length != elevations.length) return 0.0;
+
     double totalDistance = 0.0;
     for (int i = 0; i < points.length - 1; i++) {
-      totalDistance += const Distance().as(
+      double horizontalDistance = const Distance().as(
         LengthUnit.Meter,
         points[i],
         points[i + 1],
       );
+      double verticalDistance = (elevations[i + 1] - elevations[i]).abs();
+      totalDistance += sqrt(horizontalDistance * horizontalDistance +
+          verticalDistance * verticalDistance);
     }
     return totalDistance;
   }

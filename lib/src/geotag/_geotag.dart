@@ -184,18 +184,16 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
   void _trackRoutePoints() {
     _locationSubscription ??=
         _locationService.getLocationStream().listen((position) async {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          setState(() {
-            latitude = '${position.latitude}';
-            longitude = '${position.longitude}';
-            currentLocation =
-                'Lat: ${position.latitude}, Long: ${position.longitude}';
-            _mapService
-                .addRoutePoint(LatLng(position.latitude, position.longitude));
-          });
-        }
-      });
+      if (mounted) {
+        setState(() {
+          latitude = '${position.latitude}';
+          longitude = '${position.longitude}';
+          currentLocation =
+              'Lat: ${position.latitude}, Long: ${position.longitude}';
+        });
+        await _mapService
+            .addRoutePoint(LatLng(position.latitude, position.longitude));
+      }
     });
   }
 
@@ -283,70 +281,61 @@ class GeotagPageState extends State<GeotagPage> with WidgetsBindingObserver {
         // Close the route loop
         _closeRouteLoop(routePoints);
 
-        var gpx = _gpxService.createGpxFromRoutePoints(routePoints);
-        var gpxString = _gpxService.convertGpxToString(gpx);
-
-        await _gpxService.saveGpxFile(gpxString, widget.task, saveOnline);
+        await _gpxService.saveGpxFile('', widget.task, saveOnline, routePoints);
 
         if (routePoints.isNotEmpty) {
           await widget.task.updateLastCoordinates(
               LatLng(routePoints.last.latitude, routePoints.last.longitude));
         }
 
-        // Calculate and update the area and distance
-        await _calculateAndUpdateTask(routePoints);
+        if (mounted) {
+          setState(() {
+            isRoutingStarted = false;
+            _mapService.clearMarkers();
+            isLoading = false;
+          });
 
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) {
-            setState(() {
-              isRoutingStarted = false;
-              _mapService.clearMarkers();
-              isLoading = false;
-            });
+          _mapService.dispose();
 
-            _mapService.dispose();
-
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PPIRFormPage(
-                  task: widget.task,
-                ),
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PPIRFormPage(
+                task: widget.task,
               ),
-            );
-          }
-        });
+            ),
+          );
+        }
       } catch (e) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) {
-            setState(() {
-              isLoading = false;
-            });
-            debugPrint('Exception caught: $e');
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+          });
+          debugPrint('Exception caught: $e');
 
-            showFlashMessage(context, 'Error', 'Error Saving File',
-                'Something went wrong! Please try again.');
-            Navigator.pop(context);
-          }
-        });
+          showFlashMessage(context, 'Error', 'Error Saving File',
+              'Something went wrong! Please try again.');
+          Navigator.pop(context);
+        }
       }
     }
   }
 
-  Future<void> _calculateAndUpdateTask(List<LatLng> routePoints) async {
-    if (routePoints.isNotEmpty) {
-      final mapService = MapService();
-      final distance = mapService.calculateTotalDistance(routePoints);
-      double area = mapService.calculateAreaOfPolygon(routePoints);
-      double areaInHectares = area / 10000;
-
-      final taskData = {
-        'trackTotalarea': areaInHectares.toString(),
-        'trackTotaldistance': distance.toString()
-      };
-
-      await widget.task.updateTaskData(taskData);
+  Future<String> _getCurrentLocationAddress() async {
+    LatLng? position = await _locationService.getCurrentLocation();
+    if (position != null) {
+      try {
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+            position.latitude, position.longitude);
+        if (placemarks.isNotEmpty) {
+          Placemark place = placemarks[0];
+          return '${place.street}, ${place.locality}, ${place.administrativeArea}, ${place.country}';
+        }
+      } catch (e) {
+        debugPrint('Error getting address: $e');
+      }
     }
+    return 'Address not available';
   }
 
   void _closeRouteLoop(List<LatLng> routePoints) {

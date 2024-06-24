@@ -1,6 +1,6 @@
 // src/geotag/controls/gpx_service.dart
 import 'dart:io';
-
+import 'dart:math' show sin, cos, atan2, sqrt;
 import 'package:gpx/gpx.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +9,31 @@ import 'package:path_provider/path_provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import '../../tasks/controllers/task_manager.dart';
+import 'elevation_service.dart';
 
 class GpxService {
-  Future<void> saveGpxFile(
-      String gpxString, TaskManager task, bool saveOnline) async {
+  // WGS84 major axis
+  static const double earthRadius = 6378137.0;
+  // WGS84 flattening
+  static const double flattening = 1 / 298.257223563;
+  // Adjust this based on comparisons with professional devices
+  static const double correctionFactor = 0.95;
+
+  Future<void> saveGpxFile(String gpxString, TaskManager task, bool saveOnline,
+      List<LatLng> routePoints) async {
+    double areaInSquareMeters = calculateAreaOfPolygon(routePoints);
+    double areaInHectares = (areaInSquareMeters * correctionFactor) / 10000;
+    double distance = calculateTotalDistance(routePoints);
+
+    // Update the task with calculated values
+    await task.updateTaskData({
+      'trackTotalarea': areaInHectares.toStringAsFixed(9),
+      'trackTotaldistance': distance.toStringAsFixed(2),
+    });
+
+    var gpx = await createGpxFromRoutePoints(routePoints);
+    var gpxString = convertGpxToString(gpx);
+
     if (saveOnline) {
       await _uploadGpxToFirebase(gpxString, task);
     } else {
@@ -74,19 +95,79 @@ class GpxService {
     await task.updateTaskStatus('Ongoing');
   }
 
-  Gpx createGpxFromRoutePoints(List<LatLng> routePoints) {
+  Future<Gpx> createGpxFromRoutePoints(List<LatLng> routePoints) async {
     final gpx = Gpx();
-    final trackSegment = Trkseg();
-    trackSegment.trkpts = routePoints
-        .map((point) => Wpt(lat: point.latitude, lon: point.longitude))
-        .toList();
+    gpx.creator = "PCIC Mobile App - Geotagging";
+    gpx.metadata = Metadata(
+      name: "Geotagged Track",
+      desc: "Track created with PCIC geotagging application",
+      time: DateTime.now().toUtc(),
+    );
+
     final track = Trk();
+    track.name = "Geotagged Track";
+
+    final trackSegment = Trkseg();
+    for (var point in routePoints) {
+      double elevation = await ElevationService.getElevationFromMapbox(point);
+      trackSegment.trkpts.add(Wpt(
+        lat: point.latitude,
+        lon: point.longitude,
+        ele: elevation,
+        time: DateTime.now().toUtc(),
+      ));
+    }
+
     track.trksegs = [trackSegment];
     gpx.trks = [track];
     return gpx;
   }
 
   String convertGpxToString(Gpx gpx) {
-    return GpxWriter().asString(gpx);
+    return GpxWriter().asString(gpx, pretty: true);
+  }
+
+  double calculateAreaOfPolygon(List<LatLng> points) {
+    if (points.length < 3) return 0.0;
+
+    double area = 0.0;
+    int len = points.length;
+
+    for (int i = 0; i < len; i++) {
+      int j = (i + 1) % len;
+      double xi = points[i].longitudeInRad;
+      double yi = points[i].latitudeInRad;
+      double xj = points[j].longitudeInRad;
+      double yj = points[j].latitudeInRad;
+
+      area += (xj - xi) * (2 + sin(yi) + sin(yj));
+    }
+
+    area = area * earthRadius * earthRadius / 2.0;
+    return area.abs();
+  }
+
+  double calculateTotalDistance(List<LatLng> points) {
+    double totalDistance = 0.0;
+    for (int i = 0; i < points.length - 1; i++) {
+      totalDistance += calculateHaversineDistance(points[i], points[i + 1]);
+    }
+    return totalDistance;
+  }
+
+  double calculateHaversineDistance(LatLng start, LatLng end) {
+    double lat1 = start.latitudeInRad;
+    double lon1 = start.longitudeInRad;
+    double lat2 = end.latitudeInRad;
+    double lon2 = end.longitudeInRad;
+
+    double dLat = lat2 - lat1;
+    double dLon = lon2 - lon1;
+
+    double a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(lat1) * cos(lat2) * sin(dLon / 2) * sin(dLon / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    return earthRadius * c;
   }
 }
