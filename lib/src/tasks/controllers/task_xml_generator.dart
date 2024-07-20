@@ -2880,7 +2880,7 @@ Future<String> generateTaskXmlContent(String taskId) async {
             builder.element('Options', nest: '');
             builder.element('Sequence', nest: '53');
             builder.element('Type', nest: 'Radio');
-            builder.element('Value', nest: ppirSvpAct);
+            builder.element('Value', nest: ppirSvpAct); // rice/corn
           });
 
           builder.element('FormFieldZipModel', nest: () {
