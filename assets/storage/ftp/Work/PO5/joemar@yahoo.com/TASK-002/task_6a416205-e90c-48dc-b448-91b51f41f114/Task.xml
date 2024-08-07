@@ -1,0 +1,2521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TaskArchiveZipModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <AgentId xsi:nil="true"/>
+  <AssignedDate></AssignedDate>
+  <Attachments></Attachments>
+  <AuditLogs>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Label>Task Status</Label>
+      <Message>Task status is changed to '_HERE_'.</Message>
+      <SnapshotValue>For Dispatch</SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp></Timestamp>
+      <UpdatedValue></UpdatedValue>
+      <FieldLabel>Task Status</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Captured Mobile Location</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId></TaskId>
+      <Timestamp></Timestamp>
+      <UpdatedValue></UpdatedValue>
+      <FieldLabel>Captured Mobile Location</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Captured Mobile Location</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>System</Source>
+      <TaskId></TaskId>
+      <Timestamp></Timestamp>
+      <UpdatedValue></UpdatedValue>
+      <FieldLabel>Captured Mobile Location</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P{gpx: PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPGdweCB2ZXJzaW9uPSIxLjEiIGNyZWF0b3I9IlBDSUMtUVVBTkJZIiB4bWxucz0iaHR0cDovL3d3dy50b3BvZ3JhZml4LmNvbS9HUFgvMS8xIj4KICA8dHJrPgogICAgPG5hbWU+UENJQy1RVUFOQlkgVHJhY2s8L25hbWU+CiAgICA8dHJrc2VnPgogICAgICA8dHJrcHQgbGF0PSIxMy4yNzU5NjYzIiBsb249IjEyMy43NTY0OTA0Ii8+CiAgICA8L3Rya3NlZz4KICA8L3Ryaz4KPC9ncHg+, task_id: 6a416205-e90c-48dc-b448-91b51f41f114, is_dirty: true, local_id: null, ppir_east: DONNA LERONA, ppir_west: NATIONAL ROAD, created_at: 2024-08-02T09:48:39.486856+00:00, ppir_att_1: null, ppir_att_2: null, ppir_att_3: null, ppir_att_4: null, ppir_cicno: 1564747, ppir_north: SIXTO CABARLES, ppir_south: RESIDENCE, updated_at: 2024-08-07T02:44:55.057891+00:00, sync_status: not_synced, ppir_address: RIZAL, OTON ,ILOILO, ppir_farmloc: RIZAL, OTON, ILOILO, ppir_remarks: , ppir_svp_aci: null, ppir_svp_act: rice, ppir_variety: NSIC RC216 (TUBIGAN 17) TPR, ppir_area_aci: 0.5, ppir_area_act: 1.5, ppir_mobileno: null, ppir_sig_iuia: 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, last_synced_at: null, ppir_dopds_aci: null, ppir_dopds_act: 16/8/2024, ppir_doptp_aci: null, ppir_doptp_act: 31/8/2024, ppir_groupname: DA - OTON, ppir_name_iuia: mar, ppir_stagecrop: null, ppir_farmername: CALFOFORO, ANDRES, JR. DIAZ, ppir_farmertype: SELF FINANCE GROUP, ppir_lendername: null, track_date_time: 2024-08-06 21:54:50, ppir_insuranceid: 1973056, ppir_sig_insured: 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, track_last_coord: 13.2759663,123.7564904, track_total_area: 0.0000, ppir_assignmentid: PPIR-002, ppir_groupaddress: RIZAL, OTON, ILOILO, ppir_name_insured: joe, ppir_lenderaddress: null, track_total_distance: 0.0000}['ppir_assignmentid']?.toString() ?? '' - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId></TaskId>
+      <Timestamp></Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Actual</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp></Timestamp>
+      <UpdatedValue>0.2500</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Actual</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Region</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp></Timestamp>
+      <UpdatedValue></UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Region</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P_HERE_ - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:27:02.4373782Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Actual - Date of Planting (DS)</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp></Timestamp>
+      <UpdatedValue>16/8/2024</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Actual - Date of Planting (DS)</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Actual - Date of Planting (TP)</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp></Timestamp>
+      <UpdatedValue></UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Actual - Date of Planting (TP)</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Seed Variety Planted - Corn/Rice</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp></Timestamp>
+      <UpdatedValue></UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Seed Variety Planted - Corn/Rice</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P_HERE_ - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp></Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Variety</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:27:21.86Z</Timestamp>
+      <UpdatedValue>rice</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Variety</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <Label>PPIR - Post Planting Inspection Report &amp;gt; Stage of Crop ATV</Label>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Stage of Crop ATV</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:27:21.86Z</Timestamp>
+      <UpdatedValue>RICE-DOUGH STG. (MATURITY)</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldId>Stage of Crop ATV</FieldId>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P_HERE_ - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:27:28.7517927Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Full Name:</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:27:27.52Z</Timestamp>
+      <UpdatedValue>F</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Full Name:</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Signature: (Insured)</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:27:27.52Z</Timestamp>
+      <UpdatedValue>{"events":[],"attemptCount":0,"duration":0}</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Signature: (Insured)</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P_HERE_ - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:27:40.5418779Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Signature: (Insured)</Label>
+      <SnapshotValue>{"events":[],"attemptCount":0,"duration":0}</SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:27:29.743Z</Timestamp>
+      <UpdatedValue>{"events":[{"type":0,"timestamp":"2024-04-08T13:27:26.735+08:00"},{"type":2,"timestamp":"2024-04-08T13:27:29.352+08:00"}],"attemptCount":1,"duration":0}</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Signature: (Insured)</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P_HERE_ - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:27:52.2099499Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Full Name:</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:28:21.815Z</Timestamp>
+      <UpdatedValue>Inspector</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Full Name:</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P_HERE_ - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:28:24.4310056Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Full Name:</Label>
+      <SnapshotValue>Inspector</SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:28:25.002Z</Timestamp>
+      <UpdatedValue>Inspector</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Full Name:</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Signature: (IU/IA)</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:28:25.002Z</Timestamp>
+      <UpdatedValue>{"events":[],"attemptCount":0,"duration":0}</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Signature: (IU/IA)</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P_HERE_ - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:28:36.975082Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Signature: (IU/IA)</Label>
+      <SnapshotValue>{"events":[],"attemptCount":0,"duration":0}</SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:28:33.479Z</Timestamp>
+      <UpdatedValue>{"events":[{"type":0,"timestamp":"2024-04-08T13:28:24.559+08:00"},{"type":2,"timestamp":"2024-04-08T13:28:33.079+08:00"}],"attemptCount":1,"duration":0}</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Signature: (IU/IA)</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P_HERE_ - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:28:48.7513389Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Total Area (in sqm.)</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>0</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Total Area (in sqm.)</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Date and Time</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>04/08/2024 1:29:22 pm</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Date and Time</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Last Coordinates</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:22.228+08:00","unitLotNo":null,"zipCode":null}</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Last Coordinates</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinate Row|track_coordinate_row|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinates|track_coordinates|{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:02.631+08:00","unitLotNo":null,"zipCode":null}</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Date/Time|track_coord_timestamp|04/08/2024 1:29:02 pm</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P_HERE_ - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T02:31:09.1609392Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Hidden Field</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T02:31:08.8601031Z</Timestamp>
+      <UpdatedValue>N - BRGY. ROAD | E - CASIANO ORO | S - NESIA ENOC | W - EMMANUEL CLARITE</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Hidden Field</FieldLabel>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Task created.</Message>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T02:31:03.8278713Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Assigned Date Time</Label>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T02:31:08.3743402Z</Timestamp>
+      <UpdatedValue>2024-04-08T02:31:03.8278713+00:00</UpdatedValue>
+      <FieldLabel>Assigned Date Time</FieldLabel>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Agent</Label>
+      <Label>Agent</Label>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T02:31:08.3743402Z</Timestamp>
+      <UpdatedValue>Suarez, Christian</UpdatedValue>
+      <FieldLabel>Agent</FieldLabel>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinate Row|track_coordinate_row|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinates|track_coordinates|{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:05.649+08:00","unitLotNo":null,"zipCode":null}</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Date/Time|track_coord_timestamp|04/08/2024 1:29:05 pm</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinate Row|track_coordinate_row|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinates|track_coordinates|{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:08.649+08:00","unitLotNo":null,"zipCode":null}</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Date/Time|track_coord_timestamp|04/08/2024 1:29:08 pm</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinate Row|track_coordinate_row|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinates|track_coordinates|{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:11.649+08:00","unitLotNo":null,"zipCode":null}</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Date/Time|track_coord_timestamp|04/08/2024 1:29:11 pm</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Section Break||</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinate Row|track_coordinate_row|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinates|track_coordinates|{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:14.649+08:00","unitLotNo":null,"zipCode":null}</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Date/Time|track_coord_timestamp|04/08/2024 1:29:14 pm</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Section Break||</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinate Row|track_coordinate_row|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinates|track_coordinates|{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:17.649+08:00","unitLotNo":null,"zipCode":null}</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Date/Time|track_coord_timestamp|04/08/2024 1:29:17 pm</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Section Break||</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinate Row|track_coordinate_row|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinates|track_coordinates|{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:20.649+08:00","unitLotNo":null,"zipCode":null}</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Date/Time|track_coord_timestamp|04/08/2024 1:29:20 pm</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Section Break||</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinate Row|track_coordinate_row|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinates|track_coordinates|{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:22.228+08:00","unitLotNo":null,"zipCode":null}</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Date/Time|track_coord_timestamp|04/08/2024 1:29:22 pm</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Section Break||</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Section Break||</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Section Break||</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <SnapshotValue>Coordinates|track_coordinates|</SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <SnapshotValue>Date/Time|track_coord_timestamp|</SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <SnapshotValue>Coordinate Row|track_coordinate_row|</SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P_HERE_ - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:31.9213368Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Farm Location</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:48.04Z</Timestamp>
+      <UpdatedValue>Farm</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Farm Location</FieldLabel>
+      <IPAddress>172.31.37.162</IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P_HERE_ - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:29:53.7502153Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Remarks:</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:30:45.183Z</Timestamp>
+      <UpdatedValue>Remarks</UpdatedValue>
+      <FieldId>ppir_remarks</FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Remarks:</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Signature: (Insured)PPIR - Post Planting Inspection Report &amp;gt; Signature: (Insured)</Label>
+      <SnapshotValue>{"events":[{"type":0,"timestamp":"2024-04-08T13:27:26.735+08:00"},{"type":2,"timestamp":"2024-04-08T13:27:29.352+08:00"}],"attemptCount":1,"duration":0}</SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:30:45.183Z</Timestamp>
+      <UpdatedValue>{"events":[{"type":0,"timestamp":"2024-04-08T13:27:26.735+08:00"},{"type":2,"timestamp":"2024-04-08T13:27:29.352+08:00"},{"type":0,"timestamp":"2024-04-08T13:30:31.656+08:00"},{"type":2,"timestamp":"2024-04-08T13:30:35.456+08:00"}],"attemptCount":2,"duration":0}</UpdatedValue>
+      <FieldId>ppir_sig_insured</FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Signature: (Insured)</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P_HERE_ - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:30:51.4918205Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Label>Task Status</Label>
+      <Message>Task status is changed to 'Submitted'.</Message>
+      <SnapshotValue>In Progress</SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:30:57.111Z</Timestamp>
+      <UpdatedValue>Submitted</UpdatedValue>
+      <FieldLabel>Task Status</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Captured Mobile Location</Label>
+      <SnapshotValue>Quezon City, 1100</SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:30:57.111Z</Timestamp>
+      <UpdatedValue>14.653113, 121.035177</UpdatedValue>
+      <FieldLabel>Captured Mobile Location</FieldLabel>
+      <FieldLabel>Captured Mobile Location</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Captured Mobile Location</Label>
+      <SnapshotValue>14.653113, 121.035177</SnapshotValue>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:30:57.111Z</Timestamp>
+      <UpdatedValue>GAOC (Gan Advanced Osseointegration Center), Quezon City, 1105</UpdatedValue>
+      <FieldLabel>Captured Mobile Location</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Agent</Label>
+      <SnapshotValue>Suarez, Christian</SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:30:59.921735Z</Timestamp>
+      <FieldLabel>Agent</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Assigned Date Time</Label>
+      <SnapshotValue>2024-04-08T02:31:03.8278713+00:00</SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:30:59.921735Z</Timestamp>
+      <UpdatedValue>2024-04-08T05:30:59.9217363+00:00</UpdatedValue>
+      <FieldLabel>Assigned Date Time</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Dispatch Acknowledged</Label>
+      <SnapshotValue>True</SnapshotValue>
+      <Source>Suarez, Christian</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:30:59.921735Z</Timestamp>
+      <UpdatedValue>False</UpdatedValue>
+      <FieldLabel>Dispatch Acknowledged</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P_HERE_ - _HERE_ PPIR script.</Message>
+      <Source>System</Source>
+      <TaskId>PPIR-002</TaskId>
+      <Timestamp>2024-04-08T05:31:00.8335183Z</Timestamp>
+    </TaskAuditLogZipModel>
+  </AuditLogs>
+  <CreatedBy>System</CreatedBy>
+  <DateCreated>2024-04-08T02:31:03.8278713Z</DateCreated>
+  <DispatchAcknowledged>false</DispatchAcknowledged>
+  <DueDate xsi:nil="true"/>
+  <Forms>
+    <FormZipModel>
+      <ContentId>___C313c757e</ContentId>
+      <Fields>
+        <FormFieldZipModel>
+          <ContentId>___C8af47c47</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Farmer</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>fb036b78-a523-428c-9099-5cd30e0cfd48</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>1</Sequence>
+          <Type>TabHeader</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_insuranceid</FieldId>
+          <ContentId>ppir_insuranceid</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Insurance ID:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>7fd346a8-7ca4-4095-a4f0-7ad59594620b</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>3</Sequence>
+          <Type>Number</Type>
+          <Value>1973056</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_farmername</FieldId>
+          <ContentId>ppir_farmername</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Name of Farmer:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>edda9582-34f4-4e5d-8fcb-fb4e7cf38e12</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>4</Sequence>
+          <Type>Text</Type>
+          <Value>CALFOFORO, ANDRES, JR. DIAZ</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_address</FieldId>
+          <ContentId>ppir_address</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Address:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>b7fa21e1-5275-4880-bd93-b4e3e9ed5298</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>5</Sequence>
+          <Type>Paragraph</Type>
+          <Value>RIZAL, OTON ,ILOILO</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_mobileno</FieldId>
+          <ContentId>ppir_mobileno</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Mobile No.</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>e5a61bf2-5218-4363-af96-3b9c67e53b19</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>7</Sequence>
+          <Type>Text</Type>
+          <Value></Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C8c5c666c</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Heading 3</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>35e08ccb-2683-4ea6-8b39-53abbcfd308c</ObjectId>
+          <ParentObjectId>e1741f98-0db6-4831-9d5d-226e55c82216</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>15</Sequence>
+          <Type>Label</Type>
+          <Value>Location of Sketch Plan</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C849d713a</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Filler</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>b125be87-9a5d-497c-a353-7dad592d3b0a</ObjectId>
+          <ParentObjectId>e1741f98-0db6-4831-9d5d-226e55c82216</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>19</Sequence>
+          <Type>Filler</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_north</FieldId>
+          <ContentId>ppir_north</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>North:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>9c9cdbb7-a0cf-48a6-a88f-9b9d003a2fe4</ObjectId>
+          <ParentObjectId>e1741f98-0db6-4831-9d5d-226e55c82216</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>17</Sequence>
+          <Type>Text</Type>
+          <Value>SIXTO CABARLES</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_east</FieldId>
+          <ContentId>ppir_east</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>East:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>67cb381c-583b-4b5b-9d7b-cab659b82df1</ObjectId>
+          <ParentObjectId>e1741f98-0db6-4831-9d5d-226e55c82216</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>18</Sequence>
+          <Type>Text</Type>
+          <Value>DONNA LERONA</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Ced4bb507</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Filler</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>38ddbce4-1d2a-4571-a130-26ffbe74290a</ObjectId>
+          <ParentObjectId>e1741f98-0db6-4831-9d5d-226e55c82216</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>16</Sequence>
+          <Type>Filler</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_south</FieldId>
+          <ContentId>ppir_south</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>South:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>9dae3068-2783-4b5c-9661-0546cdd62d32</ObjectId>
+          <ParentObjectId>e1741f98-0db6-4831-9d5d-226e55c82216</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>20</Sequence>
+          <Type>Text</Type>
+          <Value></Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_west</FieldId>
+          <ContentId>ppir_west</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>West:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>808c57b1-fef3-4e2a-afdc-4e49ac1ee55e</ObjectId>
+          <ParentObjectId>e1741f98-0db6-4831-9d5d-226e55c82216</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>21</Sequence>
+          <Type>Text</Type>
+          <Value></Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Caa847787</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>7d6ba651-2f24-4a5a-b1b5-cce3b770a64a</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>22</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Cba3ecf69</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>2fb8b7d2-d5b4-497f-a1b0-968a2b980558</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>25</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C1e067799</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>6fb4c3db-b48c-4893-9948-b68920dd227a</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>33</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Ca5e93611</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>0d811bf2-adff-40e4-a5af-1a51c2419493</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>38</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C601ba4fb</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>3e964cf7-d063-4694-9ad1-ea0ce93f3a33</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>43</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C9c2b21b4</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>2e4c03a8-597d-46d7-bb18-ca92b61cb21c</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>48</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C15096e44</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>3acdbae6-8cbe-4f36-878c-d9a50ced23ed</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>49</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_groupaddress</FieldId>
+          <ContentId>ppir_groupaddress</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Group Address:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>230156a2-3beb-4a61-81f3-06cdc2d52d17</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>9</Sequence>
+          <Type>Paragraph</Type>
+          <Value></Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_lenderaddress</FieldId>
+          <ContentId>ppir_lenderaddress</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Lender Address:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>31e8c458-42d5-4fb8-bfbd-07d3d8617e73</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>11</Sequence>
+          <Type>Paragraph</Type>
+          <Value></Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_cicno</FieldId>
+          <ContentId>ppir_cicno</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>CIC No.:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>61f6699b-6122-4ec6-b9e8-5ddf6d4bec58</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>12</Sequence>
+          <Type>Text</Type>
+          <Value>1564747</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_farmloc</FieldId>
+          <ContentId>ppir_farmloc</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Location of Farm:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>602b6892-9416-489a-8659-2952e459b84f</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>13</Sequence>
+          <Type>Paragraph</Type>
+          <Value>RIZAL, OTON, ILOILO</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C41277505</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Findings</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>08bdd465-1733-4641-b002-b59837875261</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>27</Sequence>
+          <Type>TabHeader</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Ccda744f4</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Body</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>1e0c1a2a-0d59-4252-8eb6-e2359325b292</ObjectId>
+          <ParentObjectId>2e251a10-487b-4232-b7d9-f99aa1172e81</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>30</Sequence>
+          <Type>Label</Type>
+          <Value>Area Planted</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Ce0369d7e</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Body</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>851e57a4-d17c-467a-9547-7c300fc5ba18</ObjectId>
+          <ParentObjectId>a947b27e-3769-44d1-a9c5-21bf0ae4d91f</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>35</Sequence>
+          <Type>Label</Type>
+          <Value>Date of Planting (DS)</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Cf595c3db</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Body</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>5b513a36-faad-4898-9c53-b4afcee141ba</ObjectId>
+          <ParentObjectId>1c728bc6-2ba6-47c9-a66b-329fddb8318a</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>40</Sequence>
+          <Type>Label</Type>
+          <Value>Date of Planting (TP)</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C330188fd</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Body</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>b7051998-97cd-4205-9c13-4e319552f515</ObjectId>
+          <ParentObjectId>60ae3318-f922-4f6f-a24f-dcc507417e92</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>45</Sequence>
+          <Type>Label</Type>
+          <Value>Seed Variety Planted</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_remarks</FieldId>
+          <ContentId>ppir_remarks</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Remarks:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>9a2a65cb-bc39-4904-ba2e-82e5319631bd</ObjectId>
+          <ParentObjectId>ef7fa39c-a661-4d29-9e0b-154e4c0e2efb</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>57</Sequence>
+          <Type>Paragraph</Type>
+          <Value></Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C26680de1</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Body</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>8a5b37be-d47b-4981-969a-8b64146ef23c</ObjectId>
+          <ParentObjectId>ef7fa39c-a661-4d29-9e0b-154e4c0e2efb</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>58</Sequence>
+          <Type>Label</Type>
+          <Value>Conformed by:</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_name_insured</FieldId>
+          <ContentId>ppir_name_insured</ContentId>
+          <HelpText>Insured</HelpText>
+          <Indicator xsi:nil="true"/>
+          <Label>Full Name:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>f49128c4-09c7-47e9-adb1-2b26609532fb</ObjectId>
+          <ParentObjectId>ef7fa39c-a661-4d29-9e0b-154e4c0e2efb</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>59</Sequence>
+          <Type>Text</Type>
+          <Value>joe</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Ce8e2c8d2</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Body</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>41c1d54b-3f2f-4fc5-bd83-2cc78587c3c1</ObjectId>
+          <ParentObjectId>ef7fa39c-a661-4d29-9e0b-154e4c0e2efb</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>62</Sequence>
+          <Type>Label</Type>
+          <Value>Prepared by:</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_groupname</FieldId>
+          <ContentId>ppir_groupname</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Group Name:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>0773da25-8885-420f-b507-3106d180517a</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>8</Sequence>
+          <Type>Text</Type>
+          <Value>DA - OTON</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_lendername</FieldId>
+          <ContentId>ppir_lendername</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Lender Name:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>38cd62f2-91c4-49be-8a34-fc55c7b97028</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>10</Sequence>
+          <Type>Text</Type>
+          <Value></Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <Attachment>
+            <AuthorId>53111</AuthorId>
+            <Blob>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</Blob>
+            <BlobLocation>2cba2e43-122c-4f9a-b7a7-3e97fcd3183d</BlobLocation>
+            <CapturedDateTime>2024-04-08T05:30:35.447Z</CapturedDateTime>
+            <CapturedLocation>
+              <Accuracy xsi:nil="true"/>
+              <BuildingName>GAOC (Gan Advanced Osseointegration Center)</BuildingName>
+              <City>Quezon City</City>
+              <Country>Philippines</Country>
+              <Latitude>14.6531133</Latitude>
+              <Longitude>121.0351767</Longitude>
+              <Province></Province>
+              <Timestamp xsi:nil="true"/>
+              <ZipCode>1105</ZipCode>
+            </CapturedLocation>
+            <FileName>_FILENAME.ext_</FileName>
+            <FromMobile>false</FromMobile>
+            <Height>0</Height>
+            <LastModifiedDate>0001-01-01T00:00:00</LastModifiedDate>
+            <Length>4047</Length>
+            <MimeType>image/png</MimeType>
+            <Width>0</Width>
+            <ZipEntryFileName>_FILENAME_</ZipEntryFileName>
+          </Attachment>
+          <FieldId>ppir_sig_insured</FieldId>
+          <ContentId>ppir_sig_insured</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Signature: (Insured)</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>48264b19-5b65-49c2-aa55-dff352940f4a</ObjectId>
+          <ParentObjectId>ef7fa39c-a661-4d29-9e0b-154e4c0e2efb</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>60</Sequence>
+          <Type>ESignature</Type>
+          <Value></Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <Attachment>
+            <AuthorId>53111</AuthorId>
+            <Blob>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</Blob>
+            <BlobLocation>3ef6459c-3634-4bc1-b048-e1c0247cb6a1</BlobLocation>
+            <CapturedDateTime>2024-04-08T05:28:33.072Z</CapturedDateTime>
+            <CapturedLocation>
+              <Accuracy xsi:nil="true"/>
+              <BuildingName></BuildingName>
+              <City>Quezon City</City>
+              <Country>Philippines</Country>
+              <Latitude>14.6381974</Latitude>
+              <Longitude>121.042935</Longitude>
+              <Province></Province>
+              <Timestamp xsi:nil="true"/>
+              <ZipCode>1100</ZipCode>
+            </CapturedLocation>
+            <FileName></FileName>
+            <FromMobile>false</FromMobile>
+            <Height>0</Height>
+            <LastModifiedDate>0001-01-01T00:00:00</LastModifiedDate>
+            <Length>6421</Length>
+            <MimeType>image/png</MimeType>
+            <Width>0</Width>
+            <ZipEntryFileName></ZipEntryFileName>
+          </Attachment>
+          <FieldId>ppir_sig_iuia</FieldId>
+          <ContentId>ppir_sig_iuia</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Signature: (IU/IA)</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>a0aa8416-78ef-44bb-ae27-f9eca6c44dc5</ObjectId>
+          <ParentObjectId>ef7fa39c-a661-4d29-9e0b-154e4c0e2efb</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>64</Sequence>
+          <Type>ESignature</Type>
+          <Value></Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C7538cacd</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Filler</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>139da2b2-4b85-4eec-9466-48262d057ae8</ObjectId>
+          <ParentObjectId>ef7fa39c-a661-4d29-9e0b-154e4c0e2efb</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>61</Sequence>
+          <Type>Filler</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_name_iuia</FieldId>
+          <ContentId>ppir_name_iuia</ContentId>
+          <HelpText>IU/IA</HelpText>
+          <Indicator xsi:nil="true"/>
+          <Label>Full Name:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>9e6881eb-9d3c-4cd8-8ed2-0c6e140ce44b</ObjectId>
+          <ParentObjectId>ef7fa39c-a661-4d29-9e0b-154e4c0e2efb</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>63</Sequence>
+          <Type>Text</Type>
+          <Value>mar</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_dopds_aci</FieldId>
+          <ContentId>ppir_dopds_aci</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Per ACI - Date of Planting (DS)</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>f4281666-3928-4533-bf80-89586cf74358</ObjectId>
+          <ParentObjectId>a947b27e-3769-44d1-a9c5-21bf0ae4d91f</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>36</Sequence>
+          <Type>Date</Type>
+          <Value></Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_dopds_act</FieldId>
+          <ContentId>ppir_dopds_act</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Actual - Date of Planting (DS)</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>7cbbf87c-46f9-47d1-b699-7727ec464198</ObjectId>
+          <ParentObjectId>a947b27e-3769-44d1-a9c5-21bf0ae4d91f</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>37</Sequence>
+          <Type>Date</Type>
+          <Value>16/8/2024</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_doptp_aci</FieldId>
+          <ContentId>ppir_doptp_aci</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Per ACI - Date of Planting (TP)</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>d153d684-235c-4e3f-a415-ba337bf9299d</ObjectId>
+          <ParentObjectId>1c728bc6-2ba6-47c9-a66b-329fddb8318a</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>41</Sequence>
+          <Type>Date</Type>
+          <Value></Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_doptp_act</FieldId>
+          <ContentId>ppir_doptp_act</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Actual - Date of Planting (TP)</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>b9c5121f-3afe-43ce-b9b5-c3a36145122a</ObjectId>
+          <ParentObjectId>1c728bc6-2ba6-47c9-a66b-329fddb8318a</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>42</Sequence>
+          <Type>Date</Type>
+          <Value></Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId></FieldId>
+          <ContentId></ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Per ACI</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>ac7e1eb9-9f36-40ad-9ae0-03eb1d98ef64</ObjectId>
+          <ParentObjectId>60ae3318-f922-4f6f-a24f-dcc507417e92</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>46</Sequence>
+          <Type>Text</Type>
+          <Value></Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Cd9e63b1f</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Body</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>57b7a79a-704e-4a83-95d9-4ef5ba9c9fcb</ObjectId>
+          <ParentObjectId>ef7fa39c-a661-4d29-9e0b-154e4c0e2efb</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>55</Sequence>
+          <Type>Label</Type>
+          <Value>If transplanted, how many days were the seedings from seed sowing to transplanting</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_assignmentid</FieldId>
+          <ContentId>ppir_assignmentid</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>PPI Assignment ID:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>d0487430-ed7e-423a-965d-4a6fd5adb4a6</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>2</Sequence>
+          <Type>Number</Type>
+          <Value>PPIR-002</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Cef050610</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Grid with Fixed Rows</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>a08a5a60-437d-4b67-b648-7c7bf6b549b1</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>28</Sequence>
+          <Type>Grid</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C0044b0e2</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Row - DS</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>a947b27e-3769-44d1-a9c5-21bf0ae4d91f</ObjectId>
+          <ParentObjectId>a08a5a60-437d-4b67-b648-7c7bf6b549b1</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>34</Sequence>
+          <Type>Row</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Ca939bf9a</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Row -TP</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>1c728bc6-2ba6-47c9-a66b-329fddb8318a</ObjectId>
+          <ParentObjectId>a08a5a60-437d-4b67-b648-7c7bf6b549b1</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>39</Sequence>
+          <Type>Row</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Ceae00bd6</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Row - SVP</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>60ae3318-f922-4f6f-a24f-dcc507417e92</ObjectId>
+          <ParentObjectId>a08a5a60-437d-4b67-b648-7c7bf6b549b1</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>44</Sequence>
+          <Type>Row</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C51474a87</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label></Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>d556f75b-085b-48d8-9463-779f20630568</ObjectId>
+          <ParentObjectId>60ae3318-f922-4f6f-a24f-dcc507417e92</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>47</Sequence>
+          <Type>Filler</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_farmertype</FieldId>
+          <ContentId>ppir_farmertype</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Type of Farmers:</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>cba496fd-fb24-4ff4-853a-d9ae0fa346d8</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>6</Sequence>
+          <Type>Text</Type>
+          <Value>SELF FINANCE GROUP</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Cab5519b6</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Row - Area</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>2e251a10-487b-4232-b7d9-f99aa1172e81</ObjectId>
+          <ParentObjectId>a08a5a60-437d-4b67-b648-7c7bf6b549b1</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>29</Sequence>
+          <Type>Row</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_area_act</FieldId>
+          <ContentId>ppir_area_act</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Actual</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>c7c334df-6911-4d09-b9b1-d47da41d6d56</ObjectId>
+          <ParentObjectId>2e251a10-487b-4232-b7d9-f99aa1172e81</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>32</Sequence>
+          <Type>Number</Type>
+          <Value>1.5</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C962111dc</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Filler</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>2b89b9b3-5ec7-4e71-9f5a-afa5281bc63e</ObjectId>
+          <ParentObjectId>ef7fa39c-a661-4d29-9e0b-154e4c0e2efb</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>52</Sequence>
+          <Type>Filler</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_area_aci</FieldId>
+          <ContentId>ppir_area_aci</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Per ACI</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>0d31c35c-62dd-4d9b-a99e-702e620edd9c</ObjectId>
+          <ParentObjectId>2e251a10-487b-4232-b7d9-f99aa1172e81</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>31</Sequence>
+          <Type>Number</Type>
+          <Value>0.5</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C434bf08e</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>b4b0abd3-0448-4956-9842-8e7183aa771c</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>65</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C59eff340</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Attachment</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>1f313a18-bcfd-4ab2-9fe8-5e3c8f59c3d9</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>23</Sequence>
+          <Type>Section</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <Attachment>
+            <AuthorId>1001</AuthorId>
+            <Blob>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPGdweCB2ZXJzaW9uPSIxLjEiIGNyZWF0b3I9IlBDSUMtUVVBTkJZIiB4bWxucz0iaHR0cDovL3d3dy50b3BvZ3JhZml4LmNvbS9HUFgvMS8xIj4KICA8dHJrPgogICAgPG5hbWU+UENJQy1RVUFOQlkgVHJhY2s8L25hbWU+CiAgICA8dHJrc2VnPgogICAgICA8dHJrcHQgbGF0PSIxMy4yNzU5NjYzIiBsb249IjEyMy43NTY0OTA0Ii8+CiAgICA8L3Rya3NlZz4KICA8L3Ryaz4KPC9ncHg+</Blob>
+            <BlobLocation>3bb8a48d-4b87-4d96-a6fa-8dc7804aaf0c</BlobLocation>
+            <CapturedDateTime xsi:nil="true"/>
+            <FileName></FileName>
+            <FromMobile>false</FromMobile>
+            <Height>0</Height>
+            <LastModifiedDate>0001-01-01T00:00:00</LastModifiedDate>
+            <Length>1349</Length>
+            <MimeType>application/gpx+xml</MimeType>
+            <Width>0</Width>
+            <ZipEntryFileName></ZipEntryFileName>
+          </Attachment>
+          <FieldId>ppir_att_1</FieldId>
+          <ContentId>ppir_att_1</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Attachment 1</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>052b555b-f884-4ab7-8548-9803b1d549a3</ObjectId>
+          <ParentObjectId>1f313a18-bcfd-4ab2-9fe8-5e3c8f59c3d9</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>24</Sequence>
+          <Type>Attachment</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_nesw</FieldId>
+          <ContentId>ppir_nesw</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Hidden Field</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>100af01a-d64a-40f8-93af-16d94a032c7d</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>26</Sequence>
+          <Type>Text</Type>
+          <Value/>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Cbc50640e</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>091ca59e-a4c0-4bb9-b99e-b648ad00fd4a</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>66</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Cea4d0b64</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Location Sketch</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>e1741f98-0db6-4831-9d5d-226e55c82216</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>14</Sequence>
+          <Type>Section</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_variety</FieldId>
+          <ContentId>ppir_variety</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Variety</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>3e6d02a0-5a2a-4e69-b1bb-2ecd57c28119</ObjectId>
+          <ParentObjectId>ef7fa39c-a661-4d29-9e0b-154e4c0e2efb</ParentObjectId>
+          <RefData>
+            <Column>Variety Name</Column>
+            <ColumnId>14018</ColumnId>
+            <HintId1 xsi:nil="true"/>
+            <HintId2 xsi:nil="true"/>
+            <Link>Seed-Region-Code</Link>
+            <LinkId>14019</LinkId>
+            <ParentContentId>ppir_svp_act</ParentContentId>
+            <ParentTemplateFieldId xsi:nil="true"/>
+            <Table>ZVariety PPIR</Table>
+            <TableId>14016</TableId>
+          </RefData>
+          <RefDataParentRowId>044c4205-e3dc-44ae-9c3e-1564d77e010a</RefDataParentRowId>
+          <Options></Options>
+          <Sequence>54</Sequence>
+          <Type>List</Type>
+          <Value>rice</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_stagecrop</FieldId>
+          <ContentId>ppir_stagecrop</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Stage of Crop ATV</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>ae7da5af-b294-468b-8ffd-1f5999a1b9ea</ObjectId>
+          <ParentObjectId>ef7fa39c-a661-4d29-9e0b-154e4c0e2efb</ParentObjectId>
+          <RefData>
+            <Column>STAGES DESCRIPTION</Column>
+            <ColumnId>15017</ColumnId>
+            <HintId1 xsi:nil="true"/>
+            <HintId2 xsi:nil="true"/>
+            <Link>VARIETY ID</Link>
+            <LinkId>15016</LinkId>
+            <ParentContentId>ppir_svp_act</ParentContentId>
+            <ParentTemplateFieldId xsi:nil="true"/>
+            <Table>ZStage of Crop</Table>
+            <TableId>15015</TableId>
+          </RefData>
+          <RefDataParentRowId>044c4205-e3dc-44ae-9c3e-1564d77e010a</RefDataParentRowId>
+          <Options></Options>
+          <Sequence>56</Sequence>
+          <Type>List</Type>
+          <Value></Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_svp_act</FieldId>
+          <ContentId>ppir_svp_act</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Seed Variety Planted - Corn/Rice</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>18d6c046-bd00-4460-9b6a-c8f2dd70c1a0</ObjectId>
+          <ParentObjectId>ef7fa39c-a661-4d29-9e0b-154e4c0e2efb</ParentObjectId>
+          <RefData>
+            <Column>Seed Variety</Column>
+            <ColumnId>14015</ColumnId>
+            <HintId1 xsi:nil="true"/>
+            <HintId2 xsi:nil="true"/>
+            <Link>Region Name</Link>
+            <LinkId>14016</LinkId>
+            <ParentContentId>ppir_region</ParentContentId>
+            <ParentTemplateFieldId xsi:nil="true"/>
+            <Table>ZSeed Variety Planted</Table>
+            <TableId>14015</TableId>
+          </RefData>
+          <RefDataParentRowId>061461ca-c322-4d95-97b8-e2bfd06d467c</RefDataParentRowId>
+          <Options></Options>
+          <Sequence>53</Sequence>
+          <Type>Radio</Type>
+          <Value>rice</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C352c241e</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>ef7fa39c-a661-4d29-9e0b-154e4c0e2efb</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>50</Sequence>
+          <Type>Section</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>ppir_region</FieldId>
+          <ContentId>ppir_region</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Region</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>623d651b-15c9-4bba-9cfa-f45098958619</ObjectId>
+          <ParentObjectId>ef7fa39c-a661-4d29-9e0b-154e4c0e2efb</ParentObjectId>
+          <RefData>
+            <Column>Region Name</Column>
+            <ColumnId>14014</ColumnId>
+            <HintId1 xsi:nil="true"/>
+            <HintId2 xsi:nil="true"/>
+            <LinkId xsi:nil="true"/>
+            <ParentTemplateFieldId xsi:nil="true"/>
+            <Table>ZRegion PPIR</Table>
+            <TableId>14014</TableId>
+          </RefData>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>51</Sequence>
+          <Type>List</Type>
+          <Value></Value>
+        </FormFieldZipModel>
+      </Fields>
+      <ObjectId>61b7af12-0d56-4f5f-8561-70df26169bfa</ObjectId>
+      <Script>function getRegion(string) { if (string &amp;&amp; typeof string === "string") { // Use regular expressions to find the last two numbers const regexNumbers = /\d{2}$/; const matchesNumbers = string.match(regexNumbers); if (matchesNumbers &amp;&amp; matchesNumbers.length > 0) { const numbers = matchesNumbers[0]; // Get the matched numbers // Check if the last two digits are 13 if (numbers === "13") { const specialResult = "Region 13 (3A)"; return specialResult; } else { const result = "Region " + numbers; // Concatenate "Region " with the numbers return result; } } } return null; // No match found } form.addInlineListener('onLoad', function*(path, document, form, isNew) { var region = select.contentByContentId(form, "ppir_region"); var servicePrefix = ""; var regionNumber = ""; yield* select.metadata(function*(metadata) { servicePrefix = metadata.groupPrefix; regionNumber = getRegion(servicePrefix); }); yield* select.refData('ZRegion PPIR', 'Region Name', function*(reg) { if (reg.length > 0) { for (var i = 0; i &lt; reg.length; i++) { const temp = reg[i]; region.value = { ...temp }; } } }, null, null, regionNumber); yield* actions.patch(function(draftDocument) { var draft_region = select.contentByContentId(draftDocument, "ppir_region"); if (!!draft_region.value) { if (draft_region.value.valueId !== region.value.valueId) { draft_region.value = region.value; } } else { draft_region.value = region.value; } }); });</Script>
+      <Title>PPIR - Post Planting Inspection Report</Title>
+    </FormZipModel>
+    <FormZipModel>
+      <ContentId>___C08edc864s</ContentId>
+      <Fields>
+        <FormFieldZipModel>
+          <ContentId>___C08edc864</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Tracked Farm</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>99d924a7-9058-4837-bd46-5d239be7e359</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>1</Sequence>
+          <Type>TabHeader</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_totalarea</FieldId>
+          <ContentId>track_totalarea</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Total Area (in sqm.)</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>0f124681-4b98-49e9-bfc4-d8905b0c9841</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>5</Sequence>
+          <Type>Number</Type>
+          <Value></Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_datetime</FieldId>
+          <ContentId>track_datetime</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Date and Time</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>ef551587-0b65-4da6-8fb7-b1b8e68089f0</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>6</Sequence>
+          <Type>Text</Type>
+          <Value>2024-08-06 21:54:50</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_lastcoord</FieldId>
+          <ContentId>track_lastcoord</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Last Coordinates</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>00bda7f0-e641-489d-93cc-c1ab43d700e9</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>7</Sequence>
+          <Type>PolygonPoint</Type>
+          <Mar>Mar</Mar>
+          <Value></Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Ca548a4bc</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>91fc7b45-089e-43ed-b0bd-114c86a9891d</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>12</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Cff3abf61</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>14f41875-1f3d-468a-b8aa-15a55814234e</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>16</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Cdefe65b1</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>9d47d98d-22ab-4ad5-8491-d77a73227326</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>20</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_farmloc</FieldId>
+          <ContentId>track_farmloc</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Farm Location</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>06d9cedb-34bd-4279-8552-b366723e2de3</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>42</Sequence>
+          <Type>Paragraph</Type>
+          <Value>RIZAL, OTON, ILOILO</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_polygon_grid</FieldId>
+          <ContentId>track_polygon_grid</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Coordinates Tracked</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>efa12ec5-9d4a-4ef0-b1f0-317930a5d59c</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>8</Sequence>
+          <Type>Grid</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_visual</FieldId>
+          <ContentId>track_visual</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Launch Visualization</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>465d7cb6-2d0b-4ee1-a1e0-b546aa8c69f3</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>4</Sequence>
+          <Type>LaunchVisualization</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_areatracer</FieldId>
+          <ContentId>track_areatracer</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Track</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>0735a594-b5f1-41d3-b90a-713519cbadb3</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>2</Sequence>
+          <Type>LaunchMap</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_landplot</FieldId>
+          <ContentId>track_landplot</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>View Tracked Perimeter</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>ed107a69-5d57-4daa-a485-0f1552d1601b</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>3</Sequence>
+          <Type>LaunchMap</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coordinate_row</FieldId>
+          <ContentId>track_coordinate_row</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Coordinate Row</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>9ae9f9cf-7060-4582-aeb0-1149c52ab6b8</ObjectId>
+          <ParentObjectId>efa12ec5-9d4a-4ef0-b1f0-317930a5d59c</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>9</Sequence>
+          <Type>Row</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coordinates</FieldId>
+          <ContentId>track_coordinates</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Coordinates</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>1b224cf9-1c0b-43a6-94a6-8e99d36f098f</ObjectId>
+          <ParentObjectId>9ae9f9cf-7060-4582-aeb0-1149c52ab6b8</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>10</Sequence>
+          <Type>PolygonPoint</Type>
+          <Value>{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:02.631+08:00","unitLotNo":null,"zipCode":null}</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coord_timestamp</FieldId>
+          <ContentId>track_coord_timestamp</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Date/Time</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>e89fc95a-1cbe-4c78-a710-077d81e10a59</ObjectId>
+          <ParentObjectId>9ae9f9cf-7060-4582-aeb0-1149c52ab6b8</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>11</Sequence>
+          <Type>Text</Type>
+          <Value>04/08/2024 1:29:02 pm</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coordinate_row</FieldId>
+          <ContentId>track_coordinate_row</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Coordinate Row</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>bd977db7-78e1-4176-a5a8-df26f5a85e52</ObjectId>
+          <ParentObjectId>efa12ec5-9d4a-4ef0-b1f0-317930a5d59c</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>13</Sequence>
+          <Type>Row</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coordinates</FieldId>
+          <ContentId>track_coordinates</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Coordinates</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>fa8a7b5f-a5c7-43c4-8e41-a8d600bd815f</ObjectId>
+          <ParentObjectId>bd977db7-78e1-4176-a5a8-df26f5a85e52</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>14</Sequence>
+          <Type>PolygonPoint</Type>
+          <Value>{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:05.649+08:00","unitLotNo":null,"zipCode":null}</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coord_timestamp</FieldId>
+          <ContentId>track_coord_timestamp</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Date/Time</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>674316dd-bd2f-4138-839f-97d7f212cb4f</ObjectId>
+          <ParentObjectId>bd977db7-78e1-4176-a5a8-df26f5a85e52</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>15</Sequence>
+          <Type>Text</Type>
+          <Value>04/08/2024 1:29:05 pm</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coordinate_row</FieldId>
+          <ContentId>track_coordinate_row</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Coordinate Row</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>4a235456-fb4b-47fa-a6e6-630bf7519192</ObjectId>
+          <ParentObjectId>efa12ec5-9d4a-4ef0-b1f0-317930a5d59c</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>17</Sequence>
+          <Type>Row</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coordinates</FieldId>
+          <ContentId>track_coordinates</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Coordinates</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>1031d073-5a94-4eb1-8d9e-69925647a0f5</ObjectId>
+          <ParentObjectId>4a235456-fb4b-47fa-a6e6-630bf7519192</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>18</Sequence>
+          <Type>PolygonPoint</Type>
+          <Value>{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:08.649+08:00","unitLotNo":null,"zipCode":null}</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coord_timestamp</FieldId>
+          <ContentId>track_coord_timestamp</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Date/Time</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>87ef33c7-44fe-4fe6-b1d7-0b6cdecd9f80</ObjectId>
+          <ParentObjectId>4a235456-fb4b-47fa-a6e6-630bf7519192</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>19</Sequence>
+          <Type>Text</Type>
+          <Value>04/08/2024 1:29:08 pm</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coordinate_row</FieldId>
+          <ContentId>track_coordinate_row</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Coordinate Row</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>72d9d354-749a-4991-99fc-53dbc228c317</ObjectId>
+          <ParentObjectId>efa12ec5-9d4a-4ef0-b1f0-317930a5d59c</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>21</Sequence>
+          <Type>Row</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coordinates</FieldId>
+          <ContentId>track_coordinates</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Coordinates</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>2563598a-9bae-4d71-90c3-8fbff7b2cb83</ObjectId>
+          <ParentObjectId>72d9d354-749a-4991-99fc-53dbc228c317</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>22</Sequence>
+          <Type>PolygonPoint</Type>
+          <Value>{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:11.649+08:00","unitLotNo":null,"zipCode":null}</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coord_timestamp</FieldId>
+          <ContentId>track_coord_timestamp</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Date/Time</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>b611f788-8622-494d-aca7-84c7c9c0e6d0</ObjectId>
+          <ParentObjectId>72d9d354-749a-4991-99fc-53dbc228c317</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>23</Sequence>
+          <Type>Text</Type>
+          <Value>04/08/2024 1:29:11 pm</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C234ee8b9</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>08643319-201c-4f07-b694-4ce913f89226</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>24</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coordinate_row</FieldId>
+          <ContentId>track_coordinate_row</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Coordinate Row</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>5d462cd2-cff5-4030-84a8-a0d77a0ccde2</ObjectId>
+          <ParentObjectId>efa12ec5-9d4a-4ef0-b1f0-317930a5d59c</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>25</Sequence>
+          <Type>Row</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coordinates</FieldId>
+          <ContentId>track_coordinates</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Coordinates</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>e7d023f2-1a40-4150-9aab-9995b27c2b93</ObjectId>
+          <ParentObjectId>5d462cd2-cff5-4030-84a8-a0d77a0ccde2</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>26</Sequence>
+          <Type>PolygonPoint</Type>
+          <Value>{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:14.649+08:00","unitLotNo":null,"zipCode":null}</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coord_timestamp</FieldId>
+          <ContentId>track_coord_timestamp</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Date/Time</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>36a340d5-271d-46ab-94cf-bdabe6595a6f</ObjectId>
+          <ParentObjectId>5d462cd2-cff5-4030-84a8-a0d77a0ccde2</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>27</Sequence>
+          <Type>Text</Type>
+          <Value>04/08/2024 1:29:14 pm</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C09b40bd4</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>907e5ff9-9ad2-47f4-af1e-9e33e9855024</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>28</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coordinate_row</FieldId>
+          <ContentId>track_coordinate_row</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Coordinate Row</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>c0093f37-f1b5-4a7d-ad38-6abe75b4510c</ObjectId>
+          <ParentObjectId>efa12ec5-9d4a-4ef0-b1f0-317930a5d59c</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>29</Sequence>
+          <Type>Row</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coordinates</FieldId>
+          <ContentId>track_coordinates</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Coordinates</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>307f0fd4-c31f-4eb5-84a0-feab2e15de98</ObjectId>
+          <ParentObjectId>c0093f37-f1b5-4a7d-ad38-6abe75b4510c</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>30</Sequence>
+          <Type>PolygonPoint</Type>
+          <Value>{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:17.649+08:00","unitLotNo":null,"zipCode":null}</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coord_timestamp</FieldId>
+          <ContentId>track_coord_timestamp</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Date/Time</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>804c1c1b-5911-4990-bd3c-4bad05bd7c40</ObjectId>
+          <ParentObjectId>c0093f37-f1b5-4a7d-ad38-6abe75b4510c</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>31</Sequence>
+          <Type>Text</Type>
+          <Value>04/08/2024 1:29:17 pm</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C96db75c0</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>b5120d49-0ff8-4628-a7da-b4770afa6b58</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>32</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coordinate_row</FieldId>
+          <ContentId>track_coordinate_row</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Coordinate Row</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>f711f34e-2fd4-49eb-af07-c71fa04b8b6e</ObjectId>
+          <ParentObjectId>efa12ec5-9d4a-4ef0-b1f0-317930a5d59c</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>33</Sequence>
+          <Type>Row</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coordinates</FieldId>
+          <ContentId>track_coordinates</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Coordinates</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>ec311f16-09fb-4cd4-bece-d6bae3038d38</ObjectId>
+          <ParentObjectId>f711f34e-2fd4-49eb-af07-c71fa04b8b6e</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>34</Sequence>
+          <Type>PolygonPoint</Type>
+          <Value>{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:20.649+08:00","unitLotNo":null,"zipCode":null}</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coord_timestamp</FieldId>
+          <ContentId>track_coord_timestamp</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Date/Time</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>f98c9ce1-0863-475f-ab29-3ece9d024088</ObjectId>
+          <ParentObjectId>f711f34e-2fd4-49eb-af07-c71fa04b8b6e</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>35</Sequence>
+          <Type>Text</Type>
+          <Value>04/08/2024 1:29:20 pm</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C5b4698b0</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>c0f636b1-56a7-4fe6-b334-837fe622421f</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>36</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coordinate_row</FieldId>
+          <ContentId>track_coordinate_row</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Coordinate Row</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>77ac435f-e846-46b4-9dd4-eccaf5c1d32f</ObjectId>
+          <ParentObjectId>efa12ec5-9d4a-4ef0-b1f0-317930a5d59c</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>37</Sequence>
+          <Type>Row</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coordinates</FieldId>
+          <ContentId>track_coordinates</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Coordinates</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>8c62807e-5889-4c77-8756-2c1724734dd3</ObjectId>
+          <ParentObjectId>77ac435f-e846-46b4-9dd4-eccaf5c1d32f</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>38</Sequence>
+          <Type>PolygonPoint</Type>
+          <Value>{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:22.228+08:00","unitLotNo":null,"zipCode":null}</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <FieldId>track_coord_timestamp</FieldId>
+          <ContentId>track_coord_timestamp</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Date/Time</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>1f8fb0e7-4fde-49d2-b6f9-1dd06896c395</ObjectId>
+          <ParentObjectId>77ac435f-e846-46b4-9dd4-eccaf5c1d32f</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>39</Sequence>
+          <Type>Text</Type>
+          <Value>04/08/2024 1:29:22 pm</Value>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___C6453bbf9</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>5fd8995f-17f1-4e31-b388-bdefd5a497cf</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>40</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Cbaca3988</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>d359f07c-b8b4-4d9d-948f-194c8dcee913</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>41</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+        <FormFieldZipModel>
+          <ContentId>___Cf5512a2c</ContentId>
+          <Indicator xsi:nil="true"/>
+          <Label>Section Break</Label>
+          <LockFieldType xsi:nil="true"/>
+          <ObjectId>ab2b568c-766e-4b8e-8b56-d52b5be0c16f</ObjectId>
+          <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+          <RefDataParentRowId xsi:nil="true"/>
+          <Options></Options>
+          <Sequence>43</Sequence>
+          <Type>SectionBreak</Type>
+        </FormFieldZipModel>
+      </Fields>
+      <FormId>165e0588-9ca5-4ce7-ad00-d263928b5e31</FormId>
+      <FormTitle>Tracked Farm</FormTitle>
+    </FormZipModel>
+  </Forms>
+  <CapturedMobileLocation>
+    <Accuracy xsi:nil="true"/>
+    <BuildingName>GAOC (Gan Advanced Osseointegration Center)</BuildingName>
+    <City>Quezon City</City>
+    <Country>Philippines</Country>
+    <Latitude>14.6531133</Latitude>
+    <Longitude>121.0351767</Longitude>
+    <ZipCode>1105</ZipCode>
+    <Province></Province>
+    <Timestamp xsi:nil="true"/>
+    <ZipCode>1105</ZipCode>
+  </CapturedMobileLocation>
+  <CapturedMobileLocationHash>0</CapturedMobileLocationHash>
+  <LastAssignedAgentId>53111</LastAssignedAgentId>
+  <LastModifiedDate>2024-04-08T05:30:59.9217363Z</LastModifiedDate>
+  <Priority></Priority>
+  <Remarks></Remarks>
+  <ServiceGroupId>10010</ServiceGroupId>
+  <ServiceGroupName></ServiceGroupName>
+  <ServiceGroupTaskNumberPrefix></ServiceGroupTaskNumberPrefix>
+  <ServiceTypeId>12012</ServiceTypeId>
+  <ServiceTypeName></ServiceTypeName>
+  <StatusLogs>
+    <TaskStatusLogZipModel>
+      <AgentId xsi:nil="true"/>
+      <Source>System</Source>
+      <SourceId>1001</SourceId>
+      <TaskId>PPIR-002</TaskId>
+      <TaskNumber></TaskNumber>
+      <TaskStatus>For Dispatch</TaskStatus>
+      <Timestamp>2024-04-08T02:31:03.8278713Z</Timestamp>
+    </TaskStatusLogZipModel>
+    <TaskStatusLogZipModel>
+      <Agent>Suarez, Christian</Agent>
+      <AgentId>53111</AgentId>
+      <TaskId>PPIR-002</TaskId>
+      <TaskNumber></TaskNumber>
+      <TaskStatus>In Progress</TaskStatus>
+      <Timestamp>2024-04-08T05:26:32.092Z</Timestamp>
+    </TaskStatusLogZipModel>
+    <TaskStatusLogZipModel>
+      <Agent>Suarez, Christian</Agent>
+      <AgentId>53111</AgentId>
+      <Source>Suarez, Christian</Source>
+      <SourceId>53111</SourceId>
+      <TaskId>PPIR-002</TaskId>
+      <TaskNumber></TaskNumber>
+      <TaskStatus>In Progress</TaskStatus>
+      <Timestamp>2024-04-08T05:26:32.092Z</Timestamp>
+    </TaskStatusLogZipModel>
+    <TaskStatusLogZipModel>
+      <AgentId xsi:nil="true"/>
+      <TaskId>PPIR-002</TaskId>
+      <TaskNumber></TaskNumber>
+      <TaskStatus>Submitted</TaskStatus>
+      <Timestamp>2024-04-08T05:30:59.9217363Z</Timestamp>
+    </TaskStatusLogZipModel>
+    <TaskStatusLogZipModel>
+      <Agent>Suarez, Christian</Agent>
+      <AgentId>53111</AgentId>
+      <Source>Suarez, Christian</Source>
+      <SourceId>53111</SourceId>
+      <TaskId>PPIR-002</TaskId>
+      <TaskNumber></TaskNumber>
+      <TaskStatus>Submitted</TaskStatus>
+      <Timestamp>2024-04-08T05:30:57.111Z</Timestamp>
+    </TaskStatusLogZipModel>
+  </StatusLogs>
+  <TaskNumber></TaskNumber>
+  <TaskStatus>Submitted</TaskStatus>
+  <ArchiveDateTime>2024-04-08T13:31:01.155522+08:00</ArchiveDateTime>
+  <LatestArchiveDate>2024-04-08T13:31:01.1555203+08:00</LatestArchiveDate>
+</TaskArchiveZipModel>
