@@ -1,0 +1,137 @@
+// Automatic FlutterFlow imports
+import '/backend/schema/structs/index.dart';
+import '/backend/supabase/supabase.dart';
+import '/backend/sqlite/sqlite_manager.dart';
+import '/actions/actions.dart' as action_blocks;
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import '/custom_code/actions/index.dart'; // Imports other custom actions
+import '/flutter_flow/custom_functions.dart'; // Imports custom functions
+import 'package:flutter/material.dart';
+// Begin custom action code
+// DO NOT REMOVE OR MODIFY THE CODE ABOVE!
+
+import 'package:xml/xml.dart';
+
+Future<String> generateTaskXml(String? taskId) async {
+  if (taskId == null) {
+    throw Exception('Task ID cannot be null');
+  }
+
+  final response = await SupaFlow.client.from('tasks').select('''
+        *,
+        ppir_forms:ppir_forms!inner(*)
+      ''').eq('id', taskId).single().execute();
+
+  if (response.status != 200 || response.data == null) {
+    throw Exception('No matching data found for task ID: $taskId');
+  }
+
+  final taskData = response.data as Map<String, dynamic>;
+  final ppirData = taskData['ppir_forms'] as Map<String, dynamic>;
+
+  final builder = XmlBuilder();
+  builder.processing('xml', 'version="1.0"');
+  builder.element('ppir_form', nest: () {
+    // Add task data
+    builder.element('task', nest: () {
+      builder.element('id', nest: taskData['id']?.toString() ?? '');
+      builder.element('task_number',
+          nest: taskData['task_number']?.toString() ?? '');
+      builder.element('service_group',
+          nest: taskData['service_group']?.toString() ?? '');
+      builder.element('service_type',
+          nest: taskData['service_type']?.toString() ?? '');
+      builder.element('priority', nest: taskData['priority']?.toString() ?? '');
+      builder.element('assignee', nest: taskData['assignee']?.toString() ?? '');
+      builder.element('date_added',
+          nest: taskData['date_added']?.toString() ?? '');
+      builder.element('date_access',
+          nest: taskData['date_access']?.toString() ?? '');
+      builder.element('status', nest: taskData['status']?.toString() ?? '');
+      builder.element('task_type',
+          nest: taskData['task_type']?.toString() ?? '');
+    });
+
+    // Add ppir_forms data
+    builder.element('ppir_assignmentid',
+        nest: ppirData['ppir_assignmentid']?.toString() ?? '');
+    builder.element('gpx', nest: ppirData['gpx']?.toString() ?? '');
+    builder.element('ppir_insuranceid',
+        nest: ppirData['ppir_insuranceid']?.toString() ?? '');
+    builder.element('ppir_farmername',
+        nest: ppirData['ppir_farmername']?.toString() ?? '');
+    builder.element('ppir_address',
+        nest: ppirData['ppir_address']?.toString() ?? '');
+    builder.element('ppir_farmertype',
+        nest: ppirData['ppir_farmertype']?.toString() ?? '');
+    builder.element('ppir_mobileno',
+        nest: ppirData['ppir_mobileno']?.toString() ?? '');
+    builder.element('ppir_groupname',
+        nest: ppirData['ppir_groupname']?.toString() ?? '');
+    builder.element('ppir_groupaddress',
+        nest: ppirData['ppir_groupaddress']?.toString() ?? '');
+    builder.element('ppir_lendername',
+        nest: ppirData['ppir_lendername']?.toString() ?? '');
+    builder.element('ppir_lenderaddress',
+        nest: ppirData['ppir_lenderaddress']?.toString() ?? '');
+    builder.element('ppir_cicno',
+        nest: ppirData['ppir_cicno']?.toString() ?? '');
+    builder.element('ppir_farmloc',
+        nest: ppirData['ppir_farmloc']?.toString() ?? '');
+    builder.element('ppir_north',
+        nest: ppirData['ppir_north']?.toString() ?? '');
+    builder.element('ppir_south',
+        nest: ppirData['ppir_south']?.toString() ?? '');
+    builder.element('ppir_east', nest: ppirData['ppir_east']?.toString() ?? '');
+    builder.element('ppir_west', nest: ppirData['ppir_west']?.toString() ?? '');
+    builder.element('ppir_att_1',
+        nest: ppirData['ppir_att_1']?.toString() ?? '');
+    builder.element('ppir_att_2',
+        nest: ppirData['ppir_att_2']?.toString() ?? '');
+    builder.element('ppir_att_3',
+        nest: ppirData['ppir_att_3']?.toString() ?? '');
+    builder.element('ppir_att_4',
+        nest: ppirData['ppir_att_4']?.toString() ?? '');
+    builder.element('ppir_area_aci',
+        nest: ppirData['ppir_area_aci']?.toString() ?? '');
+    builder.element('ppir_area_act',
+        nest: ppirData['ppir_area_act']?.toString() ?? '');
+    builder.element('ppir_dopds_aci',
+        nest: ppirData['ppir_dopds_aci']?.toString() ?? '');
+    builder.element('ppir_dopds_act',
+        nest: ppirData['ppir_dopds_act']?.toString() ?? '');
+    builder.element('ppir_doptp_aci',
+        nest: ppirData['ppir_doptp_aci']?.toString() ?? '');
+    builder.element('ppir_doptp_act',
+        nest: ppirData['ppir_doptp_act']?.toString() ?? '');
+    builder.element('ppir_svp_aci',
+        nest: ppirData['ppir_svp_aci']?.toString() ?? '');
+    builder.element('ppir_svp_act',
+        nest: ppirData['ppir_svp_act']?.toString() ?? '');
+    builder.element('ppir_variety',
+        nest: ppirData['ppir_variety']?.toString() ?? '');
+    builder.element('ppir_stagecrop',
+        nest: ppirData['ppir_stagecrop']?.toString() ?? '');
+    builder.element('ppir_remarks',
+        nest: ppirData['ppir_remarks']?.toString() ?? '');
+    builder.element('ppir_name_insured',
+        nest: ppirData['ppir_name_insured']?.toString() ?? '');
+    builder.element('ppir_name_iuia',
+        nest: ppirData['ppir_name_iuia']?.toString() ?? '');
+    builder.element('ppir_sig_insured',
+        nest: ppirData['ppir_sig_insured']?.toString() ?? '');
+    builder.element('ppir_sig_iuia',
+        nest: ppirData['ppir_sig_iuia']?.toString() ?? '');
+    builder.element('track_last_coord',
+        nest: ppirData['track_last_coord']?.toString() ?? '');
+    builder.element('track_date_time',
+        nest: ppirData['track_date_time']?.toString() ?? '');
+    builder.element('track_total_area',
+        nest: ppirData['track_total_area']?.toString() ?? '');
+    builder.element('track_total_distance',
+        nest: ppirData['track_total_distance']?.toString() ?? '');
+  });
+
+  return builder.buildDocument().toXmlString(pretty: true);
+}

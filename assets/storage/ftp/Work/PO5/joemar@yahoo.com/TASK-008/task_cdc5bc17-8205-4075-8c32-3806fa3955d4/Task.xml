@@ -1,0 +1,1061 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TaskArchiveZipModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <AgentId xsi:nil="true"/>
+  <AssignedDate></AssignedDate>
+  <Attachments></Attachments>
+  <AuditLogs>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Label>Task Status</Label>
+      <Message>Task status is changed to 'completed'.</Message>
+      <SnapshotValue>For Dispatch</SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-08-07T12:03:41.748045+00:00</Timestamp>
+      <UpdatedValue>completed</UpdatedValue>
+      <FieldLabel>Task Status</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Captured Mobile Location</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-08-07T12:03:41.748045+00:00</Timestamp>
+      <UpdatedValue>completed</UpdatedValue>
+      <FieldLabel>Captured Mobile Location</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Captured Mobile Location</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-08-07T12:03:41.748045+00:00</Timestamp>
+      <UpdatedValue>completed</UpdatedValue>
+      <FieldLabel>Captured Mobile Location</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed PPPIR-008 - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-08-07T12:03:41.748045+00:00</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Actual</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-08-07T12:03:41.748045+00:00</Timestamp>
+      <UpdatedValue>0.2500</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Actual</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Region</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-08-07T12:03:41.748045+00:00</Timestamp>
+      <UpdatedValue>PO5</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Region</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed PPPIR-008 - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:27:02.4373782Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Actual - Date of Planting (DS)</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-08-07T12:03:41.748045+00:00</Timestamp>
+      <UpdatedValue></UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Actual - Date of Planting (DS)</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Actual - Date of Planting (TP)</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-08-07T12:03:41.748045+00:00</Timestamp>
+      <UpdatedValue></UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Actual - Date of Planting (TP)</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Seed Variety Planted - Corn/Rice</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-08-07T12:03:41.748045+00:00</Timestamp>
+      <UpdatedValue></UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Seed Variety Planted - Corn/Rice</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed PPPIR-008 - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-08-07T12:03:41.748045+00:00</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Variety</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:27:21.86Z</Timestamp>
+      <UpdatedValue>corn</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Variety</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <Label>PPIR - Post Planting Inspection Report &amp;gt; Stage of Crop ATV</Label>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Stage of Crop ATV</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:27:21.86Z</Timestamp>
+      <UpdatedValue>RICE-DOUGH STG. (MATURITY)</UpdatedValue>
+      <FieldId>Stage of Crop ATV</FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Stage of Crop ATV</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed PPPIR-008 - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:27:28.7517927Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Full Name:</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:27:27.52Z</Timestamp>
+      <UpdatedValue>F</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Full Name:</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Signature: (Insured)</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:27:27.52Z</Timestamp>
+      <UpdatedValue>{"events":[],"attemptCount":0,"duration":0}</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Signature: (Insured)</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed PPPIR-008 - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:27:40.5418779Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Signature: (Insured)</Label>
+      <SnapshotValue>{"events":[],"attemptCount":0,"duration":0}</SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:27:29.743Z</Timestamp>
+      <UpdatedValue>{"events":[{"type":0,"timestamp":"2024-04-08T13:27:26.735+08:00"},{"type":2,"timestamp":"2024-04-08T13:27:29.352+08:00"}],"attemptCount":1,"duration":0}</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Signature: (Insured)</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed PPPIR-008 - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:27:52.2099499Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Full Name:</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:28:21.815Z</Timestamp>
+      <UpdatedValue>Inspector</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Full Name:</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed PPPIR-008 - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:28:24.4310056Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Full Name:</Label>
+      <SnapshotValue>Inspector</SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:28:25.002Z</Timestamp>
+      <UpdatedValue>Inspector</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Full Name:</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Signature: (IU/IA)</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:28:25.002Z</Timestamp>
+      <UpdatedValue>{"events":[],"attemptCount":0,"duration":0}</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Signature: (IU/IA)</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed PPPIR-008 - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:28:36.975082Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Signature: (IU/IA)</Label>
+      <SnapshotValue>{"events":[],"attemptCount":0,"duration":0}</SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:28:33.479Z</Timestamp>
+      <UpdatedValue>{"events":[{"type":0,"timestamp":"2024-04-08T13:28:24.559+08:00"},{"type":2,"timestamp":"2024-04-08T13:28:33.079+08:00"}],"attemptCount":1,"duration":0}</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Signature: (IU/IA)</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed PPPIR-008 - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:28:48.7513389Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Total Area (in sqm.)</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>0</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Total Area (in sqm.)</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Date and Time</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue></UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Date and Time</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Last Coordinates</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue></UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Last Coordinates</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinate Row|track_coordinate_row|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinates|track_coordinates|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Date/Time|track_coord_timestamp|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed PPPIR-008 - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T02:31:09.1609392Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Hidden Field</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T02:31:08.8601031Z</Timestamp>
+      <UpdatedValue>N - NATIONAL ROAD | E - RESIDENCE | S - CANTOMAYOR | W - SOUTH</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Hidden Field</FieldLabel>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Task created.</Message>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T02:31:03.8278713Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Assigned Date Time</Label>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T02:31:08.3743402Z</Timestamp>
+      <UpdatedValue>2024-04-08T02:31:03.8278713+00:00</UpdatedValue>
+      <FieldLabel>Assigned Date Time</FieldLabel>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Agent</Label>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T02:31:08.3743402Z</Timestamp>
+      <UpdatedValue>joemar</UpdatedValue>
+      <FieldLabel>Agent</FieldLabel>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinate Row|track_coordinate_row|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinates|track_coordinates|{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:05.649+08:00","unitLotNo":null,"zipCode":null}</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Date/Time|track_coord_timestamp|04/08/2024 1:29:05 pm</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinate Row|track_coordinate_row|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinates|track_coordinates|{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:08.649+08:00","unitLotNo":null,"zipCode":null}</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Date/Time|track_coord_timestamp|04/08/2024 1:29:08 pm</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinate Row|track_coordinate_row|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinates|track_coordinates|{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:11.649+08:00","unitLotNo":null,"zipCode":null}</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Date/Time|track_coord_timestamp|04/08/2024 1:29:11 pm</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Section Break||</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinate Row|track_coordinate_row|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinates|track_coordinates|{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:14.649+08:00","unitLotNo":null,"zipCode":null}</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Date/Time|track_coord_timestamp|04/08/2024 1:29:14 pm</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Section Break||</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinate Row|track_coordinate_row|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinates|track_coordinates|{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:17.649+08:00","unitLotNo":null,"zipCode":null}</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Date/Time|track_coord_timestamp|04/08/2024 1:29:17 pm</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Date/Time|track_coord_timestamp|04/08/2024 1:29:17 pm</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Section Break||</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinate Row|track_coordinate_row|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinates|track_coordinates|{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:20.649+08:00","unitLotNo":null,"zipCode":null}</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Date/Time|track_coord_timestamp|04/08/2024 1:29:20 pm</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Section Break||</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinate Row|track_coordinate_row|</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Coordinates|track_coordinates|{"accuracy":null,"barangayVillage":null,"buildingName":null,"city":null,"country":null,"latitude":14.6531133,"longitude":121.0351767,"province":null,"street":null,"timestamp":"2024-04-08T13:29:22.228+08:00","unitLotNo":null,"zipCode":null}</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Date/Time|track_coord_timestamp|04/08/2024 1:29:22 pm</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Section Break||</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Section Break||</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <UpdatedValue>Section Break||</UpdatedValue>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <SnapshotValue>Coordinates|track_coordinates|</SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <SnapshotValue>Date/Time|track_coord_timestamp|</SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Fields</Label>
+      <SnapshotValue>Coordinate Row|track_coordinate_row|</SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:28.281Z</Timestamp>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Field</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:31.9213368Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Tracked Farm &amp;gt; Farm Location</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:48.04Z</Timestamp>
+      <UpdatedValue>Farm</UpdatedValue>
+      <FieldId></FieldId>
+      <FormTitle>Tracked Farm</FormTitle>
+      <FieldLabel>Farm Location</FieldLabel>
+      <IPAddress>172.31.37.162</IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:29:53.7502153Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Remarks:</Label>
+      <SnapshotValue></SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:30:45.183Z</Timestamp>
+      <UpdatedValue>Remarks</UpdatedValue>
+      <FieldId>ppir_remarks</FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Remarks:</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>PPIR - Post Planting Inspection Report &amp;gt; Signature: (Insured)PPIR - Post Planting Inspection Report &amp;gt; Signature: (Insured)</Label>
+      <SnapshotValue>{"events":[{"type":0,"timestamp":"2024-04-08T13:27:26.735+08:00"},{"type":2,"timestamp":"2024-04-08T13:27:29.352+08:00"}],"attemptCount":1,"duration":0}</SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:30:45.183Z</Timestamp>
+      <UpdatedValue>{"events":[{"type":0,"timestamp":"2024-04-08T13:27:26.735+08:00"},{"type":2,"timestamp":"2024-04-08T13:27:29.352+08:00"},{"type":0,"timestamp":"2024-04-08T13:30:31.656+08:00"},{"type":2,"timestamp":"2024-04-08T13:30:35.456+08:00"}],"attemptCount":2,"duration":0}</UpdatedValue>
+      <FieldId>ppir_sig_insured</FieldId>
+      <FormTitle>PPIR - Post Planting Inspection Report</FormTitle>
+      <FieldLabel>Signature: (Insured)</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P - UpdatePostPlanting script.</Message>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:30:51.4918205Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Label>Task Status</Label>
+      <Message>Task status is changed to 'Submitted'.</Message>
+      <SnapshotValue>In Progress</SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:30:57.111Z</Timestamp>
+      <UpdatedValue>Submitted</UpdatedValue>
+      <FieldLabel>Task Status</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Captured Mobile Location</Label>
+      <SnapshotValue>Quezon City, 1100</SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:30:57.111Z</Timestamp>
+      <UpdatedValue>14.653113, 121.035177</UpdatedValue>
+      <FieldLabel>Captured Mobile Location</FieldLabel>
+      <FieldLabel>Captured Mobile Location</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Captured Mobile Location</Label>
+      <SnapshotValue>14.653113, 121.035177</SnapshotValue>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:30:57.111Z</Timestamp>
+      <UpdatedValue>GAOC (Gan Advanced Osseointegration Center), Quezon City, 1105</UpdatedValue>
+      <FieldLabel>Captured Mobile Location</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Agent</Label>
+      <SnapshotValue>joemar</SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:30:59.921735Z</Timestamp>
+      <FieldLabel>Agent</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Assigned Date Time</Label>
+      <SnapshotValue>2024-04-08T02:31:03.8278713+00:00</SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:30:59.921735Z</Timestamp>
+      <UpdatedValue>2024-04-08T05:30:59.9217363+00:00</UpdatedValue>
+      <FieldLabel>Assigned Date Time</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Field</AuditLevel>
+      <Label>Dispatch Acknowledged</Label>
+      <SnapshotValue>True</SnapshotValue>
+      <Source>joemar</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:30:59.921735Z</Timestamp>
+      <UpdatedValue>False</UpdatedValue>
+      <FieldLabel>Dispatch Acknowledged</FieldLabel>
+      <IPAddress></IPAddress>
+    </TaskAuditLogZipModel>
+    <TaskAuditLogZipModel>
+      <AuditLevel>Task</AuditLevel>
+      <Message>Executed P - PO5 PPIR script.</Message>
+      <Source>System</Source>
+      <TaskId>cdc5bc17-8205-4075-8c32-3806fa3955d4</TaskId>
+      <Timestamp>2024-04-08T05:31:00.8335183Z</Timestamp>
+    </TaskAuditLogZipModel>
+    <CreatedBy>System</CreatedBy>
+    <DateCreated>2024-04-08T02:31:03.8278713Z</DateCreated>
+    <DispatchAcknowledged>false</DispatchAcknowledged>
+    <DueDate xsi:nil="true"/>
+    <Forms>
+      <FormZipModel>
+        <ContentId>___C313c757e</ContentId>
+        <Fields>
+          <FormFieldZipModel>
+            <ContentId>___C8af47c47</ContentId>
+            <Indicator xsi:nil="true"/>
+            <Label>Farmer</Label>
+            <LockFieldType xsi:nil="true"/>
+            <ObjectId>fb036b78-a523-428c-9099-5cd30e0cfd48</ObjectId>
+            <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+            <RefDataParentRowId xsi:nil="true"/>
+            <Options></Options>
+            <Sequence>1</Sequence>
+            <Type>TabHeader</Type>
+          </FormFieldZipModel>
+          <FormFieldZipModel>
+            <FieldId>ppir_insuranceid</FieldId>
+            <ContentId>ppir_insuranceid</ContentId>
+            <Indicator xsi:nil="true"/>
+            <Label>Insurance ID:</Label>
+            <LockFieldType xsi:nil="true"/>
+            <ObjectId>7fd346a8-7ca4-4095-a4f0-7ad59594620b</ObjectId>
+            <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+            <RefDataParentRowId xsi:nil="true"/>
+            <Options></Options>
+            <Sequence>3</Sequence>
+            <Type>Number</Type>
+            <Value>1962765</Value>
+          </FormFieldZipModel>
+          <FormFieldZipModel>
+            <FieldId>ppir_farmername</FieldId>
+            <ContentId>ppir_farmername</ContentId>
+            <Indicator xsi:nil="true"/>
+            <Label>Name of Farmer:</Label>
+            <LockFieldType xsi:nil="true"/>
+            <ObjectId>edda9582-34f4-4e5d-8fcb-fb4e7cf38e12</ObjectId>
+            <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+            <RefDataParentRowId xsi:nil="true"/>
+            <Options></Options>
+            <Sequence>4</Sequence>
+            <Type>Text</Type>
+            <Value>BURGOS, ERNESTO ESTRIBOR</Value>
+          </FormFieldZipModel>
+          <FormFieldZipModel>
+            <FieldId>ppir_address</FieldId>
+            <ContentId>ppir_address</ContentId>
+            <Indicator xsi:nil="true"/>
+            <Label>Address:</Label>
+            <LockFieldType xsi:nil="true"/>
+            <ObjectId>b7fa21e1-5275-4880-bd93-b4e3e9ed5298</ObjectId>
+            <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+            <RefDataParentRowId xsi:nil="true"/>
+            <Options></Options>
+            <Sequence>5</Sequence>
+            <Type>Paragraph</Type>
+            <Value>RIZAL, OTON ,ILOILO</Value>
+          </FormFieldZipModel>
+          <FormFieldZipModel>
+            <FieldId>ppir_mobileno</FieldId>
+            <ContentId>ppir_mobileno</ContentId>
+            <Indicator xsi:nil="true"/>
+            <Label>Mobile No.</Label>
+            <LockFieldType xsi:nil="true"/>
+            <ObjectId>e5a61bf2-5218-4363-af96-3b9c67e53b19</ObjectId>
+            <ParentObjectId>00000000-0000-0000-0000-000000000000</ParentObjectId>
+            <RefDataParentRowId xsi:nil="true"/>
+            <Options></Options>
+            <Sequence>7</Sequence>
+            <Type>Text</Type>
+            <Value>(0920) 239-7098</Value>
+          </FormFieldZipModel>
+          <FormFieldZipModel>
+            <ContentId>___C8c5c666c</ContentId>
+            <Indicator xsi:nil="true"/>
+            <Label>Heading 3</Label>
+            <LockFieldType xsi:nil="true"/>
+            <ObjectId>35e08ccb-2683-4ea6-8b39-53abbcfd308c</ObjectId>
+            <ParentObjectId>e1741f98-0db6-4831-9d5d-226e55c82216</ParentObjectId>
+            <RefDataParentRowId xsi:nil="true"/>
+            <Options></Options>
+            <Sequence>15</Sequence>
+            <Type>Label</Type>
+            <Value>Location of Sketch Plan</Value>
+          </FormFieldZipModel>
+          <FormFieldZipModel>
+            <ContentId>___C849d713a</ContentId>
+            <Indicator xsi:nil="true"/>
+            <Label>Filler</Label>
+            <LockFieldType xsi:nil="true"/>
+            <ObjectId>b125be87-9a5d-497c-a353-7dad592d3b0a</ObjectId>
+            <ParentObjectId>e1741f98-0db6-4831-9d5d-226e55c82216</ParentObjectId>
+            <RefDataParentRowId xsi:nil="true"/>
+            <Options></Options>
+            <Sequence>19</Sequence>
+            <Type>Filler</Type>
+          </FormFieldZipModel>
+          <FormFieldZipModel>
+            <FieldId>ppir_north</FieldId>
+            <ContentId>ppir_north</ContentId>
+            <Indicator xsi:nil="true"/>
+            <Label>North:</Label>
+            <LockFieldType xsi:nil="true"/>
+            <ObjectId>9c9cdbb7-a0cf-48a6-a88f-9b9d003a2fe4</ObjectId>
+            <ParentObjectId>e1741f98-0db6-4831-9d5d-226e55c82216</ParentObjectId>
+            <RefDataParentRowId xsi:nil="true"/>
+            <Options></Options>
+            <Sequence>17</Sequence>
+            <Type>Text</Type>
+            <Value>NATIONAL ROAD</Value>
+          </FormFieldZipModel>
+          <FormFieldZipModel>
+            <FieldId>ppir_east</FieldId>
+            <ContentId>ppir_east</ContentId>
+            <Indicator xsi:nil="true"/>
+            <Label>East:</Label>
+            <LockFieldType xsi:nil="true"/>
+            <ObjectId>67cb381c-583b-4b5b-9d7b-cab659b82df1</ObjectId>
+            <ParentObjectId>e1741f98-0db6-4831-9d5d-226e55c82216</ParentObjectId>
+            <RefDataParentRowId xsi:nil="true"/>
+            <Options></Options>
+            <Sequence>18</Sequence>
+            <Type>Text</Type>
+            <Value>RESIDENCE</Value>
+          </FormFieldZipModel>
+          <FormFieldZipModel>
+            <ContentId>___Ced4bb507</ContentId>
+            <Indicator xsi:nil="true"/>
+            <Label>Filler</Label>
+            <LockFieldType xsi:nil="true"/>
+            <ObjectId>38ddbce4-1d2a-4571-a130-26ffbe74290a</ObjectId>
+            <ParentObjectId>e1741f98-0db6-4831-9d5d-226e55c82216</ParentObjectId>
+            <RefDataParentRowId xsi:nil="true"/>
+            <Options></Options>
+            <Sequence>16</Sequence>
+            <Type>Filler</Type>
+          </FormFieldZipModel>
+          <FormFieldZipModel>
+            <FieldId>ppir_south</FieldId>
+            <ContentId>ppir_south</ContentId>
+            <Indicator xsi:nil="true"/>
+            <Label>South:</Label>
+            <LockFieldType xsi:nil="true"/>
+            <ObjectId>9dae3068-2783-4b5c-9661-0546cdd62d32</ObjectId>
+            <ParentObjectId>e1741f98-0db6-4831-9d5d-226e55c82216</ParentObjectId>
+            <RefDataParentRowId xsi:nil="true"/>
+            <Options></Options>
+            <Sequence>20</Sequence>
+            <Type>Text</Type>
+            <Value>CANTOMAYOR</Value>
+          </FormFieldZipModel>
+          <FormFieldZipModel>
+            <FieldId>ppir_west</FieldId>
+            <ContentId>ppir_west</ContentId>
+            <Indicator xsi:nil="true"/>
+            <Label>West:</Label>
+            <LockFieldType xsi:nil="true"/>
+            <ObjectId>808c57b1-fef3-4e2a-afdc-4e49ac1ee55e</ObjectId>
+            <ParentObjectId>e1741f98-0db6-4831-9d5d-226e55c82216</ParentObjectId>
+            <RefDataParentRowId xsi:nil="true"/>
+            <Options></Options>
+            <Sequence>21</Sequence>
+            <Type>Text</Type>
+            <Value>SOUTH</Value>
+          </FormFieldZipModel>
+        </Fields>
+      </FormZipModel>
+    </Forms>
+  </AuditLogs>
+</TaskArchiveZipModel>
